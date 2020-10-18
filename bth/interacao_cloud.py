@@ -64,7 +64,7 @@ def enviar_lote(lote, *args, **kwargs):
         'data_hora_envio': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         'usuario': f'(bthMigracao) {getpass.getuser()}',
         'url_consulta': None,
-        'status': 0,
+        'status': 1,
         'id_lote': None,
         'conteudo_json': json_envio_lote
     }

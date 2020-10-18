@@ -1,4 +1,4 @@
-# bthMigracao - Em desenvolvimento
+# bthMigracao2 - Em desenvolvimento
 
 Betha Sistemas / Sucesso do Cliente - Implantação (Delivery)
 
@@ -45,4 +45,11 @@ DB_NAME: Indica qual o nome do database do servidor de dados. Padrão: 'ipm_bigu
 DB_USER: Indica qual o usuário que será utilizado para acessar o banco. Padrão: 'postgres'
 
 DB_PW: Indica qual a senha do usuário que irá acessar o banco. Padrão: 'admin'
+```
+
+##### Organização dos módulos na árvores de projeto
+
+```
+
+    
 ```

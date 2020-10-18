@@ -19,6 +19,7 @@ def iniciar():
     interacao_cloud.verifica_token(params_exec['token'])
 
     # Inicia chamadas de rotinas de envio de dados
+
     # enviar(params_exec, 'paises')
     # enviar(params_exec, 'estados')
     # enviar(params_exec, 'cidades')
@@ -86,6 +87,7 @@ def iniciar():
     # enviar(params_exec, 'audiencias')
     # enviar(params_exec, 'sugestoes')
     enviar(params_exec, 'credores')
+
 
 
 def enviar(params_exec, tipo_registro, *args, **kwargs):
