@@ -2,6 +2,7 @@ import requests
 import json
 import re
 import getpass
+import logging
 from datetime import datetime
 
 

@@ -4,6 +4,7 @@ import settings
 import hashlib
 import requests
 import time
+import logging
 from datetime import datetime
 
 
@@ -15,6 +16,7 @@ class PostgreSQLConnection:
 
     def connect(self, **kwargs):
         try:
+            logging.info('Iniciando execução com o banco de dados.')
             self.conn = psycopg2.connect(
                 host=settings.DB_HOST,
                 port=settings.DB_PORT,
@@ -45,26 +47,34 @@ class PostgreSQLConnection:
 
     def verifica_tabelas_controle(self):
         try:
+            logging.info('Verificando existência de tabelas de controle de migração.')
             df = self.exec_sql("SELECT 1 " 
                                "FROM information_schema.tables "
                                "WHERE table_schema = 'public' "
                                "AND table_name = 'controle_migracao_registro'")
             existe_tabelas_controle = not df.empty
             if not existe_tabelas_controle:
+                logging.info('Tabelas de controle não encontradas.')
                 self.configura_banco()
+            else:
+                logging.info('Tabelas de controle encontradas.')
         except Exception as error:
             print("Erro ao executar função 'PostgreSQLConnection:verifica_tabelas_controle'.", error)
 
     def configura_banco(self):
+        logging.info('Iniciando configuração no banco de dados PostgreSQL.')
         print("Iniciando configuração no banco de dados PostgreSQL.")
         try:
-            commands = open("sistema_origem/postgres/sql_padrao/config.sql", "r").read().split("%/%")
+            path = f"sistema_origem/{settings.BASE_ORIGEM}/{settings.SISTEMA_ORIGEM}/sql_padrao/config.sql"
+            commands = open(path, "r").read().split("%/%")
             for sql in commands:
                 if sql != "":
                     cursor = self.conn.cursor()
                     result = cursor.execute(sql)
-                    print(result)
+                    if result is not None:
+                        print(result)
                     self.conn.commit()
+            logging.info('Configuração efetuada com sucesso.')
             print("Configuração efetuada com sucesso.")
         except Exception as error:
             print("Erro ao executar função 'PostgreSQLConnection:configura_banco'.", error)
@@ -95,6 +105,8 @@ def aplica_parametros(params_exec, t):
 def get_consulta(params_exec, assunto):
     texto_consulta = None
     try:
+        logging.info(f'Iniciando busca de consulta para o assunto {assunto}.')
+
         # Obtém o texto do arquivo assunto.sql na pasta 'sql_padrao'
         texto_consulta = open(get_path(f'{assunto}'), "r").read()
 
@@ -109,13 +121,16 @@ def get_consulta(params_exec, assunto):
 
 
 def gerar_hash_chaves(*args):
-    chaves = f'{args[0]}'
+    chaves = ''
+    for item in args:
+        chaves += str(item)
     hash_chaves = hashlib.md5(chaves.encode('utf-8')).hexdigest()
     return hash_chaves
 
 
 def insere_tabela_controle_lote(req_res):
     pgcnn = None
+    logging.info(f'Inserindo daods na tabela de controle de lotes.')
     if req_res is not None and len(req_res) != 0:
         try:
             pgcnn = PostgreSQLConnection()
@@ -155,6 +170,7 @@ def atualiza_tabela_controle_lote(**kwargs):
 
 def insere_tabela_controle_registro_ocor(req_res):
     pgcnn = None
+    logging.info(f'Inserindo daods na tabela de controle de ocorrências.')
     if req_res is not None and len(req_res) != 0:
         try:
             pgcnn = PostgreSQLConnection()
@@ -175,6 +191,7 @@ def insere_tabela_controle_registro_ocor(req_res):
 
 def insere_tabela_controle_migracao_registro(params_exec, req_res):
     pgcnn = None
+    logging.info(f'Inserindo dados na tabela de controle de registros.')
     if req_res is not None:
         try:
             pgcnn = PostgreSQLConnection()
@@ -212,6 +229,25 @@ def insere_tabela_controle_migracao_registro(params_exec, req_res):
 
         finally:
             pgcnn.close_connection()
+
+def atualiza_controle_migracao_registro(id_gerado, hash_chave):
+    pgcnn = None
+    try:
+        pgcnn = PostgreSQLConnection()
+
+        sql = f'UPDATE public.controle_migracao_registro ' \
+              f'SET id_gerado = {id_gerado} ' \
+              f'WHERE hash_chave_dsk = \'{hash_chave}\''
+        print('SQL ATUALIZA - ', sql)
+        cursor = pgcnn.conn.cursor()
+        result = cursor.execute(sql)
+        pgcnn.conn.commit()
+
+    except Exception as error:
+        print("Erro ao executar função 'insere_tabela_controle_migracao_registro'.", error)
+
+    finally:
+        pgcnn.close_connection()
 
 
 def valida_lotes_enviados(params_exec, *args, **kwargs):
@@ -301,10 +337,25 @@ def analisa_retorno_lote(params_exec, retorno_json, **kwargs):
         # Analisa registros contidos no lote
         if 'retorno' in retorno_json:
             for registro in retorno_json['retorno']:
+                # Se o registro enviado foi cadastrado com sucesso
                 if registro['status'] in ['SUCESSO', 'SUCESS', 'EXECUTADO']:
                     registro_status = 3
                     registro_resolvido = 2
-                    id_gerado = registro['idGerado']
+                    id_gerado = registro['idGerado']['id']
+                    hash_chave = registro['idIntegracao']
+                    if id_gerado is not None and hash_chave is not None:
+                        atualiza_controle_migracao_registro(id_gerado, hash_chave)
+
+                # Se o registro enviado já existia no cloud
+                elif registro['status'] == 'ERRO' and 'idExistente' in registro:
+                    registro_status = 3
+                    registro_resolvido = 2
+                    id_gerado = registro['idExistente'][0]
+                    hash_chave = registro['idIntegracao']
+                    if id_gerado is not None and hash_chave is not None:
+                        atualiza_controle_migracao_registro(id_gerado, hash_chave)
+
+                # Se houve erro na execução do registro
                 else:
                     resultado_analise['incosistencia_registros'] += 1
                     registro_status = 1
@@ -316,7 +367,6 @@ def analisa_retorno_lote(params_exec, retorno_json, **kwargs):
                     # que faz a atualização da tabela _ocor e _registro simultaneamente, verificar
                     dados_inserir = (0, 'hash', 1, kwargs.get('tipo_registro'), None, 9, 9, 9, 9,
                                      registro['idIntegracao'], registro['mensagem'], '', '', id_existente)
-                    print('dados_inserir', dados_inserir)
                     # insere_tabela_controle_registro_ocor(dados_inserir)
     except Exception as error:
         print("Erro ao executar função 'atualiza_tabela_controle_lote'.", error)

@@ -2,6 +2,7 @@
     ROTINA PRINCIPAL QUE É CHAMADA ARA O ENVIO
 """
 import settings
+import sistema_origem.ipm_cloud_postgresql.model as model
 import bth.interacao_cloud as interacao_cloud
 
 
@@ -18,8 +19,10 @@ def iniciar():
     # Realiza a validação do token informado
     interacao_cloud.verifica_token(params_exec['token'])
 
-    # Inicia chamadas de rotinas de envio de dados
+    # Verifica existência de tabelas e funções de controle
+    verifica_tabelas_controle()
 
+    # Inicia chamadas de rotinas de envio de dados
     # enviar(params_exec, 'paises')
     # enviar(params_exec, 'estados')
     # enviar(params_exec, 'cidades')
@@ -100,3 +103,8 @@ def enviar(params_exec, tipo_registro, *args, **kwargs):
 def mensagem_inicio(params_exec):
     print(f':: Iniciando execução da migração do sistema {settings.BASE_ORIGEM} para Betha Cloud utilicando os '
           f'seguintes parâmetros: \n- {params_exec}')
+
+
+def verifica_tabelas_controle():
+    pgcnn = model.PostgreSQLConnection()
+    pgcnn.verifica_tabelas_controle()

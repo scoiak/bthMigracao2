@@ -98,7 +98,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     url = "https://contabil-sl.cloud.betha.com.br/contabil/service-layer/v2/api/credores"
 
     for item in dados:
-        hash_chaves = model.gerar_hash_chaves(item['chave_1'], item["chave_2"])
+        hash_chaves = model.gerar_hash_chaves('1', 'credores', item['chave_1'])
         dict_dados = {
             'idIntegracao': hash_chaves,
             'content': {
