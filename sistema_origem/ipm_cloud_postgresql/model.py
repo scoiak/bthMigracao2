@@ -238,7 +238,6 @@ def atualiza_controle_migracao_registro(id_gerado, hash_chave):
         sql = f'UPDATE public.controle_migracao_registro ' \
               f'SET id_gerado = {id_gerado} ' \
               f'WHERE hash_chave_dsk = \'{hash_chave}\''
-        print('SQL ATUALIZA - ', sql)
         cursor = pgcnn.conn.cursor()
         result = cursor.execute(sql)
         pgcnn.conn.commit()
