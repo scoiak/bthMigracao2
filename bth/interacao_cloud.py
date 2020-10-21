@@ -97,3 +97,30 @@ def enviar_lote(lote, *args, **kwargs):
 
     finally:
         return retorno_requisicao
+
+
+def busca_dados_cloud(params_exec, **kwargs):
+    dados_coletados = []
+    has_next = True
+    url = kwargs.get('url')
+    limit = 100
+    offset = 0
+    params = {'offset': 0, 'limit': limit}
+    headers = {'authorization': f'bearer {params_exec["token"]}'}
+    try:
+        while has_next:
+            params = {'offset': offset, 'limit': limit}
+            r = requests.get(url=url, params=params, headers=headers)
+            retorno_json = r.json()
+            has_next = retorno_json['hasNext']
+            offset += limit
+            if 'content' in retorno_json:
+                for i in retorno_json['content']:
+                    dados_coletados.append(i)
+
+
+    except Exception as error:
+        print(f'Erro durante a execução da função busca_dados. {error}')
+
+    finally:
+        return dados_coletados

@@ -242,7 +242,8 @@ def insere_tabela_controle_migracao_registro2(params_exec, lista_req):
               '(sistema, tipo_registro, hash_chave_dsk, descricao_tipo_registro, id_gerado, i_chave_dsk1, ' \
               'i_chave_dsk2, i_chave_dsk3, i_chave_dsk4, i_chave_dsk5, i_chave_dsk6, i_chave_dsk7, i_chave_dsk8,' \
               'i_chave_dsk9, i_chave_dsk10, i_chave_dsk11, i_chave_dsk12) ' \
-              'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
+              'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) ' \
+              ' ON CONFLICT DO NOTHING'
         try:
             for item in lista_req:
                 cursor = pgcnn.conn.cursor()
@@ -335,7 +336,9 @@ def valida_lotes_enviados(params_exec, *args, **kwargs):
                         if status in ['AGUARDANDO_EXECUCAO', 'EXECUTANDO']:
                             existe_pendencia = True
                         else:
-                            retorno_analise_lote = analisa_retorno_lote(params_exec, retorno_json)
+                            retorno_analise_lote = analisa_retorno_lote(params_exec,
+                                                                        retorno_json,
+                                                                        tipo_registro=kwargs.get('tipo_registro'))
                     else:
                         print('Retorno não JSON:', req.status_code, req.text)
 
@@ -414,13 +417,27 @@ def analisa_retorno_lote(params_exec, retorno_json, **kwargs):
 
                 # Se o registro enviado já existia no cloud
                 elif status == 'ERRO' and 'idExistente' in registro:
-                    registro_status = 3
-                    registro_resolvido = 2
-                    # para o contábil, a linha abaixo deve ser registro['idExistente'][0]
-                    id_gerado = registro['idExistente']
-                    hash_chave = registro['idIntegracao']
-                    if id_gerado is not None and hash_chave is not None:
-                        atualiza_controle_migracao_registro(id_gerado, hash_chave)
+                    if 'idExistente' in registro:
+                        if registro['idExistente'] is not None:
+                            registro_status = 3
+                            registro_resolvido = 2
+                            # para o contábil, a linha abaixo deve ser registro['idExistente'][0]
+                            id_gerado = registro['idExistente']
+                            hash_chave = registro['idIntegracao']
+                            if id_gerado is not None and hash_chave is not None:
+                                atualiza_controle_migracao_registro(id_gerado, hash_chave)
+                        else:
+                            resultado_analise['incosistencia_registros'] += 1
+                            registro_status = 1
+                            registro_resolvido = 1
+                            registro_mensagem = '' if 'mensagem' not in registro else registro['mensagem']
+                            id_existente = None if 'idExistente' not in registro else registro['idExistente']
+
+                            # No desktop, existe uma proc chamada 'dbf_atualiza_controle_migracao_registro_integ'
+                            # que faz a atualização da tabela _ocor e _registro simultaneamente, verificar
+                            dados_inserir = (0, 'hash', 1, kwargs.get('tipo_registro'), None, 9, 9, 9, 9,
+                                             registro['idIntegracao'], registro['mensagem'], '', '', id_existente)
+                            insere_tabela_controle_registro_ocor(dados_inserir)
 
                 # Se houve erro na execução do registro
                 else:
@@ -428,7 +445,7 @@ def analisa_retorno_lote(params_exec, retorno_json, **kwargs):
                     registro_status = 1
                     registro_resolvido = 1
                     registro_mensagem = '' if 'mensagem' not in registro else registro['mensagem']
-                    id_existente = None if 'idExistente' not in registro else registro['idExistente'][0]
+                    id_existente = None if 'idExistente' not in registro else registro['idExistente']
 
                     # No desktop, existe uma proc chamada 'dbf_atualiza_controle_migracao_registro_integ'
                     # que faz a atualização da tabela _ocor e _registro simultaneamente, verificar

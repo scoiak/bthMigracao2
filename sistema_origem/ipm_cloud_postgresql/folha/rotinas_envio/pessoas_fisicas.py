@@ -13,23 +13,27 @@ def iniciar_processo_envio(params_exec, *args, **kwargs):
     dados_assunto = coletar_dados(params_exec)
 
     # T - Realiza a pré-validação dos dados
-    dados_enviar = pre_validar(params_exec, dados_assunto)
+    # dados_enviar = pre_validar(params_exec, dados_assunto)
 
     # L - Realiza o envio dos dados validados
     if not params_exec.get('somente_pre_validar'):
-        iniciar_envio(params_exec, dados_enviar, 'POST')
+        pass
+        # iniciar_envio(params_exec, dados_enviar, 'POST')
 
-    model.valida_lotes_enviados(params_exec, tipo_registro='pessoas_fisicas')
+    # model.valida_lotes_enviados(params_exec, tipo_registro='pessoas_fisicas')
 
 
 def coletar_dados(params_exec):
     print('- Iniciando a consulta dos dados a enviar.')
     df = None
     try:
+        tempo_inicio = datetime.now()
         query = model.get_consulta(params_exec, 'pessoas_fisicas.sql')
         pgcnn = model.PostgreSQLConnection()
         df = pgcnn.exec_sql(query, index_col='id')
-        print(f'- Consulta finalizada. {len(df.index)} registro(s) encontrado(s).')
+        tempo_total = (datetime.now() - tempo_inicio)
+        print(f'- Consulta finalizada. {len(df.index)} registro(s) encontrado(s). '
+              f'(Tempo consulta: {tempo_total.total_seconds()} segundos.)')
 
     except Exception as error:
         print(f'Erro ao executar função "enviar_assunto". {error}')

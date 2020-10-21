@@ -23,7 +23,8 @@ def iniciar():
     verifica_tabelas_controle()
 
     # Inicia chamadas de rotinas de envio de dados
-    enviar(params_exec, 'pessoas_fisicas')
+    enviar(params_exec, 'paises')
+    # enviar(params_exec, 'pessoas_fisicas')
 
 
 def enviar(params_exec, tipo_registro, *args, **kwargs):
