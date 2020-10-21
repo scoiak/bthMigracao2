@@ -2,6 +2,7 @@ import requests
 import json
 import re
 import getpass
+import settings
 import logging
 from datetime import datetime
 
@@ -51,7 +52,7 @@ def preparar_requisicao(lista_dados, *args, **kwargs):
             retorno_requisicao.append(ret_envio)
 
     except Exception as error:
-        print(f'Erro durante a execução da função enviar_requisicao. {error}')
+        print(f'Erro durante a execução da função preparar_requisicao. {error}')
 
     finally:
         return retorno_requisicao
@@ -76,13 +77,23 @@ def enviar_lote(lote, *args, **kwargs):
         retorno_req = requests.post(url, headers=headers, data=json_envio_lote)
         if 'json' in retorno_req.headers.get('Content-Type'):
             retorno_json = retorno_req.json()
-            retorno_requisicao['id_lote'] = retorno_json['idLote']
-            retorno_requisicao['url_consulta'] = re.sub('\w+$', f'lotes/{retorno_json["idLote"]}', url)
+
+            if 'id_lote' in retorno_json:
+                retorno_requisicao['id_lote'] = retorno_json['idLote']
+            elif 'id' in retorno_json:
+                retorno_requisicao['id_lote'] = retorno_json['id']
+            else:
+                retorno_requisicao['id_lote'] = ''
+
+            if settings.SISTEMA_ORIGEM == 'folha':
+                retorno_requisicao['url_consulta'] = url + '/lotes/' + retorno_requisicao['id_lote']
+            else:
+                retorno_requisicao['url_consulta'] = re.sub('\w+$', f'lotes/{retorno_requisicao["idLote"]}', url)
         else:
             print('Retorno não JSON:', retorno_req.status_code, retorno_req.text)
 
     except Exception as error:
-        print(f'Erro durante a execução da função enviar_requisicao. {error}')
+        print(f'Erro durante a execução da função enviar_lote. {error}')
 
     finally:
         return retorno_requisicao

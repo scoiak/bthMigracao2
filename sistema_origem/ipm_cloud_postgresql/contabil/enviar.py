@@ -7,6 +7,8 @@ import bth.interacao_cloud as interacao_cloud
 
 
 def iniciar():
+    print('\n:: Iniciando migração do sistema Contabil')
+
     params_exec = {
         'somente_pre_validar': False,
         'token': '533404da-8e5b-4d9f-b876-c9891d188d3b',
