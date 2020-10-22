@@ -16,6 +16,7 @@ def iniciar_processo_envio(params_exec, *args, **kwargs):
         iniciar_envio(params_exec, dados_enviar, 'POST')
     model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
 
+
 def busca_dados(params_exec):
     print('- Iniciando busca de dados no cloud.')
     registros = interacao_cloud.busca_dados_cloud(params_exec, url=url)
@@ -47,6 +48,7 @@ def coletar_dados(params_exec):
               f'(Tempo consulta: {tempo_total.total_seconds()} segundos.)')
     except Exception as error:
         print(f'Erro ao executar função "enviar_assunto". {error}')
+
     finally:
         return df
 
@@ -75,7 +77,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     token = params_exec['token']
     contador = 0
     for item in dados:
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['nome'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['chave_1'])
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {
@@ -95,7 +97,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'hash_chave_dsk': hash_chaves,
             'descricao_tipo_registro': 'Cadastro de Estado',
             'id_gerado': None,
-            'i_chave_dsk1': item['nome']
+            'i_chave_dsk1': item['chave_1']
         })
     if True:
         model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)
