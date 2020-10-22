@@ -29,6 +29,7 @@ def busca_dados_cloud(params_exec):
         for item in registros:
             cod_febraban = str.replace(item['numeroBanco'], '-', '')
             if not re.search("[a-zA-Z]", cod_febraban):
+
                 cod_febraban = str(int(cod_febraban))
                 hash_chaves = model.gerar_hash_chaves('300', tipo_registro, cod_febraban)
                 registros_formatados.append({
