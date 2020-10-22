@@ -30,8 +30,10 @@ def iniciar():
     # enviar(params_exec, 'tipo-logradouro')
     # enviar(params_exec, 'logradouro')
     # enviar(params_exec, 'bancos')
-    enviar(params_exec, 'agencia-bancaria')
-    # enviar(params_exec, 'pessoas_fisicas')
+    # enviar(params_exec, 'agencia-bancaria')
+    # enviar(params_exec, 'natureza-texto-juridico')
+    enviar(params_exec, 'motivo-alteracao-salarial')
+    # enviar(params_exec, 'pessoa-fisica')
 
 
 def enviar(params_exec, tipo_registro, *args, **kwargs):

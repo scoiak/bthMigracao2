@@ -5,8 +5,8 @@ import logging
 from datetime import datetime
 
 sistema = 300
-tipo_registro = 'agencia-bancaria'
-url = 'https://pessoal.cloud.betha.com.br/service-layer/v1/api/agencia-bancaria'
+tipo_registro = 'motivo-alteracao-salarial'
+url = 'https://pessoal.cloud.betha.com.br/service-layer/v1/api/motivo-alteracao-salarial'
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
@@ -34,21 +34,14 @@ def busca_dados_cloud(params_exec):
 
     try:
         for item in registros:
-            hash_chaves = model.gerar_hash_chaves(sistema,
-                                                  tipo_registro,
-                                                  item['chave_dsk1']['id'],
-                                                  item['numero'],
-                                                  item['digito'])
+            hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['descricao'])
             registros_formatados.append({
                 'sistema': sistema,
                 'tipo_registro': tipo_registro,
                 'hash_chave_dsk': hash_chaves,
-                'descricao_tipo_registro': 'Cadastro de Agências Bancárias',
+                'descricao_tipo_registro': 'Cadastro de Motivos de Alteração Salarial',
                 'id_gerado': item['id'],
-                'i_chave_dsk1': item['banco']['id'],
-                'i_chave_dsk2': item['numero'],
-                'i_chave_dsk3': item['digito'],
-            })
+                'i_chave_dsk1': item['descricao']})
         model.insere_tabela_controle_migracao_registro2(params_exec, lista_req=registros_formatados)
         print(f'- Busca de {tipo_registro} finalizada. Tabelas de controles atualizas com sucesso.')
 
@@ -108,58 +101,24 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     contador = 0
 
     for item in dados:
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro,
-                                              item['cod_febraban_banco'],
-                                              item['numeroagencia'],
-                                              item['digitoagencia'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['chave_dsk1'])
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {
-                "banco": {
-                    "id": int(item['idbanco'])
-                },
-                "nome": item['nome'],
-                "numero": item['numeroagencia'],
-                "digito": item['digitoagencia']
+                "descricao": item['chave_dsk1']
             }
         }
 
-        if 'bairro' in item and item['bairro'] is not None:
-            dict_dados['conteudo'].update({
-                'bairro': {
-                    'id': item['bairro']
-                }
-            })
-
-        if 'logradouro' in item and item['logradouro'] is not None:
-            dict_dados['conteudo'].update({
-                'logradouro': {
-                    'id': item['logradouro']
-                }
-            })
-
-        if 'cep' in item and item['cep'] is not None:
-            dict_dados['conteudo'].update({
-                'cep': item['cep']
-            })
-
-        if 'numeroEndereco' in item and item['numeroendereco'] is not None:
-            dict_dados['conteudo'].update({
-                'numeroEndereco': item['numeroendereco']
-            })
-
         contador += 1
-        print(f'Dados gerados ({contador}): ', dict_dados)
+        # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Agência Bancária',
+            'descricao_tipo_registro': 'Cadastro de Motivos de Alteração Salarial',
             'id_gerado': None,
-            'i_chave_dsk1': item['cod_febraban_banco'],
-            'i_chave_dsk2': item['numeroagencia'],
-            'i_chave_dsk3': item['digitoagencia']
+            'i_chave_dsk1': item['chave_dsk1']
         })
 
     if True:
