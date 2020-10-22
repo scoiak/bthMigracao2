@@ -5,6 +5,7 @@ SELECT
 	*
 from (
 	select
+		vpucodigo as id,
 		vpudescricao as descricao,
 		vputipo as tipo,
 		case vputipo
@@ -24,4 +25,4 @@ from (
 	from wun.tbveiculopublic
 	order by vputipo
 ) tab
-where situacao_registro not in (5, 4, 3)
+where situacao_registro not in (5, 4, 3);
