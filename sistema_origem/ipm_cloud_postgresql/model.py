@@ -181,7 +181,7 @@ def insere_tabela_controle_registro_ocor(req_res):
                       'i_sequencial_lote, id_integracao, mensagem_erro, mensagem_ajuda, json_enviado, id_existente) ' \
                       'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
                 cursor = pgcnn.conn.cursor()
-                result = cursor.execute(sql, req_res)
+                result = cursor.execute(sql, item_retorno)
                 pgcnn.conn.commit()
         except Exception as error:
             print("Erro ao executar função 'insere_tabela_controle_registro_ocor'.", error)
@@ -329,6 +329,13 @@ def valida_lotes_enviados(params_exec, *args, **kwargs):
                     if 'json' in req.headers.get('Content-Type'):
                         retorno_json = req.json()
 
+                        if 'id' in retorno_json:
+                            id_lote = retorno_json['id']
+                        elif 'idLote' in retorno_json:
+                            id_lote = retorno_json['idLote']
+                        else:
+                            id_lote = ''
+
                         if 'status' in retorno_json:
                             status = retorno_json['status']
                         elif 'situacao' in retorno_json:
@@ -341,6 +348,7 @@ def valida_lotes_enviados(params_exec, *args, **kwargs):
                         else:
                             retorno_analise_lote = analisa_retorno_lote(params_exec,
                                                                         retorno_json,
+                                                                        id_lote=id_lote,
                                                                         tipo_registro=kwargs.get('tipo_registro'))
                     else:
                         print('Retorno não JSON:', req.status_code, req.text)
@@ -368,6 +376,7 @@ def analisa_retorno_lote(params_exec, retorno_json, **kwargs):
         'incosistencia_lotes': 0
     }
     status_lote = None
+    dados_inserir_ocor = []
 
     try:
         # Verifica o status do lote
@@ -438,9 +447,11 @@ def analisa_retorno_lote(params_exec, retorno_json, **kwargs):
 
                             # No desktop, existe uma proc chamada 'dbf_atualiza_controle_migracao_registro_integ'
                             # que faz a atualização da tabela _ocor e _registro simultaneamente, verificar
-                            dados_inserir = (0, 'hash', 1, kwargs.get('tipo_registro'), None, 9, 9, 9, 9,
-                                             registro['idIntegracao'], registro['mensagem'], '', '', id_existente)
-                            insere_tabela_controle_registro_ocor(dados_inserir)
+                            dados_inserir_ocor.append((0, registro['idIntegracao'], get_codigo_sistema(),
+                                            kwargs.get('tipo_registro'), None, 9, registro_status,
+                                            registro_resolvido, 1, kwargs.get('id_lote'),
+                                            registro['mensagem'], '', '', id_existente))
+                            # insere_tabela_controle_registro_ocor(dados_inserir)
 
                 # Se houve erro na execução do registro
                 else:
@@ -452,10 +463,23 @@ def analisa_retorno_lote(params_exec, retorno_json, **kwargs):
 
                     # No desktop, existe uma proc chamada 'dbf_atualiza_controle_migracao_registro_integ'
                     # que faz a atualização da tabela _ocor e _registro simultaneamente, verificar
-                    dados_inserir = (0, 'hash', 1, kwargs.get('tipo_registro'), None, 9, 9, 9, 9,
-                                     registro['idIntegracao'], registro['mensagem'], '', '', id_existente)
-                    insere_tabela_controle_registro_ocor(dados_inserir)
+                    dados_inserir_ocor.append((0, registro['idIntegracao'], get_codigo_sistema(), kwargs.get('tipo_registro'),
+                                            None, 9, registro_status, registro_resolvido, 1, kwargs.get('id_lote'),
+                                            registro['mensagem'], '', '', id_existente))
+                    # insere_tabela_controle_registro_ocor(dados_inserir)
+        insere_tabela_controle_registro_ocor(dados_inserir_ocor)
     except Exception as error:
         print("Erro ao executar função 'analisa_retorno_lote'.", error)
     finally:
         return resultado_analise
+
+
+def get_codigo_sistema():
+    desc_sistema = settings.SISTEMA_ORIGEM
+    if desc_sistema == 'folha':
+        cod_sistema = 300
+    elif desc_sistema == 'contabil':
+        cod_sistema = 1
+    else:
+        cod_sistema = 999
+    return cod_sistema

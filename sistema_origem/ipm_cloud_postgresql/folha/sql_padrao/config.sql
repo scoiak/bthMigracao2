@@ -7,7 +7,7 @@ CREATE TABLE public.controle_migracao_registro
 (
     sistema integer NOT NULL,
     tipo_registro text NOT NULL,
-    hash_chave_dsk text NOT NULL,
+    hash_chave_dsk text NOT NULL UNIQUE,
     descricao_tipo_registro text NOT NULL,
     id_gerado integer,
     i_chave_dsk1 text NOT NULL,

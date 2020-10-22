@@ -1,1 +1,1 @@
-select numero as id, * from public.agencia
+select * from public.agencia

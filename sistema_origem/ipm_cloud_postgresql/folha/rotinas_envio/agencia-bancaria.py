@@ -10,9 +10,6 @@ url = 'https://pessoal.cloud.betha.com.br/service-layer/v1/api/agencia-bancaria'
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
-    # Verifica se existe algum lote pendente de execução
-    # model.valida_lotes_enviados(params_exec)
-
     # Realiza rotina de busca dos dados no cloud
     busca_dados_cloud(params_exec)
 
@@ -37,17 +34,23 @@ def busca_dados_cloud(params_exec):
 
     try:
         for item in registros:
-            hash_chaves = model.gerar_hash_chaves('300', tipo_registro, item['nome'])
+            hash_chaves = model.gerar_hash_chaves(sistema,
+                                                  tipo_registro,
+                                                  item['banco']['id'],
+                                                  item['numero'],
+                                                  item['digito'])
             registros_formatados.append({
                 'sistema': sistema,
                 'tipo_registro': tipo_registro,
                 'hash_chave_dsk': hash_chaves,
-                'descricao_tipo_registro': 'Cadastro de Municípios',
+                'descricao_tipo_registro': 'Cadastro de Agências Bancárias',
                 'id_gerado': item['id'],
-                'i_chave_dsk1': item['nome']
+                'i_chave_dsk1': item['banco']['id'],
+                'i_chave_dsk2': item['numero'],
+                'i_chave_dsk3': item['digito'],
             })
         model.insere_tabela_controle_migracao_registro2(params_exec, lista_req=registros_formatados)
-        print('- Busca de paises finalizada. Tabelas de controles atualizas com sucesso.')
+        print(f'- Busca de {tipo_registro} finalizada. Tabelas de controles atualizas com sucesso.')
 
     except Exception as error:
         print(f'Erro ao executar função "busca_dados_cloud". {error}')
@@ -143,7 +146,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             })
 
         contador += 1
-        # print(f'Dados gerados ({contador}): ', dict_dados)
+        print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,
@@ -156,7 +159,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'i_chave_dsk3': item['digito']
         })
 
-    if False:
+    if True:
         model.insere_tabela_controle_migracao_registro2(params_exec, lista_req=lista_controle_migracao)
         req_res = interacao_cloud.preparar_requisicao(lista_dados=lista_dados_enviar,
                                                       token=token,
