@@ -1,17 +1,17 @@
-select
-af.motcodigo as id,
-af.motcodigo as codigo,
-(case when (select au.motdescricao from wfp.tbmotivoafasta as au where au.motcodigo <> af.motcodigo and au.motdescricao = af.motdescricao limit 1) is not null then substring(af.motdescricao,1,90) || ' ' || cast(af.motcodigo as varchar) else af.motdescricao end) as descricao,
-(case af.padcodigo
-	when 1 then 'AUXILIO_DOENCA_EMPREGADOR'
-	when 2 then 'ACIDENTE_DE_TRABALHO_EMPREGADOR'
-	else 'FALTA'
-	end
-) as classificacao,
-null as tipoMovimentacaoPessoal,
-af.motdiascarencia as diasPrevistos,
-false as perdeTempoServico,
-(case when af.cpdcodigo is null then false else true end) as consideraVencimento,
-false as justificado
-from wfp.tbmotivoafasta as af
-where odomesano = '202009'
+select * from (
+	select 1 as codigo,1 as id,'Efetivo' as descricao,'EFETIVO' as classificacao
+	union
+	select 2 as codigo,2 as id,'Comissionado' as descricao,'COMISSIONADO' as classificacao
+	union
+	select 3 as codigo,3 as id,'Emprego Público' as descricao,'EMPREGO_PUBLICO' as classificacao
+	union
+	select 4 as codigo,4 as id,'Agente Político' as descricao,'ELETIVO' as classificacao
+	union
+	select 5 as codigo,5 as id,'Temporário' as descricao,'NAO_CLASSIFICADO' as classificacao
+	union
+	select 6 as codigo,6 as id,'Estágio' as descricao,'NAO_CLASSIFICADO' as classificacao
+	union
+	select 7 as codigo,7 as id,'Conselheiro' as descricao,'FUNCAO_PUBLICA' as classificacao
+	union
+	select 99 as codigo,99 as id,'Outros' as descricao,'NAO_CLASSIFICADO' as classificacao
+) as s order by 1

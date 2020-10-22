@@ -1,10 +1,11 @@
 select * from (
-		 c.cidcodigo as id,
-		 -- public.bth_get_id_gerado('300', 'estado', e.estnome) as estado,
-		 (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','estado', e.estnome))) as estado
-         c.cidnome as nome,
-		 cast(c.cidcep as varchar) as cep
-	from wun.tbcidade as c
-	inner join wun.tbestado as e on e.estcodigo = c.estcodigo
+		 select '300' as sistema,
+		 cidade.cidcodigo as id,
+		 COALESCE(public.bth_get_id_gerado('300', 'estados', estado.estnome), 24) as idEstado,
+             cidade.cidnome as nome,
+		 CAST(cidade.cidcep as text) as cep,
+		 public.bth_get_situacao_registro('300', 'cidades', cidade.cidnome) as situacao_registro
+	from wun.tbcidade cidade
+	inner join wun.tbestado estado on estado.estcodigo = cidade.estcodigo
 ) as tab
-where public.bth_get_situacao_registro('300', 'municipio', nome) in (0)
+where situacao_registro in (0)
