@@ -32,7 +32,9 @@ def iniciar():
     # enviar(params_exec, 'bancos')
     # enviar(params_exec, 'agencia-bancaria')
     # enviar(params_exec, 'natureza-texto-juridico')
-    enviar(params_exec, 'motivo-alteracao-salarial')
+    # enviar(params_exec, 'motivo-alteracao-salarial')
+    # enviar(params_exec, 'motivo-alteracao-cargo')
+    enviar(params_exec, 'tipo-ato')
     # enviar(params_exec, 'pessoa-fisica')
 
 
