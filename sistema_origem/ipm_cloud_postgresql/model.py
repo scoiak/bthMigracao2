@@ -297,7 +297,10 @@ def atualiza_controle_migracao_registro(id_gerado, hash_chave):
 
 def valida_lotes_enviados(params_exec, *args, **kwargs):
     pgcnn = None
-    retorno_analise_lote = None
+    retorno_analise_lote = {
+        'incosistencia_registros': 0,
+        'incosistencia_lotes': 0
+    }
     print('- Iniciando validação de lotes enviados pendentes.')
 
     try:
@@ -418,6 +421,7 @@ def analisa_retorno_lote(params_exec, retorno_json, **kwargs):
                 # Se o registro enviado já existia no cloud
                 elif status == 'ERRO' and 'idExistente' in registro:
                     if 'idExistente' in registro:
+                        resultado_analise['incosistencia_registros'] += 1
                         if registro['idExistente'] is not None:
                             registro_status = 3
                             registro_resolvido = 2
@@ -427,7 +431,6 @@ def analisa_retorno_lote(params_exec, retorno_json, **kwargs):
                             if id_gerado is not None and hash_chave is not None:
                                 atualiza_controle_migracao_registro(id_gerado, hash_chave)
                         else:
-                            resultado_analise['incosistencia_registros'] += 1
                             registro_status = 1
                             registro_resolvido = 1
                             registro_mensagem = '' if 'mensagem' not in registro else registro['mensagem']
@@ -451,7 +454,7 @@ def analisa_retorno_lote(params_exec, retorno_json, **kwargs):
                     # que faz a atualização da tabela _ocor e _registro simultaneamente, verificar
                     dados_inserir = (0, 'hash', 1, kwargs.get('tipo_registro'), None, 9, 9, 9, 9,
                                      registro['idIntegracao'], registro['mensagem'], '', '', id_existente)
-                    # insere_tabela_controle_registro_ocor(dados_inserir)
+                    insere_tabela_controle_registro_ocor(dados_inserir)
     except Exception as error:
         print("Erro ao executar função 'analisa_retorno_lote'.", error)
     finally:
