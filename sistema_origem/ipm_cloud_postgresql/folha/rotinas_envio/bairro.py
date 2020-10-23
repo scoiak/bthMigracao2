@@ -6,7 +6,7 @@ from datetime import datetime
 
 tipo_registro = 'bairro'
 sistema = 300
-limite_lote = 300
+limite_lote = 1000
 url = "https://pessoal.cloud.betha.com.br/service-layer/v1/api/bairro"
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
@@ -46,7 +46,6 @@ def pre_validar(params_exec, dados):
               f'{len(dados_validados)} | Registros com advertência: {len(registro_erros)}')
     except Exception as error:
         logging.error(f'Erro ao executar função "pre_validar". {error}')
-
     finally:
         return dados_validados
 
@@ -64,9 +63,9 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'conteudo': {
                 'nome': None if 'nome' not in item else item['nome'],
                 'municipio': {
-                    item['municipio']
+                    'id': item['municipio']
                 },
-                'zonaRural': item['zonaRural']
+                'zonaRural': item['zonarural']
             }
         }
         contador += 1

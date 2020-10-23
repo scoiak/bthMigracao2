@@ -6,7 +6,7 @@ from datetime import datetime
 
 tipo_registro = 'tipo-logradouro'
 sistema = 300
-limite_lote = 300
+limite_lote = 500
 url = "https://pessoal.cloud.betha.com.br/service-layer/v1/api/tipo-logradouro"
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
