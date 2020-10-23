@@ -43,7 +43,6 @@ def pre_validar(params_exec, dados):
               f'{len(dados_validados)} | Registros com advertência: {len(registro_erros)}')
     except Exception as error:
         logging.error(f'Erro ao executar função "pre_validar". {error}')
-
     finally:
         return dados_validados
 
@@ -118,13 +117,84 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                 'emails': []
             })
             lista = item['emails'].split('%||%')
-            for email in lista:
-                campo = email.split('%|%')
+            for listacampo in lista:
+                campo = listacampo.split('%|%')
                 dict_dados['conteudo']['emails'].append({
                     'descricao': campo[0],
                     'endereco': campo[1],
                     'principal': campo[2]
                 })
+        if item['telefones'] is not None:
+            dict_dados['conteudo'].update({
+                'telefones': []
+            })
+            lista = item['telefones'].split('%||%')
+            for listacampo in lista:
+                campo = listacampo.split('%|%')
+                dict_dados['conteudo']['telefones'].append({
+                    'descricao': campo[0],
+                    'tipo': campo[1],
+                    'numero': campo[2],
+                    'observacao': campo[3],
+                    'principal': campo[4]
+                })
+        if item['enderecos'] is not None:
+            dict_dados['conteudo'].update({
+                'enderecos': []
+            })
+            lista = item['enderecos'].split('%||%')
+            for listacampo in lista:
+                campo = listacampo.split('%|%')
+                dict_dados['conteudo']['enderecos'].append({
+                    'descricao': campo[0],
+                    'logradouro': {
+                        'id': campo[1]
+                    },
+                    'bairro': {
+                        'id': campo[2]
+                    },
+                    'cep': campo[3],
+                    'numero': campo[4],
+                    'complemento': campo[5],
+                    'principal': campo[6]
+                })
+        if item['contasbancarias'] is not None:
+            dict_dados['conteudo'].update({
+                'contasBancarias': []
+            })
+            lista = item['contasbancarias'].split('%||%')
+            for listacampo in lista:
+                campo = listacampo.split('%|%')
+                dict_dados['conteudo']['contasbancarias'].append({
+                    'agencia': {
+                        'id': campo[1]
+                    },
+                    'numero': campo[3],
+                    'digito': campo[4],
+                    'tipo': campo[5],
+                    'dataAbertura': campo[6],
+                    'dataFechamento': campo[7],
+                    'situacao': campo[8],
+                    'principal': campo[9]
+                })
+        if item['filiacoes'] is not None:
+            dict_dados['conteudo'].update({
+                'filiacoes': []
+            })
+            lista = item['filiacoes'].split('%||%')
+            for listacampo in lista:
+                campo = listacampo.split('%|%')
+                dict_dados['conteudo']['filiacoes'].append({
+                    'nome': campo[0],
+                    'tipoFiliacao': campo[1],
+                })
+        if item['deficiencias'] is not None:
+            dict_dados['conteudo'].update({
+                'deficiencias': []
+            })
+            dict_dados['conteudo']['deficiencias'].append({
+                'tipo': item['deficiencias']
+            })
         contador += 1
         # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)

@@ -29,7 +29,7 @@ def busca_dados_cloud(params_exec):
                 'sistema': sistema,
                 'tipo_registro': tipo_registro,
                 'hash_chave_dsk': hash_chaves,
-                'descricao_tipo_registro': 'Cadastro de Municípios',
+                'descricao_tipo_registro': 'Cadastro de Município',
                 'id_gerado': item['id'],
                 'i_chave_dsk1': item['nome']
             })
@@ -85,7 +85,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'conteudo': {
                 "nome": item['nome'],
                 "estado": {
-                    "id": item['idestado']
+                    "id": item['estado']
                 }
             }
         }
@@ -100,7 +100,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Cidades',
+            'descricao_tipo_registro': 'Cadastro de Municipio',
             'id_gerado': None,
             'i_chave_dsk1': item['nome']
         })

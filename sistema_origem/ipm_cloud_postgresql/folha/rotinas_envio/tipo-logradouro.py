@@ -44,7 +44,6 @@ def pre_validar(params_exec, dados):
               f'{len(dados_validados)} | Registros com advertência: {len(registro_erros)}')
     except Exception as error:
         logging.error(f'Erro ao executar função "pre_validar". {error}')
-
     finally:
         return dados_validados
 

@@ -20,17 +20,17 @@ def busca_dados_cloud(params_exec):
     registros_formatados = []
     try:
         for item in registros:
-            cod_febraban = str.replace(item['numeroBanco'], '-', '')
-            if not re.search("[a-zA-Z]", cod_febraban):
-                cod_febraban = str(int(cod_febraban))
-                hash_chaves = model.gerar_hash_chaves('300', tipo_registro, cod_febraban)
+            codigotexto = str.replace(item['numeroBanco'], '-', '')
+            if not re.search("[a-zA-Z]", codigotexto):
+                codigo = str(int(codigotexto))
+                hash_chaves = model.gerar_hash_chaves('300', tipo_registro, codigo)
                 registros_formatados.append({
                     'sistema': sistema,
                     'tipo_registro': tipo_registro,
                     'hash_chave_dsk': hash_chaves,
                     'descricao_tipo_registro': 'Cadastro de Banco',
                     'id_gerado': item['id'],
-                    'i_chave_dsk1': cod_febraban
+                    'i_chave_dsk1': codigo
                 })
         model.insere_tabela_controle_migracao_registro2(params_exec, lista_req=registros_formatados)
         print(f'- Busca de {tipo_registro} finalizada. Tabelas de controles atualizas com sucesso.')
