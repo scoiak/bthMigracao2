@@ -4,10 +4,10 @@ import json
 import logging
 from datetime import datetime
 
-tipo_registro = 'configuracao-evento'
+tipo_registro = 'jornada-trabalho'
 sistema = 300
 limite_lote = 500
-url = "https://pessoal.cloud.betha.com.br/service-layer/v1/api/configuracao-evento"
+url = "https://pessoal.cloud.betha.com.br/service-layer/v1/api/jornada-trabalho"
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
     dados_assunto = coletar_dados(params_exec)
@@ -58,26 +58,30 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {
-                'codigo': None if 'codigo' not in item else item['codigo'],
                 'descricao': None if 'descricao' not in item else item['descricao'],
-                'inicioVigencia': None if 'iniciovigencia' not in item else item['iniciovigencia'],
                 'tipo': None if 'tipo' not in item else item['tipo'],
-                'classificacao': None if 'classificacao' not in item else item['classificacao'],
-                'classificacaoBaixaProvisao': None if 'classificacaobaixaprovisao' not in item else item['classificacaobaixaprovisao'],
-                'unidade': None if 'unidade' not in item else item['unidade'],
-                'taxa': None if 'taxa' not in item else item['taxa'],
-                'codigoEsocial': None if 'codigoEsocial' not in item else item['codigoEsocial'],
-                'ato': None if 'ato' not in item else item['ato'],
-                'incideDsr': None if 'incideDsr' not in item else item['incideDsr'],
-                'naturezaRubrica': None if 'naturezarubrica' not in item else item['naturezarubrica'],
-                'compoemHorasMes': None if 'compoemhorasmes' not in item else item['compoemhorasmes'],
-                'observacao': None if 'observacao' not in item else item['observacao'],
-                'desabilitado': None if 'desabilitado' not in item else item['desabilitado'],
-                'formula': None if 'formula' not in item else item['formula'],
-                'enviaTransparencia': None if 'enviatransparencia' not in item else item['enviatransparencia'],
-                'configuracaoProcessamentos': None if 'configuracaoprocessamentos' not in item else item['configuracaoprocessamentos'],
+                'vigencia': None if 'vigencia' not in item else item['vigencia'],
+                'tipoCompensacao': None if 'tipoCompensacao' not in item else item['tipoCompensacao'],
+                'cargaHorariaSemanal': None if 'cargaHorariaSemanal' not in item else item['cargaHorariaSemanal'],
+                'desativado': None if 'desativado' not in item else item['desativado'],
+                'inicioVigencia': None if 'inicioVigencia' not in item else item['inicioVigencia']
             }
         }
+        if item['periodos'] is not None:
+            dict_dados['conteudo'].update({
+                'periodos': []
+            })
+            lista = item['periodos'].split('%||%')
+            for listacampo in lista:
+                campo = listacampo.split('%|%')
+                dict_dados['conteudo']['periodos'].append({
+                    'horario': {
+                        'id': campo[1]
+                    },
+                    'dia': campo[2],
+                    'classificacao': campo[3],
+                    'marcacaoAutomatica': campo[4]
+                })
         contador += 1
         # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
@@ -85,16 +89,15 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Evento',
+            'descricao_tipo_registro': 'Cadastro de Tipo de Cargo',
             'id_gerado': None,
             'i_chave_dsk1': item['codigo']
         })
-    if True:
-        model.insere_tabela_controle_migracao_registro2(params_exec, lista_req=lista_controle_migracao)
-        req_res = interacao_cloud.preparar_requisicao(lista_dados=lista_dados_enviar,
-                                                      token=token,
-                                                      url=url,
-                                                      tipo_registro=tipo_registro,
-                                                      tamanho_lote=limite_lote)
-        model.insere_tabela_controle_lote(req_res)
+    model.insere_tabela_controle_migracao_registro2(params_exec, lista_req=lista_controle_migracao)
+    req_res = interacao_cloud.preparar_requisicao(lista_dados=lista_dados_enviar,
+                                                  token=token,
+                                                  url=url,
+                                                  tipo_registro=tipo_registro,
+                                                  tamanho_lote=limite_lote)
+    model.insere_tabela_controle_lote(req_res)
     print('- Envio de dados finalizado.')
