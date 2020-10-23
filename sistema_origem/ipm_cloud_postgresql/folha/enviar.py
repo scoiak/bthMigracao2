@@ -40,7 +40,8 @@ def iniciar():
     # enviar(params_exec, 'ato')
     # enviar(params_exec, 'fonte-divulgacao')
     # enviar(params_exec, 'organograma')
-    enviar(params_exec, 'horario')
+    # enviar(params_exec, 'horario')
+    enviar(params_exec, 'concurso')
     # enviar(params_exec, 'pessoa-fisica')
 
 

@@ -6,8 +6,8 @@ import re
 from datetime import datetime
 
 sistema = 300
-tipo_registro = 'horario'
-url = 'https://pessoal.cloud.betha.com.br/service-layer/v1/api/horario'
+tipo_registro = 'concurso'
+url = 'https://pessoal.cloud.betha.com.br/service-layer/v1/api/concurso'
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
@@ -76,34 +76,55 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     contador = 0
 
     for item in dados:
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['chave_dsk1'], item['chave_dsk2'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['chave_dsk1'])
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {
-                'descricao': item['hordescricao'],
-                'entrada': item['horaminimaalocacao'],
-                'saida': item['saida'],
-                'flexivel': False,
-                'horaMinimaAlocacao': item['horaminimaalocacao'],
-                'toleranciaAlocacao': item['toleranciaalocacao'],
-                'inicioVigencia': item['iniciovigencia']
-             }
+                'numeroEdital': item['chave_dsk1'],
+                'tipoRecrutamento': item['tiporecrutamento']
+            }
         }
 
+        if 'descricao' in item and item['descricao'] is not None:
+            dict_dados.update({'descricao': item['descricao']})
+
+        if 'ato' in item and item['ato'] is not None:
+            dict_dados.update({'ato': {'id': item['ato']}})
+
+        if 'dataInicialInscricao' in item and item['datainicialinscricao'] is not None:
+            dict_dados.update({'dataInicialInscricao': item['datainicialinscricao']})
+
+        if 'dataFinalInscricao' in item and item['datafinaiInscricao'] is not None:
+            dict_dados.update({'dataFinalInscricao': item['datafinaiInscricao']})
+
+        if 'dataProrrogacao' in item and item['dataprorrogacao'] is not None:
+            dict_dados.update({'dataProrrogacao': item['dataprorrogacao']})
+
+        if 'dataHomologacao' in item and item['datahomologacao'] is not None:
+            dict_dados.update({'dataHomologacao': item['datahomologacao']})
+
+        if 'dataValidade' in item and item['datavalidade'] is not None:
+            dict_dados.update({'dataValidade': item['datavalidade']})
+
+        if 'dataProrrogacaoValidade' in item and item['dataprorrogacaovalidade'] is not None:
+            dict_dados.update({'dataProrrogacaoValidade': item['dataprorrogacaovalidade']})
+
+        if 'dataEncerramento' in item and item['dataencerramento'] is not None:
+            dict_dados.update({'dataEncerramento': item['dataencerramento']})
+
         contador += 1
-        # print(f'Dados gerados ({contador}): ', dict_dados)
+        print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Horários',
+            'descricao_tipo_registro': 'Cadastro de Concursos',
             'id_gerado': None,
-            'i_chave_dsk1': item['chave_dsk1'],
-            'i_chave_dsk2': item['chave_dsk2']
+            'i_chave_dsk1': item['chave_dsk1']
         })
 
-    if True:
+    if False:
         model.insere_tabela_controle_migracao_registro2(params_exec, lista_req=lista_controle_migracao)
         req_res = interacao_cloud.preparar_requisicao(lista_dados=lista_dados_enviar,
                                                       token=token,
