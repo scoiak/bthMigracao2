@@ -1,13 +1,11 @@
 select * from (
 	select
-		estado.estcodigo as id,
-		left(estado.estnome, 20) as chave_1,
-		left(estado.estnome, 20) as nome,
-		estado.estsigla as uf,
-		pais.painome as paisnome,
-		COALESCE(public.bth_get_id_gerado('300', 'paises', pais.painome), 29) as pais,
-		public.bth_get_situacao_registro('300', 'estados', estado.estnome) as situacao_registro
-	from wun.tbestado estado
-	inner join wun.tbpais pais ON pais.paisiglaiso = estado.paisiglaiso
+		e.estcodigo as id,
+		left(e.estnome, 20) as nome,
+		e.estsigla as uf,
+		-- public.bth_get_id_gerado('300', 'pais', pais.painome) as pais,
+		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','pais', p.nome))) as pais
+	from wun.tbestado as e
+	inner join wun.tbpais as p ON p.paisiglaiso = e.paisiglaiso
 ) as tab
-where situacao_registro in (0)
+where public.bth_get_situacao_registro('300', 'estado', estnome) in (0)

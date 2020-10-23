@@ -20,9 +20,9 @@ def busca_dados_cloud(params_exec):
     registros_formatados = []
     try:
         for item in registros:
-            codigo = str.replace(item['codigoClassificacao'], '-', '')
-            if not re.search("[a-zA-Z]", cod_febraban):
-                cod_febraban = str(int(cod_febraban))
+            codigotexto = str.replace(item['codigoClassificacao'], '-', '')
+            if not re.search("[a-zA-Z]", codigotexto):
+                codigo = str(int(codigotexto))
                 hash_chaves = model.gerar_hash_chaves('300', tipo_registro, codigo)
                 registros_formatados.append({
                     'sistema': sistema,
