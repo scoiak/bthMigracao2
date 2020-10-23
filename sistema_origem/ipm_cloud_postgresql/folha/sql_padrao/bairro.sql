@@ -4,7 +4,7 @@ select
 	b.baicodigo as codigo,
 	substring(b.bainome,1,50) as nome,
     -- public.bth_get_id_gerado('300', 'cidades', (select c.cidnome from wun.tbcidade as c where c.cidcodigo = b.cidcodigo limit 1)) as municipio,
-    (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','cidades', (select c.cidnome from wun.tbcidade as c where c.cidcodigo = b.cidcodigo limit 1)))) as municipio,
+    (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','municipio', (select c.cidnome from wun.tbcidade as c where c.cidcodigo = b.cidcodigo limit 1)))) as municipio,
     null as zonaRural
 from
 	wun.tbbairro as b
