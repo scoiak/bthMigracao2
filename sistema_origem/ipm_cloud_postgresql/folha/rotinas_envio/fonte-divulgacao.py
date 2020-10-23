@@ -108,7 +108,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'idIntegracao': hash_chaves,
             'conteudo': {
                 "descricao": item['descricao'],
-                "meioComunicacao": item['tipo']
+                "meioComunicacao": item['meio_comunicacao']
             }
         }
 
@@ -121,7 +121,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'hash_chave_dsk': hash_chaves,
             'descricao_tipo_registro': 'Cadastro de Atos',
             'id_gerado': None,
-            'i_chave_dsk1': item['chave_dsk1']
+            'i_chave_dsk1': item['meio_comunicacao']
         })
 
     if True:

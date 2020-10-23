@@ -2,6 +2,7 @@ select
 	'300' as sistema,
 	'ato' as tipo_registro,
 	num_ato as chave_dsk1,
+	desc_natureza as chave_dsk2,
 	*
 from (
 	select 
@@ -15,8 +16,8 @@ from (
        	mvto.movdata as data_resolucao,
 		pub.pubdata as data_publicacao,
        	ato.txjementa as ementa,
-	    public.bth_get_id_gerado('300','natureza-texto-juridico', cat.tctdescricao) as natureza,
-	    public.bth_get_id_gerado('300','tipo-ato', cat.tctdescricao, case cat.tctcodigo
+	    (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','natureza-texto-juridico', cat.tctdescricao))) as natureza,
+		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','tipo-ato', cat.tctdescricao, case cat.tctcodigo
 			when 1 then  'DECRETO'
 			when 2 then  'PORTARIA'
 			when 3 then  'RESOLUCAO'
@@ -81,14 +82,13 @@ from (
 			when 62 then 'ATO_COMISSAO_EXEC_LEGIS'
 			when 63 then 'ATO_ADMINISTRATIVO'
 			when 64 then 'EDITAL'
-        else 'ATO' end) as id_tipo_ato,
-		COALESCE(public.bth_get_id_gerado('300', 'ato', (CAST(ato.txjnumero as text) || '/' || CAST(ato.txjano as text))), 0) as situacao_registro
+        else 'ATO' end))) as id_tipo_ato,
+		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'ato', (CAST(ato.txjnumero as text) || '/' || CAST(ato.txjano as text)), cat.tctdescricao))) as id_cloud
 	from wlg.tbtextojuridico ato
 	inner join wlg.tbcategoriatexto cat on (cat.tctcodigo = ato.tctcodigo)
 	inner join wlg.tbmovimentotexto mvto on (mvto.txjcodigo = ato.txjcodigo and mvto.movtipo = 2)
 	inner join wlg.tbpublicacao pub on (pub.txjcodigo = ato.txjcodigo)
-	where ato.txjano = 2020
-	-- and (CAST(ato.txjnumero as text) || '/' || CAST(ato.txjano as text)) in ('1380/2020')
+	where ato.txjano <= 2020
 	--limit 10
 ) tab
-where situacao_registro not in (5, 4, 3);
+where id_cloud is null;

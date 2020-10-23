@@ -325,6 +325,7 @@ def valida_lotes_enviados(params_exec, *args, **kwargs):
                 # Se existir lote spendentes, iniciar o loop de consultas
                 for lote in df.to_dict('records'):
                     url = lote['url_consulta']
+                    print('url consulta: ', url)
                     req = requests.get(url, headers=headers)
                     if 'json' in req.headers.get('Content-Type'):
                         retorno_json = req.json()

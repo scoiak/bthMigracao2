@@ -6,8 +6,8 @@ import re
 from datetime import datetime
 
 sistema = 300
-tipo_registro = 'ato'
-url = 'https://pessoal.cloud.betha.com.br/service-layer/v1/api/ato'
+tipo_registro = 'organograma'
+url = 'https://pessoal.cloud.betha.com.br/service-layer/v1/api/organograma'
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
@@ -35,15 +35,15 @@ def busca_dados_cloud(params_exec):
 
     try:
         for item in registros:
-            hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['numeroOficial'], item['desc_natureza'])
+            hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['configuracao']['id'], item['numero'])
             registros_formatados.append({
                 'sistema': sistema,
                 'tipo_registro': tipo_registro,
                 'hash_chave_dsk': hash_chaves,
-                'descricao_tipo_registro': 'Cadastro de Atos',
+                'descricao_tipo_registro': 'Cadastro de Organogramas',
                 'id_gerado': item['id'],
-                'i_chave_dsk1': item['numeroOficial'],
-                'i_chave_dsk2': item['desc_natureza'],
+                'i_chave_dsk1': item['configuracao']['id'],
+                'i_chave_dsk2': item['numero'],
             })
         model.insere_tabela_controle_migracao_registro2(params_exec, lista_req=registros_formatados)
         print(f'- Busca de {tipo_registro} finalizada. Tabelas de controles atualizas com sucesso.')
@@ -104,40 +104,32 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     contador = 0
 
     for item in dados:
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['chave_dsk1'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['chave_dsk1'], item['chave_dsk2'])
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {
-                'numeroOficial': item['chave_dsk1'],
-                'tipo': {
-                    'id': item['id_tipo_ato']
+                'configuracao': {
+                    'id': int(item['chave_dsk1'])
                 },
-                'naturezaTextoJuridico': {
-                    'id': item['natureza']
-                },
-                'dataCriacao': item['data_inicial'].strftime("%Y-%m-%d")
+                'numero': item['chave_dsk2'],
+                'nivel': item['nivel'],
+                'descricao': item['descricao']
             }
         }
-        if 'ementa' in item and item['ementa'] is not None:
-            dict_dados['conteudo'].update({'ementa': cleanhtml(item['ementa'])})
 
-        if 'data_vigorar' in item and item['data_vigorar'] is not None:
-            dict_dados['conteudo'].update({'dataVigorar': item['data_vigorar'].strftime("%Y-%m-%d")})
-
-        if 'dt_publicacao' in item and item['dt_publicacao'] is not None:
-            dict_dados['conteudo'].update({'dataPublicacao': item['dt_publicacao'].strftime("%Y-%m-%d")})
-
-        if 'data_resolucao' in item and item['data_resolucao'] is not None:
-            dict_dados['conteudo'].update({'dataResolucao': item['data_resolucao'].strftime("%Y-%m-%d")})
+        if 'sigla' in item and item['sigla'] is not None:
+            dict_dados.update({
+                'sigla': item['sigla']
+            })
 
         contador += 1
-        # print(f'Dados gerados ({contador}): ', dict_dados)
+        print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Atos',
+            'descricao_tipo_registro': 'Cadastro de Orgranogramas',
             'id_gerado': None,
             'i_chave_dsk1': item['chave_dsk1'],
             'i_chave_dsk2': item['chave_dsk2']
@@ -149,14 +141,8 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                                                       token=token,
                                                       url=url,
                                                       tipo_registro=tipo_registro,
-                                                      tamanho_lote=100)
+                                                      tamanho_lote=300)
 
         # Insere lote na tabela 'controle_migracao_lotes'
         model.insere_tabela_controle_lote(req_res)
         print('- Envio de dados finalizado.')
-
-
-def cleanhtml(raw_html):
-    cleanr = re.compile('<.*?>|&([a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});')
-    cleantext = re.sub(cleanr, '', raw_html)
-    return cleantext

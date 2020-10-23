@@ -4,6 +4,7 @@
 import settings
 import sistema_origem.ipm_cloud_postgresql.model as model
 import bth.interacao_cloud as interacao_cloud
+from datetime import datetime
 
 
 def iniciar():
@@ -11,7 +12,8 @@ def iniciar():
 
     params_exec = {
         'somente_pre_validar': False,
-        'token': '72612895-9758-467d-a2ef-36b8b57c3198'
+        'token': '72612895-9758-467d-a2ef-36b8b57c3198',
+        'ano': 2020
     }
     # Exibe mensagem inicial de início de execução
     mensagem_inicio(params_exec)
@@ -36,15 +38,19 @@ def iniciar():
     # enviar(params_exec, 'motivo-alteracao-cargo')
     # enviar(params_exec, 'tipo-ato')
     # enviar(params_exec, 'ato')
-    enviar(params_exec, 'fonte-divulgacao')
+    # enviar(params_exec, 'fonte-divulgacao')
+    enviar(params_exec, 'organograma')
     # enviar(params_exec, 'pessoa-fisica')
 
 
 def enviar(params_exec, tipo_registro, *args, **kwargs):
     print(f'\n:: Iniciando execução do assunto {tipo_registro}')
+    tempo_inicio = datetime.now()
     path_padrao = f'sistema_origem.{settings.BASE_ORIGEM}.{settings.SISTEMA_ORIGEM}.rotinas_envio'
     modulo = __import__(f'{path_padrao}.{tipo_registro}', globals(), locals(), ['iniciar_processo_envio'], 0)
     modulo.iniciar_processo_envio(params_exec)
+    print(f'- Rotina de {tipo_registro} finalizada. '
+          f'Tempo total de execução: {(datetime.now() - tempo_inicio).total_seconds()} segundos.')
 
 
 def mensagem_inicio(params_exec):
