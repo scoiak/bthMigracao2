@@ -2,12 +2,13 @@ import sistema_origem.ipm_cloud_postgresql.model as model
 import bth.interacao_cloud as interacao_cloud
 import json
 import logging
+import re
 from datetime import datetime
 
-tipo_registro = 'configuracao-evento'
 sistema = 300
+tipo_registro = 'horario'
+url = 'https://pessoal.cloud.betha.com.br/service-layer/v1/api/horario'
 limite_lote = 500
-url = "https://pessoal.cloud.betha.com.br/service-layer/v1/api/configuracao-evento"
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
     dados_assunto = coletar_dados(params_exec)
@@ -20,12 +21,15 @@ def coletar_dados(params_exec):
     print('- Iniciando a consulta dos dados a enviar.')
     df = None
     try:
-        query = model.get_consulta(params_exec, tipo_registro + '.sql')
+        tempo_inicio = datetime.now()
+        query = model.get_consulta(params_exec, f'{tipo_registro}.sql')
         pgcnn = model.PostgreSQLConnection()
         df = pgcnn.exec_sql(query, index_col='id')
-        print(f'- Consulta finalizada. {len(df.index)} registro(s) encontrado(s).')
+        tempo_total = (datetime.now() - tempo_inicio)
+        print(f'- Consulta finalizada. {len(df.index)} registro(s) encontrado(s). '
+              f'(Tempo consulta: {tempo_total.total_seconds()} segundos.)')
     except Exception as error:
-        print(f'Erro ao executar função {tipo_registro}. {error}')
+        print(f'Erro ao executar função "enviar_assunto". {error}')
     finally:
         return df
 
@@ -58,36 +62,25 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {
-                'codigo': None if 'codigo' not in item else item['codigo'],
-                'descricao': None if 'descricao' not in item else item['descricao'],
-                'inicioVigencia': None if 'iniciovigencia' not in item else item['iniciovigencia'],
-                'tipo': None if 'tipo' not in item else item['tipo'],
-                'classificacao': None if 'classificacao' not in item else item['classificacao'],
-                'classificacaoBaixaProvisao': None if 'classificacaobaixaprovisao' not in item else item['classificacaobaixaprovisao'],
-                'unidade': None if 'unidade' not in item else item['unidade'],
-                'taxa': None if 'taxa' not in item else item['taxa'],
-                'codigoEsocial': None if 'codigoEsocial' not in item else item['codigoEsocial'],
-                'ato': None if 'ato' not in item else item['ato'],
-                'incideDsr': None if 'incideDsr' not in item else item['incideDsr'],
-                'naturezaRubrica': None if 'naturezarubrica' not in item else item['naturezarubrica'],
-                'compoemHorasMes': None if 'compoemhorasmes' not in item else item['compoemhorasmes'],
-                'observacao': None if 'observacao' not in item else item['observacao'],
-                'desabilitado': None if 'desabilitado' not in item else item['desabilitado'],
-                'formula': None if 'formula' not in item else item['formula'],
-                'enviaTransparencia': None if 'enviatransparencia' not in item else item['enviatransparencia'],
-                'configuracaoProcessamentos': None if 'configuracaoprocessamentos' not in item else item['configuracaoprocessamentos'],
-            }
+                'descricao': item['descricao'],
+                'entrada': item['entrada'],
+                'saida': item['saida'],
+                'flexivel': item['flexivel'],
+                'horaMinimaAlocacao': item['horaminimaalocacao'],
+                'toleranciaAlocacao': item['toleranciaalocacao'],
+                'inicioVigencia': item['iniciovigencia']
+             }
         }
         contador += 1
-        # print(f'Dados gerados ({contador}): ', dict_dados)
+        print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Evento',
+            'descricao_tipo_registro': 'Cadastro de Horário',
             'id_gerado': None,
-            'i_chave_dsk1': item['codigo']
+            'i_chave_dsk1': item['codigo'],
         })
     if True:
         model.insere_tabela_controle_migracao_registro2(params_exec, lista_req=lista_controle_migracao)
@@ -97,4 +90,9 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                                                       tipo_registro=tipo_registro,
                                                       tamanho_lote=limite_lote)
         model.insere_tabela_controle_lote(req_res)
-    print('- Envio de dados finalizado.')
+        print('- Envio de dados finalizado.')
+
+def cleanhtml(raw_html):
+    cleanr = re.compile('<.*?>|&([a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});')
+    cleantext = re.sub(cleanr, '', raw_html)
+    return cleantext

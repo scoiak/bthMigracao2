@@ -16,7 +16,7 @@ def iniciar():
     # enviar(params_exec, 'cidades')
     # enviar(params_exec, 'bairro')
     # enviar(params_exec, 'tipo-logradouro')
-    enviar(params_exec, 'logradouro')
+    # enviar(params_exec, 'logradouro')
     # enviar(params_exec, 'tipo-afastamento')
     # enviar(params_exec, 'bancos')
     # enviar(params_exec, 'agencia-bancaria')
@@ -25,6 +25,7 @@ def iniciar():
     # enviar(params_exec, 'motivo-alteracao-cargo')
     # enviar(params_exec, 'tipo-ato')
     # enviar(params_exec, 'pessoa-fisica')
+    # enviar(params_exec, 'configuracao-evento')
 
 def enviar(params_exec, tipo_registro, *args, **kwargs):
     print(f'\n:: Iniciando execução do assunto {tipo_registro}')
