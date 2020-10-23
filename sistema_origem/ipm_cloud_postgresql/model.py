@@ -108,7 +108,7 @@ def get_consulta(params_exec, assunto):
         logging.info(f'Iniciando busca de consulta para o assunto {assunto}.')
 
         # Obtém o texto do arquivo assunto.sql na pasta 'sql_padrao'
-        texto_consulta = open(get_path(f'{assunto}'), "r").read()
+        texto_consulta = open(get_path(f'{assunto}'), "r", encoding='utf-8').read()
 
         # Aplica os parâmetros de usuário na consulta obtida
         texto_consulta = aplica_parametros(params_exec, texto_consulta)
