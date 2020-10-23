@@ -26,18 +26,16 @@ def busca_dados_cloud(params_exec):
         for item in registros:
             hash_chaves = model.gerar_hash_chaves(sistema,
                                                   tipo_registro,
-                                                  item['chave_dsk1']['id'],
                                                   item['numero'],
-                                                  item['digito'])
+                                                  item['banco']['id'])
             registros_formatados.append({
                 'sistema': sistema,
                 'tipo_registro': tipo_registro,
                 'hash_chave_dsk': hash_chaves,
-                'descricao_tipo_registro': 'Cadastro de Agências Bancárias',
+                'descricao_tipo_registro': 'Cadastro de Agência Bancária',
                 'id_gerado': item['id'],
-                'i_chave_dsk1': item['banco']['id'],
-                'i_chave_dsk2': item['numero'],
-                'i_chave_dsk3': item['digito'],
+                'i_chave_dsk1': item['numero'],
+                'i_chave_dsk2': item['banco']['id'],
             })
         model.insere_tabela_controle_migracao_registro2(params_exec, lista_req=registros_formatados)
         print(f'- Busca de {tipo_registro} finalizada. Tabelas de controles atualizas com sucesso.')
@@ -86,18 +84,17 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     contador = 0
     for item in dados:
         hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro,
-                                              item['cod_febraban_banco'],
-                                              item['numeroagencia'],
-                                              item['digitoagencia'])
+                                              item['numero'],
+                                              item['banco'])
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {
                 "banco": {
-                    "id": int(item['idbanco'])
+                    "id": int(item['banco'])
                 },
                 "nome": item['nome'],
-                "numero": item['numeroagencia'],
-                "digito": item['digitoagencia']
+                "numero": item['numero'],
+                "digito": item['digito']
             }
         }
         if 'bairro' in item and item['bairro'] is not None:
@@ -116,7 +113,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             dict_dados['conteudo'].update({
                 'cep': item['cep']
             })
-        if 'numeroEndereco' in item and item['numeroendereco'] is not None:
+        if 'numeroendereco' in item and item['numeroendereco'] is not None:
             dict_dados['conteudo'].update({
                 'numeroEndereco': item['numeroendereco']
             })
@@ -129,9 +126,8 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'hash_chave_dsk': hash_chaves,
             'descricao_tipo_registro': 'Cadastro de Agência Bancária',
             'id_gerado': None,
-            'i_chave_dsk1': item['cod_febraban_banco'],
-            'i_chave_dsk2': item['numeroagencia'],
-            'i_chave_dsk3': item['digitoagencia']
+            'i_chave_dsk1': item['numero'],
+            'i_chave_dsk2': item['banco'],
         })
     if True:
         model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)
@@ -139,6 +135,6 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                                                       token=token,
                                                       url=url,
                                                       tipo_registro=tipo_registro,
-                                                      tamanho_lote=300)
+                                                      tamanho_lote=limite_lote)
         model.insere_tabela_controle_lote(req_res)
         print('- Envio de dados finalizado.')

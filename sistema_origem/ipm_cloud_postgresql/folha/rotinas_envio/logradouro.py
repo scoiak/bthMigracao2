@@ -6,7 +6,7 @@ from datetime import datetime
 
 tipo_registro = 'logradouro'
 sistema = 300
-limite_lote = 500
+limite_lote = 1000
 url = "https://pessoal.cloud.betha.com.br/service-layer/v1/api/logradouro"
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
@@ -54,7 +54,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     token = params_exec['token']
     contador = 0
     for item in dados:
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['codigo'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['descricao'].upper(), item['municipio'])
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {
@@ -77,7 +77,8 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'hash_chave_dsk': hash_chaves,
             'descricao_tipo_registro': 'Cadastro de Logradouro',
             'id_gerado': None,
-            'i_chave_dsk1': item['codigo']
+            'i_chave_dsk1': item['descricao'].upper(),
+            'i_chave_dsk2': item['municipio']
         })
     model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)
     req_res = interacao_cloud.preparar_requisicao(lista_dados=lista_dados_enviar,

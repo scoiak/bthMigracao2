@@ -59,7 +59,11 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'idIntegracao': hash_chaves,
             'conteudo': {
                 'descricao': None if 'descricao' not in item else item['descricao'],
+                'tipo': None if 'tipo' not in item else item['tipo'],
                 'classificacao': None if 'classificacao' not in item else item['classificacao'],
+                'tipoAfastamento': {
+                    "id": item['tipoafastamento']
+                }
             }
         }
         contador += 1
