@@ -99,5 +99,5 @@ def busca_dados(params_exec):
             'id_gerado': item['id'],
             'i_chave_dsk1': item['descricao'].upper(),
         })
-    model.insere_tabela_controle_migracao_registro2(params_exec, lista_req=registros_formatados)
+    model.insere_tabela_controle_migracao_registro(params_exec, lista_req=registros_formatados)
     print('- Busca finalizada. Tabelas de controles atualizas com sucesso.')

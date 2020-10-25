@@ -1,6 +1,6 @@
 BASE_ORIGEM = 'ipm_cloud_postgresql'
 SISTEMA_ORIGEM = 'folha'
-
+"""
 DB_HOST = '192.168.60.52'
 DB_PORT = '7777'
 DB_NAME = 'biguacu'
@@ -12,7 +12,7 @@ DB_PORT = '5432'
 DB_NAME = 'bigua_local'
 DB_USER = 'postgres'
 DB_PW = 'admin'
-"""
+
 
 def iniciar_migracao():
     start_logging()

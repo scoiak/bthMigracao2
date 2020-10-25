@@ -125,7 +125,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         })
 
     if False:
-        model.insere_tabela_controle_migracao_registro2(params_exec, lista_req=lista_controle_migracao)
+        model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)
         req_res = interacao_cloud.preparar_requisicao(lista_dados=lista_dados_enviar,
                                                       token=token,
                                                       url=url,
@@ -135,9 +135,3 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         # Insere lote na tabela 'controle_migracao_lotes'
         model.insere_tabela_controle_lote(req_res)
         print('- Envio de dados finalizado.')
-
-
-def cleanhtml(raw_html):
-    cleanr = re.compile('<.*?>|&([a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});')
-    cleantext = re.sub(cleanr, '', raw_html)
-    return cleantext

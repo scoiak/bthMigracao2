@@ -5,6 +5,7 @@ import hashlib
 import requests
 import time
 import logging
+import re
 from datetime import datetime
 
 
@@ -190,40 +191,55 @@ def insere_tabela_controle_registro_ocor(req_res):
             pgcnn.close_connection()
 
 
-def insere_tabela_controle_migracao_registro(params_exec, req_res):
-    pgcnn = None
+def insere_tabela_controle_migracao_registro(params_exec, lista_req):
     logging.info(f'Inserindo dados na tabela de controle de registros.')
-    if req_res is not None:
+    pgcnn = None
+    itens_por_insert = 500
+    data_list = []
+    sql = 'INSERT INTO public.controle_migracao_registro ' \
+          '(sistema, tipo_registro, hash_chave_dsk, descricao_tipo_registro, id_gerado, i_chave_dsk1, ' \
+          'i_chave_dsk2, i_chave_dsk3, i_chave_dsk4, i_chave_dsk5, i_chave_dsk6, i_chave_dsk7, i_chave_dsk8,' \
+          'i_chave_dsk9, i_chave_dsk10, i_chave_dsk11, i_chave_dsk12) ' \
+          'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) ' \
+          ' ON CONFLICT DO NOTHING'
+
+    if lista_req is not None:
         try:
+            # Converte os dicts de dados em tuples
+            for item in lista_req:
+                # print('item', item)
+                values = (
+                    item.get('sistema'),
+                    item.get('tipo_registro'),
+                    item.get('hash_chave_dsk'),
+                    item.get('descricao_tipo_registro'),
+                    item.get('id_gerado'),
+                    item.get('i_chave_dsk1'),
+                    None if 'i_chave_dsk2' not in item else item.get('i_chave_dsk2'),
+                    None if 'i_chave_dsk3' not in item else item.get('i_chave_dsk3'),
+                    None if 'i_chave_dsk4' not in item else item.get('i_chave_dsk4'),
+                    None if 'i_chave_dsk5' not in item else item.get('i_chave_dsk5'),
+                    None if 'i_chave_dsk6' not in item else item.get('i_chave_dsk6'),
+                    None if 'i_chave_dsk7' not in item else item.get('i_chave_dsk7'),
+                    None if 'i_chave_dsk8' not in item else item.get('i_chave_dsk8'),
+                    None if 'i_chave_dsk9' not in item else item.get('i_chave_dsk9'),
+                    None if 'i_chave_dsk10' not in item else item.get('i_chave_dsk10'),
+                    None if 'i_chave_dsk11' not in item else item.get('i_chave_dsk11'),
+                    None if 'i_chave_dsk12' not in item else item.get('i_chave_dsk12')
+                )
+                data_list.append(values)
+
+            # Instancia conexão
             pgcnn = PostgreSQLConnection()
-            sql = 'INSERT INTO public.controle_migracao_registro ' \
-                  '(sistema, tipo_registro, hash_chave_dsk, descricao_tipo_registro, id_gerado, i_chave_dsk1, ' \
-                  'i_chave_dsk2, i_chave_dsk3, i_chave_dsk4, i_chave_dsk5, i_chave_dsk6, i_chave_dsk7, i_chave_dsk8,' \
-                  'i_chave_dsk9, i_chave_dsk10, i_chave_dsk11, i_chave_dsk12) ' \
-                  'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)'
             cursor = pgcnn.conn.cursor()
 
-            values = (
-                req_res.get('sistema'),
-                req_res.get('tipo_registro'),
-                req_res.get('hash_chave_dsk'),
-                req_res.get('descricao_tipo_registro'),
-                req_res.get('id_gerado'),
-                req_res.get('i_chave_dsk1'),
-                None if 'i_chave_dsk2' not in req_res else req_res.get('i_chave_dsk2'),
-                None if 'i_chave_dsk3' not in req_res else req_res.get('i_chave_dsk3'),
-                None if 'i_chave_dsk4' not in req_res else req_res.get('i_chave_dsk4'),
-                None if 'i_chave_dsk5' not in req_res else req_res.get('i_chave_dsk5'),
-                None if 'i_chave_dsk6' not in req_res else req_res.get('i_chave_dsk6'),
-                None if 'i_chave_dsk7' not in req_res else req_res.get('i_chave_dsk7'),
-                None if 'i_chave_dsk8' not in req_res else req_res.get('i_chave_dsk8'),
-                None if 'i_chave_dsk9' not in req_res else req_res.get('i_chave_dsk9'),
-                None if 'i_chave_dsk10' not in req_res else req_res.get('i_chave_dsk10'),
-                None if 'i_chave_dsk11' not in req_res else req_res.get('i_chave_dsk11'),
-                None if 'i_chave_dsk12' not in req_res else req_res.get('i_chave_dsk12')
-            )
-            result = cursor.execute(sql, values)
-            pgcnn.conn.commit()
+            # Divide a lista de tuples em sublistas
+            list_slice = ([data_list[i:i + itens_por_insert] for i in range(0, len(data_list), itens_por_insert)])
+
+            # Realiza a inserção das sublistas no banco
+            for item in list_slice:
+                cursor.executemany(sql, item)
+                pgcnn.conn.commit()
 
         except Exception as error:
             print("Erro ao executar função 'insere_tabela_controle_migracao_registro'.", error)
@@ -484,3 +500,9 @@ def get_codigo_sistema():
     else:
         cod_sistema = 999
     return cod_sistema
+
+
+def cleanhtml(raw_html):
+    cleanr = re.compile('<.*?>|&([a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});')
+    cleantext = re.sub(cleanr, '', raw_html)
+    return cleantext
