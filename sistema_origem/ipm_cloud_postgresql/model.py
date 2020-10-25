@@ -312,12 +312,12 @@ def atualiza_controle_migracao_registro(id_gerado, hash_chave):
 
 
 def valida_lotes_enviados(params_exec, *args, **kwargs):
+    print('- Iniciando validação de lotes enviados pendentes.')
     pgcnn = None
     retorno_analise_lote = {
         'incosistencia_registros': 0,
         'incosistencia_lotes': 0
     }
-    print('- Iniciando validação de lotes enviados pendentes.')
 
     try:
         pgcnn = PostgreSQLConnection()
@@ -393,42 +393,53 @@ def analisa_retorno_lote(params_exec, retorno_json, **kwargs):
         'incosistencia_lotes': 0
     }
     status_lote = None
+    dados_atualizar_controle_reg = []
     dados_inserir_ocor = []
 
     try:
-        # Verifica o status do lote
+        # Obtém status de execução do lote
         if 'status' in retorno_json:
             status_lote = retorno_json['status']
         elif 'situacao' in retorno_json:
             status_lote = retorno_json['situacao']
 
+        # Seta o valor do statuso do lote
         if status_lote in ['EXECUTADO', 'PROCESSADO']:
             status_lote = 3
         elif status_lote in ['EXECUTADO_PARCIALMENTE']:
             status_lote = 4
-            resultado_analise['incosistencia_lotes'] += 1
         else:
             status_lote = 5
+
+        # Atualiza contagem de inconsistências
+        if status_lote in [4, 5]:
             resultado_analise['incosistencia_lotes'] += 1
 
-        # Atualiza o status do lote na tabela de controle
+        # Obtém o id do lote retornado
         if 'id' in retorno_json:
-            idRegistro = retorno_json["id"]
+            id_registro = retorno_json["id"]
         elif 'idGerado' in retorno_json:
-            idRegistro = retorno_json["id"]
+            id_registro = retorno_json["id"]
         else:
-            idRegistro = ''
+            id_registro = ''
 
+        # Armazena o horário de finalização de execução do lote
+        if 'updatedIn' in retorno_json:
+            data_hora_ret = datetime.strptime(retorno_json['updatedIn'], '%Y-%m-%dT%H:%M:%S.%f')
+        else:
+            data_hora_ret = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        # Atualiza o status do lote na tabela de controle
         sql = f'UPDATE public.controle_migracao_lotes ' \
               f'SET status = {status_lote}, ' \
-              f'    data_hora_ret = \'{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\' ' \
-              f'WHERE id_lote = \'{idRegistro}\''
+              f'    data_hora_ret = \'{data_hora_ret}\' ' \
+              f'WHERE id_lote = \'{id_registro}\''
         atualiza_tabela_controle_lote(sql=sql)
 
-        # Analisa registros contidos no lote
+        # Analisa registros dos registros contidos no lote
         if 'retorno' in retorno_json:
             for registro in retorno_json['retorno']:
-                # Se o registro enviado foi cadastrado com sucesso
+                # Obtém o status de retorno do registro
                 if 'status' in registro:
                     status = registro['registro']
                 elif 'situacao' in registro:
@@ -436,42 +447,45 @@ def analisa_retorno_lote(params_exec, retorno_json, **kwargs):
                 else:
                     status = ''
 
+                # Ação para o registro migrado com sucesso
                 if status in ['SUCESSO', 'SUCESS', 'EXECUTADO']:
                     registro_status = 3
                     registro_resolvido = 2
                     id_gerado = registro['idGerado']
                     hash_chave = registro['idIntegracao']
                     if id_gerado is not None and hash_chave is not None:
-                        atualiza_controle_migracao_registro(id_gerado, hash_chave)
+                        dados_atualizar_controle_reg.append([id_gerado, hash_chave])
+                        # atualiza_controle_migracao_registro(id_gerado, hash_chave)
 
-                # Se o registro enviado já existia no cloud
+                # Ação para registro já cadastrado no cloud
                 elif status == 'ERRO' and 'idExistente' in registro:
-                    if 'idExistente' in registro:
+                    if registro['idExistente'] is not None:
+                        registro_status = 3
+                        registro_resolvido = 2
+                        # para o contábil, a linha abaixo deve ser registro['idExistente'][0]
+                        id_gerado = registro['idExistente']
+                        hash_chave = registro['idIntegracao']
+                        if id_gerado is not None and hash_chave is not None:
+                            dados_atualizar_controle_reg.append([id_gerado, hash_chave])
+                            # atualiza_controle_migracao_registro(id_gerado, hash_chave)
+                    else:
                         resultado_analise['incosistencia_registros'] += 1
-                        if registro['idExistente'] is not None:
-                            registro_status = 3
-                            registro_resolvido = 2
-                            # para o contábil, a linha abaixo deve ser registro['idExistente'][0]
-                            id_gerado = registro['idExistente']
-                            hash_chave = registro['idIntegracao']
-                            if id_gerado is not None and hash_chave is not None:
-                                atualiza_controle_migracao_registro(id_gerado, hash_chave)
-                        else:
-                            registro_status = 1
-                            registro_resolvido = 1
-                            registro_mensagem = '' if 'mensagem' not in registro else registro['mensagem']
-                            id_existente = None if 'idExistente' not in registro else registro['idExistente']
+                        registro_status = 1
+                        registro_resolvido = 1
+                        registro_mensagem = '' if 'mensagem' not in registro else registro['mensagem']
+                        id_existente = None if 'idExistente' not in registro else registro['idExistente']
 
-                            # No desktop, existe uma proc chamada 'dbf_atualiza_controle_migracao_registro_integ'
-                            # que faz a atualização da tabela _ocor e _registro simultaneamente, verificar
-                            dados_inserir_ocor.append((0, registro['idIntegracao'], get_codigo_sistema(),
-                                            kwargs.get('tipo_registro'), None, 9, registro_status,
-                                            registro_resolvido, 1, kwargs.get('id_lote'),
-                                            registro['mensagem'], '', '', id_existente))
-                            # insere_tabela_controle_registro_ocor(dados_inserir)
+                        # No desktop, existe uma proc chamada 'dbf_atualiza_controle_migracao_registro_integ'
+                        # que faz a atualização da tabela _ocor e _registro simultaneamente, verificar
+                        dados_inserir_ocor.append((0, registro['idIntegracao'], get_codigo_sistema(),
+                                        kwargs.get('tipo_registro'), None, 9, registro_status,
+                                        registro_resolvido, 1, kwargs.get('id_lote'),
+                                        registro['mensagem'], '', '', id_existente))
 
-                # Se houve erro na execução do registro
+                # Ação para registro não cadastrado devido a erro
                 else:
+                    pass
+                    """
                     resultado_analise['incosistencia_registros'] += 1
                     registro_status = 1
                     registro_resolvido = 1
@@ -483,12 +497,35 @@ def analisa_retorno_lote(params_exec, retorno_json, **kwargs):
                     dados_inserir_ocor.append((0, registro['idIntegracao'], get_codigo_sistema(), kwargs.get('tipo_registro'),
                                             None, 9, registro_status, registro_resolvido, 1, kwargs.get('id_lote'),
                                             registro['mensagem'], '', '', id_existente))
-                    # insere_tabela_controle_registro_ocor(dados_inserir)
+                    """
         insere_tabela_controle_registro_ocor(dados_inserir_ocor)
+        atualiza_dados_controle_migracao(lista_dados=dados_atualizar_controle_reg)
     except Exception as error:
         print("Erro ao executar função 'analisa_retorno_lote'.", error)
     finally:
         return resultado_analise
+
+
+def atualiza_dados_controle_migracao(lista_dados):
+    itens_por_insert = 500
+    sql = f'UPDATE public.controle_migracao_registro ' \
+          f'SET id_gerado = %s WHERE hash_chave_dsk = %s'
+
+    try:
+        data_list = []
+        for item in lista_dados:
+            data_list.append((item[0], item[1]))
+
+        pgcnn = PostgreSQLConnection()
+        cursor = pgcnn.conn.cursor()
+        list_slice = ([data_list[i:i + itens_por_insert] for i in range(0, len(data_list), itens_por_insert)])
+
+        for item in list_slice:
+            cursor.executemany(sql, item)
+            pgcnn.conn.commit()
+
+    except Exception as error:
+        print("Erro ao executar função 'atualiza_dados_controle_migracao'.", error)
 
 
 def get_codigo_sistema():

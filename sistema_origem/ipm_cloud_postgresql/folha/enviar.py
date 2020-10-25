@@ -8,7 +8,7 @@ from datetime import datetime
 
 
 def iniciar():
-    print('\n:: Iniciando migração do sistema Folha')
+    print(':: Iniciando migração do sistema Folha')
 
     params_exec = {
         'somente_pre_validar': False,
@@ -32,7 +32,7 @@ def iniciar():
     # enviar(params_exec, 'tipo-logradouro')
     # enviar(params_exec, 'logradouro')
     # enviar(params_exec, 'bancos')
-    enviar(params_exec, 'agencia-bancaria')
+    # enviar(params_exec, 'agencia-bancaria')
     # enviar(params_exec, 'natureza-texto-juridico')
     # enviar(params_exec, 'motivo-alteracao-salarial')
     # enviar(params_exec, 'motivo-alteracao-cargo')
@@ -40,7 +40,7 @@ def iniciar():
     # enviar(params_exec, 'ato')
     # enviar(params_exec, 'fonte-divulgacao')
     # enviar(params_exec, 'organograma')
-    # enviar(params_exec, 'horario')
+    enviar(params_exec, 'horario')
     # enviar(params_exec, 'concurso')
     # enviar(params_exec, 'pessoa-fisica')
 
@@ -56,7 +56,7 @@ def enviar(params_exec, tipo_registro, *args, **kwargs):
 
 
 def mensagem_inicio(params_exec):
-    print(f':: Iniciando execução da migração do sistema {settings.BASE_ORIGEM} para Betha Cloud utilicando os '
+    print(f'\n:: Iniciando execução da migração do sistema {settings.BASE_ORIGEM} para Betha Cloud utilicando os '
           f'seguintes parâmetros: \n- {params_exec}')
 
 

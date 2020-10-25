@@ -23,7 +23,7 @@ def iniciar_processo_envio(params_exec, *args, **kwargs):
     if not params_exec.get('somente_pre_validar'):
         iniciar_envio(params_exec, dados_enviar, 'POST')
 
-    model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
+    # model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
 
 
 def busca_dados_cloud(params_exec):
@@ -34,7 +34,7 @@ def busca_dados_cloud(params_exec):
 
     try:
         for item in registros:
-            hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['descricao'])
+            hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['descricao'], item['classificacao'])
             registros_formatados.append({
                 'sistema': sistema,
                 'tipo_registro': tipo_registro,
