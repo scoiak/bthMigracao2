@@ -131,7 +131,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             dict_dados['conteudo'].update({'dataResolucao': item['data_resolucao'].strftime("%Y-%m-%d")})
 
         contador += 1
-        # print(f'Dados gerados ({contador}): ', dict_dados)
+        print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,
@@ -144,13 +144,16 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         })
 
     if True:
+        # Insere os registros coletados na tabela de controle
         model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)
+
+        # Inicia o procedimento de envio para o cloud
         req_res = interacao_cloud.preparar_requisicao(lista_dados=lista_dados_enviar,
                                                       token=token,
                                                       url=url,
                                                       tipo_registro=tipo_registro,
                                                       tamanho_lote=100)
 
-        # Insere lote na tabela 'controle_migracao_lotes'
+        # Insere lote na tabela de controle
         model.insere_tabela_controle_lote(req_res)
         print('- Envio de dados finalizado.')

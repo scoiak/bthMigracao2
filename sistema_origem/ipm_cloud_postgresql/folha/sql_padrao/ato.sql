@@ -88,7 +88,7 @@ from (
 	inner join wlg.tbcategoriatexto cat on (cat.tctcodigo = ato.tctcodigo)
 	inner join wlg.tbmovimentotexto mvto on (mvto.txjcodigo = ato.txjcodigo and mvto.movtipo = 2)
 	inner join wlg.tbpublicacao pub on (pub.txjcodigo = ato.txjcodigo)
-	--where ato.txjano <= 2020
-	-- limit 10000
+	--where ato.txjano <= {{ano}}
 ) tab
-where id_cloud is null;
+where id_cloud is null
+limit 10
