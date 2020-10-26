@@ -91,4 +91,4 @@ from (
 	where ato.txjano <= {{ano}}
 ) tab
 -- where id_cloud is null
--- limit 400
+limit 400

@@ -28,13 +28,12 @@ def coletar_dados(params_exec):
     print('- Iniciando a consulta dos dados a enviar.')
     df = None
     try:
-        tempo_inicio = datetime.now()
+        dh_inicio = datetime.now()
         query = model.get_consulta(params_exec, f'{tipo_registro}.sql')
         pgcnn = model.PostgreSQLConnection()
         df = pgcnn.exec_sql(query, index_col='id')
-        tempo_total = (datetime.now() - tempo_inicio)
-        print(f'- Consulta finalizada. {len(df.index)} registro(s) encontrado(s). '
-              f'(Tempo consulta: {tempo_total.total_seconds()} segundos.)')
+        print(f'- {len(df.index)} registro(s) encontrado(s).',
+              f'\n- Consulta finalizada. ({(datetime.now() - dh_inicio).total_seconds()} segundos)')
 
     except Exception as error:
         print(f'Erro ao executar função "enviar_assunto". {error}')
@@ -45,6 +44,7 @@ def coletar_dados(params_exec):
 
 def pre_validar(params_exec, dados):
     print('- Iniciando pré-validação dos registros.')
+    dh_inicio = datetime.now()
     dados_validados = []
     registro_erros = []
     try:
@@ -57,8 +57,9 @@ def pre_validar(params_exec, dados):
             if registro_valido:
                 dados_validados.append(linha)
 
-        print(f'- Pré-validação finalizada. Registros validados com sucesso: '
-              f'{len(dados_validados)} | Registros com advertência: {len(registro_erros)}')
+        print(f'- Registros validados com sucesso: {len(dados_validados)} '
+              f'| Registros com advertência: {len(registro_erros)}'
+              f'\n- Pré-validação finalizada. ({(datetime.now() - dh_inicio).total_seconds()}) segundos')
 
     except Exception as error:
         logging.error(f'Erro ao executar função "pre_validar". {error}')
@@ -68,52 +69,66 @@ def pre_validar(params_exec, dados):
 
 
 def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
-    print('- Iniciando envio dos dados.')
+    print('- Iniciando processo de transformação.')
+    dh_inicio = datetime.now()
     lista_dados_enviar = []
     lista_controle_migracao = []
     hoje = datetime.now().strftime("%Y-%m-%d")
     token = params_exec['token']
+    total_dados = len(dados)
     contador = 0
 
     for item in dados:
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['chave_dsk1'])
+        contador += 1
+        print(f'\r- Gerando JSON: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['chave_dsk1'], item['chave_dsk2'])
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {
-                'numeroEdital': item['chave_dsk1'],
-                'tipoRecrutamento': item['tiporecrutamento']
+                'tipoRecrutamento': item['tiporecrutamento'],
+                'numeroEdital': item['numero_edital'],
+                'descricao': item['descricao']
             }
         }
 
-        if 'descricao' in item and item['descricao'] is not None:
-            dict_dados.update({'descricao': item['descricao']})
-
         if 'ato' in item and item['ato'] is not None:
-            dict_dados.update({'ato': {'id': item['ato']}})
+            dict_dados['conteudo'].update({
+                'ato': {
+                    'id': item['ato']
+                }
+            })
 
-        if 'dataInicialInscricao' in item and item['datainicialinscricao'] is not None:
-            dict_dados.update({'dataInicialInscricao': item['datainicialinscricao']})
+        if 'percentualpcd' in item and item['percentualpcd'] is not None:
+            dict_dados['conteudo'].update({'percentualPcd': item['percentualpcd']})
 
-        if 'dataFinalInscricao' in item and item['datafinaiInscricao'] is not None:
-            dict_dados.update({'dataFinalInscricao': item['datafinaiInscricao']})
+        if 'datainicialinscricao' in item and item['datainicialinscricao'] is not None:
+            dict_dados['conteudo'].update({'dataInicialInscricao': item['datainicialinscricao'].strftime("%Y-%m-%d")})
 
-        if 'dataProrrogacao' in item and item['dataprorrogacao'] is not None:
-            dict_dados.update({'dataProrrogacao': item['dataprorrogacao']})
+        if 'datafinalinscricao' in item and item['datafinalinscricao'] is not None:
+            dict_dados['conteudo'].update({'dataFinalInscricao': item['datafinalinscricao'].strftime("%Y-%m-%d")})
 
-        if 'dataHomologacao' in item and item['datahomologacao'] is not None:
-            dict_dados.update({'dataHomologacao': item['datahomologacao']})
+        if 'dataprorrogacao' in item and item['dataprorrogacao'] is not None:
+            dict_dados['conteudo'].update({'dataProrrogacao': item['dataprorrogacao'].strftime("%Y-%m-%d")})
 
-        if 'dataValidade' in item and item['datavalidade'] is not None:
-            dict_dados.update({'dataValidade': item['datavalidade']})
+        if 'datainicialinscricaoPcd' in item and item['datainicialinscricaoPcd'] is not None:
+            dict_dados['conteudo'].update({'dataInicialInscricaoPcd': item['datainicialinscricaoPcd'].strftime("%Y-%m-%d")})
 
-        if 'dataProrrogacaoValidade' in item and item['dataprorrogacaovalidade'] is not None:
-            dict_dados.update({'dataProrrogacaoValidade': item['dataprorrogacaovalidade']})
+        if 'datafinalinscricaoPcd' in item and item['datafinalinscricaoPcd'] is not None:
+            dict_dados['conteudo'].update({'dataFinalInscricaoPcd': item['datafinalinscricaoPcd'].strftime("%Y-%m-%d")})
 
-        if 'dataEncerramento' in item and item['dataencerramento'] is not None:
-            dict_dados.update({'dataEncerramento': item['dataencerramento']})
+        if 'datahomologacao' in item and item['datahomologacao'] is not None:
+            dict_dados['conteudo'].update({'dataHomologacao': item['datahomologacao'].strftime("%Y-%m-%d")})
 
-        contador += 1
-        print(f'Dados gerados ({contador}): ', dict_dados)
+        if 'datavalidade' in item and item['datavalidade'] is not None:
+            dict_dados['conteudo'].update({'dataValidade': item['datavalidade'].strftime("%Y-%m-%d")})
+
+        if 'dataprorrogacaovalidade' in item and item['dataprorrogacaovalidade'] is not None:
+            dict_dados['conteudo'].update({'dataProrrogacaoValidade': item['dataprorrogacaovalidade'].strftime("%Y-%m-%d")})
+
+        if 'dataencerramento' in item and item['dataencerramento'] is not None:
+            dict_dados['conteudo'].update({'dataEncerramento': item['dataencerramento'].strftime("%Y-%m-%d")})
+
+        # print(f'\nDados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,
@@ -121,17 +136,20 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'hash_chave_dsk': hash_chaves,
             'descricao_tipo_registro': 'Cadastro de Concursos',
             'id_gerado': None,
-            'i_chave_dsk1': item['chave_dsk1']
+            'i_chave_dsk1': item['chave_dsk1'],
+            'i_chave_dsk2': item['chave_dsk2']
         })
+    print(f'- Processo de transformação finalizado. ({(datetime.now() - dh_inicio).total_seconds()} segundos)')
 
     if False:
+        # Insere os registros coletados na tabela de controle
         model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)
+
+        # Inicia o procedimento de envio para o cloud
         req_res = interacao_cloud.preparar_requisicao(lista_dados=lista_dados_enviar,
                                                       token=token,
                                                       url=url,
                                                       tipo_registro=tipo_registro,
-                                                      tamanho_lote=100)
-
-        # Insere lote na tabela 'controle_migracao_lotes'
+                                                      tamanho_lote=300)
+        # Insere lote na tabela de controle
         model.insere_tabela_controle_lote(req_res)
-        print('- Envio de dados finalizado.')
