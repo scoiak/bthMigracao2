@@ -54,7 +54,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     token = params_exec['token']
     contador = 0
     for item in dados:
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['descricao'].upper(), item['municipio'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['descricao'], item['municipio'])
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {
@@ -77,7 +77,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'hash_chave_dsk': hash_chaves,
             'descricao_tipo_registro': 'Cadastro de Logradouro',
             'id_gerado': None,
-            'i_chave_dsk1': item['descricao'].upper(),
+            'i_chave_dsk1': item['descricao'],
             'i_chave_dsk2': item['municipio']
         })
     model.insere_tabela_controle_migracao_registro2(params_exec, lista_req=lista_controle_migracao)

@@ -10,12 +10,14 @@ limite_lote = 500
 url = "https://pessoal.cloud.betha.com.br/service-layer/v1/api/tipo-logradouro"
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
-    busca_dados(params_exec)
-    dados_assunto = coletar_dados(params_exec)
-    dados_enviar = pre_validar(params_exec, dados_assunto)
-    if not params_exec.get('somente_pre_validar'):
-        iniciar_envio(params_exec, dados_enviar, 'POST')
-    model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
+    if True:
+        busca_dados(params_exec)
+    if True:
+        dados_assunto = coletar_dados(params_exec)
+        dados_enviar = pre_validar(params_exec, dados_assunto)
+        if not params_exec.get('somente_pre_validar'):
+            iniciar_envio(params_exec, dados_enviar, 'POST')
+        model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
 
 def coletar_dados(params_exec):
     print('- Iniciando a consulta dos dados a enviar.')

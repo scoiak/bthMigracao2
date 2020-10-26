@@ -10,12 +10,14 @@ tipo_registro = 'agencia-bancaria'
 url = 'https://pessoal.cloud.betha.com.br/service-layer/v1/api/agencia-bancaria'
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
-    busca_dados_cloud(params_exec)
-    dados_assunto = coletar_dados(params_exec)
-    dados_enviar = pre_validar(params_exec, dados_assunto)
-    if not params_exec.get('somente_pre_validar'):
-        iniciar_envio(params_exec, dados_enviar, 'POST')
-    model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
+    if False:
+        busca_dados_cloud(params_exec)
+    if True:
+        dados_assunto = coletar_dados(params_exec)
+        dados_enviar = pre_validar(params_exec, dados_assunto)
+        if not params_exec.get('somente_pre_validar'):
+            iniciar_envio(params_exec, dados_enviar, 'POST')
+        model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
 
 def busca_dados_cloud(params_exec):
     print('- Iniciando busca de dados no cloud.')
@@ -118,7 +120,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                 'numeroEndereco': item['numeroendereco']
             })
         contador += 1
-        print(f'Dados gerados ({contador}): ', dict_dados)
+        # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,

@@ -60,55 +60,51 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'conteudo': {
                 'nome': None if 'nome' not in item else item['nome'],
                 'cpf': None if 'cpf' not in item else item['cpf'],
-                'dataNascimento': None if 'dataNascimento' not in item else item['dataNascimento'],
-                'estadoCivil': None if 'estadoCivil' not in item else item['estadoCivil'],
+                'dataNascimento': None if 'datanascimento' not in item else item['datanascimento'],
+                'estadoCivil': None if 'estadocivil' not in item else item['estadocivil'],
                 'sexo': None if 'sexo' not in item else item['sexo'],
                 'raca': None if 'raca' not in item else item['raca'],
-                'corOlhos': None if 'corOlhos' not in item else item['corOlhos'],
+                'corOlhos': None if 'corolhos' not in item else item['corolhos'],
                 'estatura': None if 'estatura' not in item else item['estatura'],
                 'peso': None if 'peso' not in item else item['peso'],
-                'tipoSanguineo': None if 'tipoSanguineo' not in item else item['tipoSanguineo'],
+                'tipoSanguineo': None if 'tiposanguineo' not in item else item['tiposanguineo'],
                 'doador': None if 'doador' not in item else item['doador'],
-                #'nacionalidade': None if 'nacionalidade' not in item else item['nacionalidade'],
-                'paisNascimento': None if 'paisNascimento' not in item else item['paisNascimento'],
-                #'naturalidade': None if 'naturalidade' not in item else item['naturalidade'],
-                #'naturalizado': None if 'naturalizado' not in item else item['naturalizado'],
-                'dataChegada': None if 'dataChegada' not in item else item['dataChegada'],
-                'casadoComBrasileiro': None if 'casadoComBrasileiro' not in item else item['casadoComBrasileiro'],
-                'temFilhosBrasileiros': None if 'temFilhosBrasileiros' not in item else item['temFilhosBrasileiros'],
-                'situacaoEstrangeiro': None if 'situacaoEstrangeiro' not in item else item['situacaoEstrangeiro'],
-                'inscricaoMunicipal': None if 'inscricaoMunicipal' not in item else item['inscricaoMunicipal'],
+                'dataChegada': None if 'datachegada' not in item else item['datachegada'],
+                'casadoComBrasileiro': None if 'casadocombrasileiro' not in item else item['casadocombrasileiro'],
+                'temFilhosBrasileiros': None if 'temfilhosbrasileiros' not in item else item['temfilhosbrasileiros'],
+                'situacaoEstrangeiro': None if 'situacaoestrangeiro' not in item else item['situacaoestrangeiro'],
+                'inscricaoMunicipal': None if 'inscricaomunicipal' not in item else item['inscricaomunicipal'],
                 'identidade': None if 'identidade' not in item else item['identidade'],
-                'orgaoEmissorIdentidade': None if 'orgaoEmissorIdentidade' not in item else item['orgaoEmissorIdentidade'],
-                'ufEmissaoIdentidade': None if 'ufEmissaoIdentidade' not in item else item['ufEmissaoIdentidade'],
-                'dataEmissaoIdentidade': None if 'dataEmissaoIdentidade' not in item else item['dataEmissaoIdentidade'],
-                'dataValidadeIdentidade': None if 'dataValidadeIdentidade' not in item else item['dataValidadeIdentidade'],
-                'tituloEleitor': None if 'tituloEleitor' not in item else item['tituloEleitor'],
-                'zonaEleitoral': None if 'zonaEleitoral' not in item else item['zonaEleitoral'],
-                'secaoEleitoral': None if 'secaoEleitoral' not in item else item['secaoEleitoral'],
+                'orgaoEmissorIdentidade': None if 'orgaoemissoridentidade' not in item else item['orgaoemissoridentidade'],
+                'ufEmissaoIdentidade': None if 'ufemissaoidentidade' not in item else item['ufemissaoidentidade'],
+                'dataEmissaoIdentidade': None if 'dataemissaoidentidade' not in item else item['dataemissaoidentidade'],
+                'dataValidadeIdentidade': None if 'datavalidadeidentidade' not in item else item['datavalidadeidentidade'],
+                'tituloEleitor': None if 'tituloeleitor' not in item else item['tituloeleitor'],
+                'zonaEleitoral': None if 'zonaeleitoral' not in item else item['zonaeleitoral'],
+                'secaoEleitoral': None if 'secaoeleitoral' not in item else item['secaoeleitoral'],
                 'ctps': None if 'ctps' not in item else item['ctps'],
-                'serieCtps': None if 'serieCtps' not in item else item['serieCtps'],
-                'ufEmissaoCtps': None if 'ufEmissaoCtps' not in item else item['ufEmissaoCtps'],
-                'dataEmissaoCtps': None if 'dataEmissaoCtps' not in item else item['dataEmissaoCtps'],
-                'dataValidadeCtps': None if 'dataValidadeCtps' not in item else item['dataValidadeCtps'],
+                'serieCtps': None if 'seriectps' not in item else item['seriectps'],
+                'ufEmissaoCtps': None if 'ufEmissaoctps' not in item else item['ufEmissaoctps'],
+                'dataEmissaoCtps': None if 'dataemissaoctps' not in item else item['dataemissaoctps'],
+                'dataValidadeCtps': None if 'datavalidadectps' not in item else item['datavalidadectps'],
                 'pis': None if 'pis' not in item else item['pis'],
-                'dataEmissaoPis': None if 'dataEmissaoPis' not in item else item['dataEmissaoPis'],
-                'situacaoGrauInstrucao': None if 'situacaoGrauInstrucao' not in item else item['situacaoGrauInstrucao'],
-                'grauInstrucao': None if 'grauInstrucao' not in item else item['grauInstrucao'],
-                'certificadoReservista': None if 'certificadoReservista' not in item else item['certificadoReservista'],
+                'dataEmissaoPis': None if 'dataemissaopis' not in item else item['dataemissaopis'],
+                'situacaoGrauInstrucao': None if 'situacaograuinstrucao' not in item else item['situacaograuinstrucao'],
+                'grauInstrucao': None if 'grauinstrucao' not in item else item['grauinstrucao'],
+                'certificadoReservista': None if 'certificadoreservista' not in item else item['certificadoreservista'],
                 'ric': None if 'ric' not in item else item['ric'],
-                'ufEmissaoRic': None if 'ufEmissaoRic' not in item else item['ufEmissaoRic'],
-                'orgaoEmissorRic': None if 'orgaoEmissorRic' not in item else item['orgaoEmissorRic'],
-                'dataEmissaoRic': None if 'dataEmissaoRic' not in item else item['dataEmissaoRic'],
+                'ufEmissaoRic': None if 'ufemissaoric' not in item else item['ufemissaoric'],
+                'orgaoEmissorRic': None if 'orgaoemissorric' not in item else item['orgaoemissorric'],
+                'dataEmissaoRic': None if 'dataemissaoric' not in item else item['dataemissaoric'],
                 'cns': None if 'cns' not in item else item['cns'],
-                'dataEmissaoCns': None if 'dataEmissaoCns' not in item else item['dataEmissaoCns'],
+                'dataEmissaoCns': None if 'dataemissaocns' not in item else item['dataemissaocns'],
                 'cnh': None if 'cnh' not in item else item['cnh'],
-                'categoriaCnh': None if 'categoriaCnh' not in item else item['categoriaCnh'],
-                'dataEmissaoCnh': None if 'dataEmissaoCnh' not in item else item['dataEmissaoCnh'],
-                'dataVencimentoCnh': None if 'dataVencimentoCnh' not in item else item['dataVencimentoCnh'],
-                'dataPrimeiraCnh': None if 'dataPrimeiraCnh' not in item else item['dataPrimeiraCnh'],
-                'ufEmissaoCnh': None if 'ufEmissaoCnh' not in item else item['ufEmissaoCnh'],
-                'observacoesCnh': None if 'observacoesCnh' not in item else item['observacoesCnh'],
+                'categoriaCnh': None if 'categoriacnh' not in item else item['categoriacnh'],
+                'dataEmissaoCnh': None if 'dataemissaocnh' not in item else item['dataemissaocnh'],
+                'dataVencimentoCnh': None if 'datavencimentocnh' not in item else item['datavencimentocnh'],
+                'dataPrimeiraCnh': None if 'dataprimeiracnh' not in item else item['dataprimeiracnh'],
+                'ufEmissaoCnh': None if 'ufemissaocnh' not in item else item['ufemissaocnh'],
+                'observacoesCnh': None if 'observacoescnh' not in item else item['observacoescnh'],
                 'papel': None if 'papel' not in item else item['papel']
             }
         }
@@ -187,6 +183,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                 dict_dados['conteudo']['filiacoes'].append({
                     'nome': campo[0],
                     'tipoFiliacao': campo[1],
+                    'naturezaFiliacao': campo[2]
                 })
         if item['deficiencias'] is not None:
             dict_dados['conteudo'].update({
@@ -194,6 +191,28 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             })
             dict_dados['conteudo']['deficiencias'].append({
                 'tipo': item['deficiencias']
+            })
+        if item['nacionalidade'] is not None:
+            dict_dados['conteudo'].update({
+                'nacionalidade': {
+                    'id': item['nacionalidade']
+                }
+            })
+        if item['paisnascimento'] is not None:
+            dict_dados['conteudo'].update({
+                'paisNascimento': {
+                    'id': item['paisnascimento']
+                }
+            })
+        if item['naturalidade'] is not None:
+            dict_dados['conteudo'].update({
+                'naturalidade': {
+                    'id': item['naturalidade']
+                }
+            })
+        if item['naturalizado'] is not None:
+            dict_dados['conteudo'].update({
+                'naturalizado':  item['naturalizado']
             })
         contador += 1
         # print(f'Dados gerados ({contador}): ', dict_dados)

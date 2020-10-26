@@ -10,11 +10,14 @@ limite_lote = 500
 url = 'https://pessoal.cloud.betha.com.br/service-layer/v1/api/estado'
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
-    dados_assunto = coletar_dados(params_exec)
-    dados_enviar = pre_validar(params_exec, dados_assunto)
-    if not params_exec.get('somente_pre_validar'):
-        iniciar_envio(params_exec, dados_enviar, 'POST')
-    model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
+    if False:
+        busca_dados(params_exec)
+    if True:
+        dados_assunto = coletar_dados(params_exec)
+        dados_enviar = pre_validar(params_exec, dados_assunto)
+        if not params_exec.get('somente_pre_validar'):
+            iniciar_envio(params_exec, dados_enviar, 'POST')
+        model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
 
 def busca_dados(params_exec):
     print('- Iniciando busca de dados no cloud.')

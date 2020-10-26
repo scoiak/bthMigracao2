@@ -10,14 +10,14 @@ limite_lote = 1000
 url = "https://pessoal.cloud.betha.com.br/service-layer/v1/api/bairro"
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
-    #busca_dados(params_exec)
-    #'''
-    dados_assunto = coletar_dados(params_exec)
-    dados_enviar = pre_validar(params_exec, dados_assunto)
-    if not params_exec.get('somente_pre_validar'):
-        iniciar_envio(params_exec, dados_enviar, 'POST')
-    model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
-    #'''
+    if False:
+        busca_dados(params_exec)
+    if True:
+        dados_assunto = coletar_dados(params_exec)
+        dados_enviar = pre_validar(params_exec, dados_assunto)
+        if not params_exec.get('somente_pre_validar'):
+            iniciar_envio(params_exec, dados_enviar, 'POST')
+        model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
 
 def coletar_dados(params_exec):
     print('- Iniciando a consulta dos dados a enviar.')
@@ -57,7 +57,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     token = params_exec['token']
     contador = 0
     for item in dados:
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['nome'].upper(), item['codigo'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['nome'], item['municipio'])
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {
@@ -77,8 +77,8 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'hash_chave_dsk': hash_chaves,
             'descricao_tipo_registro': 'Cadastro de Bairro',
             'id_gerado': None,
-            'i_chave_dsk1': item['nome'].upper(),
-            'i_chave_dsk2': item['codigo']
+            'i_chave_dsk1': item['nome'],
+            'i_chave_dsk2': item['municipio']
         })
     model.insere_tabela_controle_migracao_registro2(params_exec, lista_req=lista_controle_migracao)
     req_res = interacao_cloud.preparar_requisicao(lista_dados=lista_dados_enviar,
@@ -95,14 +95,14 @@ def busca_dados(params_exec):
     print(f'- Foram encontrados {len(registros)} registros cadastrados no cloud.')
     registros_formatados = []
     for item in registros:
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['nome'].upper(), item['municipio']['id'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['nome'], item['municipio']['id'])
         registros_formatados.append({
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
             'descricao_tipo_registro': 'Cadastro de Bairro',
             'id_gerado': item['id'],
-            'i_chave_dsk1': item['nome'].upper(),
+            'i_chave_dsk1': item['nome'],
             'i_chave_dsk2': item['municipio']['id']
         })
     model.insere_tabela_controle_migracao_registro(params_exec, lista_req=registros_formatados)
