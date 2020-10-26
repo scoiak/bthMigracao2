@@ -52,6 +52,7 @@ def preparar_requisicao(lista_dados, *args, **kwargs):
                                         token=kwargs.get('token'),
                                         tipo_registro=kwargs.get('tipo_registro'))
                 retorno_requisicao.append(ret_envio)
+
                 lotes_enviados += 1
                 print(f'\r- Lotes enviados: {lotes_enviados}/{total_lotes}', end='')
                 lote_envio = []
@@ -75,7 +76,7 @@ def preparar_requisicao(lista_dados, *args, **kwargs):
 def enviar_lote(lote, *args, **kwargs):
     json_envio_lote = json.dumps(lote)
     retorno_requisicao = {
-        'sistema': '1',
+        'sistema': '300',
         'tipo_registro': kwargs.get('tipo_registro'),
         'data_hora_envio': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         'usuario': f'(bthMigracao) {getpass.getuser()}',
@@ -89,6 +90,7 @@ def enviar_lote(lote, *args, **kwargs):
         token = kwargs.get('token')
         headers = {'authorization': f'bearer {token}', 'content-type': 'application/json'}
         retorno_req = requests.post(url, headers=headers, data=json_envio_lote)
+        # print("DEBUG - Tempo requisição: ", retorno_req.elapsed.total_seconds(), ' segundos.')
         if 'json' in retorno_req.headers.get('Content-Type'):
             retorno_json = retorno_req.json()
 
