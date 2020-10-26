@@ -313,7 +313,10 @@ def atualiza_controle_migracao_registro(id_gerado, hash_chave):
 
 def valida_lotes_enviados(params_exec, *args, **kwargs):
     print('- Iniciando validação de lotes enviados pendentes.')
+    dh_inicio = datetime.now()
     pgcnn = None
+    lotes_validados = 0
+    total_lotes = 0
     retorno_analise_lote = {
         'incosistencia_registros': 0,
         'incosistencia_lotes': 0
@@ -329,19 +332,21 @@ def valida_lotes_enviados(params_exec, *args, **kwargs):
                 slq += f" AND tipo_registro = '{kwargs.get('tipo_registro')}'"
             df = pgcnn.exec_sql(slq)
             existe_pendencia = False
+            if total_lotes == 0:
+                total_lotes = len(df)
 
             if len(df) == 0:
                 print('- Não restam lotes pendentes para validação.')
             else:
                 # Inicia rodadas de verificação de lotes pendentes
                 agora = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-                print(f'- Verificando {len(df)} lote(s) pendente(s) ({agora}).')
+                # print(f'- Verificando {len(df)} lote(s) pendente(s) ({agora}).')
                 headers = {'authorization': f'bearer {params_exec["token"]}', 'content-type': 'application/json'}
 
                 # Se existir lote spendentes, iniciar o loop de consultas
                 for lote in df.to_dict('records'):
+                    print(f'\r- Lotes executados: {lotes_validados}/{total_lotes}', end='')
                     url = lote['url_consulta']
-                    print('url consulta: ', url)
                     req = requests.get(url, headers=headers)
                     if 'json' in req.headers.get('Content-Type'):
                         retorno_json = req.json()
@@ -367,19 +372,19 @@ def valida_lotes_enviados(params_exec, *args, **kwargs):
                                                                         retorno_json,
                                                                         id_lote=id_lote,
                                                                         tipo_registro=kwargs.get('tipo_registro'))
+                            lotes_validados += 1
+                            print(f'\r- Lotes executados: {lotes_validados}/{total_lotes}', end='')
                     else:
                         print('Retorno não JSON:', req.status_code, req.text)
 
             if existe_pendencia:
                 time.sleep(5)
 
-        print('- Consulta de lotes finalizada.')
         if retorno_analise_lote["incosistencia_registros"] > 0:
-            print(f'- {retorno_analise_lote["incosistencia_registros"]} registro(s) em '
-                  f'{retorno_analise_lote["incosistencia_lotes"]} lote(s) retornaram inconsistência. '
-                  f'Verificar tabela public.controle_migracao_registro_ocor para mais informações.')
+            print(f'\n- {retorno_analise_lote["incosistencia_registros"]} registro(s) retornaram inconsistência. ')
         else:
-            print('- Nenhuma inconsistência encontrada nos lotes enviados.')
+            print('\n- Nenhuma inconsistência encontrada nos lotes enviados.')
+        print(f'- Consulta de lotes finalizada. ({(datetime.now() - dh_inicio).total_seconds()} segundos)')
     except Exception as error:
         print("Erro ao executar função 'valida_lotes_enviados'.", error)
 
@@ -425,7 +430,12 @@ def analisa_retorno_lote(params_exec, retorno_json, **kwargs):
 
         # Armazena o horário de finalização de execução do lote
         if 'updatedIn' in retorno_json:
-            data_hora_ret = datetime.strptime(retorno_json['updatedIn'], '%Y-%m-%dT%H:%M:%S.%f')
+            if re.match('\d{2}\.\d+$', retorno_json['updatedIn']):
+                data_hora_ret = datetime.strptime(retorno_json['updatedIn'], '%Y-%m-%dT%H:%M:%S.%f')
+            elif re.match('\d{2}\:\d{2}\:\d{2}$', retorno_json['updatedIn']):
+                data_hora_ret = datetime.strptime(retorno_json['updatedIn'], '%Y-%m-%dT%H:%M:%S')
+            else:
+                data_hora_ret = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         else:
             data_hora_ret = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
@@ -484,8 +494,6 @@ def analisa_retorno_lote(params_exec, retorno_json, **kwargs):
 
                 # Ação para registro não cadastrado devido a erro
                 else:
-                    pass
-                    """
                     resultado_analise['incosistencia_registros'] += 1
                     registro_status = 1
                     registro_resolvido = 1
@@ -494,10 +502,11 @@ def analisa_retorno_lote(params_exec, retorno_json, **kwargs):
 
                     # No desktop, existe uma proc chamada 'dbf_atualiza_controle_migracao_registro_integ'
                     # que faz a atualização da tabela _ocor e _registro simultaneamente, verificar
-                    dados_inserir_ocor.append((0, registro['idIntegracao'], get_codigo_sistema(), kwargs.get('tipo_registro'),
-                                            None, 9, registro_status, registro_resolvido, 1, kwargs.get('id_lote'),
-                                            registro['mensagem'], '', '', id_existente))
-                    """
+                    dados_inserir_ocor.append((0, registro['idIntegracao'], get_codigo_sistema(),
+                                               kwargs.get('tipo_registro'), None, 9, registro_status,
+                                               registro_resolvido, 1, kwargs.get('id_lote'),
+                                               registro['mensagem'], '', '', id_existente))
+
         insere_tabela_controle_registro_ocor(dados_inserir_ocor)
         atualiza_dados_controle_migracao(lista_dados=dados_atualizar_controle_reg)
     except Exception as error:
@@ -530,10 +539,57 @@ def atualiza_dados_controle_migracao(lista_dados):
 
 def get_codigo_sistema():
     desc_sistema = settings.SISTEMA_ORIGEM
-    if desc_sistema == 'folha':
-        cod_sistema = 300
-    elif desc_sistema == 'contabil':
+
+    if desc_sistema == 'contabil':
         cod_sistema = 1
+    elif desc_sistema == 'folha':
+        cod_sistema = 300
+    elif desc_sistema == 'tributos':
+        cod_sistema = 301
+    elif desc_sistema == 'patrimonio':
+        cod_sistema = 302
+    elif desc_sistema == 'protocolo':
+        cod_sistema = 304
+    elif desc_sistema == 'compras':
+        cod_sistema = 305
+    elif desc_sistema == 'frotas':
+        cod_sistema = 306
+    elif desc_sistema == 'estoque':
+        cod_sistema = 307
+    elif desc_sistema == 'educacao':
+        cod_sistema = 308
+    elif desc_sistema == 'escola':
+        cod_sistema = 317
+    elif desc_sistema == 'controle-financeiro':
+        cod_sistema = 324
+    elif desc_sistema == 'faturamento-agua':
+        cod_sistema = 309
+    elif desc_sistema == 'biblioteca':
+        cod_sistema = 320
+    elif desc_sistema == 'plurianual':
+        cod_sistema = 311
+    elif desc_sistema == 'legislacao':
+        cod_sistema = 312
+    elif desc_sistema == 'rh':
+        cod_sistema = 314
+    elif desc_sistema == 'tesouraria':
+        cod_sistema = 318
+    elif desc_sistema == 'proposta':
+        cod_sistema = 319
+    elif desc_sistema == 'planejamento':
+        cod_sistema = 325
+    elif desc_sistema == 'ponto':
+        cod_sistema = 329
+    elif desc_sistema == 'validador':
+        cod_sistema = 331
+    elif desc_sistema == 'procuradoria':
+        cod_sistema = 335
+    elif desc_sistema == 'legislativo':
+        cod_sistema = 303
+    elif desc_sistema == 'producao-primaria':
+        cod_sistema = 340
+    elif desc_sistema == 'sapo-utilitario':
+        cod_sistema = 341
     else:
         cod_sistema = 999
     return cod_sistema

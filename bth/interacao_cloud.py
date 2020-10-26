@@ -3,6 +3,7 @@ import json
 import re
 import getpass
 import settings
+import math
 import logging
 from datetime import datetime
 
@@ -35,21 +36,34 @@ def verifica_token(token):
 
 
 def preparar_requisicao(lista_dados, *args, **kwargs):
+    print('- Iniciando montagem e envio de lotes.')
+    dh_inicio = datetime.now()
     retorno_requisicao = []
     lote_envio = []
+    lotes_enviados = 0
     tamanho_lote = 1 if 'tamanho_lote' not in kwargs else kwargs.get('tamanho_lote')
+    total_lotes = math.ceil(len(lista_dados) / tamanho_lote)
     try:
         for i in lista_dados:
             lote_envio.append(i)
             if len(lote_envio) >= tamanho_lote:
-                ret_envio = enviar_lote(lote_envio, url=kwargs.get('url'),
-                                        token=kwargs.get('token'), tipo_registro=kwargs.get('tipo_registro'))
+                ret_envio = enviar_lote(lote_envio,
+                                        url=kwargs.get('url'),
+                                        token=kwargs.get('token'),
+                                        tipo_registro=kwargs.get('tipo_registro'))
                 retorno_requisicao.append(ret_envio)
+                lotes_enviados += 1
+                print(f'\r- Lotes enviados: {lotes_enviados}/{total_lotes}', end='')
                 lote_envio = []
         if len(lote_envio) != 0:
             ret_envio = enviar_lote(lote_envio, url=kwargs.get('url'),
                                     token=kwargs.get('token'), tipo_registro=kwargs.get('tipo_registro'))
             retorno_requisicao.append(ret_envio)
+
+        if tamanho_lote != total_lotes:
+            print(f'\r- Lotes enviados: {total_lotes}/{total_lotes}', end='')
+
+        print(f'\n- Envio de lotes finalizado. ({(datetime.now() - dh_inicio).total_seconds()} segundos)')
 
     except Exception as error:
         print(f'Erro durante a execução da função preparar_requisicao. {error}')
@@ -84,6 +98,8 @@ def enviar_lote(lote, *args, **kwargs):
                 retorno_requisicao['id_lote'] = retorno_json['id']
             else:
                 retorno_requisicao['id_lote'] = ''
+
+            # print('DEBUG - Lote enviado: ', retorno_requisicao['id_lote'])
 
             if settings.SISTEMA_ORIGEM == 'folha':
                 retorno_requisicao['url_consulta'] = url + '/lotes/' + retorno_requisicao['id_lote']
