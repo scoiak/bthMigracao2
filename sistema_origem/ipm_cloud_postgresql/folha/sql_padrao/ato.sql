@@ -1,13 +1,11 @@
 select
-	'300' as sistema,
-	'ato' as tipo_registro,
 	num_ato as chave_dsk1,
 	*
 from (
 	select
 		(CAST(ato.txjnumero as text) || '/' || CAST(ato.txjano as text)) as num_ato,
 		cat.tctcodigo as id,
-		cat.tctcodigo as cod_ato,
+		cat.tctcodigo as codigo,
 		cat.tctdescricao as tipo_ato,
 	    cat.tctdescricao as desc_natureza,
        	mvto.movdata as data_inicial,

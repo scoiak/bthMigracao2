@@ -1,30 +1,18 @@
-"""
-    ROTINA PRINCIPAL QUE É CHAMADA ARA O ENVIO
-"""
 import settings
 import sistema_origem.ipm_cloud_postgresql.model as model
 import bth.interacao_cloud as interacao_cloud
 from datetime import datetime
 
-
 def iniciar():
     print(':: Iniciando migração do sistema Folha')
-
     params_exec = {
         'somente_pre_validar': False,
         'token': '72612895-9758-467d-a2ef-36b8b57c3198',
         'ano': 2020
     }
-    # Exibe mensagem inicial de início de execução
     mensagem_inicio(params_exec)
-
-    # Realiza a validação do token informado
     interacao_cloud.verifica_token(params_exec['token'])
-
-    # Verifica existência de tabelas e funções de controle
     verifica_tabelas_controle()
-
-    # Inicia chamadas de rotinas de envio de dados
     # enviar(params_exec, 'paises')
     # enviar(params_exec, 'estados')
     # enviar(params_exec, 'cidades')
@@ -44,7 +32,6 @@ def iniciar():
     # enviar(params_exec, 'concurso')
     # enviar(params_exec, 'pessoa-fisica')
 
-
 def enviar(params_exec, tipo_registro, *args, **kwargs):
     print(f'\n:: Iniciando execução do assunto {tipo_registro}')
     tempo_inicio = datetime.now()
@@ -54,11 +41,9 @@ def enviar(params_exec, tipo_registro, *args, **kwargs):
     print(f'- Rotina de {tipo_registro} finalizada. '
           f'\nTempo total de execução: {(datetime.now() - tempo_inicio).total_seconds()} segundos.')
 
-
 def mensagem_inicio(params_exec):
     print(f'\n:: Iniciando execução da migração do sistema {settings.BASE_ORIGEM} para Betha Cloud utilicando os '
           f'seguintes parâmetros: \n- {params_exec}')
-
 
 def verifica_tabelas_controle():
     pgcnn = model.PostgreSQLConnection()
