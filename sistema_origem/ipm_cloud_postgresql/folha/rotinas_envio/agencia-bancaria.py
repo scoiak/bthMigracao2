@@ -132,7 +132,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'i_chave_dsk2': item['banco'],
         })
     if True:
-        model.insere_tabela_controle_migracao_registro2(params_exec, lista_req=lista_controle_migracao)
+        model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)
         req_res = interacao_cloud.preparar_requisicao(lista_dados=lista_dados_enviar,
                                                       token=token,
                                                       url=url,
