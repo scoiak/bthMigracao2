@@ -17,7 +17,7 @@ def iniciar():
     # enviar(params_exec, 'pais')
     # enviar(params_exec, 'estado')
     # enviar(params_exec, 'municipio')
-    enviar(params_exec, 'bairro')
+    # enviar(params_exec, 'bairro')
     # enviar(params_exec, 'tipo-logradouro')
     # enviar(params_exec, 'logradouro')
     # enviar(params_exec, 'banco')
@@ -31,7 +31,7 @@ def iniciar():
     # enviar(params_exec, 'organograma')
     # enviar(params_exec, 'horario')
     # enviar(params_exec, 'concurso')
-    # enviar(params_exec, 'pessoa-fisica')
+    enviar(params_exec, 'pessoa-fisica')
 
 
 def enviar(params_exec, tipo_registro, *args, **kwargs):

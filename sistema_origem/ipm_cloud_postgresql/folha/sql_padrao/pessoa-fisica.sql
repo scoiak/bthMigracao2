@@ -3,7 +3,8 @@ select * from (
 	u.unicodigo as id,
 	u.unicodigo as codigo,
 	u.uninomerazao as nome,
-	replace(replace(replace(u.unicpfcnpj,'/',''),'-',''),'.','') as cpf,
+	-- replace(replace(replace(u.unicpfcnpj,'/',''),'-',''),'.','') as cpf,
+	regexp_replace(u.unicpfcnpj,'[/.-]','','g') as cpf,
 	cast(uf.unfdatanascimento as varchar) as dataNascimento,
 	(case uf.unfestadocivil when 1 then 'SOLTEIRO' when 2 then 'CASADO' when 3 then 'SEPARADO_CONSENSUALMENTE' when 4 then 'DIVORCIADO' when 5 then 'VIUVO' when 6 then 'UNIAO_ESTAVEL' else null end) as estadoCivil,
 	(case uf.unfsexo when 1 then 'MASCULINO' when 2 then 'FEMININO' else null end) as sexo,
@@ -22,7 +23,8 @@ select * from (
 	null as temFilhosBrasileiros,
 	null as situacaoEstrangeiro,
 	null as inscricaoMunicipal,
-	replace(replace(replace(u.unirgie,'/',''),'-',''),'.','') as identidade,
+	(case when length(regexp_replace(u.unirgie,'[/.-]|[1]','','g')) > 1 then (case when (select suc.unicodigo from wun.tbunico as suc where suc.unirgie = u.unirgie order by suc.unicodigo limit 1) = u.unicodigo then regexp_replace(u.unirgie,'[/.-]|[A-Za-z]','','g') else null end) else null end) as identidade,
+	-- replace(replace(replace(u.unirgie,'/',''),'-',''),'.','') as identidade,
 	uf.unfrgorgaoemissor as orgaoEmissorIdentidade,
 	cast(uf.estcodigoemissaorg as varchar) as ufEmissaoIdentidade,
 	cast((case when uf.unfrgdataemissao < uf.unfdatanascimento then uf.unfdatanascimento else uf.unfrgdataemissao end) as varchar) as dataEmissaoIdentidade,
@@ -35,12 +37,12 @@ select * from (
 	uf.estcodigoemissaoctps as ufEmissaoCtps,
 	cast((case when uf.unfdataemissaoctps < uf.unfdatanascimento then uf.unfdatanascimento else uf.unfdataemissaoctps end) as varchar) as dataEmissaoCtps,
 	null as dataValidadeCtps,
-	(case when length(uf.unfpispasep::varchar) > 1 then cast(uf.unfpispasep as varchar) else null end) as pis,
+	(case when length(uf.unfpispasep::varchar) > 1 then (case when (select suc.unicodigo from wun.tbunicofisica as suc where suc.unfpispasep = uf.unfpispasep limit 1) = u.unicodigo then uf.unfpispasep::varchar else null end) else null end) as pis,
 	null as dataEmissaoPis,
 	(case when uf.gincodigo in (2) then 'NAO_ALFABETIZADO' when uf.gincodigo in (3,4) then 'ENSINO_FUNDAMENTAL_ANOS_FINAIS' when uf.gincodigo in (5,6) then 'ENSINO_MEDIO' when uf.gincodigo in (7,8) then 'ENSINO_SUPERIOR_SEQUENCIAL' when uf.gincodigo in (9) then 'POS_GRADUACAO_ESPECIALIZACAO' when uf.gincodigo in (10) then 'POS_GRADUACAO_MESTRADO' when uf.gincodigo in (11) then 'POS_GRADUACAO_DOUTORADO' when uf.gincodigo in (12) then 'ENSINO_FUNDAMENTAL_ANOS_INICIAIS' when uf.gincodigo in (13) then 'ENSINO_FUNDAMENTAL_ANOS_INICIAIS' when uf.gincodigo in (14) then 'ENSINO_FUNDAMENTAL_ANOS_FINAIS' when uf.gincodigo in (15) then 'ENSINO_PROFISSIONALIZANTE' when uf.gincodigo in (16) then 'ENSINO_PROFISSIONALIZANTE' when uf.gincodigo in (17) then 'POS_DOUTORADO_HABILITACAO'else null end) as grauInstrucao,
 	(case when uf.gincodigo in (1,2,3,5,7,12,14,15) then 'INCOMPLETO' when uf.gincodigo in (4,6,8,9,10,11,13,16,17) then 'COMPLETO' else null end) as situacaoGrauInstrucao,
 	cast(uf.unfnrocreservista as varchar) as certificadoReservista,
-	uf.unfcatcreservista as ric,
+	null as ric,
 	null as ufEmissaoRic,
 	uf.unforgaocreservista as orgaoEmissorRic,
 	cast(uf.unfemissaocreser as varchar) as dataEmissaoRic,
@@ -61,18 +63,18 @@ select * from (
 	(case uf.unftipodeficiencia when 2 then 'FISICA' when 3 then 'AUDITIVA' when 4 then 'MENTAL' when 5 then 'MULTIPLA' when 6 then 'AUTISMO' when 7 then 'REABILITADO' when 8 then 'OUTRA' when 9 then 'VISUAL' when 10 then 'MENTAL' when 11 then 'VISUAL' when 12 then 'MULTIPLA' else null end) as deficiencias,
 	((case when uf.unfnomemae is not null then (trim(uf.unfnomemae) || '%|%' || 'MAE%|%BIOLOGICA' || (case when trim(uf.unfnomepai) is not null then '%||%' else null end)) else null end) || (case when trim(uf.unfnomepai) is not null then (trim(uf.unfnomepai) || '%|%' || 'PAI%|%BIOLOGICA') else null end)) as filiacoes
 from
-	wun.tbunico as u join wun.tbunicofisica as uf on uf.unicodigo = u.unicodigo
+	wun.tbunico as u left join wun.tbunicofisica as uf on uf.unicodigo = u.unicodigo
 where
 	u.unitipopessoa = 1
 and
 	u.unisituacao = 1
 and
-	length(replace(replace(replace(replace(u.unicpfcnpj,'/',''),'-',''),'.',''),'0','')) > 0
+	length(regexp_replace(u.unicpfcnpj,'[/.-]|[0]','','g')) > 0
+	-- length(replace(replace(replace(replace(u.unicpfcnpj,'/',''),'-',''),'.',''),'0','')) > 0
 and
 	uf.unfsexo in (1,2)
 and
 	uf.unfdatanascimento is not null
-and
-	(select suc.unicodigo from wun.tbunico as suc where suc.unitipopessoa = 1 and suc.unisituacao = 1 and suc.unicpfcnpj = u.unicpfcnpj order by suc.unicodigo asc limit 1) = u.unicodigo
+-- and (select suc.unicodigo from wun.tbunico as suc where suc.unitipopessoa = 1 and suc.unisituacao = 1 and suc.unicpfcnpj = u.unicpfcnpj order by suc.unicodigo asc limit 1) = u.unicodigo
 ) as a
-where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'pessoa-fisica', cast(codigo as varchar)))) is null
+where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'pessoa-fisica', cpf))) is null

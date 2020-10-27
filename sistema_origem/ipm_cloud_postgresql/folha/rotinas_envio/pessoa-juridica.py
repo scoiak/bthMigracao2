@@ -4,40 +4,18 @@ import json
 import logging
 from datetime import datetime
 
-tipo_registro = 'pessoa-fisica'
+tipo_registro = 'pessoa-juridica'
 sistema = 300
 limite_lote = 500
-url = "https://pessoal.cloud.betha.com.br/service-layer/v1/api/pessoa-fisica"
+url = "https://pessoal.cloud.betha.com.br/service-layer/v1/api/pessoa-juridica"
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
-    if False:
-        busca_dados(params_exec)
-    if True:
-        dados_assunto = coletar_dados(params_exec)
-        dados_enviar = pre_validar(params_exec, dados_assunto)
-        if not params_exec.get('somente_pre_validar'):
-            iniciar_envio(params_exec, dados_enviar, 'POST')
-        model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
-
-
-def busca_dados(params_exec):
-    print('- Iniciando busca de dados no cloud.')
-    registros = interacao_cloud.busca_dados_cloud(params_exec, url=url)
-    print(f'- Foram encontrados {len(registros)} registros cadastrados no cloud.')
-    registros_formatados = []
-    for item in registros:
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['cpf'])
-        registros_formatados.append({
-            'sistema': sistema,
-            'tipo_registro': tipo_registro,
-            'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Tipo de Logradouro',
-            'id_gerado': item['id'],
-            'i_chave_dsk1': item['cpf']
-        })
-    model.insere_tabela_controle_migracao_registro(params_exec, lista_req=registros_formatados)
-    print('- Busca finalizada. Tabelas de controles atualizas com sucesso.')
+    dados_assunto = coletar_dados(params_exec)
+    dados_enviar = pre_validar(params_exec, dados_assunto)
+    if not params_exec.get('somente_pre_validar'):
+        iniciar_envio(params_exec, dados_enviar, 'POST')
+    model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
 
 
 def coletar_dados(params_exec):
@@ -80,7 +58,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     token = params_exec['token']
     contador = 0
     for item in dados:
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['cpf'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['codigo'])
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {
@@ -101,10 +79,12 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                 'situacaoEstrangeiro': None if 'situacaoestrangeiro' not in item else item['situacaoestrangeiro'],
                 'inscricaoMunicipal': None if 'inscricaomunicipal' not in item else item['inscricaomunicipal'],
                 'identidade': None if 'identidade' not in item else item['identidade'],
-                'orgaoEmissorIdentidade': None if 'orgaoemissoridentidade' not in item else item['orgaoemissoridentidade'],
+                'orgaoEmissorIdentidade': None if 'orgaoemissoridentidade' not in item else item[
+                    'orgaoemissoridentidade'],
                 'ufEmissaoIdentidade': None if 'ufemissaoidentidade' not in item else item['ufemissaoidentidade'],
                 'dataEmissaoIdentidade': None if 'dataemissaoidentidade' not in item else item['dataemissaoidentidade'],
-                'dataValidadeIdentidade': None if 'datavalidadeidentidade' not in item else item['datavalidadeidentidade'],
+                'dataValidadeIdentidade': None if 'datavalidadeidentidade' not in item else item[
+                    'datavalidadeidentidade'],
                 'tituloEleitor': None if 'tituloeleitor' not in item else item['tituloeleitor'],
                 'zonaEleitoral': None if 'zonaeleitoral' not in item else item['zonaeleitoral'],
                 'secaoEleitoral': None if 'secaoeleitoral' not in item else item['secaoeleitoral'],
@@ -180,66 +160,21 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                     'complemento': campo[5],
                     'principal': campo[6]
                 })
-        if item['contasbancarias'] is not None:
+        if item['responsaveis'] is not None:
             dict_dados['conteudo'].update({
-                'contasBancarias': []
+                'responsaveis': []
             })
-            lista = item['contasbancarias'].split('%||%')
+            lista = item['responsaveis'].split('%||%')
             for listacampo in lista:
                 campo = listacampo.split('%|%')
-                dict_dados['conteudo']['contasBancarias'].append({
-                    'agencia': {
-                        'id': campo[1]
-                    },
-                    'numero': campo[2],
-                    'digito': campo[3],
-                    'tipo': campo[4],
-                    'dataAbertura': campo[5],
-                    'dataFechamento': campo[6],
-                    'situacao': campo[7],
-                    'principal': campo[8]
+                dict_dados['conteudo']['responsaveis'].append({
+                    'dataInicio': campo[0],
+                    'dataTermino': campo[1],
+                    'qualificacao': campo[2],
+                    'responsavel': {
+                        'id': campo[3]
+                    }
                 })
-        if item['filiacoes'] is not None:
-            dict_dados['conteudo'].update({
-                'filiacoes': []
-            })
-            lista = item['filiacoes'].split('%||%')
-            for listacampo in lista:
-                campo = listacampo.split('%|%')
-                dict_dados['conteudo']['filiacoes'].append({
-                    'nome': campo[0],
-                    'tipoFiliacao': campo[1],
-                    'naturezaFiliacao': campo[2]
-                })
-        if item['deficiencias'] is not None:
-            dict_dados['conteudo'].update({
-                'deficiencias': []
-            })
-            dict_dados['conteudo']['deficiencias'].append({
-                'tipo': item['deficiencias']
-            })
-        if item['nacionalidade'] is not None:
-            dict_dados['conteudo'].update({
-                'nacionalidade': {
-                    'id': item['nacionalidade']
-                }
-            })
-        if item['paisnascimento'] is not None:
-            dict_dados['conteudo'].update({
-                'paisNascimento': {
-                    'id': item['paisnascimento']
-                }
-            })
-        if item['naturalidade'] is not None:
-            dict_dados['conteudo'].update({
-                'naturalidade': {
-                    'id': item['naturalidade']
-                }
-            })
-        if item['naturalizado'] is not None:
-            dict_dados['conteudo'].update({
-                'naturalizado': item['naturalizado']
-            })
         contador += 1
         # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
@@ -249,7 +184,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'hash_chave_dsk': hash_chaves,
             'descricao_tipo_registro': 'Cadastro de Pessoa Física',
             'id_gerado': None,
-            'i_chave_dsk1': item['cpf']
+            'i_chave_dsk1': item['codigo']
         })
     if True:
         model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)
