@@ -3,6 +3,7 @@ import sistema_origem.ipm_cloud_postgresql.model as model
 import bth.interacao_cloud as interacao_cloud
 from datetime import datetime
 
+
 def iniciar():
     print(':: Iniciando migração do sistema Folha')
     params_exec = {
@@ -16,9 +17,9 @@ def iniciar():
     # enviar(params_exec, 'pais')
     # enviar(params_exec, 'estado')
     # enviar(params_exec, 'municipio')
-    # enviar(params_exec, 'bairro')
+    enviar(params_exec, 'bairro')
     # enviar(params_exec, 'tipo-logradouro')
-    enviar(params_exec, 'logradouro')
+    # enviar(params_exec, 'logradouro')
     # enviar(params_exec, 'banco')
     # enviar(params_exec, 'agencia-bancaria')
     # enviar(params_exec, 'natureza-texto-juridico')
@@ -32,6 +33,7 @@ def iniciar():
     # enviar(params_exec, 'concurso')
     # enviar(params_exec, 'pessoa-fisica')
 
+
 def enviar(params_exec, tipo_registro, *args, **kwargs):
     print(f'\n:: Iniciando execução do assunto {tipo_registro}')
     tempo_inicio = datetime.now()
@@ -41,9 +43,11 @@ def enviar(params_exec, tipo_registro, *args, **kwargs):
     print(f'- Rotina de {tipo_registro} finalizada. '
           f'\nTempo total de execução: {(datetime.now() - tempo_inicio).total_seconds()} segundos.')
 
+
 def mensagem_inicio(params_exec):
     print(f'\n:: Iniciando execução da migração do sistema {settings.BASE_ORIGEM} para Betha Cloud utilicando os '
           f'seguintes parâmetros: \n- {params_exec}')
+
 
 def verifica_tabelas_controle():
     pgcnn = model.PostgreSQLConnection()

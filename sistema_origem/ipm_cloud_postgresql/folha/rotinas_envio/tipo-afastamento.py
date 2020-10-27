@@ -60,14 +60,14 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'conteudo': {
                 'descricao': None if 'descricao' not in item else item['descricao'],
                 'classificacao': None if 'classificacao' not in item else item['classificacao'],
-                'tipoMovimentacaoPessoal': None if 'tipoMovimentacaoPessoal' not in item else item['tipoMovimentacaoPessoal'],
-                'diasPrevistos': None if 'diasPrevistos' not in item else item['diasPrevistos'],
-                'perdeTempoServico': None if 'perdeTempoServico' not in item else item['perdeTempoServico'],
-                'consideraVencimento': None if 'consideraVencimento' not in item else item['consideraVencimento'],
-                'reduz13Salario': None if 'reduz13Salario' not in item else item['reduz13Salario'],
-                'reduzFerias': None if 'reduzFerias' not in item else item['reduzFerias'],
+                'tipoMovimentacaoPessoal': None if 'tipomovimentacaopessoal' not in item else item['tipomovimentacaopessoal'],
+                'diasPrevistos': None if 'diasprevistos' not in item else item['diasprevistos'],
+                'perdeTempoServico': None if 'perdetemposervico' not in item else item['perdetemposervico'],
+                'consideraVencimento': None if 'consideravencimento' not in item else item['consideravencimento'],
+                'reduz13Salario': None if 'reduz13salario' not in item else item['reduz13salario'],
+                'reduzFerias': None if 'reduzferias' not in item else item['reduzferias'],
                 'justificado': None if 'justificado' not in item else item['justificado'],
-                'reduzFgts': None if 'reduzFgts' not in item else item['reduzFgts']
+                'reduzFgts': None if 'reduzfgts' not in item else item['reduzfgts']
             }
         }
         contador += 1

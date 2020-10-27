@@ -8,5 +8,5 @@ select
 	from wun.tbcidade as c
 ) as tab
 -- where public.bth_get_situacao_registro('300', 'municipio', nome, cast(estado as varchar)) in (0)
-where not exists (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'municipio', nome, cast(estado as varchar))))
+where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'municipio', nome, cast(estado as varchar)))) is null
 and estado is not null

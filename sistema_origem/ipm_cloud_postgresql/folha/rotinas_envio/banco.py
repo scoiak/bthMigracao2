@@ -10,8 +10,10 @@ tipo_registro = 'banco'
 limite_lote = 500
 url = 'https://pessoal.cloud.betha.com.br/service-layer/v1/api/banco'
 
+
 def iniciar_processo_envio(params_exec, *args, **kwargs):
     busca_dados_cloud(params_exec)
+
 
 def busca_dados_cloud(params_exec):
     print('- Iniciando busca de dados no cloud.')

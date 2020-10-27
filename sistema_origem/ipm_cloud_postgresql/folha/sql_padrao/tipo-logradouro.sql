@@ -8,4 +8,4 @@ select * from (
 	    wun.tbtipolograd as tl
 ) as a
 -- public.bth_get_situacao_registro('300', 'tipo-logradouro', left(upper(tl.tplnome),20)) as situacaoRegistro
-where not exists (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'tipo-logradouro', descricao)))
+where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'tipo-logradouro', descricao))) is null

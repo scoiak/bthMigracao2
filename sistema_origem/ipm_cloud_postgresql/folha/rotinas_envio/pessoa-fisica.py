@@ -6,8 +6,9 @@ from datetime import datetime
 
 tipo_registro = 'pessoa-fisica'
 sistema = 300
-limite_lote = 300
+limite_lote = 500
 url = "https://pessoal.cloud.betha.com.br/service-layer/v1/api/pessoa-fisica"
+
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
     dados_assunto = coletar_dados(params_exec)
@@ -15,6 +16,7 @@ def iniciar_processo_envio(params_exec, *args, **kwargs):
     if not params_exec.get('somente_pre_validar'):
         iniciar_envio(params_exec, dados_enviar, 'POST')
     model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
+
 
 def coletar_dados(params_exec):
     print('- Iniciando a consulta dos dados a enviar.')
@@ -28,6 +30,7 @@ def coletar_dados(params_exec):
         print(f'Erro ao executar função {tipo_registro}. {error}')
     finally:
         return df
+
 
 def pre_validar(params_exec, dados):
     print('- Iniciando pré-validação dos registros.')
@@ -45,6 +48,7 @@ def pre_validar(params_exec, dados):
         logging.error(f'Erro ao executar função "pre_validar". {error}')
     finally:
         return dados_validados
+
 
 def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     print('- Iniciando envio dos dados.')
@@ -75,10 +79,12 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                 'situacaoEstrangeiro': None if 'situacaoestrangeiro' not in item else item['situacaoestrangeiro'],
                 'inscricaoMunicipal': None if 'inscricaomunicipal' not in item else item['inscricaomunicipal'],
                 'identidade': None if 'identidade' not in item else item['identidade'],
-                'orgaoEmissorIdentidade': None if 'orgaoemissoridentidade' not in item else item['orgaoemissoridentidade'],
+                'orgaoEmissorIdentidade': None if 'orgaoemissoridentidade' not in item else item[
+                    'orgaoemissoridentidade'],
                 'ufEmissaoIdentidade': None if 'ufemissaoidentidade' not in item else item['ufemissaoidentidade'],
                 'dataEmissaoIdentidade': None if 'dataemissaoidentidade' not in item else item['dataemissaoidentidade'],
-                'dataValidadeIdentidade': None if 'datavalidadeidentidade' not in item else item['datavalidadeidentidade'],
+                'dataValidadeIdentidade': None if 'datavalidadeidentidade' not in item else item[
+                    'datavalidadeidentidade'],
                 'tituloEleitor': None if 'tituloeleitor' not in item else item['tituloeleitor'],
                 'zonaEleitoral': None if 'zonaeleitoral' not in item else item['zonaeleitoral'],
                 'secaoEleitoral': None if 'secaoeleitoral' not in item else item['secaoeleitoral'],
@@ -161,17 +167,17 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             lista = item['contasbancarias'].split('%||%')
             for listacampo in lista:
                 campo = listacampo.split('%|%')
-                dict_dados['conteudo']['contasbancarias'].append({
+                dict_dados['conteudo']['contasBancarias'].append({
                     'agencia': {
                         'id': campo[1]
                     },
-                    'numero': campo[3],
-                    'digito': campo[4],
-                    'tipo': campo[5],
-                    'dataAbertura': campo[6],
-                    'dataFechamento': campo[7],
-                    'situacao': campo[8],
-                    'principal': campo[9]
+                    'numero': campo[2],
+                    'digito': campo[3],
+                    'tipo': campo[4],
+                    'dataAbertura': campo[5],
+                    'dataFechamento': campo[6],
+                    'situacao': campo[7],
+                    'principal': campo[8]
                 })
         if item['filiacoes'] is not None:
             dict_dados['conteudo'].update({
@@ -212,7 +218,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             })
         if item['naturalizado'] is not None:
             dict_dados['conteudo'].update({
-                'naturalizado':  item['naturalizado']
+                'naturalizado': item['naturalizado']
             })
         contador += 1
         # print(f'Dados gerados ({contador}): ', dict_dados)
@@ -225,11 +231,12 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'id_gerado': None,
             'i_chave_dsk1': item['codigo']
         })
-    model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)
-    req_res = interacao_cloud.preparar_requisicao(lista_dados=lista_dados_enviar,
-                                                  token=token,
-                                                  url=url,
-                                                  tipo_registro=tipo_registro,
-                                                  tamanho_lote=limite_lote)
-    model.insere_tabela_controle_lote(req_res)
-    print('- Envio de dados finalizado.')
+    if True:
+        model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)
+        req_res = interacao_cloud.preparar_requisicao(lista_dados=lista_dados_enviar,
+                                                      token=token,
+                                                      url=url,
+                                                      tipo_registro=tipo_registro,
+                                                      tamanho_lote=limite_lote)
+        model.insere_tabela_controle_lote(req_res)
+        print('- Envio de dados finalizado.')

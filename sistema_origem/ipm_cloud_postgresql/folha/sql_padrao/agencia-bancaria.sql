@@ -10,5 +10,6 @@ select
 	-- (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','cidades', (select c.cidnome from wun.tbcidade as c where c.cidcodigo = ba.cidcodigo limit 1)))) as municipio,
 	from wun.tbbancoagencia as ba
 ) as a
-where public.bth_get_situacao_registro('300', 'agencia-bancaria', cast(numero as varchar), cast(banco as varchar)) in (0)
+-- where public.bth_get_situacao_registro('300', 'agencia-bancaria', cast(numero as varchar), cast(banco as varchar)) in (0)
+where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'agencia-bancaria',cast(numero as varchar), cast(banco as varchar)))) is null
 and banco is not null
