@@ -101,7 +101,7 @@ def enviar_lote(lote, *args, **kwargs):
             else:
                 retorno_requisicao['id_lote'] = ''
 
-            # print('DEBUG - Lote enviado: ', retorno_requisicao['id_lote'])
+            print('DEBUG - Lote enviado: ', retorno_requisicao['id_lote'])
 
             if settings.SISTEMA_ORIGEM == 'folha':
                 retorno_requisicao['url_consulta'] = url + '/lotes/' + retorno_requisicao['id_lote']

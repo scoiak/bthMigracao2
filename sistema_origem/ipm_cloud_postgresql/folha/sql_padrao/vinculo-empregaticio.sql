@@ -20,8 +20,10 @@ from (
 	'EMPREGADO' as sefip,
 	true as geraRais,
 	'TRABALHADOR_URBANO_VINCULADO_PESSOA_JURIDICA_CONTRATO_TRABALHO_CLT_PRAZO_INDETERMINADO' as rais,
-	true as vinculo_temporario,
-	5148 as motivoRescisao, -- REFERENCIAR TABELA DE MOTIVO DE RESCISÃO
+	false as vinculo_temporario,
+	null as motivoRescisao,
+	--5148 as motivoRescisao, -- REFERENCIAR TABELA DE MOTIVO DE RESCISÃO
+	-- COALESCE((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','motivo-rescisao', CAST(padcodigo as text)))), 0) as situacao_registro
 	true as dataFinalObrigatoria,
 	true as geraCaged,
 	true as geraLicencaPremio,
