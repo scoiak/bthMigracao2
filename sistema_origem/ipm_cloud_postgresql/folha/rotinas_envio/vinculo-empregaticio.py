@@ -6,8 +6,8 @@ import re
 from datetime import datetime
 
 sistema = 300
-tipo_registro = 'motivo-rescisao'
-url = 'https://pessoal.cloud.betha.com.br/service-layer/v1/api/motivo-rescisao'
+tipo_registro = 'vinculo-empregaticio'
+url = 'https://pessoal.cloud.betha.com.br/service-layer/v1/api/vinculo-empregaticio'
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
@@ -59,7 +59,7 @@ def pre_validar(params_exec, dados):
 
         print(f'- Registros validados com sucesso: {len(dados_validados)} '
               f'| Registros com advertência: {len(registro_erros)}'
-              f'\n- Pré-validação finalizada. ({(datetime.now() - dh_inicio).total_seconds()}) segundos')
+              f'\n- Pré-validação finalizada. ({(datetime.now() - dh_inicio).total_seconds()} segundos)')
 
     except Exception as error:
         logging.error(f'Erro ao executar função "pre_validar". {error}')
@@ -80,19 +80,30 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
 
     for item in dados:
         contador += 1
-        # print(f'\r- Gerando JSON: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
+        # print(f'Gerando JSON: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
         hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['chave_dsk1'])
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {
-                "descricao": item['descricao'],
-                "tipo": item['tipo'],
-                "classificacao": item['classificacao'],
-                "tipoAfastamento": {
-                    "id": item['id_motivo_afastamento']
-                }
+                'descricao': item['descricao'],
+                'tipo': item['tipo'],
+                'categoriaTrabalhador': {
+                    'id': item['categoriatrabalhador']
+                },
+                'sefip': item['sefip'],
+                'geraRais': item['gerarais'],
+                'vinculoTemporario': item['vinculo_temporario'],
+                'geraCaged': item['geracaged'],
+                'geraLicencaPremio': item['geralicencapremio'],
+                'dataFinalObrigatoria': item['datafinalobrigatoria']
             }
         }
+
+        if 'rais' in item and item['rais'] is not None:
+            dict_dados['conteudo'].update({'rais': item['rais']})
+
+        if 'motivorescisao' in item and item['motivorescisao'] is not None:
+            dict_dados['conteudo'].update({'motivoRescisao': {'id': item['motivorescisao']}})
 
         print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
@@ -100,7 +111,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Motivos de Rescisão',
+            'descricao_tipo_registro': 'Cadastro de Vínculo Empregatício',
             'id_gerado': None,
             'i_chave_dsk1': item['chave_dsk1']
         })

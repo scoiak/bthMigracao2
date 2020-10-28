@@ -6,8 +6,8 @@ import re
 from datetime import datetime
 
 sistema = 300
-tipo_registro = 'motivo-rescisao'
-url = 'https://pessoal.cloud.betha.com.br/service-layer/v1/api/motivo-rescisao'
+tipo_registro = 'lotacao-fisica'
+url = 'https://pessoal.cloud.betha.com.br/service-layer/v1/api/lotacao-fisica'
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
@@ -59,7 +59,7 @@ def pre_validar(params_exec, dados):
 
         print(f'- Registros validados com sucesso: {len(dados_validados)} '
               f'| Registros com advertência: {len(registro_erros)}'
-              f'\n- Pré-validação finalizada. ({(datetime.now() - dh_inicio).total_seconds()}) segundos')
+              f'\n- Pré-validação finalizada. ({(datetime.now() - dh_inicio).total_seconds()} segundos)')
 
     except Exception as error:
         logging.error(f'Erro ao executar função "pre_validar". {error}')
@@ -85,11 +85,12 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {
-                "descricao": item['descricao'],
-                "tipo": item['tipo'],
-                "classificacao": item['classificacao'],
-                "tipoAfastamento": {
-                    "id": item['id_motivo_afastamento']
+                'nivel': item['nivel'],
+                'descricao': item['descricao'],
+                'numero': item['numero'],
+                'inicioVigencia': item['inicio_vigencia'],
+                'configuracao': {
+                    'id': item['configuracao']
                 }
             }
         }
@@ -100,7 +101,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Motivos de Rescisão',
+            'descricao_tipo_registro': 'Cadastro de Atos',
             'id_gerado': None,
             'i_chave_dsk1': item['chave_dsk1']
         })
