@@ -1,5 +1,5 @@
 select *,ROW_NUMBER() OVER()::varchar as id,ROW_NUMBER() OVER()::varchar as codigo from (select
-'ConfiguraÁ„o Organograma 2020' as descricao,
+'Configura√ß√£o Organograma 2020' as descricao,
             'true' as emUso,
                 (select string_agg(nivel::varchar || '%|%' || descricao || '%|%' || quantidadeDigitos::varchar || '%|%' || separador || '%|%' || responsavelControleVagas || '%|%' || nivelSecretaria,'%||%') from
 	                    (select 3 as nivel,
@@ -31,7 +31,7 @@ select *,ROW_NUMBER() OVER()::varchar as id,ROW_NUMBER() OVER()::varchar as codi
 	                    true as nivelSecretaria
 	             union                 
 						select 1 as nivel,
-	                    '”rg„o' as descricao,
+	                    '√ìrg√£o' as descricao,
 	                    2 as quantidadeDigitos,
 	                    'PONTO' as separador,
 	                    false as responsavelControleVagas,
