@@ -23,7 +23,7 @@ select * from (
 	null as temFilhosBrasileiros,
 	null as situacaoEstrangeiro,
 	null as inscricaoMunicipal,
-	(case when length(regexp_replace(u.unirgie,'[/.-]|[1]','','g')) > 1 then (case when (select suc.unicodigo from wun.tbunico as suc where suc.unirgie = u.unirgie order by suc.unicodigo limit 1) = u.unicodigo then regexp_replace(u.unirgie,'[/.-]|[A-Za-z]','','g') else null end) else null end) as identidade,
+	(case when length(regexp_replace(u.unirgie,'[/.-]|[1]|[ ]|[A-Za-z]','','g')) > 1 then (case when (select suc.unicodigo from wun.tbunico as suc where regexp_replace(suc.unirgie,'[/.-]|[A-Za-z]|[ ]','','g') = regexp_replace(u.unirgie,'[/.-]|[A-Za-z]|[ ]','','g') order by suc.unicodigo limit 1) = u.unicodigo then regexp_replace(u.unirgie,'[/.-]|[A-Za-z]|[ ]','','g') else null end) else null end) as identidade,
 	-- replace(replace(replace(u.unirgie,'/',''),'-',''),'.','') as identidade,
 	uf.unfrgorgaoemissor as orgaoEmissorIdentidade,
 	cast(uf.estcodigoemissaorg as varchar) as ufEmissaoIdentidade,
@@ -63,13 +63,13 @@ select * from (
 	(case uf.unftipodeficiencia when 2 then 'FISICA' when 3 then 'AUDITIVA' when 4 then 'MENTAL' when 5 then 'MULTIPLA' when 6 then 'AUTISMO' when 7 then 'REABILITADO' when 8 then 'OUTRA' when 9 then 'VISUAL' when 10 then 'MENTAL' when 11 then 'VISUAL' when 12 then 'MULTIPLA' else null end) as deficiencias,
 	((case when uf.unfnomemae is not null then (trim(uf.unfnomemae) || '%|%' || 'MAE%|%BIOLOGICA' || (case when trim(uf.unfnomepai) is not null then '%||%' else null end)) else null end) || (case when trim(uf.unfnomepai) is not null then (trim(uf.unfnomepai) || '%|%' || 'PAI%|%BIOLOGICA') else null end)) as filiacoes
 from
-	wun.tbunico as u left join wun.tbunicofisica as uf on uf.unicodigo = u.unicodigo
+	wun.tbunico as u  join wun.tbunicofisica as uf on uf.unicodigo = u.unicodigo
 where
 	u.unitipopessoa = 1
 and
 	u.unisituacao = 1
 and
-	length(regexp_replace(u.unicpfcnpj,'[/.-]|[0]','','g')) > 0
+	length(regexp_replace(u.unicpfcnpj,'[/.-]|[0]|[ ]','','g')) > 0
 	-- length(replace(replace(replace(replace(u.unicpfcnpj,'/',''),'-',''),'.',''),'0','')) > 0
 and
 	uf.unfsexo in (1,2)

@@ -4,19 +4,18 @@ import json
 import logging
 from datetime import datetime
 
-tipo_registro = 'dependencia'
+tipo_registro = 'configuracao-organograma'
 sistema = 300
 limite_lote = 500
-url = "https://pessoal.cloud.betha.com.br/service-layer/v1/api/dependencia"
+url = "https://pessoal.cloud.betha.com.br/service-layer/v1/api/configuracao-organograma"
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
-    if True:
-        dados_assunto = coletar_dados(params_exec)
-        dados_enviar = pre_validar(params_exec, dados_assunto)
-        if not params_exec.get('somente_pre_validar'):
-            iniciar_envio(params_exec, dados_enviar, 'POST')
-        model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
+    dados_assunto = coletar_dados(params_exec)
+    dados_enviar = pre_validar(params_exec, dados_assunto)
+    if not params_exec.get('somente_pre_validar'):
+        iniciar_envio(params_exec, dados_enviar, 'POST')
+    model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
 
 
 def coletar_dados(params_exec):
@@ -59,42 +58,29 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     token = params_exec['token']
     contador = 0
     for item in dados:
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['pessoa'], item['pessoadependente'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['codigo'])
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {
-                'pessoa': {
-                    'id': item['pessoa']
-                },
-                'pessoaDependente': {
-                    'id': item['pessoadependente']
-                },
-                'responsaveis': item['responsaveis'],
-                'grau': item['grau'],
-                'dataInicio': item['datainicio'],
-                'motivoInicio': item['motivoinicio'],
-                'dataTermino': item['datatermino'],
-                'motivoTermino': item['motivotermino'],
-                'dataCasamento': item['datacasamento'],
-                'estuda': item['estuda'],
-                'dataInicioCurso': item['datainiciocurso'],
-                'dataFinalCurso': item['datafinalcurso'],
-                'irrf': item['irrf'],
-                'salarioFamilia': item['salariofamilia'],
-                'pensao': item['pensao'],
-                'dataInicioBeneficio': item['datainiciobeneficio'],
-                'duracao': item['duracao'],
-                'dataVencimento': item['datavencimento'],
-                'alvaraJudicial': item['alvarajudicial'],
-                'dataAlvara': item['dataalvara'],
-                'aplicacaoDesconto': item['aplicacaodesconto'],
-                'valorDesconto': item['valordesconto'],
-                'percentualDesconto': item['percentualdesconto'],
-                'percentualPensaoFgts': item['percentualpensaofgts'],
-                'representanteLegal': item['representantelegal'],
-                'formaPagamento': item['formapagamento']
+                'descricao': None if 'descricao' not in item else item['descricao'],
+                'emUso': None if 'emuso' not in item else item['emuso'],
             }
         }
+        if item['niveis'] is not None:
+            dict_dados['conteudo'].update({
+                'niveis': []
+            })
+            lista = item['niveis'].split('%||%')
+            for listacampo in lista:
+                campo = listacampo.split('%|%')
+                dict_dados['conteudo']['niveis'].append({
+                    'nivel': campo[0],
+                    'descricao': campo[1],
+                    'quantidadeDigitos': campo[2],
+                    'separador': campo[3],
+                    'responsavelControleVagas': campo[4]
+                })
+
         contador += 1
         # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
@@ -102,11 +88,9 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Dependencia',
+            'descricao_tipo_registro': 'Cadastro de Configuracao de Organograma',
             'id_gerado': None,
-            'i_chave_dsk1': item['pessoa'],
-            'i_chave_dsk2': item['pessoadependente']
-
+            'i_chave_dsk1': item['codigo']
         })
     model.insere_tabela_controle_migracao_registro2(params_exec, lista_req=lista_controle_migracao)
     req_res = interacao_cloud.preparar_requisicao(lista_dados=lista_dados_enviar,

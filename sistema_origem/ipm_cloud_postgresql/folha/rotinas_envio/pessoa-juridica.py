@@ -11,11 +11,33 @@ url = "https://pessoal.cloud.betha.com.br/service-layer/v1/api/pessoa-juridica"
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
-    dados_assunto = coletar_dados(params_exec)
-    dados_enviar = pre_validar(params_exec, dados_assunto)
-    if not params_exec.get('somente_pre_validar'):
-        iniciar_envio(params_exec, dados_enviar, 'POST')
-    model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
+    if False:
+        busca_dados(params_exec)
+    if True:
+        dados_assunto = coletar_dados(params_exec)
+        dados_enviar = pre_validar(params_exec, dados_assunto)
+        if not params_exec.get('somente_pre_validar'):
+            iniciar_envio(params_exec, dados_enviar, 'POST')
+        model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
+
+
+def busca_dados(params_exec):
+    print('- Iniciando busca de dados no cloud.')
+    registros = interacao_cloud.busca_dados_cloud(params_exec, url=url)
+    print(f'- Foram encontrados {len(registros)} registros cadastrados no cloud.')
+    registros_formatados = []
+    for item in registros:
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['cnpj'])
+        registros_formatados.append({
+            'sistema': sistema,
+            'tipo_registro': tipo_registro,
+            'hash_chave_dsk': hash_chaves,
+            'descricao_tipo_registro': 'Cadastro de Pessoa Juridica',
+            'id_gerado': item['id'],
+            'i_chave_dsk1': item['cnpj']
+        })
+    model.insere_tabela_controle_migracao_registro(params_exec, lista_req=registros_formatados)
+    print('- Busca finalizada. Tabelas de controles atualizas com sucesso.')
 
 
 def coletar_dados(params_exec):
@@ -58,60 +80,27 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     token = params_exec['token']
     contador = 0
     for item in dados:
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['codigo'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['cnpj'])
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {
-                'nome': None if 'nome' not in item else item['nome'],
-                'cpf': None if 'cpf' not in item else item['cpf'],
-                'dataNascimento': None if 'datanascimento' not in item else item['datanascimento'],
-                'estadoCivil': None if 'estadocivil' not in item else item['estadocivil'],
-                'sexo': None if 'sexo' not in item else item['sexo'],
-                'raca': None if 'raca' not in item else item['raca'],
-                'corOlhos': None if 'corolhos' not in item else item['corolhos'],
-                'estatura': None if 'estatura' not in item else item['estatura'],
-                'peso': None if 'peso' not in item else item['peso'],
-                'tipoSanguineo': None if 'tiposanguineo' not in item else item['tiposanguineo'],
-                'doador': None if 'doador' not in item else item['doador'],
-                'dataChegada': None if 'datachegada' not in item else item['datachegada'],
-                'casadoComBrasileiro': None if 'casadocombrasileiro' not in item else item['casadocombrasileiro'],
-                'temFilhosBrasileiros': None if 'temfilhosbrasileiros' not in item else item['temfilhosbrasileiros'],
-                'situacaoEstrangeiro': None if 'situacaoestrangeiro' not in item else item['situacaoestrangeiro'],
+                'tipo': None if 'tipo' not in item else item['tipo'],
+                'cnpj': None if 'cnpj' not in item else item['cnpj'],
+                'razaoSocial': None if 'razaosocial' not in item else item['razaosocial'],
+                'nomeFantasia': None if 'nomefantasia' not in item else item['nomefantasia'],
+                'porte': None if 'porte' not in item else item['porte'],
+                'numeroRegistro': None if 'numeroregistro' not in item else item['numeroregistro'],
+                'dataRegistro': None if 'dataregistro' not in item else item['dataregistro'],
+                'orgaoRegistro': None if 'orgaoregistro' not in item else item['orgaoregistro'],
                 'inscricaoMunicipal': None if 'inscricaomunicipal' not in item else item['inscricaomunicipal'],
-                'identidade': None if 'identidade' not in item else item['identidade'],
-                'orgaoEmissorIdentidade': None if 'orgaoemissoridentidade' not in item else item[
-                    'orgaoemissoridentidade'],
-                'ufEmissaoIdentidade': None if 'ufemissaoidentidade' not in item else item['ufemissaoidentidade'],
-                'dataEmissaoIdentidade': None if 'dataemissaoidentidade' not in item else item['dataemissaoidentidade'],
-                'dataValidadeIdentidade': None if 'datavalidadeidentidade' not in item else item[
-                    'datavalidadeidentidade'],
-                'tituloEleitor': None if 'tituloeleitor' not in item else item['tituloeleitor'],
-                'zonaEleitoral': None if 'zonaeleitoral' not in item else item['zonaeleitoral'],
-                'secaoEleitoral': None if 'secaoeleitoral' not in item else item['secaoeleitoral'],
-                'ctps': None if 'ctps' not in item else item['ctps'],
-                'serieCtps': None if 'seriectps' not in item else item['seriectps'],
-                'ufEmissaoCtps': None if 'ufEmissaoctps' not in item else item['ufEmissaoctps'],
-                'dataEmissaoCtps': None if 'dataemissaoctps' not in item else item['dataemissaoctps'],
-                'dataValidadeCtps': None if 'datavalidadectps' not in item else item['datavalidadectps'],
-                'pis': None if 'pis' not in item else item['pis'],
-                'dataEmissaoPis': None if 'dataemissaopis' not in item else item['dataemissaopis'],
-                'situacaoGrauInstrucao': None if 'situacaograuinstrucao' not in item else item['situacaograuinstrucao'],
-                'grauInstrucao': None if 'grauinstrucao' not in item else item['grauinstrucao'],
-                'certificadoReservista': None if 'certificadoreservista' not in item else item['certificadoreservista'],
-                'ric': None if 'ric' not in item else item['ric'],
-                'ufEmissaoRic': None if 'ufemissaoric' not in item else item['ufemissaoric'],
-                'orgaoEmissorRic': None if 'orgaoemissorric' not in item else item['orgaoemissorric'],
-                'dataEmissaoRic': None if 'dataemissaoric' not in item else item['dataemissaoric'],
-                'cns': None if 'cns' not in item else item['cns'],
-                'dataEmissaoCns': None if 'dataemissaocns' not in item else item['dataemissaocns'],
-                'cnh': None if 'cnh' not in item else item['cnh'],
-                'categoriaCnh': None if 'categoriacnh' not in item else item['categoriacnh'],
-                'dataEmissaoCnh': None if 'dataemissaocnh' not in item else item['dataemissaocnh'],
-                'dataVencimentoCnh': None if 'datavencimentocnh' not in item else item['datavencimentocnh'],
-                'dataPrimeiraCnh': None if 'dataprimeiracnh' not in item else item['dataprimeiracnh'],
-                'ufEmissaoCnh': None if 'ufemissaocnh' not in item else item['ufemissaocnh'],
-                'observacoesCnh': None if 'observacoescnh' not in item else item['observacoescnh'],
-                'papel': None if 'papel' not in item else item['papel']
+                'isentoInscricaoEstadual': None if 'isentoinscricaoestadual' not in item else item['isentoinscricaoestadual'],
+                'inscricaoEstadual': None if 'inscricaoestadual' not in item else item['inscricaoestadual'],
+                'optanteSimples': None if 'optantesimples' not in item else item['optantesimples'],
+                'site': None if 'site' not in item else item['site'],
+                'sindicato': None if 'sindicato' not in item else item['sindicato'],
+                'numeroAns': None if 'numeroans' not in item else item['numeroans'],
+                'numeroInep': None if 'numeroinep' not in item else item['numeroinep'],
+                'numeroValeTransporte': None if 'numerovaletransporte' not in item else item['numerovaletransporte'],
             }
         }
         if item['emails'] is not None:
@@ -169,22 +158,22 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                 campo = listacampo.split('%|%')
                 dict_dados['conteudo']['responsaveis'].append({
                     'dataInicio': campo[0],
-                    'dataTermino': campo[1],
+                    'dataTermino': None if campo[1] == 'null' else campo[1],
                     'qualificacao': campo[2],
                     'responsavel': {
                         'id': campo[3]
                     }
                 })
         contador += 1
-        # print(f'Dados gerados ({contador}): ', dict_dados)
+        print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Pessoa Física',
+            'descricao_tipo_registro': 'Cadastro de Pessoa Juridica',
             'id_gerado': None,
-            'i_chave_dsk1': item['codigo']
+            'i_chave_dsk1': item['cnpj']
         })
     if True:
         model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)

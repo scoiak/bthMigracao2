@@ -32,7 +32,7 @@ def busca_dados(params_exec):
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Tipo de Logradouro',
+            'descricao_tipo_registro': 'Cadastro de Pessoa Fisica',
             'id_gerado': item['id'],
             'i_chave_dsk1': item['cpf']
         })
@@ -247,7 +247,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Pessoa Física',
+            'descricao_tipo_registro': 'Cadastro de Pessoa Fisica',
             'id_gerado': None,
             'i_chave_dsk1': item['cpf']
         })

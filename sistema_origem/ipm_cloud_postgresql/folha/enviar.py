@@ -26,12 +26,15 @@ def iniciar():
     # enviar(params_exec, 'motivo-alteracao-salarial')
     # enviar(params_exec, 'motivo-alteracao-cargo')
     # enviar(params_exec, 'tipo-ato')
+    # enviar(params_exec, 'tipo-afastamento')
     # enviar(params_exec, 'ato')
     # enviar(params_exec, 'fonte-divulgacao')
     # enviar(params_exec, 'organograma')
     # enviar(params_exec, 'horario')
     # enviar(params_exec, 'concurso')
-    enviar(params_exec, 'pessoa-fisica')
+    # enviar(params_exec, 'pessoa-fisica')
+    # enviar(params_exec, 'pessoa-juridica')
+    # enviar(params_exec, 'dependencia')
 
 
 def enviar(params_exec, tipo_registro, *args, **kwargs):

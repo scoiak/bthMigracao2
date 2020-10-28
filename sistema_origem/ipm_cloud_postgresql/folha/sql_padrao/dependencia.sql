@@ -1,11 +1,11 @@
-select     
+select * from (
+select
 	 unicodigodep as id,
-	 unicodigodep as codigo,
 	 (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'pessoa-fisica', (select regexp_replace(suc.unicpfcnpj,'[/.-]','','g') from wun.tbunico as suc where suc.unicodigo = d.unicodigores)))) as pessoa,
 	 (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'pessoa-fisica', (select regexp_replace(suc.unicpfcnpj,'[/.-]','','g') from wun.tbunico as suc where suc.unicodigo = d.unicodigodep)))) as pessoaDependente,
 	 null as responsaveis,
-	 (case depgrauparentesco      when  1 THEN 'CONJUGE'  when  2 THEN 'FILHO'  when  3 THEN 'PAI_MAE'  when  4 THEN 'PAI_MAE'  when  5 THEN 'OUTROS'   when  8 THEN 'NETO'   when 10 THEN 'EX-CONJUGE'      else null  end) as grau,
-	 depdataregistro as dataInicio,
+	 (case depgrauparentesco      when  1 THEN 'CONJUGE'  when  2 THEN 'FILHO'  when  3 THEN 'PAI_MAE'  when  4 THEN 'PAI_MAE'    when  8 THEN 'NETO'   else null  end) as grau, --  when  5 THEN 'OUTROS' when 10 THEN 'EX-CONJUGE'
+	 (case when d.depdataregistro < (select to_date(suc.unfdatanascimento::varchar,'YYYY-MM-DD') from wun.tbunicofisica as suc where suc.unicodigo = d.unicodigodep) then (select suc.unfdatanascimento from wun.tbunicofisica as suc where suc.unicodigo = d.unicodigodep) when d.depdataregistro < (select to_date(suc.unfdatanascimento::varchar,'YYYY-MM-DD') from wun.tbunicofisica as suc where suc.unicodigo = d.unicodigores) then (select to_date(suc.unfdatanascimento::varchar,'YYYY-MM-DD') from wun.tbunicofisica as suc where suc.unicodigo = d.unicodigores) else d.depdataregistro end)::varchar as dataInicio,
 	 'OUTRO' as motivoInicio,
 	 null as dataTermino,
 	 'OUTRO' as motivoTermino,
@@ -26,12 +26,11 @@ select
 	 null as percentualDesconto,
 	 null as percentualPensaoFgts,
 	 null as representanteLegal,
-	 null as formaPagamento,
-	 null as contaBancaria
+	 null as formaPagamento
 from wun.tbdependente as d
-	 where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'dependencia', unicodigodep::varchar)))  is null
-and
-	 (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'pessoa-fisica', (select regexp_replace(suc.unicpfcnpj,'[/.-]','','g') from wun.tbunico as suc where suc.unicodigo = d.unicodigores)))) is not null
-and
-	 (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'pessoa-fisica', (select regexp_replace(suc.unicpfcnpj,'[/.-]','','g') from wun.tbunico as suc where suc.unicodigo = d.unicodigodep)))) is not null
-
+	 where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'dependencia', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'pessoa-fisica', (select regexp_replace(suc.unicpfcnpj,'[/.-]','','g') from wun.tbunico as suc where suc.unicodigo = d.unicodigores)))),(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'pessoa-fisica', (select regexp_replace(suc.unicpfcnpj,'[/.-]','','g') from wun.tbunico as suc where suc.unicodigo = d.unicodigodep)))))))  is null
+) as s
+where grau is not null
+and pessoa is not null
+and pessoaDependente is not null
+and pessoa != pessoaDependente
