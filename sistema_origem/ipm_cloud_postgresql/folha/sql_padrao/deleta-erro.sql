@@ -20,7 +20,10 @@ update public.controle_migracao_registro set tipo_registro = 'municipio',hash_ch
 update public.controle_migracao_registro set tipo_registro = 'banco',hash_chave_dsk = md5(concat('300','banco',i_chave_dsk1,i_chave_dsk2,i_chave_dsk3)) where tipo_registro = 'banco'
 commit;
 
-delete from public.controle_migracao_lotes where tipo_registro =  'tipo-afastamento';
-delete from public.controle_migracao_registro where tipo_registro = 'tipo-afastamento';
-delete from public.controle_migracao_registro_ocor where tipo_registro =  'tipo-afastamento';
-commit;
+DO $$ DECLARE
+    tipo_registro alias for 'nivel-salarial';
+BEGIN
+	delete from public.controle_migracao_lotes where tipo_registro = 'nivel-salarial';
+	delete from public.controle_migracao_registro where tipo_registro = 'nivel-salarial';
+	delete from public.controle_migracao_registro_ocor where tipo_registro = 'nivel-salarial';
+END $$;
