@@ -20,6 +20,7 @@ def iniciar():
     # enviar(params_exec, 'bairro')
     # enviar(params_exec, 'tipo-logradouro')
     # enviar(params_exec, 'logradouro')
+    enviar(params_exec, 'cbo')
     # enviar(params_exec, 'bancos')
     # enviar(params_exec, 'agencia-bancaria')
     # enviar(params_exec, 'natureza-texto-juridico')
