@@ -29,6 +29,17 @@ false as perdeTempoServico,
 false as justificado
 from wfp.tbmotivoafasta as af
 where odomesano = '202009'
+union 
+select
+(select max(motcodigo +1 ) from wfp.tbmotivoafasta) as id,
+(select max(motcodigo +1 ) from wfp.tbmotivoafasta) as codigo,
+'DEMITIDO' as descricao,
+'DEMITIDO' as classificacao,
+null as tipoMovimentacaoPessoal,
+null as diasPrevistos,
+false as perdeTempoServico,
+false as consideraVencimento,
+false as justificado
 ) as a
 where classificacao is not null
 and (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'tipo-afastamento', codigo))) is null

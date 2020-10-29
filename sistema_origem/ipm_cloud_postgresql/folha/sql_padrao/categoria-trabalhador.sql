@@ -36,8 +36,7 @@ from (
 	   when 741 then 'CONTRIBUINTE_INDIVIDUAL'
 	   when 771 then 'CONTRIBUINTE_INDIVIDUAL'
 	   else 'FUNCIONARIO'
-	end as grupoTrabalhador,
-	COALESCE((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'categoria-trabalhador', catdescricao, cast(catcodigo as text)))),0) as situacao_registro
+	end as grupoTrabalhador	
 	from wfp.tbcategoriatrabalhador
 ) tb
-where situacao_registro = 0
+where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'categoria-trabalhador', descricao, cast(catcodigo as text)))) is null

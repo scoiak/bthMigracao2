@@ -35,7 +35,7 @@ def iniciar():
     # enviar(params_exec, 'vinculo-empregaticio')
     # enviar(params_exec, 'lotacao-fisica')
     # enviar(params_exec, 'motivo-rescisao')
-    enviar(params_exec, 'nivel-salarial')
+    # enviar(params_exec, 'nivel-salarial')
     # enviar(params_exec, 'pessoa-fisica')
 
 
