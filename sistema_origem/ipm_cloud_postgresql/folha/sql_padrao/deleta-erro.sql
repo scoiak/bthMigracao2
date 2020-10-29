@@ -7,8 +7,8 @@ DO $$ DECLARE
 BEGIN	
     FOR r IN (SELECT schemaname,relname,n_live_tup FROM pg_stat_user_tables WHERE n_live_tup = 0) LOOP
     	q := q + 1;
-    	RAISE NOTICE 'Removido: % [%]',r.relname,q;
-   		-- EXECUTE 'DROP TABLE IF EXISTS ' || quote_ident(r.schemaname) || '.' || quote_ident(r.relname) || ' CASCADE';
+    	RAISE NOTICE 'Removido: % [%][%]',r.relname,q,r.n_live_tup;
+   		EXECUTE 'DROP TABLE IF EXISTS ' || quote_ident(r.schemaname) || '.' || quote_ident(r.relname) || ' CASCADE';
    		COMMIT;   		
     END LOOP;	
 END $$;

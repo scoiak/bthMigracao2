@@ -4,8 +4,8 @@ af.motcodigo as id,
 af.motcodigo as codigo,
 (case when (select au.motdescricao from wfp.tbmotivoafasta as au where au.motcodigo <> af.motcodigo and au.motdescricao = af.motdescricao limit 1) is not null then substring(af.motdescricao,1,90) || ' ' || cast(af.motcodigo as varchar) else af.motdescricao end) as descricao,
 (case
-	when af.padcodigo in (5,6,7,8,25,15,9,33,32,31) then 'DEMITIDO'
-	when af.padcodigo in (13,34,35,36,37,38,39,40,41,42,14) then 'APOSENTADO'
+	when af.padcodigo in (5,6,7,8,25,15,9,33,32,31,14) then 'DEMITIDO'
+	when af.padcodigo in (13,34,35,36,37,38,39,40,41,42) then 'APOSENTADO'
 	when af.padcodigo in (3,4) then 'FALTA'
 	when af.padcodigo in (20,12,11) then 'CEDENCIA'
 	when af.padcodigo in (17,59,62,30,29,26,22,21) then 'LICENCA_COM_VENCIMENTOS'

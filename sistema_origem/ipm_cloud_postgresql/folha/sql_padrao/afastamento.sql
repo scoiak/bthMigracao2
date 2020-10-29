@@ -9,7 +9,7 @@ SELECT
 	(case
 	 when motcodigo in (63,60,56,2,55,1) then 'ACIDENTE_DOENCA'
 	 when motcodigo in (17,59,62,30,29,26,22,21, 18,47,54,53,50,49,48,46,45,43,44, 58,16,10, 61, 47, 52, 51, 59) then 'LICENCA'
-	 when motcodigo in ( 5,6,7,8,25,15,9,33,32,31, 13,34,35,36,37,38,39,40,41,42,14) then 'RESCISAO'
+	 when motcodigo in (5,6,7,8,25,15,9,33,32,31, 13,34,35,36,37,38,39,40,41,42,14) then 'RESCISAO'
 	 when motcodigo in (20,12,11) then 'CEDENCIA'
 	 when motcodigo in (3,4) then 'FALTAS'
 	 end
