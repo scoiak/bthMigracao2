@@ -4,52 +4,28 @@ import json
 import logging
 from datetime import datetime
 
+tipo_registro = 'configuracao-evento'
 sistema = 300
-tipo_registro = 'natureza-texto-juridico'
-url = 'https://pessoal.cloud.betha.com.br/service-layer/v1/api/natureza-texto-juridico'
 limite_lote = 500
+url = "https://pessoal.cloud.betha.com.br/service-layer/v1/api/configuracao-evento"
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
-    busca_dados_cloud(params_exec)
     dados_assunto = coletar_dados(params_exec)
     dados_enviar = pre_validar(params_exec, dados_assunto)
     if not params_exec.get('somente_pre_validar'):
         iniciar_envio(params_exec, dados_enviar, 'POST')
     model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
 
-def busca_dados_cloud(params_exec):
-    print('- Iniciando busca de dados no cloud.')
-    registros = interacao_cloud.busca_dados_cloud(params_exec, url=url)
-    print(f'- Foram encontrados {len(registros)} registros cadastrados no cloud.')
-    registros_formatados = []
-    try:
-        for item in registros:
-            hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['descricao'])
-            registros_formatados.append({
-                'sistema': sistema,
-                'tipo_registro': tipo_registro,
-                'hash_chave_dsk': hash_chaves,
-                'descricao_tipo_registro': 'Cadastro de Agências Bancárias',
-                'id_gerado': item['id'],
-                'i_chave_dsk1': item['descricao']})
-        model.insere_tabela_controle_migracao_registro2(params_exec, lista_req=registros_formatados)
-        print(f'- Busca de {tipo_registro} finalizada. Tabelas de controles atualizas com sucesso.')
-    except Exception as error:
-        print(f'Erro ao executar função "busca_dados_cloud". {error}')
-
 def coletar_dados(params_exec):
     print('- Iniciando a consulta dos dados a enviar.')
     df = None
     try:
-        tempo_inicio = datetime.now()
-        query = model.get_consulta(params_exec, f'{tipo_registro}.sql')
+        query = model.get_consulta(params_exec, tipo_registro + '.sql')
         pgcnn = model.PostgreSQLConnection()
         df = pgcnn.exec_sql(query, index_col='id')
-        tempo_total = (datetime.now() - tempo_inicio)
-        print(f'- Consulta finalizada. {len(df.index)} registro(s) encontrado(s). '
-              f'(Tempo consulta: {tempo_total.total_seconds()} segundos.)')
+        print(f'- Consulta finalizada. {len(df.index)} registro(s) encontrado(s).')
     except Exception as error:
-        print(f'Erro ao executar função "enviar_assunto". {error}')
+        print(f'Erro ao executar função {tipo_registro}. {error}')
     finally:
         return df
 
@@ -78,30 +54,47 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     token = params_exec['token']
     contador = 0
     for item in dados:
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['nome'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['codigo'])
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {
-                "descricao": item['nome']
+                'codigo': None if 'codigo' not in item else item['codigo'],
+                'descricao': None if 'descricao' not in item else item['descricao'],
+                'inicioVigencia': None if 'iniciovigencia' not in item else item['iniciovigencia'],
+                'tipo': None if 'tipo' not in item else item['tipo'],
+                'classificacao': None if 'classificacao' not in item else item['classificacao'],
+                'classificacaoBaixaProvisao': None if 'classificacaobaixaprovisao' not in item else item['classificacaobaixaprovisao'],
+                'unidade': None if 'unidade' not in item else item['unidade'],
+                'taxa': None if 'taxa' not in item else item['taxa'],
+                'codigoEsocial': None if 'codigoesocial' not in item else item['codigoesocial'],
+                'ato': None if 'ato' not in item else item['ato'],
+                'incideDsr': None if 'incidedsr' not in item else item['incidedsr'],
+                'naturezaRubrica': None if 'naturezarubrica' not in item else item['naturezarubrica'],
+                'compoemHorasMes': None if 'compoemhorasmes' not in item else item['compoemhorasmes'],
+                'observacao': None if 'observacao' not in item else item['observacao'],
+                'desabilitado': None if 'desabilitado' not in item else item['desabilitado'],
+                'formula': None if 'formula' not in item else item['formula'],
+                'enviaTransparencia': None if 'enviatransparencia' not in item else item['enviatransparencia'],
+                'configuracaoProcessamentos': None if 'configuracaoprocessamentos' not in item else item['configuracaoprocessamentos'],
             }
         }
         contador += 1
-        print(f'Dados gerados ({contador}): ', dict_dados)
+        # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Natureza de Texto Jurídico',
+            'descricao_tipo_registro': 'Cadastro de Evento',
             'id_gerado': None,
-            'i_chave_dsk1': item['nome']
+            'i_chave_dsk1': item['codigo']
         })
     if True:
-        model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)
+        model.insere_tabela_controle_migracao_registro2(params_exec, lista_req=lista_controle_migracao)
         req_res = interacao_cloud.preparar_requisicao(lista_dados=lista_dados_enviar,
                                                       token=token,
                                                       url=url,
                                                       tipo_registro=tipo_registro,
-                                                      tamanho_lote=300)
+                                                      tamanho_lote=limite_lote)
         model.insere_tabela_controle_lote(req_res)
-        print('- Envio de dados finalizado.')
+    print('- Envio de dados finalizado.')

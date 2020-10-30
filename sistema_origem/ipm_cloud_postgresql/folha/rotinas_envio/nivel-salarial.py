@@ -8,19 +8,14 @@ from datetime import datetime
 sistema = 300
 tipo_registro = 'nivel-salarial'
 url = 'https://pessoal.cloud.betha.com.br/service-layer/v1/api/nivel-salarial'
+limite_lote = 500
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
-    # E - Realiza a consulta dos dados que serão enviados
     dados_assunto = coletar_dados(params_exec)
-
-    # T - Realiza a pré-validação dos dados
     dados_enviar = pre_validar(params_exec, dados_assunto)
-
-    # L - Realiza o envio dos dados validados
     if not params_exec.get('somente_pre_validar'):
         iniciar_envio(params_exec, dados_enviar, 'POST')
-
     model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
 
 
@@ -34,10 +29,8 @@ def coletar_dados(params_exec):
         df = pgcnn.exec_sql(query, index_col='id')
         print(f'- {len(df.index)} registro(s) encontrado(s).',
               f'\n- Consulta finalizada. ({(datetime.now() - dh_inicio).total_seconds()} segundos)')
-
     except Exception as error:
         print(f'Erro ao executar função "enviar_assunto". {error}')
-
     finally:
         return df
 
@@ -51,19 +44,13 @@ def pre_validar(params_exec, dados):
         lista_dados = dados.to_dict('records')
         for linha in lista_dados:
             registro_valido = True
-
-            # INSERIR AS REGRAS DE PRÉ VALIDAÇÃO AQUI
-
             if registro_valido:
                 dados_validados.append(linha)
-
         print(f'- Registros validados com sucesso: {len(dados_validados)} '
               f'| Registros com advertência: {len(registro_erros)}'
               f'\n- Pré-validação finalizada. ({(datetime.now() - dh_inicio).total_seconds()}) segundos')
-
     except Exception as error:
         logging.error(f'Erro ao executar função "pre_validar". {error}')
-
     finally:
         return dados_validados
 
@@ -77,11 +64,9 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     token = params_exec['token']
     total_dados = len(dados)
     contador = 0
-
     for item in dados:
         contador += 1
-        # print(f'\r- Gerando JSON: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['chave_dsk1'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['codigo'])
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {
@@ -89,14 +74,42 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                 "valor": item['valor'],
                 "cargaHoraria": item['cargahoraria'],
                 "coeficiente": item['coeficiente'],
+                "inicioVigencia": item['iniciovigencia'],
                 "dataHoraCriacao": item['datahoracriacao'],
+                "atoCriacao": item['atocriacao'],
+                "ultimoAto": item['ultimoato'],
                 "planoCargoSalario": {
                     "id": item['planocargosalario']
-                }
+                },
+                "classesReferencias": item['classesreferencias'],
+                "motivoAlteracao": item['motivoalteracao'],
+                "reajusteSalarial": item['reajustesalarial']
             }
         }
-
-        print(f'Dados gerados ({contador}): ', dict_dados)
+        if item['historicos'] is not None:
+            dict_dados['conteudo'].update({
+                'historicos': []
+            })
+            lista = item['historicos'].split('%||%')
+            for listacampo in lista:
+                campo = listacampo.split('%|%')
+                dict_dados['conteudo']['historicos'].append({
+                    "descricao": campo[0],
+                    "valor": campo[1],
+                    "cargaHoraria": campo[2],
+                    "coeficiente": campo[3],
+                    "inicioVigencia": campo[4],
+                    "dataHoraCriacao": campo[5],
+                    "atoCriacao": None if campo[6] == 'null' else campo[6],
+                    "ultimoAto": None if campo[7] == 'null' else campo[7],
+                    "planoCargoSalario": {
+                        "id": campo[8]
+                    },
+                    "classesReferencias": None if campo[9] == 'null' else campo[9],
+                    "motivoAlteracao": None if campo[10] == 'null' else campo[10],
+                    "reajusteSalarial": None if campo[11] == 'null' else campo[11],
+                })
+        # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,
@@ -104,19 +117,14 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'hash_chave_dsk': hash_chaves,
             'descricao_tipo_registro': 'Cadastro de Nível Salarial',
             'id_gerado': None,
-            'i_chave_dsk1': item['chave_dsk1']
+            'i_chave_dsk1': item['codigo']
         })
     print(f'- Processo de transformação finalizado. ({(datetime.now() - dh_inicio).total_seconds()} segundos)')
-
     if True:
-        # Insere os registros coletados na tabela de controle
         model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)
-
-        # Inicia o procedimento de envio para o cloud
         req_res = interacao_cloud.preparar_requisicao(lista_dados=lista_dados_enviar,
                                                       token=token,
                                                       url=url,
                                                       tipo_registro=tipo_registro,
-                                                      tamanho_lote=300)
-        # Insere lote na tabela de controle
+                                                      tamanho_lote=limite_lote)
         model.insere_tabela_controle_lote(req_res)

@@ -6,18 +6,20 @@ from datetime import datetime
 
 tipo_registro = 'bairro'
 sistema = 300
-limite_lote = 300
+limite_lote = 1000
 url = "https://pessoal.cloud.betha.com.br/service-layer/v1/api/bairro"
 
+
 def iniciar_processo_envio(params_exec, *args, **kwargs):
-    busca_dados(params_exec)
-    '''
-    dados_assunto = coletar_dados(params_exec)
-    dados_enviar = pre_validar(params_exec, dados_assunto)
-    if not params_exec.get('somente_pre_validar'):
-        iniciar_envio(params_exec, dados_enviar, 'POST')
-    model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
-    '''
+    if True:
+        busca_dados(params_exec)
+    if False:
+        dados_assunto = coletar_dados(params_exec)
+        dados_enviar = pre_validar(params_exec, dados_assunto)
+        if not params_exec.get('somente_pre_validar'):
+            iniciar_envio(params_exec, dados_enviar, 'POST')
+        model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
+
 
 def coletar_dados(params_exec):
     print('- Iniciando a consulta dos dados a enviar.')
@@ -31,6 +33,7 @@ def coletar_dados(params_exec):
         print(f'Erro ao executar função {tipo_registro}. {error}')
     finally:
         return df
+
 
 def pre_validar(params_exec, dados):
     print('- Iniciando pré-validação dos registros.')
@@ -46,9 +49,9 @@ def pre_validar(params_exec, dados):
               f'{len(dados_validados)} | Registros com advertência: {len(registro_erros)}')
     except Exception as error:
         logging.error(f'Erro ao executar função "pre_validar". {error}')
-
     finally:
         return dados_validados
+
 
 def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     print('- Iniciando envio dos dados.')
@@ -58,15 +61,15 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     token = params_exec['token']
     contador = 0
     for item in dados:
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['nome'].upper(), item['codigo'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['nome'].upper(), item['municipio'])
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {
                 'nome': None if 'nome' not in item else item['nome'],
                 'municipio': {
-                    item['municipio']
+                    'id': item['municipio']
                 },
-                'zonaRural': item['zonaRural']
+                'zonaRural': item['zonarural']
             }
         }
         contador += 1
@@ -79,7 +82,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'descricao_tipo_registro': 'Cadastro de Bairro',
             'id_gerado': None,
             'i_chave_dsk1': item['nome'].upper(),
-            'i_chave_dsk2': item['codigo']
+            'i_chave_dsk2': item['municipio']
         })
     model.insere_tabela_controle_migracao_registro2(params_exec, lista_req=lista_controle_migracao)
     req_res = interacao_cloud.preparar_requisicao(lista_dados=lista_dados_enviar,
@@ -89,6 +92,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                                                   tamanho_lote=limite_lote)
     model.insere_tabela_controle_lote(req_res)
     print('- Envio de dados finalizado.')
+
 
 def busca_dados(params_exec):
     print('- Iniciando busca de dados no cloud.')

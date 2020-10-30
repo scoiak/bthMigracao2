@@ -1,34 +1,42 @@
-select distinct
-	'300' as sistema,
-	'vinculo-empregaticio' as tipo_registro,
-	regcodigo as chave_dsk1,
-	*
+select
+   '300' as sistema,
+   'categoria-trabalhador' as tipo_registro,
+   descricao as chave_dsk1,
+   catcodigo as chave_dsk2,
+   *
 from (
 	select distinct
-	1 as id,
-	regime.regcodigo,
-	regime.regdescricao as descricao,
-	case   regime.cascodigo
-		   when 21 then 'REGIME_PROPRIO'
-		   when 1  then 'CLT'
-		   else 'OUTROS'
-	end as tipo,
-	'Sem descr' as descricaoRegimePrevidenciario,
-	cat.catcodigo as categoria_codigo,
-	cat.catdescricao as categoria_descricao,
-	COALESCE((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','categoria-trabalhador', left(cat.catdescricao, 100), cast(cat.catcodigo as text)))), 0) as categoriaTrabalhador,
-	'EMPREGADO' as sefip,
-	'S' as geraRais,
-	'10' as rais,
-	'S' as vinculo_temporario,
-	'1' as motivoRescisao,
-	true as dataFinalObrigatoria,
-	true as geraCaged,
-	true as geraLicencaPremio,
-	'1' as configuracaoAdicional
-	from wfp.tbregime regime
-	inner join wfp.tbcategoriatrabalhador cat on (cat.catcodigo = regime.catcodigo)
-	where odomesano >= 202001
-	and odomesano <= 202012
-	and regime.catcodigo is not null
-) tab
+	 1 as id,
+	 left(catdescricao, 100) as descricao,
+	 case catgrupo
+			   when 1 then 'CLT'
+			   when 2 then 'REGIME_PROPRIO'
+			   else 'OUTROS'
+	  end as tipo,
+	 '' as descricaoRegimePrevidenciario,
+	 catcodigo,
+	 case catcodigo
+	   when 101 then 'FUNCIONARIO'
+	   when 103 then 'FUNCIONARIO'
+	   when 105 then 'FUNCIONARIO'
+	   when 106 then 'FUNCIONARIO'
+	   when 410 then 'CESSAO'
+	   when 901 then 'BOLSISTA'
+	   when 902 then 'FUNCIONARIO'
+	   when 301 then 'AGENTE_PUBLICO'
+	   when 302 then 'AGENTE_PUBLICO'
+	   when 303 then 'AGENTE_PUBLICO'
+	   when 305 then 'AGENTE_PUBLICO'
+	   when 306 then 'AGENTE_PUBLICO'
+	   when 309 then 'AGENTE_PUBLICO'
+	   when 310 then 'AGENTE_PUBLICO'
+	   when 701 then 'CONTRIBUINTE_INDIVIDUAL'
+	   when 711 then 'CONTRIBUINTE_INDIVIDUAL'
+	   when 712 then 'CONTRIBUINTE_INDIVIDUAL'
+	   when 741 then 'CONTRIBUINTE_INDIVIDUAL'
+	   when 771 then 'CONTRIBUINTE_INDIVIDUAL'
+	   else 'FUNCIONARIO'
+	end as grupoTrabalhador	
+	from wfp.tbcategoriatrabalhador
+) tb
+where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'categoria-trabalhador', descricao, cast(catcodigo as text)))) is null

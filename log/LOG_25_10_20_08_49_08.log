@@ -1,9 +1,0 @@
-INFO 2020-10-25 08:49:08,594  Execução iniciada.
-INFO 2020-10-25 08:49:13,361  Iniciando execução com o banco de dados.
-INFO 2020-10-25 08:49:13,527  Verificando existência de tabelas de controle de migração.
-INFO 2020-10-25 08:49:13,547  Tabelas de controle encontradas.
-INFO 2020-10-25 08:49:13,580  Iniciando busca de consulta para o assunto horario.sql.
-INFO 2020-10-25 08:49:13,585  Iniciando execução com o banco de dados.
-INFO 2020-10-25 08:49:13,837  Inserindo dados na tabela de controle de registros.
-INFO 2020-10-25 08:49:13,837  Iniciando execução com o banco de dados.
-INFO 2020-10-25 08:49:13,914  Iniciando execução com o banco de dados.
