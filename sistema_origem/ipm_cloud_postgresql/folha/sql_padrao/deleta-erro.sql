@@ -1,6 +1,7 @@
 SELECT schemaname as esquema,relname as tabela FROM pg_stat_user_tables where relname like '%enca%' order by 1,2;
 
 SELECT schemaname as esquema,relname as tabela,n_live_tup as tamanho FROM pg_stat_user_tables order by 1,2;
+
 DO $$ DECLARE
     r RECORD;    
    	q INTEGER := 0;  
@@ -8,7 +9,7 @@ BEGIN
     FOR r IN (SELECT schemaname,relname,n_live_tup FROM pg_stat_user_tables WHERE n_live_tup = 0) LOOP
     	q := q + 1;
     	RAISE NOTICE 'Removido: % [%][%]',r.relname,q,r.n_live_tup;
-   		EXECUTE 'DROP TABLE IF EXISTS ' || quote_ident(r.schemaname) || '.' || quote_ident(r.relname) || ' CASCADE';
+   		-- EXECUTE 'DROP TABLE IF EXISTS ' || quote_ident(r.schemaname) || '.' || quote_ident(r.relname) || ' CASCADE';
    		COMMIT;   		
     END LOOP;	
 END $$;

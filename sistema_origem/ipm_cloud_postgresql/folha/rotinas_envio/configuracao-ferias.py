@@ -4,10 +4,10 @@ import json
 import logging
 from datetime import datetime
 
-tipo_registro = 'configuracao-lotacao-fisica'
+tipo_registro = 'configuracao-ferias'
 sistema = 300
 limite_lote = 500
-url = "https://pessoal.cloud.betha.com.br/service-layer/v1/api/configuracao-lotacao-fisica"
+url = "https://pessoal.cloud.betha.com.br/service-layer/v1/api/configuracao-ferias"
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
@@ -63,22 +63,22 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'idIntegracao': hash_chaves,
             'conteudo': {
                 'descricao': None if 'descricao' not in item else item['descricao'],
-                'emUso': None if 'emuso' not in item else item['emuso'],
+                'mesesParaAquisicao': item['mesesparaaquisicao'],
+                'mesesParaConcessao': item['mesesparaconcessao'],
+                'mesesParaCritica': item['mesesparacritica'],
+                'diasParaAdiquirirNoPeriodo': item['diasparaadiquirirnoperiodo'],
+                'controleAbono': item['controleabono'],
+                'abono': item['abono'],
+                'pagamentoFerias': item['pagamentoferias'],
+                'truncarDias': item['truncardias'],
+                'inicioPeriodo': item['inicioperiodo'],
+                'diaMesInicioPeriodo': item['diamesinicioperiodo'],
+                'periodoNovoFeriasProporcional': item['periodonovoferiasproporcional'],
+                'descontosFaltas': item['descontosfaltas'],
+                'cancelamentos': item['cancelamentos'],
+                'suspensoes': item['suspensoes']
             }
         }
-        if item['niveis'] is not None:
-            dict_dados['conteudo'].update({
-                'niveis': []
-            })
-            lista = item['niveis'].split('%||%')
-            for listacampo in lista:
-                campo = listacampo.split('%|%')
-                dict_dados['conteudo']['niveis'].append({
-                    'nivel': campo[0],
-                    'descricao': campo[1],
-                    'quantidadeDigitos': campo[2],
-                    'separador': campo[3]
-                })
         contador += 1
         # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
@@ -86,7 +86,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Configuracao de Lotação Fisica',
+            'descricao_tipo_registro': 'Cadastro de Configuracao de Ferias',
             'id_gerado': None,
             'i_chave_dsk1': item['codigo']
         })
