@@ -5,7 +5,7 @@ select
 	desc_natureza as chave_dsk2,
 	*
 from (
-	select 
+	select
 		(CAST(ato.txjnumero as text) || '/' || CAST(ato.txjano as text)) as num_ato,
 		cat.tctcodigo as id,
 		cat.tctcodigo as cod_ato,

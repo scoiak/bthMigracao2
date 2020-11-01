@@ -109,7 +109,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     for item in dados:
         contador += 1
         print(f'\r- Gerando JSON: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['chave_dsk1'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['chave_dsk1'], item['chave_dsk2'])
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {
