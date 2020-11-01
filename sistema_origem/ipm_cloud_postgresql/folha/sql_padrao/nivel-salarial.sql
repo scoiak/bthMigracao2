@@ -1,29 +1,25 @@
- select
-	'300' as sistema,
-	'nivel-salarial' as tipo_registro,
-	nivcodigo as chave_dsk1,
+select 
 	*
 from (
-select
-    1 as id,
-	clicodigo,
-	'2020-01-01 00:00:00' as dataHoraCriacao,
-	'2020-01-01' as inicioVigencia,
-	nivcodigo,
-	nivcodigo || ' - ' || nivdescricao as descricao,
+select	
+	nivcodigo as id,	
+	nivcodigo as codigo,
+	-- (nivdescricao || ' - ' || row_number() over(partition by nivdescricao order by nivdescricao)) as descricao,
+	(nivdescricao || ' - ' || nivcodigo) as descricao,
+	nivsalariobase as valor,
 	cast(regexp_replace(nivhoramensal, '\:\d{2}$', '', 'gi') as integer) as cargaHoraria,
-	max(nivsalariobase) as valor,
-	false as coeficiente,
-	null as atoCriacao,
-	586 as planoCargoSalario, -- Plano é configurado manualmente no cloud
+	false as coeficiente, 
+	(select nv.vigdatavigen::varchar || ' 00:00:00' from wfp.tbnivelvigen as nv where nv.nivcodigo = n.nivcodigo and nv.odomesano = n.odomesano order by nv.vigdatavigen desc limit 1) as inicioVigencia,	
+	(select nv.vigdatavigen::varchar || ' 00:00:00' from wfp.tbnivelvigen as nv where nv.nivcodigo = n.nivcodigo and nv.odomesano = n.odomesano order by nv.vigdatavigen asc limit 1) as dataHoraCriacao, 
+	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'ato', (select tj.txjnumero::varchar || '/' || tj.txjano::varchar FROM wlg.tbtextojuridico as tj where tj.txjcodigo = (select nv.txjcodigo from wfp.tbnivelvigen as nv where nv.nivcodigo = n.nivcodigo and nv.odomesano = n.odomesano and nv.txjcodigo is not null order by nv.vigdatavigen desc limit 1)),(select ct.tctdescricao from wlg.tbcategoriatexto as ct where ct.tctcodigo = (select tj.tctcodigo FROM wlg.tbtextojuridico as tj where tj.txjcodigo = (select nv.txjcodigo from wfp.tbnivelvigen as nv where nv.nivcodigo = n.nivcodigo and nv.odomesano = n.odomesano and nv.txjcodigo is not null order by nv.vigdatavigen asc limit 1)))))) as atoCriacao, 
+	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'ato', (select tj.txjnumero::varchar || '/' || tj.txjano::varchar FROM wlg.tbtextojuridico as tj where tj.txjcodigo = (select nv.txjcodigo from wfp.tbnivelvigen as nv where nv.nivcodigo = n.nivcodigo and nv.odomesano = n.odomesano and nv.txjcodigo is not null order by nv.vigdatavigen desc limit 1)),(select ct.tctdescricao from wlg.tbcategoriatexto as ct where ct.tctcodigo = (select tj.tctcodigo FROM wlg.tbtextojuridico as tj where tj.txjcodigo = (select nv.txjcodigo from wfp.tbnivelvigen as nv where nv.nivcodigo = n.nivcodigo and nv.odomesano = n.odomesano and nv.txjcodigo is not null order by nv.vigdatavigen desc limit 1)))))) as ultimoAto, 
+	586 as planoCargoSalario,
+	null as classesReferencias,
 	null as motivoAlteracao,
-	null as historico,
-	null as classes,
-COALESCE((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'nivel-salarial', '1'))), 0) as situacao_registro
-from wfp.tbnivel
-where odomesano = 202009
-and nivdesuso = 0
-group by id, clicodigo, dataHoraCriacao, inicioVigencia, nivcodigo, descricao, cargaHoraria, coeficiente, atoCriacao, planoCargoSalario, motivoAlteracao,  historico
-order by nivcodigo
+	null as reajusteSalarial,
+	(select string_agg(n.nivdescricao || ' - ' || suc.nivcodigo || '%|%' || suc.vigsalariobase || '%|%' || cast(regexp_replace(nivhoramensal, '\:\d{2}$', '', 'gi') as integer) || '%|%' || 'false' || '%|%' || suc.vigdatavigen::varchar || ' 01:00:00' || '%|%' || suc.vigdatavigen::varchar || ' 01:00:00' || '%|%' || 'null' || '%|%' || 'null' || '%|%' || '586' || '%|%' || 'null' || '%|%' || 'null' || '%|%' || 'null','%||%') from (select * from wfp.tbnivelvigen as nv where nv.nivcodigo = n.nivcodigo and nv.odomesano = n.odomesano order by nv.vigdatavigen asc) as suc) as historicos
+from 
+	wfp.tbnivel as n
+where odomesano = '202009'
 ) tab
-where situacao_registro = 0
+where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'nivel-salarial', codigo))) is null

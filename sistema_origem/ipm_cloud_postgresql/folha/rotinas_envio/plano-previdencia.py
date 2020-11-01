@@ -4,22 +4,17 @@ import json
 import logging
 from datetime import datetime
 
-tipo_registro = 'tipo-logradouro'
+tipo_registro = 'plano-previdencia'
 sistema = 300
 limite_lote = 500
-url = "https://pessoal.cloud.betha.com.br/service-layer/v1/api/tipo-logradouro"
-
+url = "https://pessoal.cloud.betha.com.br/service-layer/v1/api/plano-previdencia"
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
-    if True:
-        busca_dados(params_exec)
-    if False:
-        dados_assunto = coletar_dados(params_exec)
-        dados_enviar = pre_validar(params_exec, dados_assunto)
-        if not params_exec.get('somente_pre_validar'):
-            iniciar_envio(params_exec, dados_enviar, 'POST')
-        model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
-
+    dados_assunto = coletar_dados(params_exec)
+    dados_enviar = pre_validar(params_exec, dados_assunto)
+    if not params_exec.get('somente_pre_validar'):
+        iniciar_envio(params_exec, dados_enviar, 'POST')
+    model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
 
 def coletar_dados(params_exec):
     print('- Iniciando a consulta dos dados a enviar.')
@@ -33,7 +28,6 @@ def coletar_dados(params_exec):
         print(f'Erro ao executar função {tipo_registro}. {error}')
     finally:
         return df
-
 
 def pre_validar(params_exec, dados):
     print('- Iniciando pré-validação dos registros.')
@@ -52,7 +46,6 @@ def pre_validar(params_exec, dados):
     finally:
         return dados_validados
 
-
 def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     print('- Iniciando envio dos dados.')
     lista_dados_enviar = []
@@ -61,12 +54,17 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     token = params_exec['token']
     contador = 0
     for item in dados:
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['descricao'].upper())
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['codigo'])
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {
                 'descricao': None if 'descricao' not in item else item['descricao'],
-                'abreviatura': item['abreviatura']
+                'tipo': None if 'tipo' not in item else item['tipo'],
+                'regime': None if 'regime' not in item else item['regime'],
+                'ambitoRegime': None if 'ambitoregime' not in item else item['ambitoregime'],
+                'dataAlteracao': None if 'dataAlteracao' not in item else item['dataAlteracao'],
+                'situacao': None if 'situacao' not in item else item['situacao'],
+                'observacao': None if 'observacao' not in item else item['observacao']
             }
         }
         contador += 1
@@ -76,9 +74,9 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Tipo de Logradouro',
+            'descricao_tipo_registro': 'Cadastro de Plano de Previdencia',
             'id_gerado': None,
-            'i_chave_dsk1': item['descricao'].upper(),
+            'i_chave_dsk1': item['codigo']
         })
     model.insere_tabela_controle_migracao_registro2(params_exec, lista_req=lista_controle_migracao)
     req_res = interacao_cloud.preparar_requisicao(lista_dados=lista_dados_enviar,
@@ -88,22 +86,3 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                                                   tamanho_lote=limite_lote)
     model.insere_tabela_controle_lote(req_res)
     print('- Envio de dados finalizado.')
-
-
-def busca_dados(params_exec):
-    print('- Iniciando busca de dados no cloud.')
-    registros = interacao_cloud.busca_dados_cloud(params_exec, url=url)
-    print(f'- Foram encontrados {len(registros)} registros cadastrados no cloud.')
-    registros_formatados = []
-    for item in registros:
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['descricao'].upper())
-        registros_formatados.append({
-            'sistema': sistema,
-            'tipo_registro': tipo_registro,
-            'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Tipo de Logradouro',
-            'id_gerado': item['id'],
-            'i_chave_dsk1': item['descricao'].upper(),
-        })
-    model.insere_tabela_controle_migracao_registro(params_exec, lista_req=registros_formatados)
-    print('- Busca finalizada. Tabelas de controles atualizas com sucesso.')

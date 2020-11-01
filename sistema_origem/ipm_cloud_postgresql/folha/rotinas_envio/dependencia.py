@@ -4,16 +4,14 @@ import json
 import logging
 from datetime import datetime
 
-tipo_registro = 'tipo-logradouro'
+tipo_registro = 'dependencia'
 sistema = 300
 limite_lote = 500
-url = "https://pessoal.cloud.betha.com.br/service-layer/v1/api/tipo-logradouro"
+url = "https://pessoal.cloud.betha.com.br/service-layer/v1/api/dependencia"
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
     if True:
-        busca_dados(params_exec)
-    if False:
         dados_assunto = coletar_dados(params_exec)
         dados_enviar = pre_validar(params_exec, dados_assunto)
         if not params_exec.get('somente_pre_validar'):
@@ -61,12 +59,40 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     token = params_exec['token']
     contador = 0
     for item in dados:
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['descricao'].upper())
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['pessoa'], item['pessoadependente'])
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {
-                'descricao': None if 'descricao' not in item else item['descricao'],
-                'abreviatura': item['abreviatura']
+                'pessoa': {
+                    'id': item['pessoa']
+                },
+                'pessoaDependente': {
+                    'id': item['pessoadependente']
+                },
+                'responsaveis': item['responsaveis'],
+                'grau': item['grau'],
+                'dataInicio': item['datainicio'],
+                'motivoInicio': item['motivoinicio'],
+                'dataTermino': item['datatermino'],
+                'motivoTermino': item['motivotermino'],
+                'dataCasamento': item['datacasamento'],
+                'estuda': item['estuda'],
+                'dataInicioCurso': item['datainiciocurso'],
+                'dataFinalCurso': item['datafinalcurso'],
+                'irrf': item['irrf'],
+                'salarioFamilia': item['salariofamilia'],
+                'pensao': item['pensao'],
+                'dataInicioBeneficio': item['datainiciobeneficio'],
+                'duracao': item['duracao'],
+                'dataVencimento': item['datavencimento'],
+                'alvaraJudicial': item['alvarajudicial'],
+                'dataAlvara': item['dataalvara'],
+                'aplicacaoDesconto': item['aplicacaodesconto'],
+                'valorDesconto': item['valordesconto'],
+                'percentualDesconto': item['percentualdesconto'],
+                'percentualPensaoFgts': item['percentualpensaofgts'],
+                'representanteLegal': item['representantelegal'],
+                'formaPagamento': item['formapagamento']
             }
         }
         contador += 1
@@ -76,9 +102,11 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Tipo de Logradouro',
+            'descricao_tipo_registro': 'Cadastro de Dependencia',
             'id_gerado': None,
-            'i_chave_dsk1': item['descricao'].upper(),
+            'i_chave_dsk1': item['pessoa'],
+            'i_chave_dsk2': item['pessoadependente']
+
         })
     model.insere_tabela_controle_migracao_registro2(params_exec, lista_req=lista_controle_migracao)
     req_res = interacao_cloud.preparar_requisicao(lista_dados=lista_dados_enviar,
@@ -88,22 +116,3 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                                                   tamanho_lote=limite_lote)
     model.insere_tabela_controle_lote(req_res)
     print('- Envio de dados finalizado.')
-
-
-def busca_dados(params_exec):
-    print('- Iniciando busca de dados no cloud.')
-    registros = interacao_cloud.busca_dados_cloud(params_exec, url=url)
-    print(f'- Foram encontrados {len(registros)} registros cadastrados no cloud.')
-    registros_formatados = []
-    for item in registros:
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['descricao'].upper())
-        registros_formatados.append({
-            'sistema': sistema,
-            'tipo_registro': tipo_registro,
-            'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Tipo de Logradouro',
-            'id_gerado': item['id'],
-            'i_chave_dsk1': item['descricao'].upper(),
-        })
-    model.insere_tabela_controle_migracao_registro(params_exec, lista_req=registros_formatados)
-    print('- Busca finalizada. Tabelas de controles atualizas com sucesso.')
