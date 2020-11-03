@@ -38,6 +38,7 @@ def iniciar():
     # enviar(params_exec, 'motivo-rescisao')
     # enviar(params_exec, 'nivel-salarial')
     # enviar(params_exec, 'pessoa-fisica')
+    enviar(params_exec, 'cargo')
 
 
 def enviar(params_exec, tipo_registro, *args, **kwargs):

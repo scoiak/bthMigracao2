@@ -28,8 +28,8 @@ from (
 		 ELSE null END
 		) as classificacao,
 		(CASE
-			WHEN UPPER(motdescricao) ~ 'APOSENTADORIA' then 6764
-		 	ELSE 6820 END
+			WHEN UPPER(motdescricao) ~ 'APOSENTADORIA' then 6977
+		 	ELSE 7054 END
 		) as id_motivo_afastamento,
 		--(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','tipo-afastamento', CAST(motcodigo as text)))) as id_motivo_afastamento,
 		COALESCE((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','motivo-rescisao', CAST(padcodigo as text)))), 0) as situacao_registro

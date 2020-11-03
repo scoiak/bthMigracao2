@@ -101,7 +101,7 @@ def enviar_lote(lote, *args, **kwargs):
             else:
                 retorno_requisicao['id_lote'] = ''
 
-            print('DEBUG - Lote enviado: ', retorno_requisicao['id_lote'])
+            # print('DEBUG - Lote enviado: ', retorno_requisicao['id_lote'])
 
             if settings.SISTEMA_ORIGEM == 'folha':
                 retorno_requisicao['url_consulta'] = url + '/lotes/' + retorno_requisicao['id_lote']
@@ -135,7 +135,6 @@ def busca_dados_cloud(params_exec, **kwargs):
             if 'content' in retorno_json:
                 for i in retorno_json['content']:
                     dados_coletados.append(i)
-
 
     except Exception as error:
         print(f'Erro durante a execução da função busca_dados. {error}')
