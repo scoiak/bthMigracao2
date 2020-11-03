@@ -14,6 +14,16 @@ BEGIN
     END LOOP;	
 END $$;
 
+DO $$ DECLARE
+    r RECORD; 
+BEGIN       
+	FOR r in (select distinct schemaname from pg_catalog.pg_tables where schemaname not like 'pg_catalog') loop
+		RAISE NOTICE 'Removido: %',r.schemaname;
+		-- EXECUTE 'DROP SCHEMA ' || r.schemaname || ' CASCADE'; 
+		COMMIT;
+	END LOOP;   
+END $$;
+
 select count(*),tipo_registro,sistema from public.controle_migracao_registro group by tipo_registro,sistema
 update public.controle_migracao_registro set tipo_registro = 'pais',hash_chave_dsk = md5(concat('300','pais',i_chave_dsk1,i_chave_dsk2,i_chave_dsk3)) where tipo_registro = 'pais'
 update public.controle_migracao_registro set tipo_registro = 'estado',hash_chave_dsk = md5(concat('300','estado',i_chave_dsk1,i_chave_dsk2,i_chave_dsk3)) where tipo_registro = 'estado'
