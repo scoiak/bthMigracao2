@@ -40,6 +40,17 @@ null as diasPrevistos,
 false as perdeTempoServico,
 false as consideraVencimento,
 false as justificado
+union 
+select
+(select max(motcodigo +2 ) from wfp.tbmotivoafasta) as id,
+(select max(motcodigo +2 ) from wfp.tbmotivoafasta) as codigo,
+'FERIAS' as descricao,
+'FERIAS' as classificacao,
+null as tipoMovimentacaoPessoal,
+null as diasPrevistos,
+false as perdeTempoServico,
+false as consideraVencimento,
+false as justificado
 ) as a
 where classificacao is not null
 and (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'tipo-afastamento', codigo))) is null

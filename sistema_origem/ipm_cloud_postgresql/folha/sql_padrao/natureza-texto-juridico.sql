@@ -1,10 +1,7 @@
 select * from (
-	select '300' as sistema,
-       'natureza-texto-juridico' as tipo_registro,
+	select 
     	tctcodigo as id,
-		tctdescricao as chave_dsk1,
-        tctdescricao as nome,
-		public.bth_get_situacao_registro('300', 'natureza-texto-juridico', tctdescricao) as situacao_registro
+		tctdescricao as descricao
    from wlg.tbcategoriatexto
 ) tab
-where situacao_registro in (0)
+where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'natureza-texto-juridico',descricao))) is null

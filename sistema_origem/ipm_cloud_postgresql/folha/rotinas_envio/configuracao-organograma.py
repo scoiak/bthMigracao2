@@ -78,11 +78,12 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                     'descricao': campo[1],
                     'quantidadeDigitos': campo[2],
                     'separador': campo[3],
-                    'responsavelControleVagas': campo[4]
+                    'responsavelControleVagas': campo[4],
+                    'nivelSecretaria': campo[5]
                 })
 
         contador += 1
-        # print(f'Dados gerados ({contador}): ', dict_dados)
+        print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,

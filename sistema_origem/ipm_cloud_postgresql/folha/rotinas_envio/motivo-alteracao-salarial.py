@@ -9,13 +9,17 @@ tipo_registro = 'motivo-alteracao-salarial'
 url = 'https://pessoal.cloud.betha.com.br/service-layer/v1/api/motivo-alteracao-salarial'
 limite_lote = 500
 
+
 def iniciar_processo_envio(params_exec, *args, **kwargs):
-    busca_dados_cloud(params_exec)
-    dados_assunto = coletar_dados(params_exec)
-    dados_enviar = pre_validar(params_exec, dados_assunto)
-    if not params_exec.get('somente_pre_validar'):
-        iniciar_envio(params_exec, dados_enviar, 'POST')
-    model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
+    if True:
+        busca_dados_cloud(params_exec)
+    if True:
+        dados_assunto = coletar_dados(params_exec)
+        dados_enviar = pre_validar(params_exec, dados_assunto)
+        if not params_exec.get('somente_pre_validar'):
+            iniciar_envio(params_exec, dados_enviar, 'POST')
+        model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
+
 
 def busca_dados_cloud(params_exec):
     print('- Iniciando busca de dados no cloud.')
@@ -55,6 +59,7 @@ def coletar_dados(params_exec):
     finally:
         return df
 
+
 def pre_validar(params_exec, dados):
     print('- Iniciando pré-validação dos registros.')
     dados_validados = []
@@ -72,6 +77,7 @@ def pre_validar(params_exec, dados):
     finally:
         return dados_validados
 
+
 def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     print('- Iniciando envio dos dados.')
     lista_dados_enviar = []
@@ -80,11 +86,11 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     token = params_exec['token']
     contador = 0
     for item in dados:
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['chave_dsk1'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['descricao'])
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {
-                "descricao": item['chave_dsk1']
+                "descricao": item['descricao']
             }
         }
         contador += 1
@@ -96,7 +102,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'hash_chave_dsk': hash_chaves,
             'descricao_tipo_registro': 'Cadastro do Motivo de Alteração Salarial',
             'id_gerado': None,
-            'i_chave_dsk1': item['chave_dsk1']
+            'i_chave_dsk1': item['descricao']
         })
     if True:
         model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)

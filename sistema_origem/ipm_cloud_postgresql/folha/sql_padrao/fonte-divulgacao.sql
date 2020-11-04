@@ -1,7 +1,4 @@
-SELECT
-	'300' as sistema,
-	'fonte-divulgacao' as tipo_registro,
-	descricao as chave_dsk1,
+SELECT	
 	*
 from (
 	select
@@ -20,9 +17,8 @@ from (
 			when 9 then 'INTERNET'
 			when 10 then 'DIARIO_ASSEMBLEIA'
 			when 11 then 'DIARIO_OFICIAL_MUNICIPIO'
-		end as meio_comunicacao,
-		public.bth_get_situacao_registro('300', 'fonte-divulgacao', vpudescricao) as situacao_registro
+		end as meioComunicacao	
 	from wun.tbveiculopublic
 	order by vputipo
 ) tab
-where situacao_registro not in (5, 4, 3);
+where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'fonte-divulgacao',descricao))) is null

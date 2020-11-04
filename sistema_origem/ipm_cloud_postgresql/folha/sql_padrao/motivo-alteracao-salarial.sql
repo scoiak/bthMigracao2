@@ -1,9 +1,7 @@
 select * from (
-	select distinct '300' as sistema,
-		 'motivo-alteracao-salarial' as tipo_registro,
-		 mtrdescricao as id,
-		 mtrdescricao as chave_dsk1,
-		 public.bth_get_situacao_registro('300', 'motivo-alteracao-salarial', mtrdescricao) as situacao_registro
-	from wfp.tbmotivoreajuste
+	select 
+		 row_number() over() as id,
+		 mtrdescricao as descricao
+	from wfp.tbmotivoreajuste where odomesano = 202009
 ) tab
-where situacao_registro in (0)
+where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'motivo-alteracao-salarial',descricao))) is null

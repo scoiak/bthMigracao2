@@ -1,5 +1,5 @@
 select *,ROW_NUMBER() OVER()::varchar as id,ROW_NUMBER() OVER()::varchar as codigo from (select
-'Configuração Teste Migração 2' as descricao,
+'Configuração Geral' as descricao,
             'true' as emUso,
                 (select string_agg(nivel::varchar || '%|%' || descricao || '%|%' || quantidadeDigitos::varchar || '%|%' || separador,'%||%') from
 	                    (select

@@ -1,12 +1,9 @@
 select
-  tctcodigo as id,
-  tctdescricao as chave_dsk1,
-  classificacao as chave_dsk2,
   *
 from (
-  select '300' as sistema,
-       'tipo-ato' as tipo_registro,
-       tctcodigo,
+  select
+       tctcodigo as id,
+       tctcodigo as codigo,
        case tctcodigo
         when 1 then  'DECRETO'
         when 2 then  'PORTARIA'
@@ -74,10 +71,11 @@ from (
         when 64 then 'EDITAL'
         else 'ATO'
         end as classificacao,
-       left(tctdescricao, 40) as tctdescricao,
-       null as codigo_tce
+       left(tctdescricao, 40) as descricao       
     from wlg.tbcategoriatexto
   order by tctcodigo
 ) tab
 where
-  public.bth_get_situacao_registro('300' , 'tipo-ato' , tctdescricao, classificacao) not in (5, 4, 3)
+  -- public.bth_get_situacao_registro('300' , 'tipo-ato' , tctdescricao, classificacao) not in (5, 4, 3)
+  (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','tipo-ato', descricao, classificacao))) is null
+  

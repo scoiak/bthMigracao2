@@ -21,11 +21,12 @@ SELECT
     reg.i_chave_dsk2 AS segundaChave,   
     reg.i_chave_dsk3 AS terceiraChave,   
     reg.i_chave_dsk4 AS quartaChave,   
+    ocor.hash_chave_dsk as codigo,
     reg.id_gerado AS idGerado,
     ocor.situacao AS estadoItem,
     ocor.mensagem_erro AS mensagemErro,
     ocor.json_enviado AS jsonEnviado,
-    lot.conteudo_json AS jsonLote
+    lot.conteudo_json AS jsonLote    
 FROM 
     public.controle_migracao_registro as reg
 left JOIN 
@@ -35,7 +36,7 @@ left JOIN
 WHERE 
     ocor.id_gerado IS NULL
 AND
-    reg.tipo_registro ='nivel-salarial'
+    reg.tipo_registro = 'lotacao-fisica'
 AND 
     ocor.i_sequencial = 
         (

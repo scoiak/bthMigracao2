@@ -33,8 +33,9 @@ commit;
 
 DO $$ DECLARE
     tipo_registro alias for 'nivel-salarial';
-BEGIN
-	delete from public.controle_migracao_lotes where tipo_registro = 'nivel-salarial';
-	delete from public.controle_migracao_registro where tipo_registro = 'nivel-salarial';
-	delete from public.controle_migracao_registro_ocor where tipo_registro = 'nivel-salarial';
+begin
+	delete from public.controle_migracao_registro where tipo_registro = 'tipo-ato';
+
+	delete from public.controle_migracao_lotes where tipo_registro = 'ato';	
+	delete from public.controle_migracao_registro_ocor where tipo_registro = 'ato';
 END $$;

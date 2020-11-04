@@ -13,7 +13,7 @@ url = "https://pessoal.cloud.betha.com.br/service-layer/v1/api/tipo-logradouro"
 def iniciar_processo_envio(params_exec, *args, **kwargs):
     if True:
         busca_dados(params_exec)
-    if False:
+    if True:
         dados_assunto = coletar_dados(params_exec)
         dados_enviar = pre_validar(params_exec, dados_assunto)
         if not params_exec.get('somente_pre_validar'):

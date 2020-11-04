@@ -1,19 +1,16 @@
-select
-	'300' as sistema,
-	'motivo-rescisao' as tipo_registro,
-	motcodigo as chave_dsk1,
+select	
 	*
 from (
-	select distinct
-		1 as id,
-		motcodigo,
-		motdescricao as descricao,
+	select 
+		motcodigo as id,
+		motcodigo as codigo,		
+		(motdescricao || ' - ' || motcodigo) as descricao,
 		(CASE
-			WHEN UPPER(motdescricao) ~ 'APOSENTADORIA' then 'APOSENTADORIA'
-			WHEN UPPER(motdescricao) ~ 'RESCISÃO' then 'INICIATIVA_EMPREGADOR'
-		 	WHEN UPPER(motdescricao) ~ 'DEMISSÃO' then 'INICIATIVA_EMPREGADOR'
-		 	ELSE 'DISSOLUCAO_CONTRATO_TRABALHO' END
-		) as tipo,
+			WHEN UPPER(motdescricao) ~ 'APOSENTADORIA' then 'APOSENTADORIA'			
+			WHEN UPPER(motdescricao) ~ '[RESCISÃO|DEMISSÃO]' then (case when UPPER(motdescricao) ~ 'EMPREGADO$' then 'INICIATIVA_EMPREGADO' else 'INICIATIVA_EMPREGADOR' end)		 			 	
+			WHEN UPPER(motdescricao) ~ '[MORTE|FALESCIMENTO|EXONERAÇÃO]' then 'DISSOLUCAO_CONTRATO_TRABALHO'
+		 	else null
+		END) as tipo,
 		(CASE
 		 	WHEN UPPER(motdescricao) ~ '^APOSENTADORIA$' then 'APOSENTADORIA_ESPECIAL'
 			WHEN UPPER(motdescricao) ~ 'APOSENTADORIA ESPECIAL' then 'APOSENTADORIA_ESPECIAL'
@@ -22,21 +19,16 @@ from (
 			WHEN UPPER(motdescricao) ~ 'APOSENTADORIA POR TEMPO' then 'APOSENTADORIA_TEMPO_SERVICO'
 		 	WHEN UPPER(motdescricao) ~ 'COM JUSTA CAUSA EPREGADOR' then 'RESCISAO_COM_JUSTA_CAUSA_INICIATIVA_EMPREGADOR'
 		 	WHEN UPPER(motdescricao) ~ 'SEM JUSTA CAUSA EMPREGADOR' then 'RESCISAO_SEM_JUSTA_CAUSA_INICIATIVA_EMPREGADOR'
-			WHEN UPPER(motdescricao) ~ 'COM JUSTA CAUSA EMPREGADO$' then 'RESCISAO_COM_JUSTA_CAUSA_INICIATIVA_DO_EMPREGADO'
+			WHEN UPPER(motdescricao) ~ 'COM JUSTA CAUSA EMPREGADO$' then 'RESCISAO_INICIATIVA_EMPREGADO_394_483_CLT'
 		 	WHEN UPPER(motdescricao) ~ 'SEM JUSTA CAUSA EMPREGADO$' then 'RESCISAO_SEM_JUSTA_CAUSA_INICIATIVA_DO_EMPREGADO'
 		 	WHEN UPPER(motdescricao) ~ '[MORTE|FALESCIMENTO]' then 'FALECIMENTO_EMPREGADO_OUTROS_MOTIVOS'
 		 ELSE null END
 		) as classificacao,
-		(CASE
-			WHEN UPPER(motdescricao) ~ 'APOSENTADORIA' then 6977
-		 	ELSE 7054 END
-		) as id_motivo_afastamento,
-		--(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','tipo-afastamento', CAST(motcodigo as text)))) as id_motivo_afastamento,
-		COALESCE((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','motivo-rescisao', CAST(padcodigo as text)))), 0) as situacao_registro
+		(CASE	WHEN UPPER(motdescricao) ~ 'APOSENTADORIA' then (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','tipo-afastamento', '13'))) ELSE (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','tipo-afastamento', '64'))) end ) as tipoAfastamento
+		-- (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','tipo-afastamento', CAST(motcodigo as text)))) as tipoAfastamento	
 	from wfp.tbmotivoafasta
 	where mottipo = 4
-	and odomesano >= 202001
-	and odomesano <= 202012
+	and odomesano = 202009
 	order by motdescricao
 ) tb
-where situacao_registro = 0;
+where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','motivo-rescisao', CAST(codigo as text)))) is null
