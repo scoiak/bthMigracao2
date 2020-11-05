@@ -201,7 +201,7 @@ def insere_tabela_controle_migracao_registro(params_exec, lista_req):
           'i_chave_dsk2, i_chave_dsk3, i_chave_dsk4, i_chave_dsk5, i_chave_dsk6, i_chave_dsk7, i_chave_dsk8,' \
           'i_chave_dsk9, i_chave_dsk10, i_chave_dsk11, i_chave_dsk12, json_enviado) ' \
           'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) ' \
-          ' ON CONFLICT DO NOTHING'
+          ' ON CONFLICT (hash_chave_dsk) DO UPDATE SET json_enviado = EXCLUDED.json_enviado'
 
     if lista_req is not None:
         try:

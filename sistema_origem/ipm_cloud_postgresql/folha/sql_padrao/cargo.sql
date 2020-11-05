@@ -1,4 +1,5 @@
 -- Antes de migrar, criar campos adicionais de cargo para o e-Sfinge
+-- Configurar ID padrão da configuração de férias
 -- create index idx_cargos on wfp.tbcargo (carcodigo, odomesano);
 select
 	'300' as sistema,
@@ -44,6 +45,9 @@ from (
 		coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'cbo', cargo.cbocodigo))),0) as id_cbo,
 		coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'tipo-cargo', cargo.cartipocargo))), 0) as id_tipo_cargo,
 		coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'ato', (select concat(tj.txjnumero, '/', tj.txjano) from wlg.tbtextojuridico tj where tj.txjcodigo = cargo.txjcodigocri), (select cat.tctdescricao from wlg.tbtextojuridico tj inner join wlg.tbcategoriatexto cat on cat.tctcodigo = tj.tctcodigo where tj.txjcodigo = cargo.txjcodigocri limit 1)))),0) as id_ato,
+		(case cargo.cartemferias
+			when 1 then 752
+			else null end) as id_conf_ferias,
 		'MENSALISTA' as unidadePagamento,
 		'NAO_ACUMULAVEL' as acumuloCargos,
 		cargo.carvagas as quantidadeVagas,
