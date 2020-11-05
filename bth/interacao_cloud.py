@@ -130,6 +130,7 @@ def busca_dados_cloud(params_exec, **kwargs):
             params = {'offset': offset, 'limit': limit}
             r = requests.get(url=url, params=params, headers=headers)
             retorno_json = r.json()
+            print('params', params, f'({r.elapsed} s.)')
             has_next = retorno_json['hasNext']
             offset += limit
             if 'content' in retorno_json:

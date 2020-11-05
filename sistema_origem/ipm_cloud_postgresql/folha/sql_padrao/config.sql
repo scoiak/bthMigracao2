@@ -21,7 +21,8 @@ CREATE TABLE public.controle_migracao_registro
     i_chave_dsk9 text,
     i_chave_dsk10 text,
     i_chave_dsk11 text,
-    i_chave_dsk12 text
+    i_chave_dsk12 text,
+    json_enviado text
 );
 %/%
 

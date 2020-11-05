@@ -8,7 +8,8 @@ def iniciar():
     print(':: Iniciando migração do sistema Folha')
     params_exec = {
         'somente_pre_validar': False,
-        'token': '72612895-9758-467d-a2ef-36b8b57c3198',
+        # 'token': '72612895-9758-467d-a2ef-36b8b57c3198',
+        'token': '58924393-e014-43f4-9269-5646a39b127d',
         'ano': 2020
     }
     mensagem_inicio(params_exec)
@@ -36,7 +37,7 @@ def iniciar():
     # enviar(params_exec, 'vinculo-empregaticio')
     # enviar(params_exec, 'lotacao-fisica')
     # enviar(params_exec, 'motivo-rescisao')
-    enviar(params_exec, 'nivel-salarial')
+    # enviar(params_exec, 'nivel-salarial')
     # enviar(params_exec, 'pessoa-fisica')
     enviar(params_exec, 'cargo')
 
