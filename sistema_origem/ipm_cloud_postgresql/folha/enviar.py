@@ -39,14 +39,17 @@ def iniciar():
     # enviar(params_exec, 'configuracao-lotacao-fisica')
     # enviar(params_exec, 'lotacao-fisica')
     # enviar(params_exec, 'pessoa-fisica')
-    enviar(params_exec, 'pessoa-juridica')
+    # enviar(params_exec, 'pessoa-juridica')
     # enviar(params_exec, 'dependencia')
     # enviar(params_exec, 'categoria-trabalhador')
     # enviar(params_exec, 'vinculo-empregaticio')
     # enviar(params_exec, 'cbo')
-    # enviar(params_exec, 'evento')
+    # enviar(params_exec, 'concurso')
+    # enviar(params_exec, 'configuracao-evento')
     # enviar(params_exec, 'plano-cargo-salario')
-    # enviar(params_exec, 'nivel-salarial')
+    enviar(params_exec, 'nivel-salarial')
+    # enviar(params_exec, 'cargo')
+    # enviar(params_exec, 'matricula')
 
 
 def enviar(params_exec, tipo_registro, *args, **kwargs):

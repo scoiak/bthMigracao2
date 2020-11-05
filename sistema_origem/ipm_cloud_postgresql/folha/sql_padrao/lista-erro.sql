@@ -36,7 +36,7 @@ left JOIN
 WHERE 
     ocor.id_gerado IS NULL
 AND
-    reg.tipo_registro = 'lotacao-fisica'
+    reg.tipo_registro = 'concurso'
 AND 
     ocor.i_sequencial = 
         (

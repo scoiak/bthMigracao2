@@ -98,7 +98,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'id_gerado': None,
             'i_chave_dsk1': item['codigo']
         })
-    print(f'- Processo de transformação finalizado. ({(datetime.now() - dh_inicio).total_seconds()} segundos)')
+    # print(f'- Processo de transformação finalizado. ({(datetime.now() - dh_inicio).total_seconds()} segundos)')
     if True:
         model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)
         req_res = interacao_cloud.preparar_requisicao(lista_dados=lista_dados_enviar,

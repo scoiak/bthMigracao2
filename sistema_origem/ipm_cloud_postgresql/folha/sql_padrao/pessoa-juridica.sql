@@ -13,7 +13,7 @@ select * from
 	null as orgaoRegistro,
 	null as inscricaoMunicipal,
 	null as isentoInscricaoEstadual,
-	regexp_replace(u.unirgie, '[/.-]|[A-Za-z]|[0]','','g') as inscricaoEstadual,
+	(case when (select ssu.unicodigo from wun.tbunico as ssu where regexp_replace(ssu.unirgie, '[/.-]|[A-Za-z]|[0][ ]','','g') = regexp_replace(u.unirgie, '[/.-]|[A-Za-z]|[0][ ]','','g') limit 1) = u.unicodigo then regexp_replace(u.unirgie, '[/.-]|[A-Za-z]|[0][ ]','','g') else null end) as inscricaoEstadual,
 	null as optanteSimples,
 	null as site,
 	null as sindicato,
@@ -29,11 +29,11 @@ from
 	wun.tbunico as u left join wun.tbunicojuridica as uj on uj.unicodigo = u.unicodigo
 where
 	u.unitipopessoa = 2
-and
-	u.unisituacao = 1
+--and	u.unisituacao = 1
 and
 	length(regexp_replace(u.unicpfcnpj,'[/.-]|[0]','','g')) > 0
 and
 	((uj.unicodigores is not null and uj.unjmei = 1) or (uj.unicodigores is  null and uj.unjmei = 0))
 ) as a
 where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'pessoa-juridica', cnpj))) is null
+-- limit 1000

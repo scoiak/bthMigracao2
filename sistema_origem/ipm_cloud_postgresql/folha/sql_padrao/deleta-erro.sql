@@ -36,6 +36,6 @@ DO $$ DECLARE
 begin
 	delete from public.controle_migracao_registro where tipo_registro = 'tipo-ato';
 
-	delete from public.controle_migracao_lotes where tipo_registro = 'ato';	
-	delete from public.controle_migracao_registro_ocor where tipo_registro = 'ato';
+	delete from public.controle_migracao_lotes where tipo_registro = 'pessoa-fisica';	
+	delete from public.controle_migracao_registro_ocor where tipo_registro = 'pessoa-fisica';
 END $$;

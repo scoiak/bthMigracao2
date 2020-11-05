@@ -1,4 +1,5 @@
 select * from (select 
+row_number() over() as id,
 	fundataadmissao as database,
 	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','vinculo-empregaticio',regcodigo::varchar))) as vinculoEmpregaticio,
 	(case fc.regcodigo when 24 then 'true' else 'false' end) as contratoTemporario,
@@ -19,13 +20,13 @@ select * from (select
 	null as tempoAposentadoria,
 	null as previdenciaFederal,
 	null as previdencias,
-	carcodigo as cargo,
+	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'cargo', carcodigo))) as cargo,
 	null as cargoAlterado,
 	txjcodigo as atoAlteracaoCargo,
 	null as areaAtuacao,
 	null as areaAtuacaoAlterada,
 	null as motivoAlteracaoAreaAtuacao,
-	funocupavaga as ocupaVaga,
+	(case funocupavaga when 1 then true else false end) as ocupaVaga,
 	null as salarioAlterado,
 	null as origemSalario,
 	nivcodigo as nivelSalarial,
@@ -88,22 +89,24 @@ select * from (select
 	null as dataInicioContrato,
 	(CASE fc.funsituacao WHEN  1 THEN 'TRABALHANDO'  WHEN 2 THEN 'AFASTADO' ELSE 'DEMITIDO' end) as situacao,
 	null as inicioVigencia,
-	'FUNCIONARIO' as tipo,
-	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'pessoa-fisica', (select regexp_replace(u.unicpfcnpj,'[/.-]','','g') from  wun.tbunico u where u.unicodigo  = fc.unicodigo))))  as pessoa,
+	(CASE fc.funtipocontrato WHEN  1 THEN 'FUNCIONARIO'  	WHEN 2 THEN 'ESTAGIARIO' 	WHEN 3 THEN 'PENSIONISTA'	WHEN 4 THEN 'APOSENTADO'	WHEN 5 THEN 'REINTEGRACAO'	WHEN 6 THEN 'TRANSFERENCIA'	WHEN 7 THEN 'MENOR_APRENDIZ'	WHEN 8 THEN 'CEDIDO'	WHEN 9 THEN 'CEDIDO'	WHEN 10 THEN 'RECEBIDO'	WHEN 11 THEN 'RECEBIDO'	WHEN 12 THEN 'PREVIDENCIA'	ELSE 'FUNCIONARIO' end) as tipo, 
+	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'pessoa-fisica', (select regexp_replace(u.unicpfcnpj,'[/.-]','','g') from  wun.tbunico u where u.unicodigo  = fc.unicodigo limit 1))))  as pessoa,
 	fc.fcncodigo as codigoMatricula,
 	null as eSocial,
 	null as grupoFuncional,
 	null as jornadaTrabalho,
 	funsalariobase as rendimentoMensal,
-	txjcodigo as atoAlteracaoSalario,
-	null as motivoAlteracaoSalario,
-	null as validationStatus,
-	cnccodigo as organograma,
+	(select txjcodigo from wfp.tbfunhistoricosalarial as fhs where fhs.fcncodigo = fc.fnccodigo and fhs.odomesano = fc.odomesano limit 1) as atoAlteracaoSalario,
+	(select mtrcodigo from wfp.tbfunhistoricosalarial as fhs where fhs.fcncodigo = fc.fnccodigo and fhs.odomesano = fc.odomesano limit 1) as motivoAlteracaoSalario, 
+	null as validationStatus,	
+	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','organograma', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','configuracao-organograma', 1)))::varchar,left(left((select regexp_replace(c.cncclassif, '[\.]', '', 'gi') from wun.tbcencus as c where c.cnccodigo = fc.cnccodigo limit 1) || '00000000000000', 14) || '00000000000000', 14)))) as organograma,
 	null as lotacoesFisicas,
 	null as historicos
 from wfp.tbfuncontrato as fc  join wfp.tbfuncionario as f on f.fcncodigo = fc.fcncodigo and f.odomesano = fc.odomesano
 where fc.odomesano = 202009) as s
 where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'matricula', codigoMatricula, numeroContrato))) is null
-limit 10
+and pessoa is not null
+and situacao = 'TRABALHANDO'
+limit 1
 
 
