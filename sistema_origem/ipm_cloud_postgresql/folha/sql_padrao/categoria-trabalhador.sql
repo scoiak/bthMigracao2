@@ -1,12 +1,8 @@
 select
-   '300' as sistema,
-   'categoria-trabalhador' as tipo_registro,
-   descricao as chave_dsk1,
-   catcodigo as chave_dsk2,
    *
 from (
 	select distinct
-	 1 as id,
+	 row_number() over() as id,
 	 left(catdescricao, 100) as descricao,
 	 case catgrupo
 			   when 1 then 'CLT'
@@ -14,7 +10,7 @@ from (
 			   else 'OUTROS'
 	  end as tipo,
 	 '' as descricaoRegimePrevidenciario,
-	 catcodigo,
+	 catcodigo as codigoESocial,
 	 case catcodigo
 	   when 101 then 'FUNCIONARIO'
 	   when 103 then 'FUNCIONARIO'
@@ -39,4 +35,4 @@ from (
 	end as grupoTrabalhador	
 	from wfp.tbcategoriatrabalhador
 ) tb
-where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'categoria-trabalhador', descricao, cast(catcodigo as text)))) is null
+where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'categoria-trabalhador', descricao, codigoESocial::varchar))) is null

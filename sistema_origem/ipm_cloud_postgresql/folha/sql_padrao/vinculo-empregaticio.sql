@@ -11,7 +11,7 @@ from (
 	'EMPREGADO' as sefip,
 	true as geraRais,
 	'TRABALHADOR_URBANO_VINCULADO_PESSOA_JURIDICA_CONTRATO_TRABALHO_CLT_PRAZO_INDETERMINADO' as rais,
-	true as vinculo_temporario,
+	true as vinculoTemporario,
 	null as motivoRescisao, -- REFERENCIAR TABELA DE MOTIVO DE RESCISÃO
 	true as dataFinalObrigatoria,
 	true as geraCaged,

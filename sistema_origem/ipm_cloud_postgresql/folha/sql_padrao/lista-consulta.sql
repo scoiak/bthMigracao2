@@ -7,6 +7,7 @@ select * from public.controle_migracao_registro where tipo_registro = 'municipio
 select * from public.controle_migracao_registro_ocor where tipo_registro = 'ato';
 
 select * from public.controle_migracao_registro where tipo_registro = 'configuracao-lotacao-fisica';
+select * from public.controle_migracao_registro_ocor where tipo_registro = 'pessoa-juridica';
 
 select * from wfp.tbfuncontrato where regcodigo in (15) and odomesano = 202009 and fcncodigo = 9236
 
