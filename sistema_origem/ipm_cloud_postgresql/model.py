@@ -49,7 +49,7 @@ class PostgreSQLConnection:
     def verifica_tabelas_controle(self):
         try:
             logging.info('Verificando existência de tabelas de controle de migração.')
-            df = self.exec_sql("SELECT 1 " 
+            df = self.exec_sql("SELECT 1 "
                                "FROM information_schema.tables "
                                "WHERE table_schema = 'public' "
                                "AND table_name = 'controle_migracao_registro'")
@@ -199,8 +199,8 @@ def insere_tabela_controle_migracao_registro(params_exec, lista_req):
     sql = 'INSERT INTO public.controle_migracao_registro ' \
           '(sistema, tipo_registro, hash_chave_dsk, descricao_tipo_registro, id_gerado, i_chave_dsk1, ' \
           'i_chave_dsk2, i_chave_dsk3, i_chave_dsk4, i_chave_dsk5, i_chave_dsk6, i_chave_dsk7, i_chave_dsk8,' \
-          'i_chave_dsk9, i_chave_dsk10, i_chave_dsk11, i_chave_dsk12) ' \
-          'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) ' \
+          'i_chave_dsk9, i_chave_dsk10, i_chave_dsk11, i_chave_dsk12, json_enviado) ' \
+          'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) ' \
           ' ON CONFLICT DO NOTHING'
 
     if lista_req is not None:
@@ -225,7 +225,8 @@ def insere_tabela_controle_migracao_registro(params_exec, lista_req):
                     None if 'i_chave_dsk9' not in item else item.get('i_chave_dsk9'),
                     None if 'i_chave_dsk10' not in item else item.get('i_chave_dsk10'),
                     None if 'i_chave_dsk11' not in item else item.get('i_chave_dsk11'),
-                    None if 'i_chave_dsk12' not in item else item.get('i_chave_dsk12')
+                    None if 'i_chave_dsk12' not in item else item.get('i_chave_dsk12'),
+                    None if 'json' not in item else item.get('json')
                 )
                 data_list.append(values)
 
@@ -488,9 +489,9 @@ def analisa_retorno_lote(params_exec, retorno_json, **kwargs):
                         # No desktop, existe uma proc chamada 'dbf_atualiza_controle_migracao_registro_integ'
                         # que faz a atualização da tabela _ocor e _registro simultaneamente, verificar
                         dados_inserir_ocor.append((0, registro['idIntegracao'], get_codigo_sistema(),
-                                        kwargs.get('tipo_registro'), None, 9, registro_status,
-                                        registro_resolvido, 1, kwargs.get('id_lote'),
-                                        registro['mensagem'], '', '', id_existente))
+                                                   kwargs.get('tipo_registro'), None, 9, registro_status,
+                                                   registro_resolvido, 1, kwargs.get('id_lote'),
+                                                   registro['mensagem'], '', '', id_existente))
 
                 # Ação para registro não cadastrado devido a erro
                 else:

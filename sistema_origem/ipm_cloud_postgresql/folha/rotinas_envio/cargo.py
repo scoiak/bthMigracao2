@@ -78,7 +78,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     contador = 0
 
     for item in dados:
-        print(f'\r- Gerando JSON: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
+        # print(f'\r- Gerando JSON: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
         hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['chave_dsk1'])
         dict_dados = {
             'idIntegracao': hash_chaves,
@@ -92,13 +92,13 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                 'contagemEspecial': item['contagemespecial'],
                 'quantidadeVagasPcd': item['quantidadevagaspcd'],
                 'ato': {
-                    'id': None if math.isnan(item['id_ato']) else item['id_ato']
+                    'id': item['id_ato']
                 },
                 'cbo': {
-                    'id': None if math.isnan(item['id_cbo']) else item['id_cbo']
+                    'id': item['id_cbo']
                 },
                 'tipo': {
-                    'id': None if math.isnan(item['id_tipo_cargo']) else item['id_tipo_cargo']
+                    'id': item['id_tipo_cargo']
                 }
              }
         }
@@ -146,8 +146,33 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         if 'configuracaolicencapremio' in item and item['configuracaolicencapremio'] is not None:
             dict_dados['conteudo'].update({'configuracaoLicencaPremio': item['configuracaolicencapremio']})
 
+        if 'historico' in item and item['historico'] is not None:
+            lista_historico = []
+            entradas_hist = 0
+            if len(lista_historico) > 1:
+                for h in item['historico'].split('%/%'):
+                    entradas_hist += 1
+                    dados_historico = h.split(';')
+                    dict_item_historico = {
+                        'descricao': dados_historico[0],
+                        'inicioVigencia': dados_historico[1],
+                        'pagaDecimoTerceiroSalario': dados_historico[2],
+                        'contagemEspecial': dados_historico[3],
+                        'acumuloCargos': dados_historico[4],
+                        'quantidadeVagasPcd': dados_historico[5],
+                        'extinto': dados_historico[6],
+                        'grauInstrucao': dados_historico[7],
+                    }
+                    if entradas_hist >= 1:
+                        lista_historico.append(dict_item_historico)
+
+            if len(lista_historico) > 0:
+                dict_dados['conteudo'].update({
+                    'historico': lista_historico
+                })
+
         contador += 1
-        # print(f'Dados gerados ({contador}): ', dict_dados)
+        print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,
@@ -155,8 +180,8 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'hash_chave_dsk': hash_chaves,
             'descricao_tipo_registro': 'Cadastro de Cargos',
             'id_gerado': None,
-            'i_chave_dsk1': item['chave_dsk1'],
-            'i_chave_dsk2': item['chave_dsk2']
+            'json': json.dumps(dict_dados),
+            'i_chave_dsk1': item['chave_dsk1']
         })
 
     if True:
