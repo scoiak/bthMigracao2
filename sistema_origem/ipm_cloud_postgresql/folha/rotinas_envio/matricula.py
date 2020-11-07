@@ -89,79 +89,140 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                     'id': item['vinculoempregaticio']
                 },
                 #'contratoTemporario': None if 'contratotemporario' not in item else item['contratotemporario'],
-                'indicativoAdmissao': None if 'indicativoadmissao' not in item else item['indicativoadmissao'],
-                'naturezaAtividade': None if 'naturezaatividade' not in item else item['naturezaatividade'],
-                'tipoAdmissao': None if 'tipoadmissao' not in item else item['tipoadmissao'],
-                'primeiroEmprego': None if 'primeiroemprego' not in item else item['primeiroemprego'],
-                'optanteFgts': None if 'optantefgts' not in item else item['optantefgts'],
-                'dataOpcao': None if 'dataopcao' not in item else item['dataopcao'],
-                'contaFgts': None if 'contafgts' not in item else item['contafgts'],
-                'tipoProvimento': None if 'tipoprovimento' not in item else item['tipoprovimento'],
-                'dataNomeacao': None if 'datanomeacao' not in item else item['datanomeacao'],
-                'dataPosse': None if 'dataposse' not in item else item['dataposse'],
-                'tempoAposentadoria': None if 'tempoaposentadoria' not in item else item['tempoaposentadoria'],
-                'previdenciaFederal': None if 'previdenciafederal' not in item else item['previdenciafederal'],
                 #'previdencias': None if 'previdencias' not in item else item['previdencias'],
                 'cargo': {
                     'id': item['cargo']
                 },
-                'cargoAlterado': None if 'cargoalterado' not in item else item['cargoalterado'],
-                'areaAtuacaoAlterada': None if 'areaatuacaoalterada' not in item else item['areaatuacaoalterada'],
-                'ocupaVaga': None if 'ocupavaga' not in item else item['ocupavaga'],
-                'salarioAlterado': None if 'salarioalterado' not in item else item['salarioalterado'],
-                'origemSalario': None if 'origemsalario' not in item else item['origemsalario'],
-                'ocupaVagaComissionado': None if 'ocupavagacomissionado' not in item else item['ocupavagacomissionado'],
-                'salarioComissionado': None if 'salariocomissionado' not in item else item['salariocomissionado'],
-                'unidadePagamento': None if 'unidadepagamento' not in item else item['unidadepagamento'],
-                'formaPagamento': None if 'formapagamento' not in item else item['formapagamento'],
-                'quantidadeHorasMes': None if 'quantidadehorasmes' not in item else item['quantidadehorasmes'],
-                'quantidadeHorasSemana': None if 'quantidadehorassemana' not in item else item['quantidadehorassemana'],
-                'jornadaParcial': None if 'jornadaparcial' not in item else item['jornadaparcial'],
-                'dataAgendamentoRescisao': None if 'dataagendamentorescisao' not in item else item['dataagendamentorescisao'],
                 #'funcoesGratificadas	': None if 'funcoesGratificadas	' not in item else item['funcoesGratificadas	'],
-                'dataTerminoContratoTemporario': None if 'dataterminocontratotemporario' not in item else item['dataterminocontratotemporario'],
-                'motivoContratoTemporario': None if 'motivocontratotemporario' not in item else item['motivocontratotemporario'],
-                'tipoInclusaoContratoTemporario': None if 'tipoinclusaocontratotemporario' not in item else item['tipoinclusaocontratotemporario'],
-                'dataProrrogacaoContratoTemporario': None if 'dataprorrogacaocontratotemporario' not in item else item['dataprorrogacaocontratotemporario'],
-                'numeroCartaoPonto': None if 'numerocartaoponto' not in item else item['numerocartaoponto'],
-                'indicativoProvimento': None if 'indicativoprovimento' not in item else item['indicativoprovimento'],
-                'matriculaEmpresaOrigem': None if 'matriculaempresaorigem' not in item else item['matriculaempresaorigem'],
-                'dataAdmissaoOrigem': None if 'dataadmissaoorigem' not in item else item['dataadmissaoorigem'],
-                'ocorrenciaSefip': None if 'ocorrenciasefip' not in item else item['ocorrenciasefip'],
-                'controleJornada': None if 'controlejornada' not in item else item['controlejornada'],
-                'processaAverbacao': None if 'processaaverbacao' not in item else item['processaaverbacao'],
-                'dataFinal': None if 'datafinal' not in item else item['datafinal'],
-                'dataProrrogacao': None if 'dataprorrogacao' not in item else item['dataprorrogacao'],
-                'formacaoPeriodo': None if 'formacaoperiodo' not in item else item['formacaoperiodo'],
-                'formacaoFase': None if 'formacaofase' not in item else item['formacaofase'],
-                'estagioObrigatorio': None if 'estagioobrigatorio' not in item else item['estagioobrigatorio'],
-                'objetivo': None if 'objetivo' not in item else item['objetivo'],
-                'numeroContrato': None if 'numerocontrato' not in item else item['numerocontrato'],
-                'possuiSeguroVida': None if 'possuisegurovida' not in item else item['possuisegurovida'],
-                'numeroApoliceSeguroVida': None if 'numeroapolicesegurovida' not in item else item['numeroapolicesegurovida'],
                 #'responsaveis': None if 'responsaveis' not in item else item['responsaveis'],
-                'dataCessacaoAposentadoria': None if 'datacessacaoaposentadoria' not in item else item['datacessacaoaposentadoria'],
-                'motivoInicioBeneficio': None if 'motivoiniciobeneficio' not in item else item['motivoiniciobeneficio'],
-                'duracaoBeneficio': None if 'duracaobeneficio' not in item else item['duracaobeneficio'],
-                'dataCessacaoBeneficio': None if 'datacessacaobeneficio' not in item else item['datacessacaobeneficio'],
-                'dataInicioContrato': None if 'datainiciocontrato' not in item else item['datainiciocontrato'],
-                'situacao': None if 'situacao' not in item else item['situacao'],
-                'inicioVigencia': None if 'iniciovigencia' not in item else item['iniciovigencia'],
-                'tipo': None if 'tipo' not in item else item['tipo'],
                 #'codigoMatricula': None if 'codigoMatricula' not in item else item['codigoMatricula'],
-                'eSocial': None if 'eeocial' not in item else item['eeocial'],
-                'rendimentoMensal': None if 'rendimentomensal' not in item else item['rendimentomensal'],
-                'validationStatus': None if 'validationstatus' not in item else item['validationstatus'],
-                'lotacoesFisicas': None if 'lotacoesfisicas' not in item else item['lotacoesfisicas'],
-                'historicos': None if 'historicos' not in item else item['historicos']
+                #'validationStatus': None if 'validationstatus' not in item else item['validationstatus'],
+                #'lotacoesFisicas': None if 'lotacoesfisicas' not in item else item['lotacoesfisicas'],
+                #'historicos': None if 'historicos' not in item else item['historicos']
             }
         }
-        if 'sindicato' in item and item['sindicato'] is not None:
+        if 'database' in item and item['database'] is not None:
+            dict_dados['conteudo'].update({'dataBase': item['database']})
+        if 'numeroapolicesegurovida' in item and item['numeroapolicesegurovida'] is not None:
+            dict_dados['conteudo'].update({'numeroApoliceSeguroVida': item['numeroapolicesegurovida']})
+        if 'possuisegurovida' in item and item['possuisegurovida'] is not None:
+            dict_dados['conteudo'].update({'possuiSeguroVida': item['possuisegurovida']})
+        if 'origemsalario' in item and item['origemsalario'] is not None:
+            dict_dados['conteudo'].update({'origemSalario': item['origemsalario']})
+        if 'salarioalterado' in item and item['salarioalterado'] is not None:
+            dict_dados['conteudo'].update({'salarioAlterado': item['salarioalterado']})
+        if 'indicativoadmissao' in item and item['indicativoadmissao'] is not None:
+            dict_dados['conteudo'].update({'indicativoAdmissao': item['indicativoadmissao']})
+        if 'rendimentomensal' in item and item['rendimentomensal'] is not None:
+            dict_dados['conteudo'].update({'rendimentoMensal': item['rendimentomensal']})
+        if 'naturezaatividade' in item and item['naturezaatividade'] is not None:
+            dict_dados['conteudo'].update({'naturezaAtividade': item['naturezaatividade']})
+        if 'tipoadmissao' in item and item['tipoadmissao'] is not None:
+            dict_dados['conteudo'].update({'tipoAdmissao': item['tipoadmissao']})
+        if 'primeiroemprego' in item and item['primeiroemprego'] is not None:
+            dict_dados['conteudo'].update({'primeiroEmprego': item['primeiroemprego']})
+        if 'tipoprovimento' in item and item['tipoprovimento'] is not None:
+            dict_dados['conteudo'].update({'tipoProvimento': item['tipoprovimento']})
+        if 'datanomeacao' in item and item['datanomeacao'] is not None:
+            dict_dados['conteudo'].update({'dataNomeacao': item['datanomeacao']})
+        if 'dataposse' in item and item['dataposse'] is not None:
+            dict_dados['conteudo'].update({'dataPosse': item['dataposse']})
+        if 'tempoaposentadoria' in item and item['tempoaposentadoria'] is not None:
+            dict_dados['conteudo'].update({'tempoAposentadoria': item['tempoaposentadoria']})
+        if 'previdenciafederal' in item and item['previdenciafederal'] is not None:
+            dict_dados['conteudo'].update({'previdenciaFederal': item['previdenciafederal']})
+        if 'cargoalterado' in item and item['cargoalterado'] is not None:
+            dict_dados['conteudo'].update({'cargoAlterado': item['cargoalterado']})
+        if 'areaatuacaoalterada' in item and item['areaatuacaoalterada'] is not None:
+            dict_dados['conteudo'].update({'areaAtuacaoAlterada': item['areaatuacaoalterada']})
+        if 'ocupavaga' in item and item['ocupavaga'] is not None:
+            dict_dados['conteudo'].update({'ocupaVaga': item['ocupavaga']})
+        if 'ocupavagacomissionado' in item and item['ocupavagacomissionado'] is not None:
+            dict_dados['conteudo'].update({'ocupaVagaComissionado': item['ocupavagacomissionado']})
+        if 'salariocomissionado' in item and item['salariocomissionado'] is not None:
+            dict_dados['conteudo'].update({'salarioComissionado': item['salariocomissionado']})
+        if 'unidadepagamento' in item and item['unidadepagamento'] is not None:
+            dict_dados['conteudo'].update({'unidadePagamento': item['unidadepagamento']})
+        if 'formapagamento' in item and item['formapagamento'] is not None:
+            dict_dados['conteudo'].update({'formaPagamento': item['formapagamento']})
+        if 'quantidadehorasmes' in item and item['quantidadehorasmes'] is not None:
+            dict_dados['conteudo'].update({'quantidadeHorasMes': item['quantidadehorasmes']})
+        if 'quantidadehorassemana' in item and item['quantidadehorassemana'] is not None:
+            dict_dados['conteudo'].update({'quantidadeHorasSemana': item['quantidadehorassemana']})
+        if 'jornadaparcial' in item and item['jornadaparcial'] is not None:
+            dict_dados['conteudo'].update({'jornadaParcial': item['jornadaparcial']})
+        if 'dataagendamentorescisao' in item and item['dataagendamentorescisao'] is not None:
+            dict_dados['conteudo'].update({'dataAgendamentoRescisao': item['dataagendamentorescisao']})
+        if 'dataterminocontratotemporario' in item and item['dataterminocontratotemporario'] is not None:
+            dict_dados['conteudo'].update({'dataTerminoContratoTemporario': item['dataterminocontratotemporario']})
+        if 'motivocontratotemporario' in item and item['motivocontratotemporario'] is not None:
+            dict_dados['conteudo'].update({'motivoContratoTemporario': item['motivocontratotemporario']})
+        if 'tipoinclusaocontratotemporario' in item and item['tipoinclusaocontratotemporario'] is not None:
+            dict_dados['conteudo'].update({'tipoInclusaoContratoTemporario': item['tipoinclusaocontratotemporario']})
+        if 'dataprorrogacaocontratotemporario' in item and item['dataprorrogacaocontratotemporario'] is not None:
+            dict_dados['conteudo'].update({'dataProrrogacaoContratoTemporario': item['dataprorrogacaocontratotemporario']})
+        if 'numerocartaoponto' in item and item['numerocartaoponto'] is not None:
+            dict_dados['conteudo'].update({'numeroCartaoPonto': item['numerocartaoponto']})
+        if 'indicativoprovimento' in item and item['indicativoprovimento'] is not None:
+            dict_dados['conteudo'].update({'indicativoProvimento': item['indicativoprovimento']})
+        if 'matriculaempresaorigem' in item and item['matriculaempresaorigem'] is not None:
+            dict_dados['conteudo'].update({'matriculaEmpresaOrigem': item['matriculaempresaorigem']})
+        if 'dataadmissaoorigem' in item and item['dataadmissaoorigem'] is not None:
+            dict_dados['conteudo'].update({'dataAdmissaoOrigem': item['dataadmissaoorigem']})
+        if 'ocorrenciasefip' in item and item['ocorrenciasefip'] is not None:
+            dict_dados['conteudo'].update({'ocorrenciaSefip': item['ocorrenciasefip']})
+        if 'controlejornada' in item and item['controlejornada'] is not None:
+            dict_dados['conteudo'].update({'controleJornada': item['controlejornada']})
+        if 'processaaverbacao' in item and item['processaaverbacao'] is not None:
+            dict_dados['conteudo'].update({'processaAverbacao': item['processaaverbacao']})
+        if 'datafinal' in item and item['datafinal'] is not None:
+            dict_dados['conteudo'].update({'dataFinal': item['datafinal']})
+        if 'dataprorrogacao' in item and item['dataprorrogacao'] is not None:
+            dict_dados['conteudo'].update({'dataProrrogacao': item['dataprorrogacao']})
+        if 'formacaoperiodo' in item and item['formacaoperiodo'] is not None:
+            dict_dados['conteudo'].update({'formacaoPeriodo': item['formacaoperiodo']})
+        if 'formacaofase' in item and item['formacaofase'] is not None:
+            dict_dados['conteudo'].update({'formacaoFase': item['formacaofase']})
+        if 'estagioobrigatorio' in item and item['estagioobrigatorio'] is not None:
+            dict_dados['conteudo'].update({'estagioObrigatorio': item['estagioobrigatorio']})
+        if 'objetivo' in item and item['objetivo'] is not None:
+            dict_dados['conteudo'].update({'objetivo': item['objetivo']})
+        if 'numerocontrato' in item and item['numerocontrato'] is not None:
+            dict_dados['conteudo'].update({'numeroContrato': item['numerocontrato']})
+        if 'datacessacaoaposentadoria' in item and item['datacessacaoaposentadoria'] is not None:
+            dict_dados['conteudo'].update({'dataCessacaoAposentadoria': item['datacessacaoaposentadoria']})
+        if 'motivoiniciobeneficio' in item and item['motivoiniciobeneficio'] is not None:
+            dict_dados['conteudo'].update({'motivoInicioBeneficio': item['motivoiniciobeneficio']})
+        if 'duracaobeneficio' in item and item['duracaobeneficio'] is not None:
+            dict_dados['conteudo'].update({'duracaoBeneficio': item['duracaobeneficio']})
+        if 'datacessacaobeneficio' in item and item['datacessacaobeneficio'] is not None:
+            dict_dados['conteudo'].update({'dataCessacaoBeneficio': item['datacessacaobeneficio']})
+        if 'datainiciocontrato' in item and item['datainiciocontrato'] is not None:
+            dict_dados['conteudo'].update({'dataInicioContrato': item['datainiciocontrato']})
+        if 'situacao' in item and item['situacao'] is not None:
+            dict_dados['conteudo'].update({'situacao': item['situacao']})
+        if 'iniciovigencia' in item and item['iniciovigencia'] is not None:
+            dict_dados['conteudo'].update({'inicioVigencia': item['iniciovigencia']})
+        if 'tipo' in item and item['tipo'] is not None:
+            dict_dados['conteudo'].update({'tipo': item['tipo']})
+        if 'esocial' in item and item['esocial'] is not None:
+            dict_dados['conteudo'].update({'eSocial': item['esocial']})
+        if item['codigomatricula'] is not None:
+            campo = item['codigomatricula'].split('%|%')
             dict_dados['conteudo'].update({
-                'sindicato': {
-                    'id': item['sindicato']
+                'codigoMatricula': {
+                    'contrato': int(campo[0]),
+                    'digitoVerificador': int(campo[1]),
+                    'numero': int(campo[2])
                 }
             })
+        if False:
+            if 'sindicato' in item and item['sindicato'] is not None:
+                dict_dados['conteudo'].update({
+                    'sindicato': {
+                        'id': item['sindicato']
+                    }
+                })
         if 'leicontrato' in item and item['leicontrato'] is not None:
             dict_dados['conteudo'].update({
                 'leiContrato': {
@@ -228,12 +289,13 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                     'id': item['classereferenciacomissionado']
                 }
             })
-        if 'contabancariapagamento' in item and item['contabancariapagamento'] is not None:
-            dict_dados['conteudo'].update({
-                'contaBancariaPagamento': {
-                    'id': item['contabancariapagamento']
-                }
-            })
+        if False:
+            if 'contabancariapagamento' in item and item['contabancariapagamento'] is not None:
+                dict_dados['conteudo'].update({
+                    'contaBancariaPagamento': {
+                        'id': item['contabancariapagamento']
+                    }
+                })
         if 'configuracaoferias' in item and item['configuracaoferias'] is not None:
             dict_dados['conteudo'].update({
                 'configuracaoFerias': {

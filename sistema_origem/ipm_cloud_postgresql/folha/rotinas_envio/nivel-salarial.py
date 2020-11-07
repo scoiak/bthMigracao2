@@ -76,8 +76,8 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                 "coeficiente": item['coeficiente'],
                 "inicioVigencia": item['iniciovigencia'],
                 "dataHoraCriacao": item['datahoracriacao'],
-                "atoCriacao": item['atocriacao'],
-                "ultimoAto": item['ultimoato'],
+                #"atoCriacao": item['atocriacao'],
+                #"ultimoAto": item['ultimoato'],
                 "planoCargoSalario": {
                     "id": item['planocargosalario']
                 },
@@ -86,30 +86,74 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                 "reajusteSalarial": item['reajustesalarial']
             }
         }
-        if item['historicos'] is not None:
+        if 'atocriacao' in item and item['atocriacao'] is not None:
             dict_dados['conteudo'].update({
-                'historicos': []
+                'atoCriacao': {
+                    'id': item['atocriacao']
+                }
             })
-            lista = item['historicos'].split('%||%')
-            for listacampo in lista:
-                campo = listacampo.split('%|%')
-                dict_dados['conteudo']['historicos'].append({
-                    "descricao": campo[0],
-                    "valor": campo[1],
-                    "cargaHoraria": campo[2],
-                    "coeficiente": campo[3],
-                    "inicioVigencia": campo[4],
-                    "dataHoraCriacao": campo[5],
-                    "atoCriacao": None if campo[6] == 'null' else campo[6],
-                    "ultimoAto": None if campo[7] == 'null' else campo[7],
-                    "planoCargoSalario": {
-                        "id": campo[8]
-                    },
-                    "classesReferencias": None if campo[9] == 'null' else campo[9],
-                    "motivoAlteracao": None if campo[10] == 'null' else campo[10],
-                    "reajusteSalarial": None if campo[11] == 'null' else campo[11],
+        if 'ultimoato' in item and item['ultimoato'] is not None:
+            dict_dados['conteudo'].update({
+                'ultimoAto': {
+                    'id': item['ultimoato']
+                }
+            })
+        if item['historicos'] is not None:
+            listahistorico = []
+            totalhistorico = 0
+            if len(listahistorico) > 1:
+                lista = item['historicos'].split('%||%')
+                for listacampo in lista:
+                    totalhistorico += 1
+                    campo = listacampo.split('%|%')
+                    dict_item_historico = {
+                        "descricao": campo[0],
+                        "valor": campo[1],
+                        "cargaHoraria": campo[2],
+                        "coeficiente": campo[3],
+                        "inicioVigencia": campo[4],
+                        "dataHoraCriacao": campo[5],
+                        "planoCargoSalario": {
+                            "id": campo[8]
+                        }
+                    }
+                    if campo[6] is not None:
+                        dict_item_historico.update({
+                            'atoCriacao': {
+                                'id': campo[6]
+                            }
+                        })
+                    if campo[7] is not None:
+                        dict_item_historico.update({
+                            'ultimoAto': {
+                                'id': campo[7]
+                            }
+                        })
+                    if campo[9] is not None:
+                        dict_item_historico.update({
+                            'classesReferencias': {
+                                'id': campo[9]
+                            }
+                        })
+                    if campo[10] is not None:
+                        dict_item_historico.update({
+                            'motivoAlteracao': {
+                                'id': campo[10]
+                            }
+                        })
+                    if campo[11] is not None:
+                        dict_item_historico.update({
+                            'reajusteSalarial': {
+                                'id': campo[11]
+                            }
+                        })
+                    if totalhistorico >= 1:
+                        listahistorico.append(dict_item_historico)
+            if len(listahistorico) > 0:
+                dict_dados['conteudo'].update({
+                    'historicos': listahistorico
                 })
-        # print(f'Dados gerados ({contador}): ', dict_dados)
+        print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,

@@ -24,18 +24,19 @@ BEGIN
 	END LOOP;   
 END $$;
 
-select count(*),tipo_registro,sistema from public.controle_migracao_registro group by tipo_registro,sistema
+select count(*),tipo_registro,sistema from public.controle_migracao_registro group by tipo_registro,sistema order by 1,2
 update public.controle_migracao_registro set tipo_registro = 'pais',hash_chave_dsk = md5(concat('300','pais',i_chave_dsk1,i_chave_dsk2,i_chave_dsk3)) where tipo_registro = 'pais'
 update public.controle_migracao_registro set tipo_registro = 'estado',hash_chave_dsk = md5(concat('300','estado',i_chave_dsk1,i_chave_dsk2,i_chave_dsk3)) where tipo_registro = 'estado'
 update public.controle_migracao_registro set tipo_registro = 'municipio',hash_chave_dsk = md5(concat('300','municipio',i_chave_dsk1,i_chave_dsk2,i_chave_dsk3)) where tipo_registro = 'municipio'
 update public.controle_migracao_registro set tipo_registro = 'banco',hash_chave_dsk = md5(concat('300','banco',i_chave_dsk1,i_chave_dsk2,i_chave_dsk3)) where tipo_registro = 'banco'
-commit;
+update public.controle_migracao_registro cmr set	i_chave_dsk2 = (select c.i_chave_dsk1 from public.controle_migracao_registro c where c.tipo_registro = 'tipo-ato' and c.id_gerado = cmr.i_chave_dsk2::integer) where cmr.tipo_registro = 'ato';
+update public.controle_migracao_registro set	hash_chave_dsk = md5(concat('300', 'ato', i_chave_dsk1, i_chave_dsk2)) where tipo_registro = 'ato';
 
 DO $$ DECLARE
-    tipo_registro alias for 'nivel-salarial';
+    tr text := 'matricula';
 begin
-	delete from public.controle_migracao_registro where tipo_registro = 'tipo-ato';
+	delete from public.controle_migracao_registro where tipo_registro = tr;
 
-	delete from public.controle_migracao_lotes where tipo_registro = 'pessoa-fisica';	
-	delete from public.controle_migracao_registro_ocor where tipo_registro = 'pessoa-fisica';
+	delete from public.controle_migracao_lotes where tipo_registro = tr;	
+	delete from public.controle_migracao_registro_ocor where tipo_registro = tr;
 END $$;

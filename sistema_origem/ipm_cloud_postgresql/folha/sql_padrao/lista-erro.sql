@@ -25,7 +25,8 @@ SELECT
     reg.id_gerado AS idGerado,
     ocor.situacao AS estadoItem,
     ocor.mensagem_erro AS mensagemErro,
-    ocor.json_enviado AS jsonEnviado,
+    --ocor.json_enviado AS jsonEnviado,
+    reg.json_enviado AS jsonEnviado,
     lot.conteudo_json AS jsonLote    
 FROM 
     public.controle_migracao_registro as reg
@@ -36,7 +37,7 @@ left JOIN
 WHERE 
     ocor.id_gerado IS NULL
 AND
-    reg.tipo_registro = 'concurso'
+    reg.tipo_registro = 'organograma'
 AND 
     ocor.i_sequencial = 
         (

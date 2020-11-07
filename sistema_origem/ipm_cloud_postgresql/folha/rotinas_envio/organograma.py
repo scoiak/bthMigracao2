@@ -101,7 +101,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             }
         }
         if 'sigla' in item and item['sigla'] is not None:
-            dict_dados.update({
+            dict_dados['conteudo'].update({
                 'sigla': item['sigla']
             })
         contador += 1

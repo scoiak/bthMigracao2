@@ -53,3 +53,4 @@ FROM wfp.tbrescisaocalculada
 
 SELECT * FROM wfp.tbcalculofolha;
 select * from wfp.tbrescisaocalculada;
+select * from  wfp.calculoprovdesc
