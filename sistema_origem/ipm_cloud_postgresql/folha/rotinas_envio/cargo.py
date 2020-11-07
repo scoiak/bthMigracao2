@@ -146,6 +146,29 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         if 'configuracaolicencapremio' in item and item['configuracaolicencapremio'] is not None:
             dict_dados['conteudo'].update({'configuracaoLicencaPremio': item['configuracaolicencapremio']})
 
+        if 'id_conf_ferias' in item and item['id_conf_ferias'] is not None:
+            dict_dados['conteudo'].update({
+                'configuracaoFerias': {
+                    'id': item['id_conf_ferias']
+                }
+            })
+
+        if 'niveis' in item and item['niveis'] is not None:
+            lista_niveis = []
+            for n in item['niveis'].split('%/%'):
+                dados_niveis = n.split(';')
+                dict_item_niveis = {
+                    'nivelSalarial': {
+                        'id': dados_niveis[1]
+                    }
+                }
+                lista_niveis.append(dict_item_niveis)
+
+            # print('lista_niveis', lista_niveis)
+            dict_dados['conteudo'].update({
+                'remuneracoes': lista_niveis
+            })
+
         if 'historico' in item and item['historico'] is not None:
             lista_historico = []
             entradas_hist = 0

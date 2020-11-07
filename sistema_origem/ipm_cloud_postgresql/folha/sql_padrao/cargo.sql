@@ -1,6 +1,22 @@
 -- Antes de migrar, criar campos adicionais de cargo para o e-Sfinge
 -- Configurar ID padrão da configuração de férias
 -- create index idx_cargos on wfp.tbcargo (carcodigo, odomesano);
+with niveis_atuais as (
+	select
+	cargo_cod,
+	string_agg(concat(nivel, ';', id_nivel), '%/%') as niveis
+	from (
+		select distinct cn.carcodigo as cargo_cod,
+		cn.nivcodigo as nivel,
+		concat((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'nivel-salarial', cn.nivcodigo)))) as id_nivel
+		from wfp.tbcargonivel cn
+		where not exists (
+			select 1
+			from wfp.tbcargonivel cn2
+			where cn2.nivcodigo = cn.nivcodigo
+			and cn2.cnitipoatualiza = 2)
+	) nv
+	group by cargo_cod)
 select
 	'300' as sistema,
 	'cargo' as tipo_registro,
@@ -34,6 +50,7 @@ select
 			from wfp.tbcargo c
 			where c.carcodigo = codigo
 	) tab) as historico,
+	(select niveis from niveis_atuais niveis where niveis.cargo_cod = codigo) as niveis,
 	*
 from (
 	select distinct
@@ -46,7 +63,7 @@ from (
 		coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'tipo-cargo', cargo.cartipocargo))), 0) as id_tipo_cargo,
 		coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'ato', (select concat(tj.txjnumero, '/', tj.txjano) from wlg.tbtextojuridico tj where tj.txjcodigo = cargo.txjcodigocri), (select cat.tctdescricao from wlg.tbtextojuridico tj inner join wlg.tbcategoriatexto cat on cat.tctcodigo = tj.tctcodigo where tj.txjcodigo = cargo.txjcodigocri limit 1)))),0) as id_ato,
 		(case cargo.cartemferias
-			when 1 then 752
+			when 1 then 452
 			else null end) as id_conf_ferias,
 		'MENSALISTA' as unidadePagamento,
 		'NAO_ACUMULAVEL' as acumuloCargos,
@@ -67,7 +84,7 @@ from (
 	        when 14 then 'POS_DOUTORADO_HABILITACAO'
 	    else '' end as grauInstrucao,
 	    case cargo.gincodigo
-	        when 2 then 'INCOMPLETO'
+	        when 2 then null
 	        when 3 then 'INCOMPLETO'
 	        when 4 then 'INCOMPLETO'
 	        when 5 then 'INCOMPLETO'
@@ -84,10 +101,12 @@ from (
 		coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'cargo', cargo.carcodigo))), 0) as id_gerado
 	from wfp.tbcargo cargo
 	where caremdesuso = 0
+	--and odomesano = 202009
 	and txjcodigocri is not null
-	--and carcodigo = 1
+	and carcodigo < 10
 	and cbocodigo is not null
 	order by codigo
 ) tab
-where id_gerado = 0
+where id_cbo <> 0
+and id_gerado = 0
 limit 5
