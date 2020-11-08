@@ -78,7 +78,8 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     contador = 0
 
     for item in dados:
-        # print(f'\r- Gerando JSON: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
+        contador += 1
+        print(f'\r- Gerando JSON: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
         hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['chave_dsk1'])
         dict_dados = {
             'idIntegracao': hash_chaves,
@@ -87,10 +88,11 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                 'acumuloCargos': item['acumulocargos'],
                 'quantidadeVagas': item['quantidadevagas'],
                 'dedicacaoExclusiva': item['dedicacaoexclusiva'],
-                'inicioVigencia': item['iniciovigencia'].strftime("%Y-%m-%d %H:%M:%S"),
+                'inicioVigencia': item['iniciovigencia'].strftime("%Y-%m-%d 02:%M:%S"),
                 'pagaDecimoTerceiroSalario': item['pagadecimoterceirosalario'],
                 'contagemEspecial': item['contagemespecial'],
                 'quantidadeVagasPcd': item['quantidadevagaspcd'],
+                'extinto': item['extinto'],
                 'ato': {
                     'id': item['id_ato']
                 },
@@ -99,6 +101,23 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                 },
                 'tipo': {
                     'id': item['id_tipo_cargo']
+                },
+                'camposAdicionais': {
+                    'tipo': 'CARGO',
+                    'campos': [
+                        {
+                            'id': '5fa6dc8bed9eb40104372a23',
+                            'valor': item['tcetipoquadro']
+                        },
+                        {
+                            'id': '5fa6dc8bed9eb40104372a24',
+                            'valor': item['tcecodcargo']
+                        },
+                        {
+                            'id': '5fa6dc8bed9eb40104372a25',
+                            'valor': item['tcetipocargoacu']
+                        }
+                    ]
                 }
              }
         }
@@ -146,33 +165,114 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         if 'configuracaolicencapremio' in item and item['configuracaolicencapremio'] is not None:
             dict_dados['conteudo'].update({'configuracaoLicencaPremio': item['configuracaolicencapremio']})
 
+        if 'id_conf_ferias' in item and item['id_conf_ferias'] is not None:
+            dict_dados['conteudo'].update({
+                'configuracaoFerias': {
+                    'id': item['id_conf_ferias']
+                }
+            })
+
+        if 'niveis_vigentes' in item and item['niveis_vigentes'] is not None:
+            lista_niveis = []
+            for n in item['niveis_vigentes']:
+                dados_niveis = n.split(':')
+                if not re.search('\?', dados_niveis[1]):
+                    dict_item_niveis = {
+                        'nivelSalarial': {
+                            'id': int(dados_niveis[1])
+                        }
+                    }
+                    lista_niveis.append(dict_item_niveis)
+
+            # print('lista_niveis', lista_niveis)
+            dict_dados['conteudo'].update({
+                'remuneracoes': lista_niveis
+            })
+
         if 'historico' in item and item['historico'] is not None:
             lista_historico = []
-            entradas_hist = 0
-            if len(lista_historico) > 1:
-                for h in item['historico'].split('%/%'):
-                    entradas_hist += 1
-                    dados_historico = h.split(';')
-                    dict_item_historico = {
-                        'descricao': dados_historico[0],
-                        'inicioVigencia': dados_historico[1],
-                        'pagaDecimoTerceiroSalario': dados_historico[2],
-                        'contagemEspecial': dados_historico[3],
-                        'acumuloCargos': dados_historico[4],
-                        'quantidadeVagasPcd': dados_historico[5],
-                        'extinto': dados_historico[6],
-                        'grauInstrucao': dados_historico[7],
+            for h in item['historico'].split('%/%'):
+                dados_historico = h.split(',')
+                # print('dados_historico', dados_historico, type(dados_historico))
+                for idx, val in enumerate(dados_historico):
+                    pass
+                    # print(idx, val)
+
+                dict_item_historico = {
+                    'descricao': dados_historico[11],
+                    'inicioVigencia': dados_historico[12] + ' 01:00:00',
+                    'pagaDecimoTerceiroSalario': True if dados_historico[24] == 't' else False,
+                    'contagemEspecial': dados_historico[23],
+                    'acumuloCargos': dados_historico[17],
+                    'quantidadeVagasPcd': dados_historico[25],
+                    'extinto': True if dados_historico[29] == 't' else False,
+                    'grauInstrucao': dados_historico[20],
+                    'quantidadeVagas': dados_historico[18],
+                    'dedicacaoExclusiva': True if dados_historico[22] == 't' else False,
+                    'ato': {
+                        'id': dados_historico[2]
+                    },
+                    'cbo': {
+                        'id': item['id_cbo'] if dados_historico[3] == '0' else dados_historico[3],
+                    },
+                    'tipo': {
+                        'id': dados_historico[4]
+                    },
+                    'camposAdicionais': {
+                        'tipo': 'CARGO',
+                        'campos': [
+                            {
+                                'id': '5fa6dc8bed9eb40104372a23',
+                                'valor': dados_historico[26]
+                            },
+                            {
+                                'id': '5fa6dc8bed9eb40104372a24',
+                                'valor': dados_historico[27]
+                            },
+                            {
+                                'id': '5fa6dc8bed9eb40104372a25',
+                                'valor': dados_historico[28]
+                            }
+                        ]
                     }
-                    if entradas_hist >= 1:
-                        lista_historico.append(dict_item_historico)
+                }
 
-            if len(lista_historico) > 0:
-                dict_dados['conteudo'].update({
-                    'historico': lista_historico
-                })
+                if dados_historico[6] != '0':
+                    dict_item_historico.update({
+                        'configuracaoFerias': {
+                            'id': dados_historico[6]
+                        }
+                    })
 
-        contador += 1
-        print(f'Dados gerados ({contador}): ', dict_dados)
+                lista_niveis_historico = []
+                if re.search('\:', dados_historico[30]):
+                    for item_niveis in dados_historico[30].split('|'):
+                        nivel = item_niveis.split(':')
+                        if not re.search('\?', nivel[1]):
+                            try:
+                                dict_item_niveis = {
+                                    'nivelSalarial': {
+                                        'id': int(nivel[1])
+                                    }
+                                }
+                                lista_niveis_historico.append(dict_item_niveis)
+
+                            except Exception as error:
+                                print(f"Erro na geração de item {nivel[1]}. ", error)
+
+                    if len(lista_niveis_historico) > 0:
+                        dict_item_historico.update({
+                            'remuneracoes': lista_niveis_historico
+                        })
+
+                # Insere lista de históricos no dicionario a ser enviado
+                lista_historico.append(dict_item_historico)
+
+            dict_dados['conteudo'].update({
+                'historicos': lista_historico
+            })
+
+        # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,
@@ -190,7 +290,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                                                       token=token,
                                                       url=url,
                                                       tipo_registro=tipo_registro,
-                                                      tamanho_lote=100)
+                                                      tamanho_lote=20)
 
         # Insere lote na tabela 'controle_migracao_lotes'
         model.insere_tabela_controle_lote(req_res)
