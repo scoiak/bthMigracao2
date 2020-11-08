@@ -33,7 +33,7 @@ update public.controle_migracao_registro cmr set	i_chave_dsk2 = (select c.i_chav
 update public.controle_migracao_registro set	hash_chave_dsk = md5(concat('300', 'ato', i_chave_dsk1, i_chave_dsk2)) where tipo_registro = 'ato';
 
 DO $$ DECLARE
-    tr text := 'matricula';
+    tr text := 'vinculo-empregaticio';
 begin
 	delete from public.controle_migracao_registro where tipo_registro = tr;
 

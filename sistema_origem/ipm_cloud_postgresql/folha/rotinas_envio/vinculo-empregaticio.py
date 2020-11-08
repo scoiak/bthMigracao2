@@ -87,7 +87,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         if 'rais' in item and item['rais'] is not None:
             dict_dados['conteudo'].update({'rais': item['rais']})
         if 'motivorescisao' in item and item['motivorescisao'] is not None:
-            dict_dados['conteudo'].update({'motivoRescisao': {'id': item['motivorescisao']}})
+            dict_dados['conteudo'].update({'motivoRescisao': {'id': int(item['motivorescisao'])}})
         print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({

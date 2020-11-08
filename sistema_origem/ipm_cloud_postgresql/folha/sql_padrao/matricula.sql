@@ -1,10 +1,13 @@
 --create index idx_f_fc on wfp.tbfuncontrato (fcncodigo, odomesano);
 --create index idx_fc_f on wfp.tbfuncionario (fcncodigo, odomesano);
 --create index idx_f_fhs on wfp.tbfunhistoricosalarial (fcncodigo, odomesano);
+--create index idx_fp_fc on wfp.tbfunpreviden (fcncodigo, odomesano);
 
 select * from (select 
 row_number() over() as id,
+	fc.odomesano as competencia,
 	fundataadmissao::varchar as database,
+	regcodigo,
 	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','vinculo-empregaticio',regcodigo::varchar))) as vinculoEmpregaticio,
 	(case fc.regcodigo when 24 then 'true' when 20 then 'true' else 'false' end) as contratoTemporario,
 	'NORMAL' as indicativoAdmissao,
@@ -21,8 +24,8 @@ row_number() over() as id,
 	fundatanomeacao::varchar as dataNomeacao,
 	fundataposse::varchar as dataPosse,
 	null as tempoAposentadoria,
-	(case (select p.tpvcodigo from wfp.tbfunpreviden as p where p.funcontrato = fc.funcontrato and p.odomesano = fc.odomesano and p.fcncodigo = fc.fnccodigo) when 1 then true when 6 then true else false end) as previdenciaFederal,
-	(case (select p.tpvcodigo from wfp.tbfunpreviden as p where p.funcontrato = fc.funcontrato and p.odomesano = fc.odomesano and p.fcncodigo = fc.fnccodigo) when 1 then true when 6 then true else false end) as previdencias,
+	(case (select p.tpvcodigo from wfp.tbfunpreviden as p where p.funcontrato = fc.funcontrato and p.fcncodigo = fc.fnccodigo and p.odomesano = fc.odomesano ) when 1 then true when 6 then true else false end) as previdenciaFederal,
+	(case (select p.tpvcodigo from wfp.tbfunpreviden as p where p.funcontrato = fc.funcontrato and p.fcncodigo = fc.fnccodigo and p.odomesano = fc.odomesano) when 3 then 'ESTADUAL' when 4 then 'FUNDO_ASSISTENCIA' when 5 then 'FUNDO_PREVIDENCIA' when 2 then 'FUNDO_FINANCEIRO' else null end) || '%|%' || (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'plano-previdencia', (select p.tpvcodigo from wfp.tbfunpreviden as p where p.funcontrato = fc.funcontrato and p.fcncodigo = fc.fnccodigo and p.odomesano = fc.odomesano)))) as previdencias,
 	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'cargo', carcodigo))) as cargo,
 	null as cargoAlterado,
 	txjcodigo as atoAlteracaoCargo,
@@ -107,10 +110,10 @@ row_number() over() as id,
 	null as lotacoesFisicas,
 	null as historicos
 from wfp.tbfuncontrato as fc  join wfp.tbfuncionario as f on f.fcncodigo = fc.fcncodigo and f.odomesano = fc.odomesano
-where fc.odomesano = 202009) as s
+--where fc.odomesano = 202009
+where fc.fcncodigo = 15011
+) as s
 where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'matricula', codigoMatricula, numeroContrato))) is null
 and pessoa is not null
 and situacao = 'TRABALHANDO'
-limit 1
-
-
+--limit 1

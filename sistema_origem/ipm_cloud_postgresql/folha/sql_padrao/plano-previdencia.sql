@@ -28,3 +28,4 @@ select * from (select
             from wfp.tbprevidencia
             where odomesano = '202009') as a
 -- where public.bth_get_situacao_registro('300', 'plano-previdencia', cast(a.codigo as varchar)) in (0)
+            
