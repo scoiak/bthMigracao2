@@ -290,7 +290,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                                                       token=token,
                                                       url=url,
                                                       tipo_registro=tipo_registro,
-                                                      tamanho_lote=20)
+                                                      tamanho_lote=1)
 
         # Insere lote na tabela 'controle_migracao_lotes'
         model.insere_tabela_controle_lote(req_res)
