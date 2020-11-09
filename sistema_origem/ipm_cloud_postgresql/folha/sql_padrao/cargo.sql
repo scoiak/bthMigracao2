@@ -1,4 +1,4 @@
--- Antes de migrar, criar campos adicionais de cargo para o e-Sfinge
+-- Antes de migrar, criar campos adicionais de cargo para o e-Sfinge e configurar no modulo de envio
 --  5fa6dc8bed9eb40104372a23 -> TIPO DE QUADRO
 --  5fa6dc8bed9eb40104372a24 -> CODIGO TCE
 --  5fa6dc8bed9eb40104372a25 -> TICO CARGO ACUMULO
@@ -26,16 +26,17 @@ from (
 		/* 9 */nv.carcodigo as carcodigo,
 		/* 10 */c.odomesano,
 		--concat(c.carcodigo, ' - ', c.cardescricao) as descricao,
-		/* 11 */ (c.carcodigo::varchar || ' - ' || c.cardescricao)::text as descricao,
+		/* 11 */ regexp_replace(concat(c.carcodigo, ' - ', c.cardescricao), '\,', '', 'gi') as descricao,
 		/* 12 */nv.cnidatarelaciona as inicio_vigencia,
 		/* 13 */c.cbocodigo as cbo,
 		/* 14 */c.cartipocargo as cartipocargo,
 		/* 15 */c.cartemferias as cartemferias,
 		/* 16 */'MENSALISTA' as unidadePagamento,
 		/* 17 */'NAO_ACUMULAVEL' as acumuloCargos,
-		/* 18 */c.carvagas as quantidadeVagas,
+		/* 18 */coalesce(c.carvagas, 0) as quantidadeVagas,
 		/* 19 */c.txjcodigocri as txjcodigocri,
 		/* 20 */case c.gincodigo
+		    when 1 then null
 	        when 2 then 'NAO_ALFABETIZADO'
 	        when 3 then 'ENSINO_FUNDAMENTAL_ANOS_INICIAIS'
 	        when 4 then 'ENSINO_FUNDAMENTAL_ANOS_FINAIS'
@@ -51,6 +52,7 @@ from (
 	        when 14 then 'POS_DOUTORADO_HABILITACAO'
 	    else '' end as grauInstrucao,
 	    /* 21 */case c.gincodigo
+	        when 1 then null
 	        when 2 then null
 	        when 3 then 'INCOMPLETO'
 	        when 4 then 'INCOMPLETO'
@@ -88,7 +90,7 @@ from (
 			nv.cnidatarelaciona,
 			nv.txjcodigo
 		from wfp.tbcargonivel nv
-		--where nv.carcodigo = 7
+		where nv.carcodigo in (235, 348, 573)
 		group by 1, 2, 3
 		order by 1, 2
 	) as nv
@@ -121,7 +123,7 @@ select
 from (
 	select
 		c.carcodigo,
-		concat(c.carcodigo, ' - ', c.cardescricao) as descricao,
+		regexp_replace(concat(c.carcodigo, ' - ', c.cardescricao), '\,', '', 'gi') as descricao,
 		(case coalesce(c.txjcodigoext, 0) when 0 then false else true end) as extinto,
 		c.txjcodigoext as ato_extincao,
 		(case coalesce(c.txjcodigoext, 0) when 0 then 0
@@ -139,8 +141,9 @@ from (
 		else null end) as id_conf_ferias,
 		'MENSALISTA' as unidadePagamento,
 		'NAO_ACUMULAVEL' as acumuloCargos,
-		c.carvagas as quantidadeVagas,
+		coalesce(c.carvagas, 0) as quantidadeVagas,
 	    case c.gincodigo
+	        when 1 then null
 	        when 2 then 'NAO_ALFABETIZADO'
 	        when 3 then 'ENSINO_FUNDAMENTAL_ANOS_INICIAIS'
 	        when 4 then 'ENSINO_FUNDAMENTAL_ANOS_FINAIS'
@@ -156,6 +159,7 @@ from (
 	        when 14 then 'POS_DOUTORADO_HABILITACAO'
 	    else '' end as grauInstrucao,
 	    case c.gincodigo
+	        when 1 then null
 	        when 2 then null
 	        when 3 then 'INCOMPLETO'
 	        when 4 then 'INCOMPLETO'
@@ -173,7 +177,7 @@ from (
 		coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'cargo', c.carcodigo))), 0) as id_gerado
 	from wfp.tbcargo c
 	where c.odomesano = 202009
-	--and c.carcodigo = 7
+	and c.carcodigo in (235, 348, 573)
 	order by c.carcodigo
 ) cargos
 where cargos.id_gerado = 0
