@@ -4,7 +4,7 @@ from (
 	select
 	regcodigo as id,
 	regcodigo as codigo,
-	regdescricao as descricao,
+	regdescricao||' ('||regcodigo::varchar||')' as descricao,
 	(case cascodigo when 21 then 'REGIME_PROPRIO' when 1  then 'CLT' else 'OUTROS' end) as tipo,
 	null as descricaoRegimePrevidenciario,	
     (select id_gerado 
@@ -39,16 +39,15 @@ from (
      else 'false'
     end ) as vinculoTemporario,
 	(CASE  
-     when regcodigo in(1,2,5,8,10,15,19,21,23,24,25,27) then 5343::varchar -- ajustar par final
+     when regcodigo in(1,2,5,8,10,15,19,21,23,24,25,27) then '5343' -- ajustar par final
      else null
-    end ) as motivoRescisao, -- REFERENCIAR TABELA DE MOTIVO DE RESCIS�O
+    end ) as motivoRescisao, -- REFERENCIAR TABELA DE MOTIVO DE RESCISÃO
 	false as dataFinalObrigatoria,
 	(case cascodigo when 1  then 'true' else 'false' end) as geraCaged,
 	'true' as geraLicencaPremio
 	from wfp.tbregime as r
 	where odomesano = '202009'
-  	  and regcodigo not in(3,4,6,7,10,11,12,16,17,18,22,26,28) -- Espec�fico Biguacu 
+  	  and regcodigo not in(3,4,6,7,10,11,12,16,17,18,22,26,28) -- Específico Biguacu 
 ) as a
 where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','vinculo-empregaticio',codigo::varchar))) is null
-and categoriaTrabalhador is not null
---and categoriaTrabalhador is not null
+and categoriaTrabalhador is not null;

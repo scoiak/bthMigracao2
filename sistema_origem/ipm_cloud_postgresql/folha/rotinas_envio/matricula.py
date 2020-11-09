@@ -27,15 +27,15 @@ def busca_dados(params_exec):
     print(f'- Foram encontrados {len(registros)} registros cadastrados no cloud.')
     registros_formatados = []
     for item in registros:
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['codigoMatricula'], item['numeroContrato'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['codigoMatricula']['numero'], item['codigoMatricula']['contrato'])
         registros_formatados.append({
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
             'descricao_tipo_registro': 'Cadastro de Matricula',
             'id_gerado': item['id'],
-            'i_chave_dsk1': item['codigoMatricula'],
-            'i_chave_dsk2': item['numeroContrato'],
+            'i_chave_dsk1': item['codigoMatricula']['numero'],
+            'i_chave_dsk2': item['codigoMatricula']['contrato'],
         })
     model.insere_tabela_controle_migracao_registro(params_exec, lista_req=registros_formatados)
     print('- Busca finalizada. Tabelas de controles atualizas com sucesso.')
@@ -84,23 +84,37 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['codigomatricula'], item['numerocontrato'])
         dict_dados = {
             'idIntegracao': hash_chaves,
-            'conteudo': {
+            'conteudo': {}
+        }
+        # 'funcoesGratificadas	': None if 'funcoesGratificadas	' not in item else item['funcoesGratificadas']
+        # 'responsaveis': None if 'responsaveis' not in item else item['responsaveis']
+        # 'validationStatus': None if 'validationstatus' not in item else item['validationstatus']
+        # 'lotacoesFisicas': None if 'lotacoesfisicas' not in item else item['lotacoesfisicas']
+        # 'contratoTemporario': None if 'contratotemporario' not in item else item['contratotemporario']
+        if 'previdencias' in item and item['previdencias'] is not None:
+            dict_dados['conteudo'].update({
+                'previdencias': []
+            })
+            campo = item['previdencias'].split('%|%')
+            dict_dados['conteudo']['previdencias'].append({
+                #'matricula': campo[0],
+                'tipo': campo[0],
+                'plano': {
+                    'id': int(campo[1])
+                }
+            })
+        if 'vinculoempregaticio' in item and item['vinculoempregaticio'] is not None:
+            dict_dados['conteudo'].update({
                 'vinculoEmpregaticio': {
                     'id': item['vinculoempregaticio']
                 },
-                #'contratoTemporario': None if 'contratotemporario' not in item else item['contratotemporario'],
-                #'previdencias': None if 'previdencias' not in item else item['previdencias'],
+            })
+        if 'cargo' in item and item['cargo'] is not None:
+            dict_dados['conteudo'].update({
                 'cargo': {
-                    'id': item['cargo']
-                },
-                #'funcoesGratificadas	': None if 'funcoesGratificadas	' not in item else item['funcoesGratificadas	'],
-                #'responsaveis': None if 'responsaveis' not in item else item['responsaveis'],
-                #'codigoMatricula': None if 'codigoMatricula' not in item else item['codigoMatricula'],
-                #'validationStatus': None if 'validationstatus' not in item else item['validationstatus'],
-                #'lotacoesFisicas': None if 'lotacoesfisicas' not in item else item['lotacoesfisicas'],
-                #'historicos': None if 'historicos' not in item else item['historicos']
-            }
-        }
+                    'id': int(item['cargo'])
+                }
+            })
         if 'database' in item and item['database'] is not None:
             dict_dados['conteudo'].update({'dataBase': item['database']})
         if 'numeroapolicesegurovida' in item and item['numeroapolicesegurovida'] is not None:
@@ -256,7 +270,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         if 'nivelsalarial' in item and item['nivelsalarial'] is not None:
             dict_dados['conteudo'].update({
                 'nivelSalarial': {
-                    'id': item['nivelsalarial']
+                    'id': int(item['nivelsalarial'])
                 }
             })
         if 'classereferencia' in item and item['classereferencia'] is not None:
@@ -416,8 +430,370 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                     'id': item['organograma']
                 }
             })
+        if item['historicos'] is not None:
+            listahistorico = []
+            lista = item['historicos'].split('%&&%')
+            if len(lista) > 0:
+                for listacampo in lista:
+                    campo = listacampo.split('%&%')
+                    for idx, val in enumerate(campo):
+                        if campo[idx] == '':
+                            campo[idx] = None
+                    dict_item_historico = {}
+                    # 'funcoesGratificadas	': None if 'funcoesGratificadas	' not in item else item['funcoesGratificadas']
+                    # 'responsaveis': None if 'responsaveis' not in item else item['responsaveis']
+                    # 'validationStatus': None if 'validationstatus' not in item else item['validationstatus']
+                    # 'lotacoesFisicas': None if 'lotacoesfisicas' not in item else item['lotacoesfisicas']
+                    # 'contratoTemporario': None if 'contratotemporario' not in item else item['contratotemporario']
+                    if campo[18] is not None:
+                        dict_item_historico.update({
+                            'previdencias': []
+                        })
+                        campoprevidencia = campo[18].split('%|%')
+                        dict_item_historico['previdencias'].append({
+                            #'matricula': campoprevidencia[0],
+                            'tipo': campoprevidencia[0],
+                            'plano': {
+                                'id': int(campoprevidencia[1])
+                            }
+                        })
+                    if campo[1] is not None:
+                        dict_item_historico.update({
+                            'vinculoEmpregaticio': {
+                                'id': campo[1]
+                            },
+                        })
+                    if campo[19] is not None:
+                        dict_item_historico.update({
+                            'cargo': {
+                                'id': int(campo[19])
+                             }
+                        })
+                    if campo[0] is not None:
+                        dict_item_historico.update({'dataBase': campo[0]})
+                    if campo[71] is not None:
+                        dict_item_historico.update({'numeroApoliceSeguroVida': campo[71]})
+                    if campo[70] is not None:
+                        dict_item_historico.update({'possuiSeguroVida': campo[70]})
+                    if campo[27] is not None:
+                        dict_item_historico.update({'origemSalario': campo[27]})
+                    if campo[26] is not None:
+                        dict_item_historico.update({'salarioAlterado': campo[26]})
+                    if campo[3] is not None:
+                        dict_item_historico.update({'indicativoAdmissao': campo[3]})
+                    if campo[94] is not None:
+                        dict_item_historico.update({'rendimentoMensal': campo[94]})
+                    if campo[4] is not None:
+                        dict_item_historico.update({'naturezaAtividade': campo[4]})
+                    if campo[5] is not None:
+                        dict_item_historico.update({'tipoAdmissao': campo[5]})
+                    if campo[6] is not None:
+                        dict_item_historico.update({'primeiroEmprego': campo[6]})
+                    if campo[11] is not None:
+                        dict_item_historico.update({'tipoProvimento': campo[11]})
+                    if campo[14] is not None:
+                        dict_item_historico.update({'dataNomeacao': campo[14]})
+                    if campo[15] is not None:
+                        dict_item_historico.update({'dataPosse': campo[15]})
+                    if campo[16] is not None:
+                        dict_item_historico.update({'tempoAposentadoria': campo[16]})
+                    if campo[17] is not None:
+                        dict_item_historico.update({'previdenciaFederal': campo[17]})
+                    if campo[20] is not None:
+                        dict_item_historico.update({'cargoAlterado': campo[20]})
+                    if campo[23] is not None:
+                        dict_item_historico.update({'areaAtuacaoAlterada': campo[23]})
+                    if campo[25] is not None:
+                        dict_item_historico.update({'ocupaVaga': campo[25]})
+                    if campo[32] is not None:
+                        dict_item_historico.update({'ocupaVagaComissionado': campo[32]})
+                    if campo[33] is not None:
+                        dict_item_historico.update({'salarioComissionado': campo[33]})
+                    if campo[36] is not None:
+                        dict_item_historico.update({'unidadePagamento': campo[36]})
+                    if campo[37] is not None:
+                        dict_item_historico.update({'formaPagamento': campo[37]})
+                    if campo[40] is not None:
+                        dict_item_historico.update({'quantidadeHorasMes': campo[40]})
+                    if campo[41] is not None:
+                        dict_item_historico.update({'quantidadeHorasSemana': campo[41]})
+                    if campo[42] is not None:
+                        dict_item_historico.update({'jornadaParcial': campo[42]})
+                    if campo[43] is not None:
+                        dict_item_historico.update({'dataAgendamentoRescisao': campo[43]})
+                    if campo[45] is not None:
+                        dict_item_historico.update(
+                            {'dataTerminoContratoTemporario': campo[45]})
+                    if campo[46] is not None:
+                        dict_item_historico.update({'motivoContratoTemporario': campo[46]})
+                    if campo[47] is not None:
+                        dict_item_historico.update(
+                            {'tipoInclusaoContratoTemporario': campo[47]})
+                    if campo[48] is not None:
+                        dict_item_historico.update(
+                            {'dataProrrogacaoContratoTemporario': campo[48]})
+                    if campo[49] is not None:
+                        dict_item_historico.update({'numeroCartaoPonto': campo[49]})
+                    if campo[51] is not None:
+                        dict_item_historico.update({'indicativoProvimento': campo[51]})
+                    if campo[53] is not None:
+                        dict_item_historico.update({'matriculaEmpresaOrigem': campo[53]})
+                    if campo[54] is not None:
+                        dict_item_historico.update({'dataAdmissaoOrigem': campo[54]})
+                    if campo[55] is not None:
+                        dict_item_historico.update({'ocorrenciaSefip': campo[55]})
+                    if campo[56] is not None:
+                        dict_item_historico.update({'controleJornada': campo[56]})
+                    if campo[59] is not None:
+                        dict_item_historico.update({'processaAverbacao': campo[59]})
+                    if campo[60] is not None:
+                        dict_item_historico.update({'dataFinal': campo[60]})
+                    if campo[61] is not None:
+                        dict_item_historico.update({'dataProrrogacao': campo[61]})
+                    if campo[65] is not None:
+                        dict_item_historico.update({'formacaoPeriodo': campo[65]})
+                    if campo[66] is not None:
+                        dict_item_historico.update({'formacaoFase': campo[66]})
+                    if campo[67] is not None:
+                        dict_item_historico.update({'estagioObrigatorio': campo[67]})
+                    if campo[68] is not None:
+                        dict_item_historico.update({'objetivo': campo[68]})
+                    if campo[69] is not None:
+                        dict_item_historico.update({'numeroContrato': campo[69]})
+                    if campo[74] is not None:
+                        dict_item_historico.update({'dataCessacaoAposentadoria': campo[74]})
+                    if campo[79] is not None:
+                        dict_item_historico.update({'motivoInicioBeneficio': campo[79]})
+                    if campo[80] is not None:
+                        dict_item_historico.update({'duracaoBeneficio': campo[80]})
+                    if campo[81] is not None:
+                        dict_item_historico.update({'dataCessacaoBeneficio': campo[81]})
+                    if campo[85] is not None:
+                        dict_item_historico.update({'dataInicioContrato': campo[85]})
+                    if campo[86] is not None:
+                        dict_item_historico.update({'situacao': campo[86]})
+                    if campo[87] is not None:
+                        dict_item_historico.update({'inicioVigencia': campo[87]})
+                    if campo[88] is not None:
+                        dict_item_historico.update({'tipo': campo[88]})
+                    if campo[91] is not None:
+                        dict_item_historico.update({'eSocial': campo[91]})
+                    if campo[90] is not None:
+                        campomatricula = campo[90].split('%|%')
+                        dict_item_historico.update({
+                            'codigoMatricula': {
+                                'contrato': int(campomatricula[0]),
+                                'digitoVerificador': int(campomatricula[1]),
+                                'numero': int(campomatricula[2])
+                            }
+                        })
+                    if False:
+                        if 'sindicato' in item and item['sindicato'] is not None:
+                            dict_item_historico.update({
+                                'sindicato': {
+                                    'id': item['sindicato']
+                                }
+                            })
+                    if campo[12] is not None:
+                        dict_item_historico.update({
+                            'leiContrato': {
+                                'id': campo[12]
+                            }
+                        })
+                    if campo[13] is not None:
+                        dict_item_historico.update({
+                            'atoContrato': {
+                                'id': campo[13]
+                            }
+                        })
+                    if campo[21] is not None:
+                        dict_item_historico.update({
+                            'atoAlteracaoCargo': {
+                                'id': campo[21]
+                            }
+                        })
+                    if campo[22] is not None:
+                        dict_item_historico.update({
+                            'areaAtuacao': {
+                                'id': campo[22]
+                            }
+                        })
+                    if campo[24] is not None:
+                        dict_item_historico.update({
+                            'motivoAlteracaoAreaAtuacao': {
+                                'id': campo[24]
+                            }
+                        })
+                    if campo[28] is not None:
+                        dict_item_historico.update({
+                            'nivelSalarial': {
+                                'id': int(campo[28])
+                            }
+                        })
+                    if campo[29] is not None:
+                        dict_item_historico.update({
+                            'classeReferencia': {
+                                'id': campo[29]
+                            }
+                        })
+                    if campo[30] is not None:
+                        dict_item_historico.update({
+                            'cargoComissionado': {
+                                'id': campo[30]
+                            }
+                        })
+                    if campo[31] is not None:
+                        dict_item_historico.update({
+                            'areaAtuacaoComissionado': {
+                                'id': campo[31]
+                            }
+                        })
+                    if campo[34] is not None:
+                        dict_item_historico.update({
+                            'nivelSalarialComissionado': {
+                                'id': campo[34]
+                            }
+                        })
+                    if campo[35] is not None:
+                        dict_item_historico.update({
+                            'classeReferenciaComissionado': {
+                                'id': campo[35]
+                            }
+                        })
+                    if False:
+                        if 'contabancariapagamento' in item and item['contabancariapagamento'] is not None:
+                            dict_item_historico.update({
+                                'contaBancariaPagamento': {
+                                    'id': item['contabancariapagamento']
+                                }
+                            })
+                    if campo[39] is not None:
+                        dict_item_historico.update({
+                            'configuracaoFerias': {
+                                'id': campo[39]
+                            }
+                        })
+                    if campo[50] is not None:
+                        dict_item_historico.update({
+                            'parametroPonto': {
+                                'id': campo[50]
+                            }
+                        })
+                    if campo[52] is not None:
+                        dict_item_historico.update({
+                            'orgaoOrigem': {
+                                'id': campo[52]
+                            }
+                        })
+                    if campo[57] is not None:
+                        dict_item_historico.update({
+                            'configuracaoLicencaPremio': {
+                                'id': campo[57]
+                            }
+                        })
+                    if campo[58] is not None:
+                        dict_item_historico.update({
+                            'configuracaoAdicional': {
+                                'id': campo[58]
+                            }
+                        })
+                    if campo[62] is not None:
+                        dict_item_historico.update({
+                            'instituicaoEnsino': {
+                                'id': campo[62]
+                            }
+                        })
+                    if campo[63] is not None:
+                        dict_item_historico.update({
+                            'agenteIntegracao': {
+                                'id': campo[63]
+                            }
+                        })
+                    if campo[64] is not None:
+                        dict_item_historico.update({
+                            'formacao': {
+                                'id': campo[64]
+                            }
+                        })
+                    if campo[72] is not None:
+                        dict_item_historico.update({
+                            'categoriaTrabalhador': {
+                                'id': campo[72]
+                            }
+                        })
+                    if campo[76] is not None:
+                        dict_item_historico.update({
+                            'motivoAposentadoria': {
+                                'id': campo[76]
+                            }
+                        })
+                    if campo[77] is not None:
+                        dict_item_historico.update({
+                            'funcionarioOrigem': {
+                                'id': campo[77]
+                            }
+                        })
+                    if campo[78] is not None:
+                        dict_item_historico.update({
+                            'tipoMovimentacao': {
+                                'id': campo[78]
+                            }
+                        })
+                    if campo[83] is not None:
+                        dict_item_historico.update({
+                            'matriculaOrigem': {
+                                'id': campo[83]
+                            }
+                        })
+                    if campo[84] is not None:
+                        dict_item_historico.update({
+                            'responsavel': {
+                                'id': campo[84]
+                            }
+                        })
+                    if campo[89] is not None:
+                        dict_item_historico.update({
+                            'pessoa': {
+                                'id': campo[89]
+                            }
+                        })
+                    if campo[92] is not None:
+                        dict_item_historico.update({
+                            'grupoFuncional': {
+                                'id': campo[92]
+                            }
+                        })
+                    if campo[93] is not None:
+                        dict_item_historico.update({
+                            'jornadaTrabalho': {
+                                'id': campo[93]
+                            }
+                        })
+                    if campo[95] is not None:
+                        dict_item_historico.update({
+                            'atoAlteracaoSalario': {
+                                'id': campo[95]
+                            }
+                        })
+                    if campo[96] is not None:
+                        dict_item_historico.update({
+                            'motivoAlteracaoSalario': {
+                                'id': campo[98]
+                            }
+                        })
+                    if campo[98] is not None:
+                        dict_item_historico.update({
+                            'organograma': {
+                                'id': campo[98]
+                            }
+                        })
+                    listahistorico.append(dict_item_historico)
+            if len(listahistorico) > 0:
+                dict_dados['conteudo'].update({
+                    'historicos': listahistorico
+                })
         contador += 1
-        # print(f'Dados gerados ({contador}): ', dict_dados)
+        print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,
@@ -426,12 +802,12 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'descricao_tipo_registro': 'Cadastro de Matricula',
             'id_gerado': None,
             'json': json.dumps(dict_dados),
-            'i_chave_dsk1': item['codigomatricula'],
-            'i_chave_dsk2': item['numerocontrato'],
+            'i_chave_dsk1': item['fcncodigo'],
+            'i_chave_dsk2': item['funcontrato'],
         })
     if True:
         model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)
-    if False:
+    if True:
         req_res = interacao_cloud.preparar_requisicao(lista_dados=lista_dados_enviar,
                                                       token=token,
                                                       url=url,

@@ -42,7 +42,7 @@ def iniciar():
     # enviar(params_exec, 'pessoa-juridica')
     # enviar(params_exec, 'dependencia')
     # enviar(params_exec, 'categoria-trabalhador')
-    # enviar(params_exec, 'vinculo-empregaticio')
+    #enviar(params_exec, 'vinculo-empregaticio')
     # enviar(params_exec, 'cbo')
     # enviar(params_exec, 'concurso')
     # enviar(params_exec, 'configuracao-evento')

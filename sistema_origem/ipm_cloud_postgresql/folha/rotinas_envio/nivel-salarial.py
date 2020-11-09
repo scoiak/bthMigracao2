@@ -100,11 +100,9 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             })
         if item['historicos'] is not None:
             listahistorico = []
-            totalhistorico = 0
-            if len(listahistorico) > 1:
-                lista = item['historicos'].split('%||%')
+            lista = item['historicos'].split('%||%')
+            if len(lista) > 0:
                 for listacampo in lista:
-                    totalhistorico += 1
                     campo = listacampo.split('%|%')
                     dict_item_historico = {
                         "descricao": campo[0],
@@ -147,8 +145,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                                 'id': campo[11]
                             }
                         })
-                    if totalhistorico >= 1:
-                        listahistorico.append(dict_item_historico)
+                    listahistorico.append(dict_item_historico)
             if len(listahistorico) > 0:
                 dict_dados['conteudo'].update({
                     'historicos': listahistorico

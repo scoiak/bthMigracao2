@@ -37,7 +37,8 @@ left JOIN
 WHERE 
     ocor.id_gerado IS NULL
 AND
-    reg.tipo_registro = 'vinculo-empregaticio'
+    --reg.tipo_registro = 'vinculo-empregaticio'
+    reg.tipo_registro = 'matricula'
 AND 
     ocor.i_sequencial = 
         (
