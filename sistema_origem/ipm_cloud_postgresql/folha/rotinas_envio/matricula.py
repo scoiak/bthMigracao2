@@ -87,7 +87,6 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'conteudo': {}
         }
         # 'funcoesGratificadas	': None if 'funcoesGratificadas	' not in item else item['funcoesGratificadas']
-        # 'responsaveis': None if 'responsaveis' not in item else item['responsaveis']
         # 'validationStatus': None if 'validationstatus' not in item else item['validationstatus']
         # 'lotacoesFisicas': None if 'lotacoesfisicas' not in item else item['lotacoesfisicas']
         # 'contratoTemporario': None if 'contratotemporario' not in item else item['contratotemporario']
@@ -97,11 +96,25 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             })
             campo = item['previdencias'].split('%|%')
             dict_dados['conteudo']['previdencias'].append({
-                #'matricula': campo[0],
+                # 'matricula': campo[0],
                 'tipo': campo[0],
                 'plano': {
                     'id': int(campo[1])
                 }
+            })
+        if 'responsaveis' in item and item['responsaveis'] is not None:
+            dict_dados['conteudo'].update({
+                'responsaveis': []
+            })
+            campo = item['responsaveis'].split('%|%')
+            dict_dados['conteudo']['responsaveis'].append({
+                'pessoa': {
+                    'id': int(campo[0])
+                },
+                'dataInicio': campo[1],
+                # 'dataTermino': campo[2],
+                # 'profissao': campo[3],
+                # 'localTrabalho': campo[4],
             })
         if 'vinculoempregaticio' in item and item['vinculoempregaticio'] is not None:
             dict_dados['conteudo'].update({
@@ -441,7 +454,6 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                             campo[idx] = None
                     dict_item_historico = {}
                     # 'funcoesGratificadas	': None if 'funcoesGratificadas	' not in item else item['funcoesGratificadas']
-                    # 'responsaveis': None if 'responsaveis' not in item else item['responsaveis']
                     # 'validationStatus': None if 'validationstatus' not in item else item['validationstatus']
                     # 'lotacoesFisicas': None if 'lotacoesfisicas' not in item else item['lotacoesfisicas']
                     # 'contratoTemporario': None if 'contratotemporario' not in item else item['contratotemporario']
@@ -451,11 +463,25 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                         })
                         campoprevidencia = campo[18].split('%|%')
                         dict_item_historico['previdencias'].append({
-                            #'matricula': campoprevidencia[0],
+                            # 'matricula': campoprevidencia[0],
                             'tipo': campoprevidencia[0],
                             'plano': {
                                 'id': int(campoprevidencia[1])
                             }
+                        })
+                    if campo[73] is not None:
+                        dict_item_historico.update({
+                            'responsaveis': []
+                        })
+                        camporesponsaveis = campo[73].split('%|%')
+                        dict_item_historico['responsaveis'].append({
+                            'pessoa': {
+                                'id': int(camporesponsaveis[0])
+                            },
+                            'dataInicio': camporesponsaveis[1],
+                            # 'dataTermino': camporesponsaveis[2],
+                            # 'profissao': camporesponsaveis[3],
+                            # 'localTrabalho': camporesponsaveis[4],
                         })
                     if campo[1] is not None:
                         dict_item_historico.update({

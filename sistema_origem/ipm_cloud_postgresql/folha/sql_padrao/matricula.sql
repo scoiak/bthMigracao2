@@ -79,10 +79,10 @@ from (select
 	null as configuracaoLicencaPremio,
 	null as configuracaoAdicional,
 	null as processaAverbacao,
-	(case when fc.funtipocontrato not in (2) then null else fc.fundatatermcont::varchar end) as dataFinal,--60
+	(case when fc.funtipocontrato in (2) then fc.fundatatermcont::varchar else null  end) as dataFinal,--60
 	null as dataProrrogacao,
-	(select id_gerado from public.controle_migracao_registro cmr where tipo_registro = 'pessoa-juridica' limit 1) as instituicaoEnsino,
-	(select id_gerado from public.controle_migracao_registro cmr where tipo_registro = 'pessoa-juridica' limit 1) as agenteIntegracao,
+	(case when fc.funtipocontrato in (2) then (select id_gerado from public.controle_migracao_registro cmr where tipo_registro = 'pessoa-juridica' limit 1) else null end)::varchar as instituicaoEnsino,
+	(case when fc.funtipocontrato in (2) then (select id_gerado from public.controle_migracao_registro cmr where tipo_registro = 'pessoa-juridica' limit 1) else null end)::varchar as agenteIntegracao,
 	'1363' as formacao,
 	null as formacaoPeriodo,--65
 	null as formacaoFase,
@@ -91,8 +91,9 @@ from (select
 	fc.funcontrato as numeroContrato,
 	null as possuiSeguroVida,--70
 	null as numeroApoliceSeguroVida,
-   (case when fc.funtipocontrato not in (2) then (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'categoria-trabalhador', 'Estagiário', '901'))) else null end)::varchar as categoriaTrabalhador,
-	null as responsaveis,
+	(case when fc.funtipocontrato in (2) then (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'categoria-trabalhador', 'Estagiário', '901'))) else null end)::varchar as categoriaTrabalhador,
+	--null as responsaveis,
+	(case when fc.funtipocontrato in (2) then (select id_gerado from public.controle_migracao_registro cmr where tipo_registro = 'pessoa-fisica' limit 1) || '%|%' || (SELECT to_date(fc.odomesano||'01','YYYYMMDD')::varchar || ' 00:00:00') else null end)::varchar as responsaveis,
 	null as dataCessacaoAposentadoria,
 	null as entidadeOrigem,--75
 	null as motivoAposentadoria,
@@ -203,10 +204,10 @@ from (select
 	null as configuracaoLicencaPremio,
 	null as configuracaoAdicional,
 	null as processaAverbacao,
-	(case when fc.funtipocontrato not in (2) then null else fc.fundatatermcont::varchar end) as dataFinal,--60
+	(case when fc.funtipocontrato in (2) then fc.fundatatermcont::varchar else null  end) as dataFinal,--60
 	null as dataProrrogacao,
-	(select id_gerado from public.controle_migracao_registro cmr where tipo_registro = 'pessoa-juridica' limit 1) as instituicaoEnsino,
-	(select id_gerado from public.controle_migracao_registro cmr where tipo_registro = 'pessoa-juridica' limit 1) as agenteIntegracao,
+	(case when fc.funtipocontrato in (2) then (select id_gerado from public.controle_migracao_registro cmr where tipo_registro = 'pessoa-juridica' limit 1) else null end)::varchar as instituicaoEnsino,
+	(case when fc.funtipocontrato in (2) then (select id_gerado from public.controle_migracao_registro cmr where tipo_registro = 'pessoa-juridica' limit 1) else null end)::varchar as agenteIntegracao,
 	'1363' as formacao,
 	null as formacaoPeriodo,--65
 	null as formacaoFase,
@@ -215,8 +216,9 @@ from (select
 	fc.funcontrato as numeroContrato,
 	null as possuiSeguroVida,--70
 	null as numeroApoliceSeguroVida,
-	(case when fc.funtipocontrato not in (2) then (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'categoria-trabalhador', 'Estagiário', '901'))) else null end)::varchar as categoriaTrabalhador,
-	null as responsaveis,
+	(case when fc.funtipocontrato in (2) then (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'categoria-trabalhador', 'Estagiário', '901'))) else null end)::varchar as categoriaTrabalhador,
+	--null as responsaveis,
+	(case when fc.funtipocontrato in (2) then (select id_gerado from public.controle_migracao_registro cmr where tipo_registro = 'pessoa-fisica' limit 1) || '%|%' || (SELECT to_date(fc.odomesano||'01','YYYYMMDD')::varchar || ' 00:00:00') else null end)::varchar as responsaveis,
 	null as dataCessacaoAposentadoria,
 	null as entidadeOrigem,--75
 	null as motivoAposentadoria,
