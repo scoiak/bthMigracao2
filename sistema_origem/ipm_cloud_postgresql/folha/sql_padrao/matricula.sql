@@ -1,11 +1,13 @@
+-- DROP index IF exists idx_f_fhs,idx_f_fc,idx_fc_f,idx_fp_fc,idx_rc_fc,idx_pc_fc,idx_cmr,idx_m_fc cascade;
+-- DROP TABLE IF EXISTS matricula CASCADE;
+ 
 create index IF NOT exists idx_f_fhs on wfp.tbfunhistoricosalarial (fcncodigo, funcontrato, odomesano);
 create index IF NOT exists idx_f_fc on wfp.tbfuncontrato (fcncodigo, odomesano);
 create index IF NOT exists idx_fc_f on wfp.tbfuncionario (fcncodigo, odomesano);
-create index IF NOT EXISTs idx_fp_fc on wfp.tbfunpreviden (fcncodigo, funcontrato);
+create index IF NOT EXISTs idx_fp_fc on wfp.tbfunpreviden (fcncodigo, funcontrato, odomesano);
 create index IF NOT exists idx_rc_fc on wfp.tbrescisaocalculada (fcncodigo, funcontrato);
 create index IF NOT exists idx_pc_fc on wfp.tbprorrogacontr (fcncodigo, funcontrato);
-create index IF NOT exists idx_cmr on public.controle_migracao_registro (hash_chave_dsk); 
--- DROP TABLE IF EXISTS matricula CASCADE;
+create index IF NOT exists idx_cmr on public.controle_migracao_registro (hash_chave_dsk);
 
 -- SELECT string_agg('coalesce(suc.' || column_name || '::varchar,'''')',' || ''%&%'' ||')  FROM information_schema.columns WHERE  table_name   = 'matricula';
 
@@ -13,13 +15,13 @@ create index IF NOT exists idx_cmr on public.controle_migracao_registro (hash_ch
 select * 
 INTO TABLE matricula
 from (select 
-	(case when fc.funtipocontrato not in (2) then fundataadmissao::varchar else null end) as database, --0	
+	(case when fc.funtipocontrato not in (2) then fundataadmissao::varchar else null end) as database, --0		
 	(case when fc.funtipocontrato not in (2,3,4) then (coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','vinculo-empregaticio',regcodigo::varchar))),(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','vinculo-empregaticio','1'))))) else null end)::varchar as vinculoEmpregaticio,
 	(case fc.regcodigo when 24 then 'true' when 20 then 'true' else 'false' end) as contratoTemporario, --2
 	(case when fc.funtipocontrato not in (2) then 'NORMAL' else null end) as indicativoAdmissao,
-	'URBANO' as naturezaAtividade,
-	(case funtipocontrato when 10 then 'TRANSFERENCIA' else 'ADMISSAO' end) as tipoAdmissao,	--5
-	 (case funtipoemprego when 1 then 'true' else  'false' end) as primeiroEmprego, --6
+	(case when fc.funtipocontrato not in (2) then 'URBANO' else null end) as naturezaAtividade,
+	(case when fc.funtipocontrato not in (2) then (case funtipocontrato when 10 then 'TRANSFERENCIA' else 'ADMISSAO' end) else null end) as tipoAdmissao,	--5
+	 (case when fc.funtipocontrato not in (2) then (case funtipoemprego when 1 then 'true' else  'false' end) else null end)as primeiroEmprego, --6
 	 (case regcodigo when 1 then  'true' else	'false'	 end) as optanteFgts,
 	fundataopcaofgts::varchar as dataOpcao,
 	ifcsequenciafgts as contaFgts,
@@ -28,12 +30,12 @@ from (select
 	null as leiContrato,
 	--txjcodigo as atoContrato,
 	null as atoContrato,
-	fundatanomeacao::varchar as dataNomeacao,
-	fundataposse::varchar as dataPosse,--15
+	(case when fc.funtipocontrato not in (2) then fundatanomeacao::varchar else null end) as dataNomeacao,
+	(case when fc.funtipocontrato not in (2) then fundataposse::varchar else null end) as dataPosse,--15
 	null as tempoAposentadoria,
-	(case (select p.tpvcodigo from wfp.tbfunpreviden as p where p.funcontrato = fc.funcontrato and p.fcncodigo = fc.fcncodigo and p.odomesano = fc.odomesano limit 1) when 1 then true when 6 then true else false end) as previdenciaFederal,
-	--true as previdenciaFederal,
-	(case (select p.tpvcodigo from wfp.tbfunpreviden as p where p.funcontrato = fc.funcontrato and p.fcncodigo = fc.fcncodigo and p.odomesano = fc.odomesano limit 1) when 1 then null when 6 then null else ((case (select p.tpvcodigo from wfp.tbfunpreviden as p where p.fcncodigo = fc.fcncodigo and p.funcontrato = fc.funcontrato limit 1) when 3 then 'ESTADUAL' when 4 then 'FUNDO_ASSISTENCIA' when 5 then 'FUNDO_PREVIDENCIA' when 2 then 'FUNDO_FINANCEIRO' else null end) || '%|%' || (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'plano-previdencia', (select p.tpvcodigo from wfp.tbfunpreviden as p where p.fcncodigo = fc.fcncodigo and p.funcontrato = fc.funcontrato limit 1))))) end) as previdencias,
+	--true as previdenciaFederal,	
+	(case when fc.funtipocontrato not in (2) then (case (select p.tpvcodigo from wfp.tbfunpreviden as p where p.funcontrato = fc.funcontrato and p.fcncodigo = fc.fcncodigo and p.odomesano = fc.odomesano and p.fprprincipal = 1 limit 1) when 1 then true when 6 then true else false end) else null end) as previdenciaFederal,
+	(case (select p.tpvcodigo from wfp.tbfunpreviden as p where p.funcontrato = fc.funcontrato and p.fcncodigo = fc.fcncodigo and p.odomesano = fc.odomesano and p.fprprincipal = 1 limit 1) when 1 then null when 6 then null else ((case (select p.tpvcodigo from wfp.tbfunpreviden as p where p.fcncodigo = fc.fcncodigo and p.funcontrato = fc.funcontrato and p.odomesano = fc.odomesano and p.fprprincipal = 1 limit 1) when 3 then 'ESTADUAL' when 4 then 'FUNDO_ASSISTENCIA' when 5 then 'FUNDO_PREVIDENCIA' when 2 then 'FUNDO_FINANCEIRO' else null end) || '%|%' || (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'plano-previdencia', (select p.tpvcodigo from wfp.tbfunpreviden as p where p.fcncodigo = fc.fcncodigo and p.funcontrato = fc.funcontrato and p.odomesano = fc.odomesano and p.fprprincipal = 1 limit 1))))) end) as previdencias,
 	(case when fc.funtipocontrato not in (4) then coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'cargo', carcodigo))),(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'cargo', '1')))) else null end)::varchar as cargo,--19
 	null as cargoAlterado,--20
 	--txjcodigo as atoAlteracaoCargo,
@@ -48,18 +50,18 @@ from (select
 	null as classeReferencia,
 	null as cargoComissionado,--30
 	null as areaAtuacaoComissionado,
-	false as ocupaVagaComissionado,
+	(case when fc.funtipocontrato not in (2) then false else null end) as ocupaVagaComissionado,
 	null as salarioComissionado,
 	null as nivelSalarialComissionado,
 	null as classeReferenciaComissionado,--35
-	'MENSALISTA' as unidadePagamento,
+	(case when fc.funtipocontrato not in (2) then 'MENSALISTA' else null end) as unidadePagamento,
 	--(case funformapagamento when 2 then 'CREDITO_EM_CONTA'  when 3 then 'DINHEIRO' when 4 then 'CHEQUE' else 'DINHEIRO' end) as formaPagamento,
 	'DINHEIRO' as formaPagamento,
 	ifcsequenciapaga as contaBancariaPagamento,
 	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'configuracao-ferias', 1))) as configuracaoFerias,
 	cast(regexp_replace(funhorastrabmes, '\:\d{2}$', '', 'gi') as integer) as quantidadeHorasMes,--40
-	(cast(regexp_replace(funhorastrabmes, '\:\d{2}$', '', 'gi') as integer)/5) as quantidadeHorasSemana,
-	false as jornadaParcial,
+	(case when fc.funtipocontrato not in (2) then (cast(regexp_replace(funhorastrabmes, '\:\d{2}$', '', 'gi') as integer)/5) else null end)::varchar as quantidadeHorasSemana,
+	(case when fc.funtipocontrato not in (2) then false else null end) as jornadaParcial,
 	null as dataAgendamentoRescisao,
 	null as funcoesGratificadas, 
 	(case fc.funsituacao when 1 then null else (case fc.regcodigo when 24 then (select resdata from wfp.tbrescisaocalculada as rc where rc.fcncodigo = fc.fcncodigo and rc.funcontrato = fc.funcontrato order by resdata desc limit 1) when 20 then (select resdata from wfp.tbrescisaocalculada as rc where rc.fcncodigo = fc.fcncodigo and rc.funcontrato = fc.funcontrato order by resdata desc limit 1) else null end) end)::varchar as dataTerminoContratoTemporario,
@@ -77,11 +79,11 @@ from (select
 	null as configuracaoLicencaPremio,
 	null as configuracaoAdicional,
 	null as processaAverbacao,
-	null as dataFinal,--60
+	(case when fc.funtipocontrato not in (2) then null else fc.fundatatermcont::varchar end) as dataFinal,--60
 	null as dataProrrogacao,
-	null as instituicaoEnsino,
-	null as agenteIntegracao,
-	null as formacao,
+	(select id_gerado from public.controle_migracao_registro cmr where tipo_registro = 'pessoa-juridica' limit 1) as instituicaoEnsino,
+	(select id_gerado from public.controle_migracao_registro cmr where tipo_registro = 'pessoa-juridica' limit 1) as agenteIntegracao,
+	'1363' as formacao,
 	null as formacaoPeriodo,--65
 	null as formacaoFase,
 	null as estagioObrigatorio,
@@ -89,7 +91,7 @@ from (select
 	fc.funcontrato as numeroContrato,
 	null as possuiSeguroVida,--70
 	null as numeroApoliceSeguroVida,
-	null as categoriaTrabalhador,
+   (case when fc.funtipocontrato not in (2) then (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'categoria-trabalhador', 'Estagiário', '901'))) else null end)::varchar as categoriaTrabalhador,
 	null as responsaveis,
 	null as dataCessacaoAposentadoria,
 	null as entidadeOrigem,--75
@@ -103,8 +105,7 @@ from (select
 	null as matriculaOrigem,
 	null as responsavel,
 	fundataadmissao::varchar as dataInicioContrato,--85
-	(CASE fc.funsituacao WHEN  1 THEN 'TRABALHANDO'  WHEN 2 THEN 'AFASTADO' ELSE 'DEMITIDO' end) as situacao,
-	--'DEMITIDO' as situacao,
+	(case when fc.funtipocontrato in (9,8) then 'CEDIDO' else (CASE fc.funsituacao WHEN  1 THEN 'TRABALHANDO'  WHEN 2 THEN 'AFASTADO' ELSE 'DEMITIDO' end) end) as situacao,
 	--'2020-11-01 00:00:00' as inicioVigencia,
 	(SELECT to_date(fc.odomesano||'01','YYYYMMDD')::varchar || ' 00:00:00')  as inicioVigencia,
 	--(CASE fc.funtipocontrato WHEN  1 THEN 'FUNCIONARIO'  	WHEN 2 THEN 'ESTAGIARIO' 	WHEN 3 THEN 'PENSIONISTA'	WHEN 4 THEN 'APOSENTADO'	WHEN 5 THEN 'REINTEGRACAO'	WHEN 6 THEN 'TRANSFERENCIA'	WHEN 7 THEN 'MENOR_APRENDIZ'	WHEN 8 THEN 'CEDIDO'	WHEN 9 THEN 'CEDIDO'	WHEN 10 THEN 'RECEBIDO'	WHEN 11 THEN 'RECEBIDO'	WHEN 12 THEN 'PREVIDENCIA'	ELSE 'FUNCIONARIO' end) as tipo,
@@ -129,8 +130,9 @@ from (select
 	fc.odomesano as competencia
 from wfp.tbfuncontrato as fc  join wfp.tbfuncionario as f on f.fcncodigo = fc.fcncodigo and f.odomesano = fc.odomesano
 ) as s
-where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'matricula', codigoMatricula, numeroContrato))) is null
-and pessoa is not null;
+where 
+(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'matricula', fcncodigo, funcontrato))) is null and
+pessoa is not null;
 */
 
 create index if not exists idx_m_fc on matricula (fcncodigo, funcontrato);
@@ -141,9 +143,9 @@ from (select
 	(case when fc.funtipocontrato not in (2,3,4) then (coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','vinculo-empregaticio',regcodigo::varchar))),(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','vinculo-empregaticio','1'))))) else null end)::varchar as vinculoEmpregaticio,
 	(case fc.regcodigo when 24 then 'true' when 20 then 'true' else 'false' end) as contratoTemporario, --2
 	(case when fc.funtipocontrato not in (2) then 'NORMAL' else null end) as indicativoAdmissao,
-	'URBANO' as naturezaAtividade,
-	(case funtipocontrato when 10 then 'TRANSFERENCIA' else 'ADMISSAO' end) as tipoAdmissao,	--5
-	 (case funtipoemprego when 1 then 'true' else  'false' end) as primeiroEmprego, --6
+	(case when fc.funtipocontrato not in (2) then 'URBANO' else null end) as naturezaAtividade,
+	(case when fc.funtipocontrato not in (2) then (case funtipocontrato when 10 then 'TRANSFERENCIA' else 'ADMISSAO' end) else null end) as tipoAdmissao,	--5
+	 (case when fc.funtipocontrato not in (2) then (case funtipoemprego when 1 then 'true' else  'false' end) else null end)as primeiroEmprego, --6
 	 (case regcodigo when 1 then  'true' else	'false'	 end) as optanteFgts,
 	fundataopcaofgts::varchar as dataOpcao,
 	ifcsequenciafgts as contaFgts,
@@ -152,13 +154,12 @@ from (select
 	null as leiContrato,
 	--txjcodigo as atoContrato,
 	null as atoContrato,
-	fundatanomeacao::varchar as dataNomeacao,
-	fundataposse::varchar as dataPosse,--15
+	(case when fc.funtipocontrato not in (2) then fundatanomeacao::varchar else null end) as dataNomeacao,
+	(case when fc.funtipocontrato not in (2) then fundataposse::varchar else null end) as dataPosse,--15
 	null as tempoAposentadoria,
-	(case (select p.tpvcodigo from wfp.tbfunpreviden as p where p.funcontrato = fc.funcontrato and p.fcncodigo = fc.fcncodigo and p.odomesano = fc.odomesano limit 1) when 1 then true when 6 then true else false end) as previdenciaFederal,
-	--true as previdenciaFederal,
-	--(case (select p.tpvcodigo from wfp.tbfunpreviden as p where p.fcncodigo = fc.fcncodigo and p.funcontrato = fc.funcontrato limit 1) when 3 then 'ESTADUAL' when 4 then 'FUNDO_ASSISTENCIA' when 5 then 'FUNDO_PREVIDENCIA' when 2 then 'FUNDO_FINANCEIRO' else null end) || '%|%' || (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'plano-previdencia', (select p.tpvcodigo from wfp.tbfunpreviden as p where p.fcncodigo = fc.fcncodigo and p.funcontrato = fc.funcontrato limit 1)))) as previdencias,
-	(case (select p.tpvcodigo from wfp.tbfunpreviden as p where p.funcontrato = fc.funcontrato and p.fcncodigo = fc.fcncodigo and p.odomesano = fc.odomesano limit 1) when 1 then null when 6 then null else ((case (select p.tpvcodigo from wfp.tbfunpreviden as p where p.fcncodigo = fc.fcncodigo and p.funcontrato = fc.funcontrato limit 1) when 3 then 'ESTADUAL' when 4 then 'FUNDO_ASSISTENCIA' when 5 then 'FUNDO_PREVIDENCIA' when 2 then 'FUNDO_FINANCEIRO' else null end) || '%|%' || (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'plano-previdencia', (select p.tpvcodigo from wfp.tbfunpreviden as p where p.fcncodigo = fc.fcncodigo and p.funcontrato = fc.funcontrato limit 1))))) end) as previdencias,
+	--true as previdenciaFederal,	
+	(case when fc.funtipocontrato not in (2) then (case (select p.tpvcodigo from wfp.tbfunpreviden as p where p.funcontrato = fc.funcontrato and p.fcncodigo = fc.fcncodigo and p.odomesano = fc.odomesano and p.fprprincipal = 1 limit 1) when 1 then true when 6 then true else false end) else null end) as previdenciaFederal,
+	(case (select p.tpvcodigo from wfp.tbfunpreviden as p where p.funcontrato = fc.funcontrato and p.fcncodigo = fc.fcncodigo and p.odomesano = fc.odomesano and p.fprprincipal = 1 limit 1) when 1 then null when 6 then null else ((case (select p.tpvcodigo from wfp.tbfunpreviden as p where p.fcncodigo = fc.fcncodigo and p.funcontrato = fc.funcontrato and p.odomesano = fc.odomesano and p.fprprincipal = 1 limit 1) when 3 then 'ESTADUAL' when 4 then 'FUNDO_ASSISTENCIA' when 5 then 'FUNDO_PREVIDENCIA' when 2 then 'FUNDO_FINANCEIRO' else null end) || '%|%' || (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'plano-previdencia', (select p.tpvcodigo from wfp.tbfunpreviden as p where p.fcncodigo = fc.fcncodigo and p.funcontrato = fc.funcontrato and p.odomesano = fc.odomesano and p.fprprincipal = 1 limit 1))))) end) as previdencias,
 	(case when fc.funtipocontrato not in (4) then coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'cargo', carcodigo))),(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'cargo', '1')))) else null end)::varchar as cargo,--19
 	null as cargoAlterado,--20
 	--txjcodigo as atoAlteracaoCargo,
@@ -173,18 +174,18 @@ from (select
 	null as classeReferencia,
 	null as cargoComissionado,--30
 	null as areaAtuacaoComissionado,
-	false as ocupaVagaComissionado,
+	(case when fc.funtipocontrato not in (2) then false else null end) as ocupaVagaComissionado,
 	null as salarioComissionado,
 	null as nivelSalarialComissionado,
 	null as classeReferenciaComissionado,--35
-	'MENSALISTA' as unidadePagamento,
+	(case when fc.funtipocontrato not in (2) then 'MENSALISTA' else null end) as unidadePagamento,
 	--(case funformapagamento when 2 then 'CREDITO_EM_CONTA'  when 3 then 'DINHEIRO' when 4 then 'CHEQUE' else 'DINHEIRO' end) as formaPagamento,
 	'DINHEIRO' as formaPagamento,
 	ifcsequenciapaga as contaBancariaPagamento,
 	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'configuracao-ferias', 1))) as configuracaoFerias,
 	cast(regexp_replace(funhorastrabmes, '\:\d{2}$', '', 'gi') as integer) as quantidadeHorasMes,--40
-	(cast(regexp_replace(funhorastrabmes, '\:\d{2}$', '', 'gi') as integer)/5) as quantidadeHorasSemana,
-	false as jornadaParcial,
+	(case when fc.funtipocontrato not in (2) then (cast(regexp_replace(funhorastrabmes, '\:\d{2}$', '', 'gi') as integer)/5) else null end)::varchar as quantidadeHorasSemana,
+	(case when fc.funtipocontrato not in (2) then false else null end) as jornadaParcial,
 	null as dataAgendamentoRescisao,
 	null as funcoesGratificadas, 
 	(case fc.funsituacao when 1 then null else (case fc.regcodigo when 24 then (select resdata from wfp.tbrescisaocalculada as rc where rc.fcncodigo = fc.fcncodigo and rc.funcontrato = fc.funcontrato order by resdata desc limit 1) when 20 then (select resdata from wfp.tbrescisaocalculada as rc where rc.fcncodigo = fc.fcncodigo and rc.funcontrato = fc.funcontrato order by resdata desc limit 1) else null end) end)::varchar as dataTerminoContratoTemporario,
@@ -202,11 +203,11 @@ from (select
 	null as configuracaoLicencaPremio,
 	null as configuracaoAdicional,
 	null as processaAverbacao,
-	null as dataFinal,--60
+	(case when fc.funtipocontrato not in (2) then null else fc.fundatatermcont::varchar end) as dataFinal,--60
 	null as dataProrrogacao,
-	null as instituicaoEnsino,
-	null as agenteIntegracao,
-	null as formacao,
+	(select id_gerado from public.controle_migracao_registro cmr where tipo_registro = 'pessoa-juridica' limit 1) as instituicaoEnsino,
+	(select id_gerado from public.controle_migracao_registro cmr where tipo_registro = 'pessoa-juridica' limit 1) as agenteIntegracao,
+	'1363' as formacao,
 	null as formacaoPeriodo,--65
 	null as formacaoFase,
 	null as estagioObrigatorio,
@@ -214,7 +215,7 @@ from (select
 	fc.funcontrato as numeroContrato,
 	null as possuiSeguroVida,--70
 	null as numeroApoliceSeguroVida,
-	null as categoriaTrabalhador,
+	(case when fc.funtipocontrato not in (2) then (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'categoria-trabalhador', 'Estagiário', '901'))) else null end)::varchar as categoriaTrabalhador,
 	null as responsaveis,
 	null as dataCessacaoAposentadoria,
 	null as entidadeOrigem,--75
@@ -228,7 +229,7 @@ from (select
 	null as matriculaOrigem,
 	null as responsavel,
 	fundataadmissao::varchar as dataInicioContrato,--85
-	(CASE fc.funsituacao WHEN  1 THEN 'TRABALHANDO'  WHEN 2 THEN 'AFASTADO' ELSE 'DEMITIDO' end) as situacao,
+	(case when fc.funtipocontrato in (9,8) then 'CEDIDO' else (CASE fc.funsituacao WHEN  1 THEN 'TRABALHANDO'  WHEN 2 THEN 'AFASTADO' ELSE 'DEMITIDO' end) end) as situacao,
 	--'2020-11-01 00:00:00' as inicioVigencia,
 	(SELECT to_date(fc.odomesano||'01','YYYYMMDD')::varchar || ' 00:00:00')  as inicioVigencia,
 	--(CASE fc.funtipocontrato WHEN  1 THEN 'FUNCIONARIO'  	WHEN 2 THEN 'ESTAGIARIO' 	WHEN 3 THEN 'PENSIONISTA'	WHEN 4 THEN 'APOSENTADO'	WHEN 5 THEN 'REINTEGRACAO'	WHEN 6 THEN 'TRANSFERENCIA'	WHEN 7 THEN 'MENOR_APRENDIZ'	WHEN 8 THEN 'CEDIDO'	WHEN 9 THEN 'CEDIDO'	WHEN 10 THEN 'RECEBIDO'	WHEN 11 THEN 'RECEBIDO'	WHEN 12 THEN 'PREVIDENCIA'	ELSE 'FUNCIONARIO' end) as tipo,
@@ -256,12 +257,12 @@ from (select
 	fc.funcontrato,	
 	fc.odomesano as competencia
 from wfp.tbfuncontrato as fc  join wfp.tbfuncionario as f on f.fcncodigo = fc.fcncodigo and f.odomesano = fc.odomesano
-where fc.odomesano = 202009
+where fc.odomesano = 202010
 --and fc.fcncodigo = 15605
 and fc.funsituacao in (1,2)
 order by fc.fcncodigo,fc.funcontrato
 --limit 10 offset 0
 ) as s
 where 
-(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'matricula', codigoMatricula, numeroContrato))) is null and
+(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'matricula', fcncodigo, funcontrato))) is null and
 pessoa is not null;

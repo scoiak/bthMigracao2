@@ -11,9 +11,9 @@ url = "https://pessoal.cloud.betha.com.br/service-layer/v1/api/matricula"
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
-    if True:
-        busca_dados(params_exec)
     if False:
+        busca_dados(params_exec)
+    if True:
         dados_assunto = coletar_dados(params_exec)
         dados_enviar = pre_validar(params_exec, dados_assunto)
         if not params_exec.get('somente_pre_validar'):
@@ -81,7 +81,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     token = params_exec['token']
     contador = 0
     for item in dados:
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['codigomatricula'], item['numerocontrato'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['fcncodigo'], item['funcontrato'])
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {}

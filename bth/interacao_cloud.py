@@ -121,7 +121,7 @@ def busca_dados_cloud(params_exec, **kwargs):
     dados_coletados = []
     has_next = True
     url = kwargs.get('url')
-    limit = 100
+    limit = 10
     offset = 0
     params = {'offset': 0, 'limit': limit}
     headers = {'authorization': f'bearer {params_exec["token"]}'}
