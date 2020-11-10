@@ -4,7 +4,7 @@ create index IF NOT exists idx_fc_f on wfp.tbfuncionario (fcncodigo, odomesano);
 create index IF NOT EXISTs idx_fp_fc on wfp.tbfunpreviden (fcncodigo, funcontrato);
 create index IF NOT exists idx_rc_fc on wfp.tbrescisaocalculada (fcncodigo, funcontrato);
 create index IF NOT exists idx_pc_fc on wfp.tbprorrogacontr (fcncodigo, funcontrato);
- 
+create index IF NOT exists idx_cmr on public.controle_migracao_registro (hash_chave_dsk); 
 -- DROP TABLE IF EXISTS matricula CASCADE;
 
 -- SELECT string_agg('coalesce(suc.' || column_name || '::varchar,'''')',' || ''%&%'' ||')  FROM information_schema.columns WHERE  table_name   = 'matricula';
