@@ -9,14 +9,14 @@ def iniciar():
     params_exec = {
         'somente_pre_validar': False,
         # 'token': '72612895-9758-467d-a2ef-36b8b57c3198', # Homologação 1
-        # 'token': '58924393-e014-43f4-9269-5646a39b127d', # Homologação 2
+        #'token': '58924393-e014-43f4-9269-5646a39b127d', # Homologação 2
         'token': 'c52c4510-0a8f-468f-a501-1f68b32795c8', # Homologação 3
         'ano': 2020
     }
     mensagem_inicio(params_exec)
     interacao_cloud.verifica_token(params_exec['token'])
     verifica_tabelas_controle()
-    # enviar(params_exec, 'pais')
+    enviar(params_exec, 'pais')
     # enviar(params_exec, 'estado')
     # enviar(params_exec, 'municipio')
     # enviar(params_exec, 'bairro')
@@ -52,7 +52,7 @@ def iniciar():
     # enviar(params_exec, 'plano-cargo-salario')
     # enviar(params_exec, 'nivel-salarial')
     # enviar(params_exec, 'cargo')
-    enviar(params_exec, 'matricula')
+    # enviar(params_exec, 'matricula')
 
 
 def enviar(params_exec, tipo_registro, *args, **kwargs):

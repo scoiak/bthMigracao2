@@ -18,10 +18,10 @@ from (select
 	(case when fc.funtipocontrato not in (2,3,4) then fundataadmissao::varchar else null end) as database, --0		
 	(case when fc.funtipocontrato not in (2,3,4) then (coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','vinculo-empregaticio',regcodigo::varchar))),(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','vinculo-empregaticio','1'))))) else null end)::varchar as vinculoEmpregaticio,
 	(case fc.regcodigo when 24 then 'true' when 20 then 'true' else 'false' end) as contratoTemporario, --2
-	(case when fc.funtipocontrato not in (2) then 'NORMAL' else null end) as indicativoAdmissao,
-	(case when fc.funtipocontrato not in (2) then 'URBANO' else null end) as naturezaAtividade,
-	(case when fc.funtipocontrato not in (2) then (case funtipocontrato when 10 then 'TRANSFERENCIA' else 'ADMISSAO' end) else null end) as tipoAdmissao,	--5
-	 (case when fc.funtipocontrato not in (2) then (case funtipoemprego when 1 then 'true' else  'false' end) else null end)as primeiroEmprego, --6
+	(case when fc.funtipocontrato not in (2,3,4) then 'NORMAL' else null end) as indicativoAdmissao,
+	(case when fc.funtipocontrato not in (2,3,4) then 'URBANO' else null end) as naturezaAtividade,
+	(case when fc.funtipocontrato not in (2,3,4) then (case funtipocontrato when 10 then 'TRANSFERENCIA' else 'ADMISSAO' end) else null end) as tipoAdmissao,	--5
+	 (case when fc.funtipocontrato not in (2,3,4) then (case funtipoemprego when 1 then 'true' else  'false' end) else null end)as primeiroEmprego, --6
 	 (case regcodigo when 1 then  'true' else	'false'	 end) as optanteFgts,
 	fundataopcaofgts::varchar as dataOpcao,
 	ifcsequenciafgts as contaFgts,
@@ -143,10 +143,10 @@ from (select
 (case when fc.funtipocontrato not in (2,3,4) then fundataadmissao::varchar else null end) as database, --0		
 	(case when fc.funtipocontrato not in (2,3,4) then (coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','vinculo-empregaticio',regcodigo::varchar))),(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','vinculo-empregaticio','1'))))) else null end)::varchar as vinculoEmpregaticio,
 	(case fc.regcodigo when 24 then 'true' when 20 then 'true' else 'false' end) as contratoTemporario, --2
-	(case when fc.funtipocontrato not in (2) then 'NORMAL' else null end) as indicativoAdmissao,
-	(case when fc.funtipocontrato not in (2) then 'URBANO' else null end) as naturezaAtividade,
-	(case when fc.funtipocontrato not in (2) then (case funtipocontrato when 10 then 'TRANSFERENCIA' else 'ADMISSAO' end) else null end) as tipoAdmissao,	--5
-	 (case when fc.funtipocontrato not in (2) then (case funtipoemprego when 1 then 'true' else  'false' end) else null end)as primeiroEmprego, --6
+	(case when fc.funtipocontrato not in (2,3,4) then 'NORMAL' else null end) as indicativoAdmissao,
+	(case when fc.funtipocontrato not in (2,3,4) then 'URBANO' else null end) as naturezaAtividade,
+	(case when fc.funtipocontrato not in (2,3,4) then (case funtipocontrato when 10 then 'TRANSFERENCIA' else 'ADMISSAO' end) else null end) as tipoAdmissao,	--5
+	 (case when fc.funtipocontrato not in (2,3,4) then (case funtipoemprego when 1 then 'true' else  'false' end) else null end)as primeiroEmprego, --6
 	 (case regcodigo when 1 then  'true' else	'false'	 end) as optanteFgts,
 	fundataopcaofgts::varchar as dataOpcao,
 	ifcsequenciafgts as contaFgts,
