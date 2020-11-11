@@ -41,7 +41,7 @@ def busca_dados_cloud(params_exec):
                 'i_chave_dsk1': item['numero'],
                 'i_chave_dsk2': item['banco']['id'],
             })
-        model.insere_tabela_controle_migracao_registro2(params_exec, lista_req=registros_formatados)
+        model.insere_tabela_controle_migracao_registro(params_exec, lista_req=registros_formatados)
         print(f'- Busca de {tipo_registro} finalizada. Tabelas de controles atualizas com sucesso.')
     except Exception as error:
         print(f'Erro ao executar função "busca_dados_cloud". {error}')

@@ -11,13 +11,16 @@ url = 'https://pessoal.cloud.betha.com.br/service-layer/v1/api/estado'
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
-    if False:
-        busca_dados(params_exec)
     if True:
+        busca_dados(params_exec)
+    if False:
         dados_assunto = coletar_dados(params_exec)
+
         dados_enviar = pre_validar(params_exec, dados_assunto)
+
         if not params_exec.get('somente_pre_validar'):
             iniciar_envio(params_exec, dados_enviar, 'POST')
+
         model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
 
 
@@ -36,7 +39,7 @@ def busca_dados(params_exec):
             'id_gerado': item['id'],
             'i_chave_dsk1': item['nome']
         })
-    model.insere_tabela_controle_migracao_registro2(params_exec, lista_req=registros_formatados)
+    model.insere_tabela_controle_migracao_registro(params_exec, lista_req=registros_formatados)
     print('- Busca de estados finalizada. Tabelas de controles atualizas com sucesso.')
 
 

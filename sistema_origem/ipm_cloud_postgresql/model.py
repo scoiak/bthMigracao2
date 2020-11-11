@@ -384,7 +384,7 @@ def valida_lotes_enviados(params_exec, *args, **kwargs):
         if retorno_analise_lote["incosistencia_registros"] > 0:
             print(f'\n- {retorno_analise_lote["incosistencia_registros"]} registro(s) retornaram inconsistência. ')
         else:
-            print('- Nenhuma inconsistência encontrada nos lotes enviados.')
+            print('\n- Nenhuma inconsistência encontrada nos lotes enviados.')
         print(f'- Consulta de lotes finalizada. ({(datetime.now() - dh_inicio).total_seconds()} segundos)')
     except Exception as error:
         print("Erro ao executar função 'valida_lotes_enviados'.", error)
