@@ -122,7 +122,7 @@ def busca_dados_cloud(params_exec, **kwargs):
     has_next = True
     url = kwargs.get('url')
     limit = 20
-    offset = 200 * limit
+    offset = 0
     rodada_busca = 0
     headers = {'authorization': f'bearer {params_exec["token"]}'}
 
@@ -142,6 +142,7 @@ def busca_dados_cloud(params_exec, **kwargs):
             if 'content' in retorno_json:
                 for i in retorno_json['content']:
                     dados_coletados.append(i)
+        print('\n- Busca de páginas finalizada.')
     except Exception as error:
         print(f'Erro durante a execução da função busca_dados. {error}')
 

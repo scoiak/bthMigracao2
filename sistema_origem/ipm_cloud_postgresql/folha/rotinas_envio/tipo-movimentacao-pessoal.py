@@ -5,18 +5,20 @@ import logging
 from datetime import datetime
 
 sistema = 300
-tipo_registro = 'natureza-texto-juridico'
-url = 'https://pessoal.cloud.betha.com.br/service-layer/v1/api/natureza-texto-juridico'
+tipo_registro = 'tipo-movimentacao-pessoal'
+url = 'https://pessoal.cloud.betha.com.br/service-layer/v1/api/tipo-movimentacao-pessoal'
 limite_lote = 500
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
-    busca_dados_cloud(params_exec)
-    dados_assunto = coletar_dados(params_exec)
-    dados_enviar = pre_validar(params_exec, dados_assunto)
-    if not params_exec.get('somente_pre_validar'):
-        iniciar_envio(params_exec, dados_enviar, 'POST')
-    model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
+    if True:
+        busca_dados_cloud(params_exec)
+    if True:
+        dados_assunto = coletar_dados(params_exec)
+        dados_enviar = pre_validar(params_exec, dados_assunto)
+        if not params_exec.get('somente_pre_validar'):
+            iniciar_envio(params_exec, dados_enviar, 'POST')
+        model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
 
 
 def busca_dados_cloud(params_exec):
@@ -26,14 +28,16 @@ def busca_dados_cloud(params_exec):
     registros_formatados = []
     try:
         for item in registros:
-            hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['descricao'])
+            hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['descricao'], item['classificacao'])
             registros_formatados.append({
                 'sistema': sistema,
                 'tipo_registro': tipo_registro,
                 'hash_chave_dsk': hash_chaves,
-                'descricao_tipo_registro': 'Cadastro de Agências Bancárias',
+                'descricao_tipo_registro': 'Cadastro de Tipo de Movimentacao Pessoal',
                 'id_gerado': item['id'],
-                'i_chave_dsk1': item['descricao']})
+                'i_chave_dsk1': item['descricao'],
+                'i_chave_dsk2': item['classificacao']
+            })
         model.insere_tabela_controle_migracao_registro2(params_exec, lista_req=registros_formatados)
         print(f'- Busca de {tipo_registro} finalizada. Tabelas de controles atualizas com sucesso.')
     except Exception as error:
@@ -83,23 +87,25 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     token = params_exec['token']
     contador = 0
     for item in dados:
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['nome'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['descricao'], item['classificacao'])
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {
-                "descricao": item['nome']
+                "descricao": item['descricao'],
+                "classificacao": item['classificacao'],
             }
         }
         contador += 1
-        print(f'Dados gerados ({contador}): ', dict_dados)
+        # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Natureza de Texto Jurídico',
+            'descricao_tipo_registro': 'Cadastro de Tipo de Movimentação Pessoal',
             'id_gerado': None,
-            'i_chave_dsk1': item['nome']
+            'i_chave_dsk1': item['descricao'],
+            'i_chave_dsk2': item['classificacao']
         })
     if True:
         model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)
@@ -107,6 +113,6 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                                                       token=token,
                                                       url=url,
                                                       tipo_registro=tipo_registro,
-                                                      tamanho_lote=300)
+                                                      tamanho_lote=limite_lote)
         model.insere_tabela_controle_lote(req_res)
         print('- Envio de dados finalizado.')

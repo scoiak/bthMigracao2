@@ -12,7 +12,7 @@ url = 'https://pessoal.cloud.betha.com.br/service-layer/v1/api/fonte-divulgacao'
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
     # Realiza rotina de busca dos dados no cloud
-    busca_dados_cloud(params_exec)
+    # busca_dados_cloud(params_exec)
 
     # E - Realiza a consulta dos dados que serão enviados
     dados_assunto = coletar_dados(params_exec)

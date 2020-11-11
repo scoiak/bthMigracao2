@@ -10,9 +10,9 @@ url = 'https://pessoal.cloud.betha.com.br/service-layer/v1/api/municipio'
 limite_lote = 500
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
-    if True:
-        busca_dados_cloud(params_exec)
     if False:
+        busca_dados_cloud(params_exec)
+    if True:
         dados_assunto = coletar_dados(params_exec)
         dados_enviar = pre_validar(params_exec, dados_assunto)
         if not params_exec.get('somente_pre_validar'):
