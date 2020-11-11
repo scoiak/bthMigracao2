@@ -83,7 +83,7 @@ from (select
 	null as dataProrrogacao,
 	(case when fc.funtipocontrato in (2) then (select id_gerado from public.controle_migracao_registro cmr where tipo_registro = 'pessoa-juridica' and id_gerado is not null limit 1) else null end)::varchar as instituicaoEnsino,
 	(case when fc.funtipocontrato in (2) then (select id_gerado from public.controle_migracao_registro cmr where tipo_registro = 'pessoa-juridica' and id_gerado is not null limit 1) else null end)::varchar as agenteIntegracao,
-	'1363' as formacao,
+	(case when fc.funtipocontrato in (2) then '1363' else null end)::varchar as formacao,
 	null as formacaoPeriodo,--65
 	null as formacaoFase,
 	null as estagioObrigatorio,
@@ -208,7 +208,7 @@ from (select
 	null as dataProrrogacao,
 	(case when fc.funtipocontrato in (2) then (select id_gerado from public.controle_migracao_registro cmr where tipo_registro = 'pessoa-juridica' and id_gerado is not null limit 1) else null end)::varchar as instituicaoEnsino,
 	(case when fc.funtipocontrato in (2) then (select id_gerado from public.controle_migracao_registro cmr where tipo_registro = 'pessoa-juridica' and id_gerado is not null limit 1) else null end)::varchar as agenteIntegracao,
-	'1363' as formacao,
+	(case when fc.funtipocontrato in (2) then '1363' else null end)::varchar as formacao,
 	null as formacaoPeriodo,--65
 	null as formacaoFase,
 	null as estagioObrigatorio,

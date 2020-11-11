@@ -6,12 +6,12 @@ import re
 from datetime import datetime
 
 sistema = 300
-tipo_registro = 'pessoa-contas'
+tipo_registro = 'conta-bancaria'
 url = 'https://pessoal.cloud.betha.com.br/service-layer/v1/api/pessoa-fisica'
+limite_lote = 500
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
-    # Realiza rotina de busca dos dados no cloud
     busca_dados_cloud(params_exec)
 
 
@@ -21,7 +21,6 @@ def busca_dados_cloud(params_exec):
     print(f'- Busca de pessoas finalizada, iniciando verificação das contas bancárias.')
     registros_formatados = []
     total_contas = 0
-
     try:
         for item in registros:
             if 'contasBancarias' in item and item['contasBancarias'] is not None:
@@ -40,12 +39,10 @@ def busca_dados_cloud(params_exec):
                         'i_chave_dsk1': cpf_pessoa,
                         'i_chave_dsk2': item_conta['numero'],
                     }
-                    # print('novo_registro', cpf_pessoa, item_conta['numero'])
                     registros_formatados.append(novo_registro)
                     total_contas += 1
         model.insere_tabela_controle_migracao_registro(params_exec, lista_req=registros_formatados)
         print(f'- Busca de {tipo_registro} finalizada. Foram executas {total_contas} contas. '
               f'Tabelas de controles atualizas com sucesso.')
-
     except Exception as error:
         print(f'Erro ao executar função "busca_dados_cloud". {error}')
