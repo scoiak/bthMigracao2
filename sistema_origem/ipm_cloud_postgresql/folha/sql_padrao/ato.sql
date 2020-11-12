@@ -1,23 +1,16 @@
 select
-	'300' as sistema,
-	'ato' as tipo_registro,
-	num_ato as chave_dsk1,
-	desc_natureza as chave_dsk2,
-	*
+	*,row_number() over() as id
 from (
 	select
-		(CAST(ato.txjnumero as text) || '/' || CAST(ato.txjano as text)) as num_ato,
-		cat.tctcodigo as id,
-		cat.tctcodigo as cod_ato,
-		cat.tctdescricao as tipo_ato,
-	    cat.tctdescricao as desc_natureza,
-       	mvto.movdata as data_inicial,
-	    mvto.movdata as data_vigorar,
-       	mvto.movdata as data_resolucao,
-		pub.pubdata as data_publicacao,
+		distinct
+		(CAST(ato.txjnumero as text) || '/' || CAST(ato.txjano as text)) as numeroOficial,
+       	mvto.movdata as dataCriacao,
+	    mvto.movdata as dataVigorar,
+       	mvto.movdata as dataResolucao,
+		pub.pubdata as dataPublicacao,
        	ato.txjementa as ementa,
-	    (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','natureza-texto-juridico', cat.tctdescricao))) as natureza,
-		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','tipo-ato', cat.tctdescricao, case cat.tctcodigo
+	    (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','natureza-texto-juridico', cat.tctdescricao))) as naturezaTextoJuridico,
+		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','tipo-ato', left(cat.tctdescricao, 40), (case cat.tctcodigo
 			when 1 then  'DECRETO'
 			when 2 then  'PORTARIA'
 			when 3 then  'RESOLUCAO'
@@ -82,13 +75,10 @@ from (
 			when 62 then 'ATO_COMISSAO_EXEC_LEGIS'
 			when 63 then 'ATO_ADMINISTRATIVO'
 			when 64 then 'EDITAL'
-        else 'ATO' end))) as id_tipo_ato,
-		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'ato', (CAST(ato.txjnumero as text) || '/' || CAST(ato.txjano as text)), cat.tctdescricao))) as id_cloud
+        else 'ATO' end)))) as tipo
 	from wlg.tbtextojuridico ato
 	inner join wlg.tbcategoriatexto cat on (cat.tctcodigo = ato.tctcodigo)
 	inner join wlg.tbmovimentotexto mvto on (mvto.txjcodigo = ato.txjcodigo and mvto.movtipo = 2)
 	inner join wlg.tbpublicacao pub on (pub.txjcodigo = ato.txjcodigo)
-	where ato.txjano <= {{ano}}
 ) tab
--- where id_cloud is null
-limit 400
+where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'ato', numeroOficial, tipo))) is null

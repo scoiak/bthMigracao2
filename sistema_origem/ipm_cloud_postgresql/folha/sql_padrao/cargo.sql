@@ -16,7 +16,7 @@ select
 	/* 3 */coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'cbo', cbo))),0) as id_cbo,
 	/* 4 */coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'tipo-cargo', cartipocargo))), 0) as id_tipo_cargo,
 	/* 5 */coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'ato', (select concat(tj.txjnumero, '/', tj.txjano) from wlg.tbtextojuridico tj where tj.txjcodigo = nv.txjcodigocri), (select cat.tctdescricao from wlg.tbtextojuridico tj inner join wlg.tbcategoriatexto cat on cat.tctcodigo = tj.tctcodigo where tj.txjcodigo = nv.txjcodigocri limit 1)))),0) as id_ato_criacao,
-	/* 6 */coalesce((case cartemferias when 1 then 452 else null end), 0) as id_conf_ferias,
+	/* 6 */coalesce((case cartemferias when 1 then 460 else null end), 0) as id_conf_ferias,
 	*
 into temporary table temp_cargos
 from (
@@ -90,7 +90,7 @@ from (
 			nv.cnidatarelaciona,
 			nv.txjcodigo
 		from wfp.tbcargonivel nv
-		--where nv.carcodigo in (235, 348, 573)
+		--where nv.carcodigo in (1, 2, 3)
 		group by 1, 2, 3
 		order by 1, 2
 	) as nv
@@ -137,7 +137,7 @@ from (
 		coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'ato', (select concat(tj.txjnumero, '/', tj.txjano) from wlg.tbtextojuridico tj where tj.txjcodigo = c.txjcodigocri), (select cat.tctdescricao from wlg.tbtextojuridico tj inner join wlg.tbcategoriatexto cat on cat.tctcodigo = tj.tctcodigo where tj.txjcodigo = c.txjcodigocri limit 1)))),0) as id_ato,
 		c.cartemferias,
 		(case c.cartemferias
-			when 1 then 452
+			when 1 then 460
 		else null end) as id_conf_ferias,
 		'MENSALISTA' as unidadePagamento,
 		'NAO_ACUMULAVEL' as acumuloCargos,
@@ -177,7 +177,7 @@ from (
 		coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'cargo', c.carcodigo))), 0) as id_gerado
 	from wfp.tbcargo c
 	where c.odomesano = 202009
-	--and c.carcodigo in (235, 348, 573)
+	--and c.carcodigo in (1, 2, 3)
 	order by c.carcodigo
 ) cargos
 where cargos.id_gerado = 0

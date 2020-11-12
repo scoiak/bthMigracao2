@@ -1,3 +1,4 @@
+-- Configurar o id da lotação física
 select distinct
 	'300' as sistema,
 	'lotacao-fisica' as tipo_registro,
@@ -12,7 +13,7 @@ from (
 		 cltdescricao as descricao,
 		 --left(cast(odomesano as text), 4) || '-' || right(cast(odomesano as text), 2) || '-01T00:00:00.000Z' as inicio_vigencia,
 		 '1900-01-01 00:00:00' as inicio_vigencia,
-		 238 as configuracao,
+		 247 as configuracao,
 		 null as telefones,
 		 null as municipio,
 		 null as rua,

@@ -33,22 +33,30 @@ def iniciar():
     # enviar(params_exec, 'motivo-rescisao')
     # enviar(params_exec, 'tipo-cargo')
     # enviar(params_exec, 'tipo-ato')
-    enviar(params_exec, 'ato')
-
-
-    # enviar(params_exec, 'cbo')
-
+    # enviar(params_exec, 'ato')
+    # enviar(params_exec, 'plano-previdencia')
+    # enviar(params_exec, 'configuracao-ferias')
+    # enviar(params_exec, 'configuracao-organograma')
     # enviar(params_exec, 'organograma')
-    # enviar(params_exec, 'horario')
-    # enviar(params_exec, 'concurso')
+    # enviar(params_exec, 'lotacao-fisica')
+    # enviar(params_exec, 'pessoa-juridica')
+    # enviar(params_exec, 'pessoa-fisica')
+    enviar(params_exec, 'pessoa-contas')
+    # enviar(params_exec, 'dependencia')
+    # enviar(params_exec, 'configuracao-evento')
+    # enviar(params_exec, 'plano-cargo-salario')
+    # enviar(params_exec, 'nivel-salarial')
     # enviar(params_exec, 'categoria-trabalhador')
     # enviar(params_exec, 'vinculo-empregaticio')
-    # enviar(params_exec, 'lotacao-fisica')
-
-    # enviar(params_exec, 'nivel-salarial')
-    # enviar(params_exec, 'pessoa-fisica')
+    # enviar(params_exec, 'cbo')
     # enviar(params_exec, 'cargo')
-    # enviar(params_exec, 'pessoa-contas')
+    # enviar(params_exec, 'concurso')
+    # enviar(params_exec, 'categoria-trabalhador')
+
+
+
+
+
     # enviar(params_exec, 'matricula')
 
 
