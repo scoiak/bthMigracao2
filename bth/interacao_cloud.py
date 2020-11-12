@@ -149,7 +149,7 @@ def busca_dados_cloud(params_exec, **kwargs):
 
             if erros_consecutivos >= 10:
                 print('Diversas requisições consecutivas retornaram erro. Verificar se o servidor está ativo.')
-                sys.exit()
+                has_next = False
 
             # if rodada_busca == 100:
             #     has_next = False
