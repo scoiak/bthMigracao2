@@ -1,9 +1,6 @@
 import sistema_origem.ipm_cloud_postgresql.model as model
 import bth.interacao_cloud as interacao_cloud
-import json
-import logging
-import re
-from datetime import datetime
+
 
 sistema = 300
 tipo_registro = 'pessoa-contas'
@@ -18,10 +15,9 @@ def iniciar_processo_envio(params_exec, *args, **kwargs):
 def busca_dados_cloud(params_exec):
     print('- Iniciando busca de dados no cloud.')
     registros = interacao_cloud.busca_dados_cloud(params_exec, url=url)
-    print(f'- Busca de pessoas finalizada, iniciando verificação das contas bancárias.')
+    print(f'- Busca de pessoas finalizada, iniciando verificação dos dados obtidos.')
     registros_formatados = []
     total_contas = 0
-
     try:
         for item in registros:
             if 'contasBancarias' in item and item['contasBancarias'] is not None:
@@ -46,6 +42,5 @@ def busca_dados_cloud(params_exec):
         model.insere_tabela_controle_migracao_registro(params_exec, lista_req=registros_formatados)
         print(f'- Busca de {tipo_registro} finalizada. Foram executas {total_contas} contas. '
               f'Tabelas de controles atualizas com sucesso.')
-
     except Exception as error:
         print(f'Erro ao executar função "busca_dados_cloud". {error}')

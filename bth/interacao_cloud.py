@@ -151,11 +151,6 @@ def busca_dados_cloud(params_exec, **kwargs):
                 print('Diversas requisições consecutivas retornaram erro. Verificar se o servidor está ativo.')
                 has_next = False
 
-            # if rodada_busca == 100:
-            #     has_next = False
-
-
-
         print('\n- Busca de páginas finalizada.')
     except Exception as error:
         print(f'Erro durante a execução da função busca_dados. {error}')

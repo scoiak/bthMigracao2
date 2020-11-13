@@ -90,7 +90,7 @@ from (
 			nv.cnidatarelaciona,
 			nv.txjcodigo
 		from wfp.tbcargonivel nv
-		--where nv.carcodigo in (1, 2, 3)
+		--where nv.carcodigo <= 10
 		group by 1, 2, 3
 		order by 1, 2
 	) as nv
@@ -177,7 +177,7 @@ from (
 		coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'cargo', c.carcodigo))), 0) as id_gerado
 	from wfp.tbcargo c
 	where c.odomesano = 202009
-	--and c.carcodigo in (1, 2, 3)
+	--and c.carcodigo <= 10
 	order by c.carcodigo
 ) cargos
 where cargos.id_gerado = 0
