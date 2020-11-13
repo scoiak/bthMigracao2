@@ -92,15 +92,15 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                     'tipo': 'CARGO',
                     'campos': [
                         {
-                            'id': '5fa6dc8bed9eb40104372a23',
+                            'id': '5fa92346b94c800104b363d6',
                             'valor': item['tcetipoquadro']
                         },
                         {
-                            'id': '5fa6dc8bed9eb40104372a24',
+                            'id': '5fa92346b94c800104b363d7',
                             'valor': item['tcecodcargo']
                         },
                         {
-                            'id': '5fa6dc8bed9eb40104372a25',
+                            'id': '5fa92346b94c800104b363d8',
                             'valor': item['tcetipocargoacu']
                         }
                     ]
@@ -184,15 +184,15 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                         'tipo': 'CARGO',
                         'campos': [
                             {
-                                'id': '5fa6dc8bed9eb40104372a23',
+                                'id': '5fa92346b94c800104b363d6',
                                 'valor': dados_historico[26]
                             },
                             {
-                                'id': '5fa6dc8bed9eb40104372a24',
+                                'id': '5fa92346b94c800104b363d7',
                                 'valor': dados_historico[27]
                             },
                             {
-                                'id': '5fa6dc8bed9eb40104372a25',
+                                'id': '5fa92346b94c800104b363d8',
                                 'valor': dados_historico[28]
                             }
                         ]
