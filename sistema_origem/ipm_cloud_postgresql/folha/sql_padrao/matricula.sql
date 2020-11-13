@@ -168,38 +168,38 @@ from (select
 	null as areaAtuacao,
 	null as areaAtuacaoAlterada,
 	null as motivoAlteracaoAreaAtuacao,
-	(case funocupavaga when 1 then true else false end) as ocupaVaga,--25
+	(case when fc.funtipocontrato not in (4) then (case funocupavaga when 1 then true else false end) else null end)::varchar as ocupaVaga,--25
 	null as salarioAlterado,
 	null as origemSalario,	
 	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'nivel-salarial', nivcodigo)))::varchar as nivelSalarial,
 	null as classeReferencia,
 	null as cargoComissionado,--30
 	null as areaAtuacaoComissionado,
-	(case when fc.funtipocontrato not in (2) then false else null end) as ocupaVagaComissionado,
+	(case when fc.funtipocontrato not in (2,3,4) then false else null end)::varchar as ocupaVagaComissionado,
 	null as salarioComissionado,
 	null as nivelSalarialComissionado,
 	null as classeReferenciaComissionado,--35
-	(case when fc.funtipocontrato not in (2) then 'MENSALISTA' else null end) as unidadePagamento,
+	(case when fc.funtipocontrato not in (2,3,4) then 'MENSALISTA' else null end)::varchar as unidadePagamento,
 	--(case funformapagamento when 2 then 'CREDITO_EM_CONTA'  when 3 then 'DINHEIRO' when 4 then 'CHEQUE' else 'DINHEIRO' end) as formaPagamento,
 	'DINHEIRO' as formaPagamento,
 	ifcsequenciapaga as contaBancariaPagamento,
-	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'configuracao-ferias', 1))) as configuracaoFerias,
+	(case when fc.funtipocontrato not in (3,4) then (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'configuracao-ferias', 1))) else null end)::varchar as configuracaoFerias,
 	cast(regexp_replace(funhorastrabmes, '\:\d{2}$', '', 'gi') as integer) as quantidadeHorasMes,--40
-	(case when fc.funtipocontrato not in (2) then (cast(regexp_replace(funhorastrabmes, '\:\d{2}$', '', 'gi') as integer)/5) else null end)::varchar as quantidadeHorasSemana,
-	(case when fc.funtipocontrato not in (2) then false else null end) as jornadaParcial,
+	(case when fc.funtipocontrato not in (2,3,4) then (cast(regexp_replace(funhorastrabmes, '\:\d{2}$', '', 'gi') as integer)/5) else null end)::varchar as quantidadeHorasSemana,
+	(case when fc.funtipocontrato not in (2,3,4) then false else null end) as jornadaParcial,
 	null as dataAgendamentoRescisao,
 	null as funcoesGratificadas, 
 	(case fc.funsituacao when 1 then null else (case fc.regcodigo when 24 then (select resdata from wfp.tbrescisaocalculada as rc where rc.fcncodigo = fc.fcncodigo and rc.funcontrato = fc.funcontrato order by resdata desc limit 1) when 20 then (select resdata from wfp.tbrescisaocalculada as rc where rc.fcncodigo = fc.fcncodigo and rc.funcontrato = fc.funcontrato order by resdata desc limit 1) else null end) end)::varchar as dataTerminoContratoTemporario,
 	null as motivoContratoTemporario,
 	null as tipoInclusaoContratoTemporario,
 	null as dataProrrogacaoContratoTemporario,
-	funcartaoponto as numeroCartaoPonto,
+	(case when fc.funtipocontrato not in (3,4) then funcartaoponto else null end)::varchar as numeroCartaoPonto,
 	null as parametroPonto,--50
 	null as indicativoProvimento,
 	null as orgaoOrigem,
 	null as matriculaEmpresaOrigem,
 	null as dataAdmissaoOrigem,
-	(case fc.funnocivos   when 0 then null   when 1 then 'NUNCA_EXPOSTO_AGENTES_NOCIVOS'  when 2 then 'EXPOSTO_APOSENTADORIA_15_ANOS'  when 5 then 'EXPOSTO_APOSENTADORIA_15_ANOS'     when 3 then 'EXPOSTO_APOSENTADORIA_20_ANOS'  when 7 then 'EXPOSTO_APOSENTADORIA_20_ANOS'   when 4 then 'EXPOSTO_APOSENTADORIA_25_ANOS'    when 8 then 'EXPOSTO_APOSENTADORIA_25_ANOS'    else     null    end) as ocorrenciaSefip,--55
+	(case when fc.funtipocontrato not in (3,4) then (case fc.funnocivos   when 0 then null   when 1 then 'NUNCA_EXPOSTO_AGENTES_NOCIVOS'  when 2 then 'EXPOSTO_APOSENTADORIA_15_ANOS'  when 5 then 'EXPOSTO_APOSENTADORIA_15_ANOS'     when 3 then 'EXPOSTO_APOSENTADORIA_20_ANOS'  when 7 then 'EXPOSTO_APOSENTADORIA_20_ANOS'   when 4 then 'EXPOSTO_APOSENTADORIA_25_ANOS'    when 8 then 'EXPOSTO_APOSENTADORIA_25_ANOS'    else     null    end) else null end)::varchar as ocorrenciaSefip,--55
 	null as controleJornada,--56
 	null as configuracaoLicencaPremio,
 	null as configuracaoAdicional,
@@ -213,14 +213,14 @@ from (select
 	null as formacaoFase,
 	null as estagioObrigatorio,
 	null as objetivo,
-	fc.funcontrato as numeroContrato,
+	(case when fc.funtipocontrato not in (3,4) then fc.funcontrato else null end)::varchar as numeroContrato,
 	null as possuiSeguroVida,--70
 	null as numeroApoliceSeguroVida,
 	(case when fc.funtipocontrato in (2) then (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'categoria-trabalhador', 'Estagiário', '901'))) else null end)::varchar as categoriaTrabalhador,
 	--null as responsaveis,
 	(case when fc.funtipocontrato in (2) then (select id_gerado from public.controle_migracao_registro cmr where tipo_registro = 'pessoa-fisica' and id_gerado is not null limit 1) || '%|%' || (SELECT to_date(fc.odomesano||'01','YYYYMMDD')::varchar) else null end)::varchar as responsaveis,
 	null as dataCessacaoAposentadoria,
-	null as entidadeOrigem,--75
+	(case when fc.funtipocontrato in (3,4) then 5924 else null end)::varchar as entidadeOrigem,--75
 	null as motivoAposentadoria,
 	null as funcionarioOrigem,
 	null as tipoMovimentacao,
@@ -257,14 +257,16 @@ from (select
 	row_number() over() as id,
 	fc.fcncodigo,
 	fc.funcontrato,	
-	fc.odomesano as competencia
+	fc.odomesano as competencia,
+	fc.funtipocontrato
 from wfp.tbfuncontrato as fc  join wfp.tbfuncionario as f on f.fcncodigo = fc.fcncodigo and f.odomesano = fc.odomesano
 where fc.odomesano = 202010
+--and fc.funtipocontrato not in (4)
 --and fc.fcncodigo = 15605
+and fc.fcncodigo = 603
 and fc.funsituacao in (1,2)
 order by fc.fcncodigo,fc.funcontrato
---limit 10 offset 0
 ) as s
 where 
-(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'matricula', fcncodigo, funcontrato))) is null and
+--(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'matricula', fcncodigo, funcontrato))) is null and
 pessoa is not null;

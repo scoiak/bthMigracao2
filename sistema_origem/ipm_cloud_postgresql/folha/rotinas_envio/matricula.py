@@ -389,6 +389,12 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                     'id': item['funcionarioorigem']
                 }
             })
+        if 'entidadeorigem' in item and item['entidadeorigem'] is not None:
+            dict_dados['conteudo'].update({
+                'entidadeOrigem': {
+                    'id': item['entidadeorigem']
+                }
+            })
         if 'tipomovimentacao' in item and item['tipomovimentacao'] is not None:
             dict_dados['conteudo'].update({
                 'tipoMovimentacao': {
@@ -745,6 +751,12 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                         dict_item_historico.update({
                             'categoriaTrabalhador': {
                                 'id': campo[72]
+                            }
+                        })
+                    if campo[75] is not None:
+                        dict_item_historico.update({
+                            'entidadeOrigem': {
+                                'id': campo[75]
                             }
                         })
                     if campo[76] is not None:

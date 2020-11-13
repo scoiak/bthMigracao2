@@ -1,5 +1,5 @@
--- update wun.tbpais set painome = 'Aústria' where painome = 'Áustria'
--- update wun.tbestado set estnome = 'Distrito Federal' where estnome = 'Federal'
+update wun.tbpais set painome = 'Aústria' where painome = 'Áustria';
+update wun.tbestado set estnome = 'Distrito Federal' where estnome = 'Federal';
 
 select * from (
 select
@@ -12,4 +12,4 @@ select
 ) as tab
 -- where public.bth_get_situacao_registro('300', 'estado', nome) in (0)
 where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'estado', nome))) is null
-and pais is not null
+and pais is not null;

@@ -13,14 +13,11 @@ url = 'https://pessoal.cloud.betha.com.br/service-layer/v1/api/estado'
 def iniciar_processo_envio(params_exec, *args, **kwargs):
     if True:
         busca_dados(params_exec)
-    if False:
+    if True:
         dados_assunto = coletar_dados(params_exec)
-
         dados_enviar = pre_validar(params_exec, dados_assunto)
-
         if not params_exec.get('somente_pre_validar'):
             iniciar_envio(params_exec, dados_enviar, 'POST')
-
         model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
 
 
