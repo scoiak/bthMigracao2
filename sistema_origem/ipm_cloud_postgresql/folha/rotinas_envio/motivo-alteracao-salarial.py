@@ -9,13 +9,25 @@ tipo_registro = 'motivo-alteracao-salarial'
 url = 'https://pessoal.cloud.betha.com.br/service-layer/v1/api/motivo-alteracao-salarial'
 limite_lote = 500
 
+
 def iniciar_processo_envio(params_exec, *args, **kwargs):
+    # Realiza a busca de dados no cloud
     busca_dados_cloud(params_exec)
-    dados_assunto = coletar_dados(params_exec)
-    dados_enviar = pre_validar(params_exec, dados_assunto)
+
+    # Executa a rotina de extração
+    # dados_assunto = coletar_dados(params_exec)
+
+    # Executa a pré-validação dos dados extraídos
+    # dados_enviar = pre_validar(params_exec, dados_assunto)
+
+    # Inicia o envio de dados para o cloud
     if not params_exec.get('somente_pre_validar'):
-        iniciar_envio(params_exec, dados_enviar, 'POST')
-    model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
+        pass
+        # iniciar_envio(params_exec, dados_enviar, 'POST')
+
+    # Verifica a situação dos lotes enviados
+    # model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
+
 
 def busca_dados_cloud(params_exec):
     print('- Iniciando busca de dados no cloud.')
@@ -23,17 +35,21 @@ def busca_dados_cloud(params_exec):
     print(f'- Foram encontrados {len(registros)} registros cadastrados no cloud.')
     registros_formatados = []
     try:
+        id_entidade = interacao_cloud.get_dados_token(params_exec.get('token'))['entityId']
         for item in registros:
-            hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['descricao'])
-            registros_formatados.append({
+            hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, id_entidade, item['descricao'])
+
+            registro = {
                 'sistema': sistema,
                 'tipo_registro': tipo_registro,
                 'hash_chave_dsk': hash_chaves,
                 'descricao_tipo_registro': 'Cadastro de Motivos de Alteração Salarial',
                 'id_gerado': item['id'],
-                'i_chave_dsk1': item['descricao']
-            })
-        model.insere_tabela_controle_migracao_registro2(params_exec, lista_req=registros_formatados)
+                'i_chave_dsk1': id_entidade,
+                'i_chave_dsk2': item['descricao']
+            }
+            registros_formatados.append(registro)
+        model.insere_tabela_controle_migracao_registro(params_exec, lista_req=registros_formatados)
         print(f'- Busca de {tipo_registro} finalizada. Tabelas de controles atualizas com sucesso.')
     except Exception as error:
         print(f'Erro ao executar função "busca_dados_cloud". {error}')
@@ -55,6 +71,7 @@ def coletar_dados(params_exec):
     finally:
         return df
 
+
 def pre_validar(params_exec, dados):
     print('- Iniciando pré-validação dos registros.')
     dados_validados = []
@@ -72,6 +89,7 @@ def pre_validar(params_exec, dados):
     finally:
         return dados_validados
 
+
 def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     print('- Iniciando envio dos dados.')
     lista_dados_enviar = []
@@ -80,11 +98,11 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     token = params_exec['token']
     contador = 0
     for item in dados:
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['chave_dsk1'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['chave_dsk1'], item['chave_dsk2'])
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {
-                "descricao": item['chave_dsk1']
+                "descricao": item['descricao']
             }
         }
         contador += 1
@@ -96,7 +114,8 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'hash_chave_dsk': hash_chaves,
             'descricao_tipo_registro': 'Cadastro do Motivo de Alteração Salarial',
             'id_gerado': None,
-            'i_chave_dsk1': item['chave_dsk1']
+            'i_chave_dsk1': item['chave_dsk1'],
+            'i_chave_dsk2': item['chave_dsk2']
         })
     if True:
         model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)

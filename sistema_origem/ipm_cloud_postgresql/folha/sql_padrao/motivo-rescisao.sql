@@ -4,6 +4,8 @@ from (
 	select
 		motcodigo as id,
 		motcodigo as codigo,
+		clicodigo,
+		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', clicodigo))) as id_entidade,
 		concat(motcodigo, ' - ', motdescricao) as descricao,
 		(CASE
 			WHEN UPPER(motdescricao) ~ 'APOSENTADORIA' then 'APOSENTADORIA'
@@ -26,11 +28,10 @@ from (
 		 	WHEN UPPER(motdescricao) ~ '[MORTE|FALESCIMENTO]' then 'FALECIMENTO_EMPREGADO_OUTROS_MOTIVOS'
 		 ELSE null END
 		) as classificacao,
-		(CASE	WHEN UPPER(motdescricao) ~ 'APOSENTADORIA' then (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','tipo-afastamento', '13'))) ELSE (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','tipo-afastamento', '64'))) end ) as tipoAfastamento
-		-- (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','tipo-afastamento', CAST(motcodigo as text)))) as tipoAfastamento
+		(case WHEN UPPER(motdescricao) ~ 'APOSENTADORIA' then (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','tipo-afastamento', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', clicodigo))), '13'))) ELSE (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','tipo-afastamento', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', clicodigo))), '64'))) end ) as tipoAfastamento
 	from wfp.tbmotivoafasta
 	where mottipo = 4
 	and odomesano = 202009
 	order by motdescricao
 ) tb
-where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','motivo-rescisao', CAST(codigo as text)))) is null
+where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','motivo-rescisao', id_entidade, codigo))) is null

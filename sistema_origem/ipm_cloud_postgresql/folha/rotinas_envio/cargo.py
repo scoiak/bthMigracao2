@@ -80,7 +80,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     for item in dados:
         contador += 1
         print(f'\r- Gerando JSON: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['chave_dsk1'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['chave_dsk1'], item['chave_dsk2'])
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {
@@ -106,15 +106,15 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                     'tipo': 'CARGO',
                     'campos': [
                         {
-                            'id': '5fa92346b94c800104b363d6',
+                            'id': '5fafc50a001f7a0104272606',
                             'valor': item['tcetipoquadro']
                         },
                         {
-                            'id': '5fa92346b94c800104b363d7',
+                            'id': '5fafc50a001f7a0104272608',
                             'valor': item['tcecodcargo']
                         },
                         {
-                            'id': '5fa92346b94c800104b363d8',
+                            'id': '5fafc50a001f7a0104272607',
                             'valor': item['tcetipocargoacu']
                         }
                     ]
@@ -222,15 +222,15 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                         'tipo': 'CARGO',
                         'campos': [
                             {
-                                'id': '5fa92346b94c800104b363d6',
+                                'id': '5fafc50a001f7a0104272606',
                                 'valor': dados_historico[26]
                             },
                             {
-                                'id': '5fa92346b94c800104b363d7',
+                                'id': '5fafc50a001f7a0104272608',
                                 'valor': dados_historico[27]
                             },
                             {
-                                'id': '5fa92346b94c800104b363d8',
+                                'id': '5fafc50a001f7a0104272607',
                                 'valor': dados_historico[28]
                             }
                         ]
@@ -272,7 +272,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                 'historicos': lista_historico
             })
 
-        # print(f'Dados gerados ({contador}): ', dict_dados)
+        print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,
@@ -281,7 +281,8 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'descricao_tipo_registro': 'Cadastro de Cargos',
             'id_gerado': None,
             'json': json.dumps(dict_dados),
-            'i_chave_dsk1': item['chave_dsk1']
+            'i_chave_dsk1': item['chave_dsk1'],
+            'i_chave_dsk2': item['chave_dsk2']
         })
 
     if True:

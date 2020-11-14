@@ -66,7 +66,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     contador = 0
     for item in dados:
         contador += 1
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['codigo'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['id_entidade'], item['codigo'])
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {
@@ -147,7 +147,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                             })
 
                     if campo[10] is not None:
-                        dict_item_historico.update({'motivoAlteracao': {'id': 3602}})
+                        dict_item_historico.update({'motivoAlteracao': {'id': 3801}})
                         """
                         if campo[10] == '':
                             dict_item_historico.update({'motivoAlteracao': None})
@@ -174,7 +174,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                 dict_dados['conteudo'].update({
                     'historicos': listahistorico
                 })
-        print(f'Dados gerados ({contador}): ', dict_dados)
+        # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,
@@ -182,7 +182,8 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'hash_chave_dsk': hash_chaves,
             'descricao_tipo_registro': 'Cadastro de Nível Salarial',
             'id_gerado': None,
-            'i_chave_dsk1': item['codigo']
+            'i_chave_dsk1': item['id_entidade'],
+            'i_chave_dsk2': item['codigo']
         })
     print(f'- Processo de transformação finalizado. ({(datetime.now() - dh_inicio).total_seconds()} segundos)')
     if True:

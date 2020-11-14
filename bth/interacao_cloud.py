@@ -33,7 +33,27 @@ def verifica_token(token):
             print('- Token inválido. Execução será finalizada.')
 
     except Exception as error:
+        print(f'Erro ao executar função "verifica_token". {error}')
+
+
+def get_dados_token(token):
+    r = {}
+    try:
+        url = "https://oauth.cloud.betha.com.br/auth/oauth2/tokeninfo"
+        params = {'access_token': token}
+        req = requests.get(url=url, params=params)
+        data = req.json()
+
+        if 'user' in data:
+            dados_json = data['user']['attributes']['singleAccess']
+            r['entityId'] = re.search("(?<=entityId\" : \")(\\d+)(?!=\")", str(dados_json)).group()
+            r['databaseId'] = re.search("(?<=databaseId\" : \")(\\d+)(?!=\")", str(dados_json)).group()
+
+    except Exception as error:
         print(f'Erro ao executar função "get_dados_token". {error}')
+
+    finally:
+        return r
 
 
 def preparar_requisicao(lista_dados, *args, **kwargs):
