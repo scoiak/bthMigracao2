@@ -316,7 +316,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                     'id': item['classereferenciacomissionado']
                 }
             })
-        if False:
+        if True:
             if 'contabancariapagamento' in item and item['contabancariapagamento'] is not None:
                 dict_dados['conteudo'].update({
                     'contaBancariaPagamento': {
@@ -692,11 +692,11 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                                 'id': campo[35]
                             }
                         })
-                    if False:
-                        if 'contabancariapagamento' in item and item['contabancariapagamento'] is not None:
+                    if True:
+                        if campo[38] is not None:
                             dict_item_historico.update({
                                 'contaBancariaPagamento': {
-                                    'id': item['contabancariapagamento']
+                                    'id': int(campo[38])
                                 }
                             })
                     if campo[39] is not None:

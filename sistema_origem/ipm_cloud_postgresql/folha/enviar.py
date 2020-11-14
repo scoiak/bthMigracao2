@@ -11,6 +11,8 @@ def iniciar():
         # 'token': '72612895-9758-467d-a2ef-36b8b57c3198', # Homologação 1
         'token': '58924393-e014-43f4-9269-5646a39b127d', # Homologação 2
         # 'token': 'c52c4510-0a8f-468f-a501-1f68b32795c8', # Homologação 3
+        # 'token': 'c420e8c5-bc8a-44c4-8b34-e46df7867a3e', # Oficial
+
         'ano': 2020
     }
     mensagem_inicio(params_exec)
