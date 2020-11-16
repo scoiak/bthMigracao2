@@ -1,5 +1,6 @@
 SELECT 
 1 as id,
+(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', {{clicodigo}}))) as id_entidade,
 1 as codigo,
 'Plano Geral' AS descricao,
 'DATA_ADMISSAO' AS inicio,

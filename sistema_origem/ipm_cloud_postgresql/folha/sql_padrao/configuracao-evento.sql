@@ -1,6 +1,9 @@
 select
 	cpdcodigo as id,
 	cpdcodigo as codigo,
+	clicodigo,
+	--(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', clicodigo))) as id_entidade,
+	'2734' as id_entidade,
 	cpddescricao as descricao,
 	'1990-01' as inicioVigencia,
 	(case cpdclasse when 1 then 'VENCIMENTO' when 2 then 'DESCONTO' when 3 then 'INFORMATIVO_MAIS' when 4 then 'INFORMATIVO_MENOS' end) as tipo,

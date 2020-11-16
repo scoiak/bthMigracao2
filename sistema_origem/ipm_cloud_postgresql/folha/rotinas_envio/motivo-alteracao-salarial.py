@@ -27,17 +27,21 @@ def busca_dados_cloud(params_exec):
     print(f'- Foram encontrados {len(registros)} registros cadastrados no cloud.')
     registros_formatados = []
     try:
+        id_entidade = interacao_cloud.get_dados_token(params_exec.get('token'))['entityId']
         for item in registros:
-            hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['descricao'])
-            registros_formatados.append({
+            hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, id_entidade, item['descricao'])
+
+            registro = {
                 'sistema': sistema,
                 'tipo_registro': tipo_registro,
                 'hash_chave_dsk': hash_chaves,
                 'descricao_tipo_registro': 'Cadastro de Motivos de Alteração Salarial',
                 'id_gerado': item['id'],
-                'i_chave_dsk1': item['descricao']
-            })
-        model.insere_tabela_controle_migracao_registro2(params_exec, lista_req=registros_formatados)
+                'i_chave_dsk1': id_entidade,
+                'i_chave_dsk2': item['descricao']
+            }
+            registros_formatados.append(registro)
+        model.insere_tabela_controle_migracao_registro(params_exec, lista_req=registros_formatados)
         print(f'- Busca de {tipo_registro} finalizada. Tabelas de controles atualizas com sucesso.')
     except Exception as error:
         print(f'Erro ao executar função "busca_dados_cloud". {error}')
@@ -86,7 +90,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     token = params_exec['token']
     contador = 0
     for item in dados:
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['descricao'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['chave_dsk1'], item['chave_dsk2'])
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {
@@ -102,7 +106,8 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'hash_chave_dsk': hash_chaves,
             'descricao_tipo_registro': 'Cadastro do Motivo de Alteração Salarial',
             'id_gerado': None,
-            'i_chave_dsk1': item['descricao']
+            'i_chave_dsk1': item['chave_dsk1'],
+            'i_chave_dsk2': item['chave_dsk2']
         })
     if True:
         model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)

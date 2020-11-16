@@ -66,7 +66,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     contador = 0
     for item in dados:
         contador += 1
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['codigo'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['id_entidade'], item['codigo'])
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {
@@ -110,47 +110,70 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                         "cargaHoraria": campo[2],
                         "coeficiente": campo[3],
                         "inicioVigencia": campo[4],
-                        "dataHoraCriacao": campo[5],
+                        "dataHoraCriacao": item['datahoracriacao'],
                         "planoCargoSalario": {
                             "id": campo[8]
                         }
                     }
                     if campo[6] is not None:
-                        dict_item_historico.update({
-                            'atoCriacao': {
-                                'id': campo[6]
-                            }
-                        })
+                        if campo[6] == '':
+                            dict_item_historico.update({'atoCriacao': None})
+                        else:
+                            dict_item_historico.update({
+                                'atoCriacao': {
+                                    'id': campo[6]
+                                }
+                            })
+
                     if campo[7] is not None:
-                        dict_item_historico.update({
-                            'ultimoAto': {
-                                'id': campo[7]
-                            }
-                        })
+                        if campo[7] == '':
+                            dict_item_historico.update({'ultimoAto': None})
+                        else:
+                            dict_item_historico.update({
+                                'ultimoAto': {
+                                    'id': campo[7]
+                                }
+                            })
+
                     if campo[9] is not None:
-                        dict_item_historico.update({
-                            'classesReferencias': {
-                                'id': campo[9]
-                            }
-                        })
+                        if campo[9] == '':
+                            dict_item_historico.update({'classesReferencias': None})
+                        else:
+                            dict_item_historico.update({
+                                'classesReferencias': {
+                                    'id': campo[9]
+                                }
+                            })
+
                     if campo[10] is not None:
-                        dict_item_historico.update({
-                            'motivoAlteracao': {
-                                'id': campo[10]
-                            }
-                        })
+                        dict_item_historico.update({'motivoAlteracao': {'id': 3801}})
+                        """
+                        if campo[10] == '':
+                            dict_item_historico.update({'motivoAlteracao': None})
+                        else:
+                            dict_item_historico.update({
+                                'motivoAlteracao': {
+                                    'id': campo[10]
+                                }
+                            })
+                        """
+
                     if campo[11] is not None:
-                        dict_item_historico.update({
-                            'reajusteSalarial': {
-                                'id': campo[11]
-                            }
-                        })
+                        if campo[11] == '':
+                            dict_item_historico.update({'reajusteSalarial': None})
+                        else:
+                            dict_item_historico.update({
+                                'reajusteSalarial': {
+                                    'id': campo[11]
+                                }
+                            })
+
                     listahistorico.append(dict_item_historico)
             if len(listahistorico) > 0:
                 dict_dados['conteudo'].update({
                     'historicos': listahistorico
                 })
-        print(f'Dados gerados ({contador}): ', dict_dados)
+        # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,
@@ -158,7 +181,8 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'hash_chave_dsk': hash_chaves,
             'descricao_tipo_registro': 'Cadastro de Nível Salarial',
             'id_gerado': None,
-            'i_chave_dsk1': item['codigo']
+            'i_chave_dsk1': item['id_entidade'],
+            'i_chave_dsk2': item['codigo']
         })
     print(f'- Processo de transformação finalizado. ({(datetime.now() - dh_inicio).total_seconds()} segundos)')
     if True:
