@@ -67,9 +67,8 @@ from
 where
 	u.unitipopessoa = 1
 --and	u.unisituacao = 1
-and
-	length(regexp_replace(u.unicpfcnpj,'[/.-]|[0]|[ ]','','g')) > 0
-	-- length(replace(replace(replace(replace(u.unicpfcnpj,'/',''),'-',''),'.',''),'0','')) > 0
+--and length(regexp_replace(u.unicpfcnpj,'[/.-]|[0]|[ ]','','g')) > 0
+-- length(replace(replace(replace(replace(u.unicpfcnpj,'/',''),'-',''),'.',''),'0','')) > 0
 and
 	uf.unfsexo in (1,2)
 and

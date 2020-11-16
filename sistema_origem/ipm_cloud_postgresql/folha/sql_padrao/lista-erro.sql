@@ -25,7 +25,7 @@ SELECT
     reg.id_gerado AS idGerado,
     ocor.situacao AS estadoItem,
     ocor.mensagem_erro AS mensagemErro,
-    --ocor.json_enviado AS jsonEnviado,
+    ocor.json_enviado AS jsonEnviado,
     reg.json_enviado AS jsonEnviado
     --lot.conteudo_json AS jsonLote    
 FROM 
@@ -39,7 +39,7 @@ WHERE
     ocor.id_gerado IS NULL
 AND
     --reg.tipo_registro = 'vinculo-empregaticio'
-    reg.tipo_registro = 'matricula'
+    reg.tipo_registro = 'formacao'
 AND 
     ocor.i_sequencial = 
         (

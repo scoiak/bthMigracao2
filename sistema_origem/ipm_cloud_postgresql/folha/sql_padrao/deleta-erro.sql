@@ -24,7 +24,6 @@ BEGIN
 	END LOOP;   
 END $$;
 
-select count(*),tipo_registro,sistema from public.controle_migracao_registro group by tipo_registro,sistema order by 1,2
 update public.controle_migracao_registro set tipo_registro = 'pais',hash_chave_dsk = md5(concat('300','pais',i_chave_dsk1,i_chave_dsk2,i_chave_dsk3)) where tipo_registro = 'pais'
 update public.controle_migracao_registro set tipo_registro = 'estado',hash_chave_dsk = md5(concat('300','estado',i_chave_dsk1,i_chave_dsk2,i_chave_dsk3)) where tipo_registro = 'estado'
 update public.controle_migracao_registro set tipo_registro = 'municipio',hash_chave_dsk = md5(concat('300','municipio',i_chave_dsk1,i_chave_dsk2,i_chave_dsk3)) where tipo_registro = 'municipio'
@@ -35,11 +34,11 @@ update public.controle_migracao_registro set	hash_chave_dsk = md5(concat('300', 
 update public.controle_migracao_registro set	hash_chave_dsk = md5(concat('300', 'conta-bancaria', i_chave_dsk1, i_chave_dsk2)) where tipo_registro = 'pessoa-contas';
 
 DO $$ DECLARE
-	tr text := 'matricula';
+	tr text := 'formacao';
 	-- tr text := 'cargo';
     -- tr text := 'vinculo-empregaticio';
 begin
 	delete from public.controle_migracao_registro where tipo_registro = tr;
-	delete from public.controle_migracao_lotes where tipo_registro = tr;	
+	-- delete from public.controle_migracao_lotes where tipo_registro = tr;	
 	delete from public.controle_migracao_registro_ocor where tipo_registro = tr;
 END $$;
