@@ -12,21 +12,20 @@ limite_lote = 500
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
     # Realiza a busca de dados no cloud
-    busca_dados_cloud(params_exec)
+    # busca_dados_cloud(params_exec)
 
     # Executa a rotina de extração
-    # dados_assunto = coletar_dados(params_exec)
+    dados_assunto = coletar_dados(params_exec)
 
     # Executa a pré-validação dos dados extraídos
-    # dados_enviar = pre_validar(params_exec, dados_assunto)
+    dados_enviar = pre_validar(params_exec, dados_assunto)
 
     # Inicia o envio de dados para o cloud
     if not params_exec.get('somente_pre_validar'):
-        pass
-        # iniciar_envio(params_exec, dados_enviar, 'POST')
+        iniciar_envio(params_exec, dados_enviar, 'POST')
 
     # Verifica a situação dos lotes enviados
-    # model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
+    model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
 
 
 def busca_dados_cloud(params_exec):

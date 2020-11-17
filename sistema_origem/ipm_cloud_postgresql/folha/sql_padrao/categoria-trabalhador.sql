@@ -3,8 +3,7 @@ select
 from (
 	select distinct
 	 row_number() over() as id,
-	 --(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', clicodigo))) as id_entidade,
-	 '2734' as id_entidade,
+	 (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', {{clicodigo}}))) as id_entidade,
 	 left(catdescricao, 100) as descricao,
 	 case catgrupo
 			   when 1 then 'CLT'

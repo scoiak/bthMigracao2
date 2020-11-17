@@ -7,12 +7,13 @@ from datetime import datetime
 def iniciar():
     print(':: Iniciando migração do sistema Folha')
     params_exec = {
-        'clicodigo': '2734',
+        'clicodigo': '2016',
         'somente_pre_validar': False,
         # 'token': '72612895-9758-467d-a2ef-36b8b57c3198', # Token Homolog 1
         # 'token': '58924393-e014-43f4-9269-5646a39b127d', # Token Homolog 2
+        'token': 'c52c4510-0a8f-468f-a501-1f68b32795c8', # Homologação 3
         # 'token': 'c420e8c5-bc8a-44c4-8b34-e46df7867a3e', # Token base oficial
-        'token': '144e13ad-29ce-49b7-b9dc-7d95ee29b0f6', # Token FAMABI
+        # 'token': '144e13ad-29ce-49b7-b9dc-7d95ee29b0f6', # Token FAMABI
         'ano': 2020
     }
     mensagem_inicio(params_exec)
@@ -38,7 +39,7 @@ def iniciar():
     # enviar(params_exec, 'tipo-ato')
     # enviar(params_exec, 'ato')
     # enviar(params_exec, 'plano-previdencia')
-    # enviar(params_exec, 'configuracao-ferias')
+    # enviar(params_exec, 'configuracao-ferias') AQUI
     # enviar(params_exec, 'configuracao-organograma')
     # enviar(params_exec, 'organograma')
     # enviar(params_exec, 'lotacao-fisica')
@@ -52,10 +53,9 @@ def iniciar():
     # enviar(params_exec, 'categoria-trabalhador')
     # enviar(params_exec, 'vinculo-empregaticio')
     # enviar(params_exec, 'cbo')
-    # enviar(params_exec, 'cargo')
-    # enviar(params_exec, 'categoria-trabalhador')
-    enviar(params_exec, 'concurso')
-    # enviar(params_exec, 'matricula')
+    enviar(params_exec, 'cargo')
+    # enviar(params_exec, 'concurso')
+    # enviar(params_exec, 'mede-lotes')
 
 
 def enviar(params_exec, tipo_registro, *args, **kwargs):

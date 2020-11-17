@@ -201,7 +201,7 @@ def insere_tabela_controle_migracao_registro(params_exec, lista_req):
           'i_chave_dsk2, i_chave_dsk3, i_chave_dsk4, i_chave_dsk5, i_chave_dsk6, i_chave_dsk7, i_chave_dsk8,' \
           'i_chave_dsk9, i_chave_dsk10, i_chave_dsk11, i_chave_dsk12, json_enviado) ' \
           'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) ' \
-          ' ON CONFLICT (hash_chave_dsk) DO UPDATE SET json_enviado = EXCLUDED.json_enviado'
+          ' ON CONFLICT (hash_chave_dsk) DO UPDATE SET json_enviado = EXCLUDED.json_enviado, id_gerado = %s'
 
     if lista_req is not None:
         try:
@@ -226,7 +226,8 @@ def insere_tabela_controle_migracao_registro(params_exec, lista_req):
                     None if 'i_chave_dsk10' not in item else item.get('i_chave_dsk10'),
                     None if 'i_chave_dsk11' not in item else item.get('i_chave_dsk11'),
                     None if 'i_chave_dsk12' not in item else item.get('i_chave_dsk12'),
-                    None if 'json' not in item else item.get('json')
+                    None if 'json' not in item else item.get('json'),
+                    None if 'id_gerado' not in item else item.get('id_gerado')
                 )
                 data_list.append(values)
 

@@ -10,9 +10,9 @@ url = 'https://pessoal.cloud.betha.com.br/service-layer/v1/api/municipio'
 limite_lote = 500
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
-    if False:
-        busca_dados_cloud(params_exec)
     if True:
+        busca_dados_cloud(params_exec)
+    if False:
         dados_assunto = coletar_dados(params_exec)
         dados_enviar = pre_validar(params_exec, dados_assunto)
         if not params_exec.get('somente_pre_validar'):
@@ -36,7 +36,7 @@ def busca_dados_cloud(params_exec):
                 'i_chave_dsk1': item['nome'],
                 'i_chave_dsk2': item['estado']['id']
             })
-        model.insere_tabela_controle_migracao_registro2(params_exec, lista_req=registros_formatados)
+        model.insere_tabela_controle_migracao_registro(params_exec, lista_req=registros_formatados)
         print('- Busca de paises finalizada. Tabelas de controles atualizas com sucesso.')
     except Exception as error:
         print(f'Erro ao executar função "busca_dados_cloud". {error}')

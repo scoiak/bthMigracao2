@@ -21,6 +21,6 @@ select
 	(select string_agg(n.nivdescricao || ' - ' || suc.nivcodigo || '%|%' || suc.vigsalariobase || '%|%' || cast(regexp_replace(nivhoramensal, '\:\d{2}$', '', 'gi') as integer) || '%|%' || 'false' || '%|%' || suc.vigdatavigen::varchar || ' 01:00:00' || '%|%' || suc.vigdatavigen::varchar || ' 01:00:00' || '%|%' || '' || '%|%' || '' || '%|%' || (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','plano-cargo-salario', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', {{clicodigo}}))), 1))) || '%|%' || '' || '%|%' || '' || '%|%' || '','%||%') from (select * from wfp.tbnivelvigen as nv where nv.nivcodigo = n.nivcodigo and nv.odomesano = n.odomesano order by nv.vigdatavigen asc) as suc) as historicos
 from 
 	wfp.tbnivel as n
-where odomesano = '202009'
+where odomesano = '202010'
 ) tab
 where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'nivel-salarial', id_entidade, codigo))) is null
