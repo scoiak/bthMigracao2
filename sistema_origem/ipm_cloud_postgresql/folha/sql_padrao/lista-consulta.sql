@@ -3,7 +3,7 @@ select * from wfp.tbrubricaautonomoplano
 select * from wfp.tbrubricaautonomo
 select * from wfp.tbgpsgcencusautonomo
 
-select * from wfp.tbfuntransferencia
+select * from wfp.tbfuntransferencia where odomesano = 202010
 
 select * from public.controle_migracao_registro where tipo_registro = 'formacao';
 select * from public.controle_migracao_lotes where tipo_registro = 'matricula';
