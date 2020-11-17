@@ -1,4 +1,8 @@
-SELECT 
+select 
+row_number() over() as id,
+(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))) as entidade,
+row_number() over(partition by matricula order by matricula asc,inicioAfastamento asc) as codigo,
+* from (SELECT 
 	fcncodigo as matricula,
 	afadatainicio as inicioAfastamento,
 	afadatafinal as fimAfastamento,
@@ -27,8 +31,8 @@ SELECT
 	null as atestados
 FROM 
 	wfp.tbfunafastamento as fa	
-where odomesano = 202009
-union
+where odomesano = 202010
+union all
 select 
 	fcncodigo as matricula,
 	rctdatarescisao as inicioAfastamento,
@@ -50,4 +54,5 @@ select
 	null as tipoOnus,
 	null as atestados
 from  wfp.tbrescisaocontrato
-where odomesano = '202009'
+where odomesano = 202010
+) as a

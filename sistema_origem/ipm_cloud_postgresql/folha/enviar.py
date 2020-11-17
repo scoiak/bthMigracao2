@@ -56,8 +56,8 @@ def iniciar():
     # enviar(params_exec, 'plano-cargo-salario')
     # enviar(params_exec, 'nivel-salarial')
     # enviar(params_exec, 'cargo')
-    enviar(params_exec, 'formacao')
-    # enviar(params_exec, 'matricula')
+    # enviar(params_exec, 'formacao')
+    enviar(params_exec, 'matricula')
 
 
 def enviar(params_exec, tipo_registro, *args, **kwargs):

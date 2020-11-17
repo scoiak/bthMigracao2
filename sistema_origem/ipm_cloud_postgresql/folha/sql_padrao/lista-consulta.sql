@@ -3,8 +3,10 @@ select * from wfp.tbrubricaautonomoplano
 select * from wfp.tbrubricaautonomo
 select * from wfp.tbgpsgcencusautonomo
 
+select * from wfp.tbfuntransferencia
+
 select * from public.controle_migracao_registro where tipo_registro = 'formacao';
-select * from public.controle_migracao_lotes where tipo_registro = 'formacao';
+select * from public.controle_migracao_lotes where tipo_registro = 'matricula';
 select * from public.controle_migracao_registro where tipo_registro = 'cargo' and i_chave_dsk1 = '2734' and i_chave_dsk2 = '486';
 select * from public.controle_migracao_registro_ocor where tipo_registro = 'matricula';
 
