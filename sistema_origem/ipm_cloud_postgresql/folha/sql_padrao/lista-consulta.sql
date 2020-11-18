@@ -11,12 +11,15 @@ select * from public.controle_migracao_registro_ocor where tipo_registro = 'matr
 
 select * from public.controle_migracao_registro where tipo_registro = 'cargo' and id_gerado = 102530;
 
+select * from wfp.funconta
+
 select * from wfp.tbfunlocais where odomesano = 202010 and fcncodigo = 171
 
 select count(*),tipo_registro,sistema from public.controle_migracao_registro group by tipo_registro,sistema order by 1,2
 
 select * from public.controle_migracao_registro where tipo_registro = 'pessoa-contas';
 select * from public.controle_migracao_registro where tipo_registro = 'conta-bancaria';
+select * from public.controle_migracao_registro where tipo_registro = 'conta-bancaria' and i_chave_dsk1 = '84408847968';
  
 select * from wfp.tbfuncontrato where regcodigo in (15) and odomesano = 202009 and fcncodigo = 9236
 

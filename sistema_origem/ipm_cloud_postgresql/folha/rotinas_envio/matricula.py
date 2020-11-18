@@ -27,15 +27,16 @@ def busca_dados(params_exec):
     print(f'- Foram encontrados {len(registros)} registros cadastrados no cloud.')
     registros_formatados = []
     for item in registros:
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['codigoMatricula']['numero'], item['codigoMatricula']['contrato'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, 56, item['codigoMatricula']['numero'], item['codigoMatricula']['contrato'])
         registros_formatados.append({
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
             'descricao_tipo_registro': 'Cadastro de Matricula',
             'id_gerado': item['id'],
-            'i_chave_dsk1': item['codigoMatricula']['numero'],
-            'i_chave_dsk2': item['codigoMatricula']['contrato'],
+            'i_chave_dsk1': 56,
+            'i_chave_dsk2': item['codigoMatricula']['numero'],
+            'i_chave_dsk3': item['codigoMatricula']['contrato'],
         })
     model.insere_tabela_controle_migracao_registro(params_exec, lista_req=registros_formatados)
     print('- Busca finalizada. Tabelas de controles atualizas com sucesso.')
@@ -90,24 +91,28 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         # 'validationStatus': None if 'validationstatus' not in item else item['validationstatus']
         # 'contratoTemporario': None if 'contratotemporario' not in item else item['contratotemporario']
         if item['lotacoesfisicas'] is not None:
-            dict_dados['conteudo'].update({
-                'lotacoesFisicas': []
-            })
+            listaconteudo = []
             lista = item['lotacoesfisicas'].split('%||%')
-            for listacampo in lista:
-                campo = listacampo.split('%|%')
-                dict_dados['conteudo']['lotacoesFisicas'].append({
-                    'lotacaoFisica': {
-                      "id": int(campo[0])
-                    },
-                    'principal': campo[1],
-                    'dataInicio': campo[2],
+            if len(lista) > 0:
+                for listacampo in lista:
+                    campo = listacampo.split('%|%')
+                    dict_item_conteudo = {
+                        'lotacaoFisica': {
+                            'id': int(campo[0])
+                        },
+                        'principal': campo[1],
+                        'dataInicio': campo[2],
+                    }
+                    if campo[3] is not None:
+                        if campo[3] != '':
+                            dict_item_conteudo.update({
+                                'dataFim': campo[3]
+                            })
+                    listaconteudo.append(dict_item_conteudo)
+            if len(listaconteudo) > 0:
+                dict_dados['conteudo'].update({
+                    'lotacoesFisicas': listaconteudo
                 })
-                if campo[3] is not None:
-                    if campo[3] != '':
-                        dict_dados['conteudo']['lotacoesFisicas'].update({
-                            'dataFim': campo[3]
-                        })
         if 'previdencias' in item and item['previdencias'] is not None:
             dict_dados['conteudo'].update({
                 'previdencias': []
@@ -493,24 +498,28 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                             }
                         })
                     if campo[99] is not None:
-                        dict_item_historico.update({
-                            'lotacoesFisicas': []
-                        })
+                        listaconteudohistorico = []
                         listalotacoesfisicas = campo[99].split('%||%')
-                        for listacampolotacoesfisicas in listalotacoesfisicas:
-                            campolotacoesfisicas = listacampolotacoesfisicas.split('%|%')
-                            dict_item_historico['lotacoesFisicas'].append({
-                                'lotacaoFisica': {
-                                    "id": int(campolotacoesfisicas[0])
-                                },
-                                'principal': campolotacoesfisicas[1],
-                                'dataInicio': campolotacoesfisicas[2],
+                        if len(lista) > 0:
+                            for listacampolotacoesfisicas in listalotacoesfisicas:
+                                campolotacoesfisicas = listacampolotacoesfisicas.split('%|%')
+                                dict_item_conteudo_historico = {
+                                    'lotacaoFisica': {
+                                        'id': int(campolotacoesfisicas[0])
+                                    },
+                                    'principal': campolotacoesfisicas[1],
+                                    'dataInicio': campolotacoesfisicas[2],
+                                }
+                                if campolotacoesfisicas[3] is not None:
+                                    if campolotacoesfisicas[3] != '':
+                                        dict_item_conteudo_historico.update({
+                                            'dataFim': campolotacoesfisicas[3]
+                                        })
+                                listaconteudohistorico.append(dict_item_conteudo_historico)
+                        if len(listaconteudohistorico) > 0:
+                            dict_item_historico.update({
+                                'lotacoesFisicas': listaconteudohistorico
                             })
-                            if campolotacoesfisicas[3] is not None:
-                                if campolotacoesfisicas[3] != '':
-                                    dict_item_historico['lotacoesFisicas'].update({
-                                        'dataFim': campolotacoesfisicas[3]
-                                    })
                     if campo[73] is not None:
                         dict_item_historico.update({
                             'responsaveis': []
@@ -882,7 +891,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         })
     if True:
         model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)
-    if False:
+    if True:
         req_res = interacao_cloud.preparar_requisicao(lista_dados=lista_dados_enviar,
                                                       token=token,
                                                       url=url,
