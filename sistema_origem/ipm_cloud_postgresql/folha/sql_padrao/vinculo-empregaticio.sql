@@ -42,14 +42,14 @@ from (
      else 'false'
     end ) as vinculoTemporario,
 	(CASE
-     when regcodigo in(1,2,5,8,10,15,19,21,23,24,25,27) then '5539' -- ajustar par final
+     when regcodigo in(1,2,5,8,10,15,19,21,23,24,25,27) then '5691' -- ajustar par final
      else null
     end ) as motivoRescisao, -- REFERENCIAR TABELA DE MOTIVO DE RESCISÃO
 	false as dataFinalObrigatoria,
 	(case cascodigo when 1  then 'true' else 'false' end) as geraCaged,
 	'true' as geraLicencaPremio
 	from wfp.tbregime as r
-	where odomesano = '202009'
+	where odomesano = '202010'
   	  and regcodigo not in(3,4,6,7,10,11,12,16,17,18,22,26,28) -- Específico Biguacu
 ) as a
 where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','vinculo-empregaticio', id_entidade, codigo))) is null

@@ -6,6 +6,7 @@ DB_PORT = '7666'
 DB_NAME = 'biguacu'
 DB_USER = 'postgres'
 DB_PW = 'bethadba'
+
 """
 DB_HOST = 'localhost'
 DB_PORT = '5433'
