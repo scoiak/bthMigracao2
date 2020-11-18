@@ -343,7 +343,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             if 'contabancariapagamento' in item and item['contabancariapagamento'] is not None:
                 dict_dados['conteudo'].update({
                     'contaBancariaPagamento': {
-                        'id': item['contabancariapagamento']
+                        'id': int(item['contabancariapagamento'])
                     }
                 })
         if 'configuracaoferias' in item and item['configuracaoferias'] is not None:

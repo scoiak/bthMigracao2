@@ -5,6 +5,8 @@ select * from wfp.tbgpsgcencusautonomo
 
 select * from wfp.tbfuntransferencia where odomesano = 202010
 
+select (data_hora_ret  - data_hora_env) as totalRetorno, id_lote as lote from public.controle_migracao_lotes where tipo_registro = 'matricula';
+
 select * from public.controle_migracao_lotes where tipo_registro = 'matricula';
 select * from public.controle_migracao_registro where tipo_registro = 'matricula';
 select * from public.controle_migracao_registro_ocor where tipo_registro = 'matricula';
