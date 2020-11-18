@@ -274,8 +274,9 @@ from (select
 	fc.odomesano as competencia,
 	fc.funtipocontrato,
 	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))) as clicodigo
-	,(select uninomerazao from wun.tbunico as u where u.unicodigo = fc.unicodigo) as nome
-from wfp.tbfuncontrato as fc  join wfp.tbfuncionario as f on f.fcncodigo = fc.fcncodigo and f.odomesano = fc.odomesano
+	--(case when (select max(afc.odomesano) from wfp.tbfuncontrato as afc where afc.fcncodigo = fc.fcncodigo and afc.funcontrato = fc.funcontrato and afc.funtipocontrato not in (4) limit 1) > fc.odomesano then fc.funcontrato else (fc.funcontrato + 1) end) as funcontrato
+	--,(select uninomerazao from wun.tbunico as u where u.unicodigo = fc.unicodigo) as nome
+from wfp.tbfuncontrato as fc join wfp.tbfuncionario as f on f.fcncodigo = fc.fcncodigo and f.odomesano = fc.odomesano
 where fc.odomesano = (select max(afc.odomesano) from wfp.tbfuncontrato as afc where afc.fcncodigo = fc.fcncodigo and afc.funcontrato = fc.funcontrato and afc.funtipocontrato not in (4) limit 1)
 --and fc.funtipocontrato not in (4)
 and fc.fcncodigo in (15605,603,1747,2279,14020,570,12684,1739)

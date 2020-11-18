@@ -47,3 +47,9 @@ select
 	from wfp.tbfuncontrato as fc  join wfp.tbfuncionario as f on f.fcncodigo = fc.fcncodigo and f.odomesano = fc.odomesano
 where fc.odomesano = 202010
 and fc.funsituacao in (1,2)
+
+select * from controle_migracao_registro cmr where tipo_registro = 'entidade'
+
+select	
+	(case codigo when 1 then 'S' when 2 then 'N' else 'K' end) as teste
+	from (select 1 as codigo) as a
