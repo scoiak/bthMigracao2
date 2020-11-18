@@ -27,7 +27,7 @@ SELECT
     ocor.mensagem_erro AS mensagemErro,
     --ocor.json_enviado AS jsonEnviado,
     reg.json_enviado AS jsonEnviado
-    --lot.conteudo_json AS jsonLote    
+    ,lot.conteudo_json AS jsonLote    
 FROM 
     public.controle_migracao_registro as reg
 left JOIN 

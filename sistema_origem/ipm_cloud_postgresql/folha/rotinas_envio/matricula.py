@@ -88,8 +88,26 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         }
         # 'funcoesGratificadas	': None if 'funcoesGratificadas	' not in item else item['funcoesGratificadas']
         # 'validationStatus': None if 'validationstatus' not in item else item['validationstatus']
-        # 'lotacoesFisicas': None if 'lotacoesfisicas' not in item else item['lotacoesfisicas']
         # 'contratoTemporario': None if 'contratotemporario' not in item else item['contratotemporario']
+        if item['lotacoesfisicas'] is not None:
+            dict_dados['conteudo'].update({
+                'lotacoesFisicas': []
+            })
+            lista = item['lotacoesfisicas'].split('%||%')
+            for listacampo in lista:
+                campo = listacampo.split('%|%')
+                dict_dados['conteudo']['lotacoesFisicas'].append({
+                    'lotacaoFisica': {
+                      "id": int(campo[0])
+                    },
+                    'principal': campo[1],
+                    'dataInicio': campo[2],
+                })
+                if campo[3] is not None:
+                    if campo[3] != '':
+                        dict_dados['conteudo']['lotacoesFisicas'].update({
+                            'dataFim': campo[3]
+                        })
         if 'previdencias' in item and item['previdencias'] is not None:
             dict_dados['conteudo'].update({
                 'previdencias': []
@@ -119,7 +137,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         if 'vinculoempregaticio' in item and item['vinculoempregaticio'] is not None:
             dict_dados['conteudo'].update({
                 'vinculoEmpregaticio': {
-                    'id': item['vinculoempregaticio']
+                    'id': int(item['vinculoempregaticio'])
                 },
             })
         if 'cargo' in item and item['cargo'] is not None:
@@ -326,7 +344,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         if 'configuracaoferias' in item and item['configuracaoferias'] is not None:
             dict_dados['conteudo'].update({
                 'configuracaoFerias': {
-                    'id': item['configuracaoferias']
+                    'id': int(item['configuracaoferias'])
                 }
             })
         if 'parametroponto' in item and item['parametroponto'] is not None:
@@ -368,7 +386,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         if 'formacao' in item and item['formacao'] is not None:
             dict_dados['conteudo'].update({
                 'formacao': {
-                    'id': item['formacao']
+                    'id': int(item['formacao'])
                 }
             })
         if 'categoriatrabalhador' in item and item['categoriatrabalhador'] is not None:
@@ -416,7 +434,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         if 'pessoa' in item and item['pessoa'] is not None:
             dict_dados['conteudo'].update({
                 'pessoa': {
-                    'id': item['pessoa']
+                    'id': int(item['pessoa'])
                 }
             })
         if 'grupofuncional' in item and item['grupofuncional'] is not None:
@@ -446,7 +464,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         if 'organograma' in item and item['organograma'] is not None:
             dict_dados['conteudo'].update({
                 'organograma': {
-                    'id': item['organograma']
+                    'id': int(item['organograma'])
                 }
             })
         if item['historicos'] is not None:
@@ -461,7 +479,6 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                     dict_item_historico = {}
                     # 'funcoesGratificadas	': None if 'funcoesGratificadas	' not in item else item['funcoesGratificadas']
                     # 'validationStatus': None if 'validationstatus' not in item else item['validationstatus']
-                    # 'lotacoesFisicas': None if 'lotacoesfisicas' not in item else item['lotacoesfisicas']
                     # 'contratoTemporario': None if 'contratotemporario' not in item else item['contratotemporario']
                     if campo[18] is not None:
                         dict_item_historico.update({
@@ -475,6 +492,25 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                                 'id': int(campoprevidencia[1])
                             }
                         })
+                    if campo[99] is not None:
+                        dict_item_historico.update({
+                            'lotacoesFisicas': []
+                        })
+                        listalotacoesfisicas = campo[99].split('%||%')
+                        for listacampolotacoesfisicas in listalotacoesfisicas:
+                            campolotacoesfisicas = listacampolotacoesfisicas.split('%|%')
+                            dict_item_historico['lotacoesFisicas'].append({
+                                'lotacaoFisica': {
+                                    "id": int(campolotacoesfisicas[0])
+                                },
+                                'principal': campolotacoesfisicas[1],
+                                'dataInicio': campolotacoesfisicas[2],
+                            })
+                            if campolotacoesfisicas[3] is not None:
+                                if campolotacoesfisicas[3] != '':
+                                    dict_item_historico['lotacoesFisicas'].update({
+                                        'dataFim': campolotacoesfisicas[3]
+                                    })
                     if campo[73] is not None:
                         dict_item_historico.update({
                             'responsaveis': []
@@ -492,7 +528,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                     if campo[1] is not None:
                         dict_item_historico.update({
                             'vinculoEmpregaticio': {
-                                'id': campo[1]
+                                'id': int(campo[1])
                             },
                         })
                     if campo[19] is not None:
@@ -702,7 +738,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                     if campo[39] is not None:
                         dict_item_historico.update({
                             'configuracaoFerias': {
-                                'id': campo[39]
+                                'id': int(campo[39])
                             }
                         })
                     if campo[50] is not None:
@@ -744,7 +780,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                     if campo[64] is not None:
                         dict_item_historico.update({
                             'formacao': {
-                                'id': campo[64]
+                                'id': int(campo[64])
                             }
                         })
                     if campo[72] is not None:
@@ -792,7 +828,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                     if campo[89] is not None:
                         dict_item_historico.update({
                             'pessoa': {
-                                'id': campo[89]
+                                'id': int(campo[89])
                             }
                         })
                     if campo[92] is not None:
@@ -822,7 +858,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                     if campo[98] is not None:
                         dict_item_historico.update({
                             'organograma': {
-                                'id': campo[98]
+                                'id': int(campo[98])
                             }
                         })
                     listahistorico.append(dict_item_historico)
@@ -846,7 +882,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         })
     if True:
         model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)
-    if True:
+    if False:
         req_res = interacao_cloud.preparar_requisicao(lista_dados=lista_dados_enviar,
                                                       token=token,
                                                       url=url,

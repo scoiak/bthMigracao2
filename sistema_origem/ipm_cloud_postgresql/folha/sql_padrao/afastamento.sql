@@ -3,12 +3,12 @@ row_number() over() as id,
 (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))) as entidade,
 row_number() over(partition by matricula order by matricula asc,inicioAfastamento asc) as codigo,
 * from (SELECT 
-	fcncodigo as matricula,
+	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'matricula', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), fcncodigo, funcontrato))) as matricula,
 	afadatainicio as inicioAfastamento,
 	afadatafinal as fimAfastamento,
 	afadatafinal as retornoTrabalho,
 	afaafadias as quantidade,
-	afaafadias as quantidadeDias,
+	--afaafadias as quantidadeDias,
 	'DIAS' as unidade,
 	(case
 	 when motcodigo in (63,60,56,2,55,1) then 'ACIDENTE_DOENCA'
@@ -18,9 +18,9 @@ row_number() over(partition by matricula order by matricula asc,inicioAfastament
 	 when motcodigo in (3,4) then 'FALTAS'
 	 end
 	) as decorrente,
-	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'tipo-afastamento', motcodigo)))::varchar as tipoAfastamento,
+	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'tipo-afastamento',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), motcodigo)))::varchar as tipoAfastamento,
 	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'ato', (select tj.txjnumero::varchar || '/' || tj.txjano::varchar FROM wlg.tbtextojuridico as tj where tj.txjcodigo = fa.txjcodigo),(select ct.tctdescricao from wlg.tbcategoriatexto as ct where ct.tctcodigo = (select tj.tctcodigo FROM wlg.tbtextojuridico as tj where tj.txjcodigo = fa.txjcodigo)))))::varchar as ato,
-	null as motivo,
+	afaobs as motivo,
 	null as descontar,
 	null as competenciaDesconto,
 	null as abonar,
@@ -34,15 +34,15 @@ FROM
 where odomesano = 202010
 union all
 select 
-	fcncodigo as matricula,
+	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'matricula', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), fcncodigo, funcontrato))) as matricula,
 	rctdatarescisao as inicioAfastamento,
 	null as fimAfastamento,
 	null as retornoTrabalho,
 	null as quantidade,
-	null as quantidadeDias,
+	--null as quantidadeDias,
 	'DIAS' as unidade,
 	'RESCISAO' as decorrente,
-	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'tipo-afastamento',64)))::varchar as tipoAfastamento,
+	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'tipo-afastamento',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),64)))::varchar as tipoAfastamento,
 	null as ato,
 	null as motivo,
 	null as descontar,

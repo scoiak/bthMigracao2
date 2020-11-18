@@ -31,14 +31,14 @@ update public.controle_migracao_registro set tipo_registro = 'banco',hash_chave_
 update public.controle_migracao_registro cmr set	i_chave_dsk2 = (select c.i_chave_dsk1 from public.controle_migracao_registro c where c.tipo_registro = 'tipo-ato' and c.id_gerado = cmr.i_chave_dsk2::integer) where cmr.tipo_registro = 'ato';
 update public.controle_migracao_registro set	hash_chave_dsk = md5(concat('300', 'ato', i_chave_dsk1, i_chave_dsk2)) where tipo_registro = 'ato';
 
-update public.controle_migracao_registro set	hash_chave_dsk = md5(concat('300', 'conta-bancaria', i_chave_dsk1, i_chave_dsk2)) where tipo_registro = 'pessoa-contas';
+update public.controle_migracao_registro set tipo_registro = 'conta-bancaria',hash_chave_dsk = md5(concat('300', 'conta-bancaria', i_chave_dsk1, i_chave_dsk2)) where tipo_registro = 'pessoa-contas';
 
 DO $$ DECLARE
 	tr text := 'matricula';
 	-- tr text := 'cargo';
     -- tr text := 'vinculo-empregaticio';
 begin
-	delete from public.controle_migracao_registro where tipo_registro = tr;
 	-- delete from public.controle_migracao_lotes where tipo_registro = tr;	
+	-- delete from public.controle_migracao_registro where tipo_registro = tr;	
 	delete from public.controle_migracao_registro_ocor where tipo_registro = tr;
 END $$;
