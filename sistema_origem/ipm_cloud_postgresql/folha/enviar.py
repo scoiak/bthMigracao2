@@ -53,7 +53,7 @@ def iniciar():
     # enviar(params_exec, 'categoria-trabalhador')
     # enviar(params_exec, 'vinculo-empregaticio')
     # enviar(params_exec, 'cbo')
-    enviar(params_exec, 'cargo')
+    # enviar(params_exec, 'cargo')
     # enviar(params_exec, 'concurso')
     # enviar(params_exec, 'mede-lotes')
 

@@ -13,14 +13,15 @@ url = 'https://pessoal.cloud.betha.com.br/service-layer/v1/api/cargo'
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
     # E - Realiza a consulta dos dados que serão enviados
-    dados_assunto = coletar_dados(params_exec)
+    # dados_assunto = coletar_dados(params_exec)
 
     # T - Realiza a pré-validação dos dados
-    dados_enviar = pre_validar(params_exec, dados_assunto)
+    # dados_enviar = pre_validar(params_exec, dados_assunto)
 
     # L - Realiza o envio dos dados validados
     if not params_exec.get('somente_pre_validar'):
-        iniciar_envio(params_exec, dados_enviar, 'POST')
+        pass
+        # iniciar_envio(params_exec, dados_enviar, 'POST')
 
     model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
 
