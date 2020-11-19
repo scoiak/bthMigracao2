@@ -1,12 +1,12 @@
-select 
+select * from (select 
 row_number() over() as id,
 (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))) as entidade,
 row_number() over(partition by matricula order by matricula asc,inicioAfastamento asc) as codigo,
 * from (SELECT 
 	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'matricula', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), fcncodigo, funcontrato))) as matricula,
-	afadatainicio as inicioAfastamento,
-	afadatafinal as fimAfastamento,
-	afadatafinal as retornoTrabalho,
+	afadatainicio::varchar as inicioAfastamento,
+	afadatafinal::varchar as fimAfastamento,
+	afadatafinal::varchar as retornoTrabalho,
 	afaafadias as quantidade,
 	--afaafadias as quantidadeDias,
 	'DIAS' as unidade,
@@ -18,8 +18,9 @@ row_number() over(partition by matricula order by matricula asc,inicioAfastament
 	 when motcodigo in (3,4) then 'FALTAS'
 	 end
 	) as decorrente,
-	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'tipo-afastamento',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), motcodigo)))::varchar as tipoAfastamento,
-	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'ato', (select tj.txjnumero::varchar || '/' || tj.txjano::varchar FROM wlg.tbtextojuridico as tj where tj.txjcodigo = fa.txjcodigo),(select ct.tctdescricao from wlg.tbcategoriatexto as ct where ct.tctcodigo = (select tj.tctcodigo FROM wlg.tbtextojuridico as tj where tj.txjcodigo = fa.txjcodigo)))))::varchar as ato,
+	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'tipo-afastamento',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), motcodigo)))::varchar as tipoAfastamento,	
+	--(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'ato', (select concat(tj.txjnumero, '/', tj.txjano) from wlg.tbtextojuridico tj where tj.txjcodigo = fa.txjcodigo), (select cat.tctdescricao from wlg.tbtextojuridico tj inner join wlg.tbcategoriatexto cat on cat.tctcodigo = tj.tctcodigo where tj.txjcodigo = fa.txjcodigo limit 1))))::varchar as ato,
+	null as ato,
 	afaobs as motivo,
 	null as descontar,
 	null as competenciaDesconto,
@@ -32,10 +33,11 @@ row_number() over(partition by matricula order by matricula asc,inicioAfastament
 FROM 
 	wfp.tbfunafastamento as fa	
 where odomesano = 202010
+and fcncodigo = 896
 union all
 select 
 	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'matricula', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), fcncodigo, funcontrato))) as matricula,
-	rctdatarescisao as inicioAfastamento,
+	rctdatarescisao::varchar as inicioAfastamento,
 	null as fimAfastamento,
 	null as retornoTrabalho,
 	null as quantidade,
@@ -55,4 +57,7 @@ select
 	null as atestados
 from  wfp.tbrescisaocontrato
 where odomesano = 202010
+and fcncodigo = 896
 ) as a
+) as b
+where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'afastamento', entidade, matricula, codigo))) is null

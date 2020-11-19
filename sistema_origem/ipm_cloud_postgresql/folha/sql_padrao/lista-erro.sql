@@ -35,10 +35,11 @@ left JOIN
 left JOIN 
     public.controle_migracao_lotes as lot on lot.id_lote = ocor.id_integracao 
 WHERE 
-	--ocor.hash_chave_dsk = '1b441dc391d709a46c413d50400fe765' AND
+	--ocor.hash_chave_dsk = 'a63ed5889527c9a01211c50e277646f6' AND
+	--reg.hash_chave_dsk = 'a63ed5889527c9a01211c50e277646f6' AND
     ocor.id_gerado IS NULL
 AND
-    --reg.tipo_registro = 'vinculo-empregaticio'
+    --reg.tipo_registro = 'afastamento'
     reg.tipo_registro = 'matricula'
 AND 
     ocor.i_sequencial = 

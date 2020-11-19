@@ -58,6 +58,7 @@ def iniciar():
     # enviar(params_exec, 'nivel-salarial')
     # enviar(params_exec, 'cargo')
     enviar(params_exec, 'matricula')
+    # enviar(params_exec, 'afastamento')
 
 
 def enviar(params_exec, tipo_registro, *args, **kwargs):

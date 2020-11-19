@@ -66,7 +66,7 @@ from
 	wun.tbunico as u  join wun.tbunicofisica as uf on uf.unicodigo = u.unicodigo
 where
 	u.unitipopessoa = 1
---and	u.unisituacao = 1
+and	u.unisituacao = 1
 and length(regexp_replace(u.unicpfcnpj,'[/.-]|[0]|[ ]','','g')) > 0
 -- length(replace(replace(replace(replace(u.unicpfcnpj,'/',''),'-',''),'.',''),'0','')) > 0
 --and	uf.unfsexo in (1,2)

@@ -5,13 +5,17 @@ select * from wfp.tbgpsgcencusautonomo
 
 select * from wfp.tbfuntransferencia where odomesano = 202010
 
+select * from wfp.tbpensaoalimenticia where fcncodigo = 7944 and odomesano = 202010
+
 select (data_hora_ret  - data_hora_env) as totalRetorno, id_lote as lote from public.controle_migracao_lotes where tipo_registro = 'matricula';
 
 select * from public.controle_migracao_lotes where tipo_registro = 'matricula';
 select * from public.controle_migracao_registro where tipo_registro = 'matricula';
 select * from public.controle_migracao_registro_ocor where tipo_registro = 'matricula';
 
-select * from public.controle_migracao_registro where tipo_registro = 'cargo' and id_gerado = 102530;
+select * from public.controle_migracao_registro where tipo_registro = 'cargo' and id_gerado = 105221;
+
+select * from public.controle_migracao_registro where tipo_registro = 'matricula' and i_chave_dsk2 = '187';
 
 select * from wfp.funconta
 
@@ -61,7 +65,9 @@ select
 where fc.odomesano = 202010
 and fc.funsituacao in (1,2)
 
-select * from controle_migracao_registro cmr where tipo_registro = 'motivo-rescisao'
+select (case coalesce((select p.tpvcodigo from wfp.tbfunpreviden as p where p.funcontrato = 1 and p.fcncodigo = 7032 and p.odomesano = 200803 and p.fprprincipal = 1 limit 1),0) when 0 then true else false end)
+
+select * from controle_migracao_registro cmr where tipo_registro = 'afastamento'
 
 select	
 	(case codigo when 1 then 'S' when 2 then 'N' else 'K' end) as teste

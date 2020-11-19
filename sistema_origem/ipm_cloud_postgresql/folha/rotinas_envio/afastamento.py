@@ -66,34 +66,50 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     contador = 0
     for item in dados:
         contador += 1
-        # print(f'\r- Gerando JSON: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
+        print(f'\r- Gerando JSON: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
         hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['entidade'], item['matricula'], item['codigo'])
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {
                 'matricula': {
-                    'id': item['matricula']
+                    'id': int(item['matricula'])
                 },
                 'inicioAfastamento': item['inicioafastamento'],
                 'fimAfastamento': item['fimafastamento'],
                 'retornoTrabalho': item['retornotrabalho'],
                 'quantidade': item['quantidade'],
-                'quantidadeDias': item['quantidadedias'],
                 'unidade': item['unidade'],
                 'decorrente': item['decorrente'],
-                'tipoAfastamento': item['tipoafastamento'],
-                'ato': item['ato'],
-                'motivo': item['motivo'],
-                'descontar': item['descontar'],
-                'competenciaDesconto': item['competenciadesconto'],
-                'abonar': item['abonar'],
-                'competenciaAbono': item['competenciaabono'],
-                'afastamentoOrigem': item['afastamentoorigem'],
-                'pessoaJuridica': item['pessoajuridica'],
-                'tipoOnus': item['tipoonus'],
-                'atestados': item['atestados'],
+                'tipoAfastamento': {
+                    'id': item['tipoafastamento']
+                }
             }
         }
+        if 'quantidadedias' in item and item['quantidadedias'] is not None:
+            dict_dados['conteudo'].update({'quantidadeDias': item['quantidadedias']})
+        if 'atestados' in item and item['atestados'] is not None:
+            dict_dados['conteudo'].update({'atestados': item['atestados']})
+        if 'tipoonus' in item and item['tipoonus'] is not None:
+            dict_dados['conteudo'].update({'tipoOnus': item['tipoonus']})
+        if 'pessoajuridica' in item and item['pessoajuridica'] is not None:
+            dict_dados['conteudo'].update({'pessoaJuridica': item['pessoajuridica']})
+        if 'afastamentoorigem' in item and item['afastamentoorigem'] is not None:
+            dict_dados['conteudo'].update({'afastamentoOrigem': item['afastamentoorigem']})
+        if 'competenciaabono' in item and item['competenciaabono'] is not None:
+            dict_dados['conteudo'].update({'competenciaAbono': item['competenciaabono']})
+        if 'abonar' in item and item['abonar'] is not None:
+            dict_dados['conteudo'].update({'abonar': item['abonar']})
+        if 'competenciadesconto' in item and item['competenciadesconto'] is not None:
+            dict_dados['conteudo'].update({'competenciaDesconto': item['competenciadesconto']})
+        if 'descontar' in item and item['descontar'] is not None:
+            dict_dados['conteudo'].update({'descontar': item['descontar']})
+        if 'motivo' in item and item['motivo'] is not None:
+            dict_dados['conteudo'].update({'motivo': item['motivo']})
+        if 'ato' in item and item['ato'] is not None:
+            dict_dados['conteudo'].update({
+                'ato': {
+                    'id': int(item['ato'])
+                }})
         print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
