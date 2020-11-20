@@ -42,7 +42,8 @@ and
 	reg.id_gerado is null
 AND
     --reg.tipo_registro = 'afastamento'
-    reg.tipo_registro = 'matricula'
+    --reg.tipo_registro = 'matricula'
+    reg.tipo_registro = 'lancamento-evento'
 AND 
     ocor.i_sequencial = 
         (

@@ -14,10 +14,16 @@ to_date(coalesce((select ((case when substring(aux.parmesanoinicio,5,2) = '01' t
 SELECT to_date(((case when substring('202001',5,2) = '01' then   (substring('202001',1,4)::int - 1) || substring('202001',5,2) else '0' end)::int - 1) ||'01','YYYYMMDD')::varchar as dataInicial
 
 select data_hora_env ,data_hora_ret,(data_hora_ret  - data_hora_env) as totalRetorno, id_lote as lote from public.controle_migracao_lotes where tipo_registro = 'matricula' order by data_hora_env desc;
+select tipo_registro as registro,data_hora_env ,data_hora_ret,(data_hora_ret  - data_hora_env) as totalRetorno, id_lote as lote from public.controle_migracao_lotes where length(id_lote) > 1 order by data_hora_env desc;
+
+select * from public.controle_migracao_registro where tipo_registro = 'lancamento-evento' and hash_chave_dsk  = 'cda0b61044d4902674da4698b83dc72d';
+select * from public.controle_migracao_lotes where tipo_registro = 'lancamento-evento' and conteudo_json like '%2738db17a14e99863d1eaf128c7d0122%';
 
 select * from public.controle_migracao_lotes where tipo_registro = 'matricula';
 select * from public.controle_migracao_registro where tipo_registro = 'matricula';
 select * from public.controle_migracao_registro_ocor where tipo_registro = 'matricula';
+
+select * from public.controle_migracao_registro_ocor where tipo_registro = 'lancamento-evento';
 
 select * from public.controle_migracao_registro where tipo_registro = 'matricula' and id_gerado = 2000180;
 
