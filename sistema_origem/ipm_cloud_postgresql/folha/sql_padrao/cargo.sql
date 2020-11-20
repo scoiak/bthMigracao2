@@ -93,6 +93,7 @@ from (
 			nv.txjcodigo
 		from wfp.tbcargonivel nv
 		--where nv.carcodigo in (477, 394, 440, 523, 2, 381, 779, 438, 778, 507, 3, 471, 312, 494, 194, 476, 439, 332, 380, 436, 755, 767, 230, 517, 178, 399, 112, 119, 430, 460)
+		-- where nv.carcodigo = 471
 		group by 1, 2, 3
 		order by 1, 2
 	) as nv
@@ -109,18 +110,26 @@ select
 	carcodigo as chave_dsk2,
 	array(select distinct unnest(string_to_array((
 			select
-				string_agg(concat(nv2.nivcodigo, ': ', coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'nivel-salarial', id_entidade, nv2.nivcodigo)))::text, '?')), ', ')
-			from wfp.tbcargonivel nv2
-			where nv2.carcodigo = cargos.carcodigo
-			and not exists (
-				select 1
-				from wfp.tbcargonivel nv3
-				where nv3.carcodigo = nv2.carcodigo
-				and nv3.nivcodigo = nv2.nivcodigo
-				and nv3.cnitipoatualiza = 2
-			)
-			group by nv2.carcodigo
-		), ', '))) niveis_vigentes,
+				string_agg(concat(n_nivcodigo, ':', coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'nivel-salarial', id_entidade, n_nivcodigo))))), ', ')
+			from (
+				select
+					nv2.carcodigo as n_carcodigo,
+					nv2.nivcodigo as n_nivcodigo
+					--string_agg(concat(nv2.nivcodigo, ': ', coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'nivel-salarial', id_entidade, nv2.nivcodigo)))::text, '?')), ', ')
+				from wfp.tbcargonivel nv2
+				where nv2.carcodigo = cargos.carcodigo
+				and not exists (
+					select 1
+					from wfp.tbcargonivel nv3
+					where nv3.carcodigo = nv2.carcodigo
+					and nv3.nivcodigo = nv2.nivcodigo
+					and nv3.cnitipoatualiza = 2
+					and nv3.cnidatarelaciona >= nv2.cnidatarelaciona
+				)
+				group by nv2.carcodigo, nv2.nivcodigo
+				order by nv2.carcodigo, nv2.nivcodigo
+			) n
+		), ', ')) order by 1) niveis_vigentes,
 	regexp_replace((select string_agg(string_to_array(h.*::text,';')::text, '%/%') as hist from temp_cargos h where h.carcodigo = cargos.carcodigo), '[\"\\\{\}\(\)]', '', 'gi') as historico,
 	cargos.*
 from (
@@ -183,6 +192,7 @@ from (
 	from wfp.tbcargo c
 	where c.odomesano = 202010
 	--and c.carcodigo in (477, 394, 440, 523, 2, 381, 779, 438, 778, 507, 3, 471, 312, 494, 194, 476, 439, 332, 380, 436, 755, 767, 230, 517, 178, 399, 112, 119, 430, 460)
+	-- and c.carcodigo = 471
 	order by c.carcodigo
 ) cargos
 where cargos.id_gerado = 0
