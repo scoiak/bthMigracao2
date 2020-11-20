@@ -2,12 +2,13 @@ select * from (select
 row_number() over() as id,
 (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))) as entidade,
 row_number() over(partition by matricula order by matricula asc,inicioAfastamento asc) as codigo,
-* from (SELECT 
+* from (
+SELECT 
 	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'matricula', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), fcncodigo, funcontrato))) as matricula,
 	afadatainicio::varchar as inicioAfastamento,
 	afadatafinal::varchar as fimAfastamento,
 	afadatafinal::varchar as retornoTrabalho,
-	afaafadias as quantidade,
+	afaafadias::varchar as quantidade,
 	--afaafadias as quantidadeDias,
 	'DIAS' as unidade,
 	(case
@@ -33,14 +34,14 @@ row_number() over(partition by matricula order by matricula asc,inicioAfastament
 FROM 
 	wfp.tbfunafastamento as fa	
 where odomesano = 202010
-and fcncodigo = 896
+--and fcncodigo in (2)--,70,565
 union all
 select 
 	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'matricula', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), fcncodigo, funcontrato))) as matricula,
 	rctdatarescisao::varchar as inicioAfastamento,
-	null as fimAfastamento,
-	null as retornoTrabalho,
-	null as quantidade,
+	null::varchar as fimAfastamento,
+	null::varchar as retornoTrabalho,
+	null::varchar as quantidade,
 	--null as quantidadeDias,
 	'DIAS' as unidade,
 	'RESCISAO' as decorrente,
@@ -55,9 +56,12 @@ select
 	null as pessoaJuridica,
 	null as tipoOnus,
 	null as atestados
-from  wfp.tbrescisaocontrato
+from  wfp.tbrescisaocontrato as r
 where odomesano = 202010
-and fcncodigo = 896
+and not exists (select fc.funsituacao from wfp.tbfuncontrato as fc where fc.funcontrato = r.funcontrato and fc.fcncodigo = r.fcncodigo and fc.odomesano = r.odomesano and fc.funsituacao = 1) 
+--and fcncodigo in (2)--,70,565
 ) as a
 ) as b
-where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'afastamento', entidade, matricula, codigo))) is null
+where matricula is not null
+--select * from controle_migracao_registro cmr where tipo_registro = 'afastamento' and i_chave_dsk2 = '2000180'
+and (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'afastamento',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),matricula,codigo))) is null

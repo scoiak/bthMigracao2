@@ -33,7 +33,7 @@ from (select
 	 (case when fc.funtipocontrato not in (2) then (case funtipoemprego when 1 then 'true' else  'false' end) else null end)as primeiroEmprego, --6
 	 (case regcodigo when 1 then  'true' else	'false'	 end) as optanteFgts,
 	fundataopcaofgts::varchar as dataOpcao,
-	ifcsequenciafgts as contaFgts,
+	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'conta-bancaria', (select left(regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g'),11) from wun.tbunico as u where u.unicodigo = fc.unicodigo), (select ucb.ifcnumeroconta from wun.tbunicocontabanco as ucb where ucb.unicodigo = fc.unicodigo and ucb.ifcsequencia = fc.ifcsequenciafgts))))::varchar as contaFgts,
 	unicodigocsi as sindicato,--10
 	null as tipoProvimento,
 	null as leiContrato,
@@ -66,8 +66,8 @@ from (select
 	(case funformapagamento when 2 then (case when (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'conta-bancaria', (select left(regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g'),11) from wun.tbunico as u where u.unicodigo = fc.unicodigo), (select ucb.ifcnumeroconta from wun.tbunicocontabanco as ucb where ucb.unicodigo = fc.unicodigo and ucb.ifcsequencia = fc.ifcsequenciapaga)))) > 1 then 'CREDITO_EM_CONTA' else null end)  when 3 then 'DINHEIRO' when 4 then 'CHEQUE' else 'DINHEIRO' end) as formaPagamento,	
 	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'conta-bancaria', (select left(regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g'),11) from wun.tbunico as u where u.unicodigo = fc.unicodigo), (select ucb.ifcnumeroconta from wun.tbunicocontabanco as ucb where ucb.unicodigo = fc.unicodigo and ucb.ifcsequencia = fc.ifcsequenciapaga))))::varchar as contaBancariaPagamento,
 	(case when fc.funtipocontrato not in (0) then (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'configuracao-ferias',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), 1))) else null end)::varchar as configuracaoFerias,
-	cast(regexp_replace(funhorastrabmes, '\:\d{2}$', '', 'gi') as integer) as quantidadeHorasMes,--40
-	(case when fc.funtipocontrato not in (2) then (cast(regexp_replace(funhorastrabmes, '\:\d{2}$', '', 'gi') as integer)/5) else null end)::varchar as quantidadeHorasSemana,
+	coalesce(regexp_replace(funhorastrabmes, '\:\d{2}$', '', 'gi'),'1')::varchar as quantidadeHorasMes,--40
+	(case when fc.funtipocontrato not in (2) then (coalesce(regexp_replace(funhorastrabmes, '\:\d{2}$', '', 'gi'),'1')::int/5) else null end)::varchar as quantidadeHorasSemana,
 	(case when fc.funtipocontrato not in (2) then false else null end) as jornadaParcial,
 	null as dataAgendamentoRescisao,
 	null as funcoesGratificadas, 
@@ -199,8 +199,8 @@ from (select
 	(case funformapagamento when 2 then (case when (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'conta-bancaria', (select left(regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g'),11) from wun.tbunico as u where u.unicodigo = fc.unicodigo), (select ucb.ifcnumeroconta from wun.tbunicocontabanco as ucb where ucb.unicodigo = fc.unicodigo and ucb.ifcsequencia = fc.ifcsequenciapaga)))) > 1 then 'CREDITO_EM_CONTA' else null end)  when 3 then 'DINHEIRO' when 4 then 'CHEQUE' else 'DINHEIRO' end) as formaPagamento,	
 	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'conta-bancaria', (select left(regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g'),11) from wun.tbunico as u where u.unicodigo = fc.unicodigo), (select ucb.ifcnumeroconta from wun.tbunicocontabanco as ucb where ucb.unicodigo = fc.unicodigo and ucb.ifcsequencia = fc.ifcsequenciapaga))))::varchar as contaBancariaPagamento,
 	(case when fc.funtipocontrato not in (0) then (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'configuracao-ferias',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), 1))) else null end)::varchar as configuracaoFerias,
-	cast(regexp_replace(funhorastrabmes, '\:\d{2}$', '', 'gi') as integer) as quantidadeHorasMes,--40
-	(case when fc.funtipocontrato not in (2) then (cast(regexp_replace(funhorastrabmes, '\:\d{2}$', '', 'gi') as integer)/5) else null end)::varchar as quantidadeHorasSemana,
+	coalesce(regexp_replace(funhorastrabmes, '\:\d{2}$', '', 'gi'),'1')::varchar as quantidadeHorasMes,--40
+	(case when fc.funtipocontrato not in (2) then (coalesce(regexp_replace(funhorastrabmes, '\:\d{2}$', '', 'gi'),'1')::int/5) else null end)::varchar as quantidadeHorasSemana,
 	(case when fc.funtipocontrato not in (2) then false else null end) as jornadaParcial,
 	null as dataAgendamentoRescisao,
 	null as funcoesGratificadas, 
@@ -284,9 +284,9 @@ where
 fc.odomesano = 202010
 -- and fc.funtipocontrato not in (3,4)
 --and fc.fcncodigo in (15605,603,1747,2279,14020,570,12684,1739)
-and fc.funsituacao in (1,2)
+--and fc.funsituacao in (1,2)
 order by fc.fcncodigo,fc.funcontrato
-limit 200 offset 400
+limit 200 offset 0
 ) as s
 where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'matricula', clicodigo, fcncodigo, funcontrato))) is null and 
 pessoa is not null

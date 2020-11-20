@@ -37,7 +37,9 @@ left JOIN
 WHERE 
 	--ocor.hash_chave_dsk = 'a63ed5889527c9a01211c50e277646f6' AND
 	--reg.hash_chave_dsk = 'a63ed5889527c9a01211c50e277646f6' AND
-    ocor.id_gerado IS NULL
+    ocor.id_gerado IS null
+and 
+	reg.id_gerado is null
 AND
     --reg.tipo_registro = 'afastamento'
     reg.tipo_registro = 'matricula'

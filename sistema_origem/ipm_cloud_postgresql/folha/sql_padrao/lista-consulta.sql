@@ -7,15 +7,27 @@ select * from wfp.tbfuntransferencia where odomesano = 202010
 
 select * from wfp.tbpensaoalimenticia where fcncodigo = 7944 and odomesano = 202010
 
-select (data_hora_ret  - data_hora_env) as totalRetorno, id_lote as lote from public.controle_migracao_lotes where tipo_registro = 'matricula';
+select substring('202001',1,4) --aux.parmesanoinicio
+
+to_date(coalesce((select ((case when substring(aux.parmesanoinicio,5,2) = '01' then (substring(aux.parmesanoinicio,1,4)::int - 1) || substring(aux.parmesanoinicio,5,2) else (aux.parmesanoinicio - 1) end)) || '01'
+
+SELECT to_date(((case when substring('202001',5,2) = '01' then   (substring('202001',1,4)::int - 1) || substring('202001',5,2) else '0' end)::int - 1) ||'01','YYYYMMDD')::varchar as dataInicial
+
+select data_hora_env ,data_hora_ret,(data_hora_ret  - data_hora_env) as totalRetorno, id_lote as lote from public.controle_migracao_lotes where tipo_registro = 'matricula' order by data_hora_env desc;
 
 select * from public.controle_migracao_lotes where tipo_registro = 'matricula';
 select * from public.controle_migracao_registro where tipo_registro = 'matricula';
 select * from public.controle_migracao_registro_ocor where tipo_registro = 'matricula';
 
-select * from public.controle_migracao_registro where tipo_registro = 'cargo' and id_gerado = 105221;
+select * from public.controle_migracao_registro where tipo_registro = 'matricula' and id_gerado = 2000180;
 
-select * from public.controle_migracao_registro where tipo_registro = 'matricula' and i_chave_dsk2 = '187';
+select * from public.controle_migracao_registro where tipo_registro = 'matricula' and id_gerado is not null;
+
+
+select * from public.controle_migracao_registro_ocor where tipo_registro = 'afastamento';
+select * from public.controle_migracao_registro where tipo_registro = 'afastamento' and id_gerado is null;
+select * from public.controle_migracao_lotes where tipo_registro = 'afastamento';
+select * from public.controle_migracao_registro where tipo_registro = 'tipo-afastamento' and id_gerado = 7675;
 
 select * from wfp.funconta
 

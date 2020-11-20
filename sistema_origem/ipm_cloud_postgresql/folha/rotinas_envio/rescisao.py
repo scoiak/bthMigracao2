@@ -72,18 +72,26 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'idIntegracao': hash_chaves,
             'conteudo': {
                 'data': item['data'],
-                'saldoFgts': item['saldofgts'],
-                'fgtsMesAnterior': item['fgtsmesanterior'],
-                'ato': item['ato'],
+                'conversao': item['conversao'],
                 'matricula': {
                     'id': item['matricula']
                 },
-                'avisoPrevio': item['avisoprevio'],
                 'motivoRescisao': {
                     'id': item['motivorescisao']
                 }
             }
         }
+        if 'saldofgts' in item and item['saldofgts'] is not None:
+            dict_dados['conteudo'].update({'saldoFgts': item['saldofgts']})
+        if 'fgtsmesanterior' in item and item['fgtsmesanterior'] is not None:
+            dict_dados['conteudo'].update({'fgtsMesAnterior': item['fgtsmesanterior']})
+        if 'avisoprevio' in item and item['avisoprevio'] is not None:
+            dict_dados['conteudo'].update({'avisoPrevio': item['avisoprevio']})
+        if 'ato' in item and item['ato'] is not None:
+            dict_dados['conteudo'].update({
+                'ato': {
+                    'id': int(item['ato'])
+                }})
         print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({

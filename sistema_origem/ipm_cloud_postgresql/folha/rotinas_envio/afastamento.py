@@ -75,9 +75,6 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                     'id': int(item['matricula'])
                 },
                 'inicioAfastamento': item['inicioafastamento'],
-                'fimAfastamento': item['fimafastamento'],
-                'retornoTrabalho': item['retornotrabalho'],
-                'quantidade': item['quantidade'],
                 'unidade': item['unidade'],
                 'decorrente': item['decorrente'],
                 'tipoAfastamento': {
@@ -85,6 +82,12 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                 }
             }
         }
+        if 'quantidade' in item and item['quantidade'] is not None:
+            dict_dados['conteudo'].update({'quantidade': item['quantidade']})
+        if 'fimafastamento' in item and item['fimafastamento'] is not None:
+            dict_dados['conteudo'].update({'fimAfastamento': item['fimafastamento']})
+        if 'retornotrabalho' in item and item['retornotrabalho'] is not None:
+            dict_dados['conteudo'].update({'retornoTrabalho': item['retornotrabalho']})
         if 'quantidadedias' in item and item['quantidadedias'] is not None:
             dict_dados['conteudo'].update({'quantidadeDias': item['quantidadedias']})
         if 'atestados' in item and item['atestados'] is not None:
