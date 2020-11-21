@@ -23,6 +23,10 @@ select * from public.controle_migracao_lotes where tipo_registro = 'matricula';
 select * from public.controle_migracao_registro where tipo_registro = 'matricula';
 select * from public.controle_migracao_registro_ocor where tipo_registro = 'matricula';
 
+select * from public.controle_migracao_registro_ocor where tipo_registro = 'rescisao';
+select * from public.controle_migracao_registro where tipo_registro = 'rescisao';
+select * from public.controle_migracao_registro where tipo_registro = 'rescisao' and i_chave_dsk2 ='2041812';
+
 select * from public.controle_migracao_registro_ocor where tipo_registro = 'lancamento-evento';
 
 select * from public.controle_migracao_registro where tipo_registro = 'matricula' and id_gerado = 2000180;

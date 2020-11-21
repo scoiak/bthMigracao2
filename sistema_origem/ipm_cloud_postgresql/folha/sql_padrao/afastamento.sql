@@ -60,8 +60,32 @@ from  wfp.tbrescisaocontrato as r
 where odomesano = 202010
 and not exists (select fc.funsituacao from wfp.tbfuncontrato as fc where fc.funcontrato = r.funcontrato and fc.fcncodigo = r.fcncodigo and fc.odomesano = r.odomesano and fc.funsituacao = 1) 
 --and fcncodigo in (2)--,70,565
+union all
+select 
+	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'matricula', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), fcncodigosol, funcontratosol))) as matricula,
+	ftrdatasolicitacao::varchar as inicioAfastamento,
+	null::varchar as fimAfastamento,
+	null::varchar as retornoTrabalho,
+	null::varchar as quantidade,
+	--null as quantidadeDias,
+	'DIAS' as unidade,
+	'CEDENCIA' as decorrente,
+	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'tipo-afastamento',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),20)))::varchar as tipoAfastamento,
+	null as ato,
+	null as motivo,
+	null as descontar,
+	null as competenciaDesconto,
+	null as abonar,
+	null as competenciaAbono,
+	null as afastamentoOrigem,
+	null as pessoaJuridica,
+	null as tipoOnus,
+	null as atestados
+from wfp.tbfuntransferencia as ft 
+where odomesano = 202010 
+--and fcncodigo in (2)--,70,565
 ) as a
 ) as b
 where matricula is not null
 --select * from controle_migracao_registro cmr where tipo_registro = 'afastamento' and i_chave_dsk2 = '2000180'
-and (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'afastamento',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),matricula,codigo))) is null
+--and (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'afastamento',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),matricula,codigo))) is null

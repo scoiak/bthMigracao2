@@ -60,6 +60,8 @@ def iniciar():
     # enviar(params_exec, 'matricula')
     enviar(params_exec, 'afastamento')
     # enviar(params_exec, 'lancamento-evento')
+    # enviar(params_exec, 'rescisao')
+    # enviar(params_exec, 'calculo-folha-rescisao')
 
 
 def enviar(params_exec, tipo_registro, *args, **kwargs):

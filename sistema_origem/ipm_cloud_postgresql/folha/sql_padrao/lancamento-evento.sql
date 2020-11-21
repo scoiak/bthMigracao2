@@ -20,7 +20,7 @@ to_char(DATE (concat(varmesano, '01')), 'yyyy-MM-dd') as dataFinal,
 to_char(varvalor, 'FM99999990.00') as valor,
 null as observacao
 from wfp.tbprovdescvaria as pdv --join wfp.tbcalculoprovdesc as cpd on pdv.calcodigo = cpd.calcodigo 
-where 0 = 0
+--where 0 = 0
 --and fcncodigo in (7961)--7316,9782,70
 -- and varvalor > 0  
 union ALL 

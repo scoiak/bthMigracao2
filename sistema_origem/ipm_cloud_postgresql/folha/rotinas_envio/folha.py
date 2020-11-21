@@ -6,8 +6,8 @@ import re
 from datetime import datetime
 
 sistema = 300
-tipo_registro = 'rescisao'
-url = 'https://pessoal.cloud.betha.com.br/service-layer/v1/api/rescisao'
+tipo_registro = 'folha'
+url = 'https://pessoal.cloud.betha.com.br/service-layer/v1/api/folha'
 limite_lote = 1000
 
 

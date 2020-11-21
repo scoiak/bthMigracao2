@@ -43,7 +43,8 @@ and
 AND
     --reg.tipo_registro = 'afastamento'
     --reg.tipo_registro = 'matricula'
-    reg.tipo_registro = 'lancamento-evento'
+    --reg.tipo_registro = 'lancamento-evento'
+    reg.tipo_registro = 'calculo-folha-rescisao'
 AND 
     ocor.i_sequencial = 
         (

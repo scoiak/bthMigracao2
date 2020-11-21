@@ -6,8 +6,8 @@ import re
 from datetime import datetime
 
 sistema = 300
-tipo_registro = 'rescisao'
-url = 'https://pessoal.cloud.betha.com.br/service-layer/v1/api/rescisao'
+tipo_registro = 'calculo-folha-rescisao'
+url = 'https://pessoal.cloud.betha.com.br/service-layer/v1/api/calculo-folha-rescisao'
 limite_lote = 1000
 
 
@@ -71,23 +71,42 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {
-                'data': item['data'],
-                'matricula': {
-                    'id': item['matricula']
-                },
+                'calculoFolhaMatriculas': [
+                    {
+                        'matricula': {
+                            'id': item['matricula']
+                        },
+                        'saldoFgts': item['saldofgts'],
+                        'fgtsMesAnterior': item['fgtsmesanterior'],
+                    }
+                ],
                 'motivoRescisao': {
                     'id': item['motivorescisao']
                 }
             }
         }
-        if 'conversao' in item and item['conversao'] is not None:
-            dict_dados['conteudo'].update({'conversao': item['conversao']})
-        if 'saldofgts' in item and item['saldofgts'] is not None:
-            dict_dados['conteudo'].update({'saldoFgts': item['saldofgts']})
-        if 'fgtsmesanterior' in item and item['fgtsmesanterior'] is not None:
-            dict_dados['conteudo'].update({'fgtsMesAnterior': item['fgtsmesanterior']})
+        if 'tipoprocessamento' in item and item['tipoprocessamento'] is not None:
+            dict_dados['conteudo'].update({'tipoProcessamento': item['tipoprocessamento']})
+        if 'subtipoprocessamento' in item and item['subtipoprocessamento'] is not None:
+            dict_dados['conteudo'].update({'subTipoProcessamento': item['subtipoprocessamento']})
+        if 'dataagendamento' in item and item['dataagendamento'] is not None:
+            dict_dados['conteudo'].update({'dataAgendamento': item['dataagendamento']})
+        if 'datapagamento' in item and item['datapagamento'] is not None:
+            dict_dados['conteudo'].update({'dataPagamento': item['datapagamento']})
+        if 'tipovinculacaomatricula' in item and item['tipovinculacaomatricula'] is not None:
+            dict_dados['conteudo'].update({'tipoVinculacaoMatricula': item['tipovinculacaomatricula']})
         if 'avisoprevio' in item and item['avisoprevio'] is not None:
             dict_dados['conteudo'].update({'avisoPrevio': item['avisoprevio']})
+        if 'datarescisao' in item and item['datarescisao'] is not None:
+            dict_dados['conteudo'].update({'dataRescisao': item['datarescisao']})
+        if 'consideraavosperdidosdecimoterceiro' in item and item['consideraavosperdidosdecimoterceiro'] is not None:
+            dict_dados['conteudo'].update({'consideraAvosPerdidosDecimoTerceiro': item['consideraavosperdidosdecimoterceiro']})
+        if 'descontarfaltasferias' in item and item['descontarfaltasferias'] is not None:
+            dict_dados['conteudo'].update({'descontarFaltasFerias': item['descontarfaltasferias']})
+        if 'trabalhoudiarescisao' in item and item['trabalhoudiarescisao'] is not None:
+            dict_dados['conteudo'].update({'trabalhouDiaRescisao': item['trabalhoudiarescisao']})
+        if 'reporvaga' in item and item['reporvaga'] is not None:
+            dict_dados['conteudo'].update({'reporVaga': item['reporvaga']})
         if 'ato' in item and item['ato'] is not None:
             dict_dados['conteudo'].update({
                 'ato': {
@@ -103,7 +122,9 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'id_gerado': None,
             'i_chave_dsk1': item['entidade'],
             'i_chave_dsk2': item['matricula'],
-            'i_chave_dsk3': item['codigo']
+            'i_chave_dsk3': item['tipoprocessamento'],
+            'i_chave_dsk4': item['subtipoprocessamento'],
+            'i_chave_dsk5': item['dataRescisao']
         })
     print(f'- Processo de transformação finalizado. ({(datetime.now() - dh_inicio).total_seconds()} segundos)')
     if True:

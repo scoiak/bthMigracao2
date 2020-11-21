@@ -286,7 +286,7 @@ fc.odomesano = 202010
 --and fc.fcncodigo in (15605,603,1747,2279,14020,570,12684,1739)
 --and fc.funsituacao in (1,2)
 order by fc.fcncodigo,fc.funcontrato
-limit 200 offset 0
+limit 600 offset 0
 ) as s
 where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'matricula', clicodigo, fcncodigo, funcontrato))) is null and 
 pessoa is not null
