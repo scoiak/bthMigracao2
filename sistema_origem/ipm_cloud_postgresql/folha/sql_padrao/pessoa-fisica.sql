@@ -1,13 +1,16 @@
-select * from (
+select
+	'5fbbb7e4ed9eb4010438607a' as id_ca_observacoes, -- INSERIR AQUI O ID DO CAMPO ADICIONAL 'OBSERVAÇÕES'
+	*
+from (
 	select
 	u.unicodigo as id,
 	u.unicodigo as codigo,
 	u.uninomerazao as nome,
 	-- replace(replace(replace(u.unicpfcnpj,'/',''),'-',''),'.','') as cpf,
 	left(regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g'),11) as cpf,
-	cast(uf.unfdatanascimento as varchar) as dataNascimento,
+	cast(coalesce(uf.unfdatanascimento,'1990-01-01') as varchar) as dataNascimento,
 	(case uf.unfestadocivil when 1 then 'SOLTEIRO' when 2 then 'CASADO' when 3 then 'SEPARADO_CONSENSUALMENTE' when 4 then 'DIVORCIADO' when 5 then 'VIUVO' when 6 then 'UNIAO_ESTAVEL' else null end) as estadoCivil,
-	(case uf.unfsexo when 1 then 'MASCULINO' when 2 then 'FEMININO' else null end) as sexo,
+	(case uf.unfsexo when 1 then 'MASCULINO' when 2 then 'FEMININO' else 'MASCULINO' end) as sexo,
 	(case uf.unfcorpele when 1 then 'BRANCA' when 2 then 'PRETA' when 3 then 'AMARELA' when 4 then 'PARDA' when 5 then 'INDIGENA' else null end) as raca,
 	(case uf.unfcorolhos when 1 then 'PRETO' when 2 then 'AZUL' when 3 then 'CASTANHO' when 4 then 'VERDE' else null end) as corOlhos,
 	replace(cast(uf.unfaltura as varchar),',','.') as estatura,
@@ -61,20 +64,19 @@ select * from (
 	(select string_agg('Endereço' || (case suc.linha when 1 then '' else ' ' || cast(suc.linha as varchar) end) || '%|%' || (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','logradouro', (select left(upper(l.lognome),50) from wun.tblogradouro as l where l.logcodigo = suc.logcodigo),(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','municipio', (select left(c.cidnome,50) from wun.tbcidade as c where c.cidcodigo = suc.cidcodigo limit 1),(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','estado', (select left(e.estnome,20) from wun.tbestado as e where e.estcodigo = (select c.estcodigo from wun.tbcidade as c where c.cidcodigo = suc.cidcodigo limit 1) limit 1)))))))))) || '%|%' || (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','bairro', (select left(upper(b.bainome),50) from wun.tbbairro as b where b.baicodigo = suc.baicodigo),(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','municipio', (select left(c.cidnome,50) from wun.tbcidade as c where c.cidcodigo = suc.cidcodigo limit 1),(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','estado', (select left(e.estnome,20) from wun.tbestado as e where e.estcodigo = (select c.estcodigo from wun.tbcidade as c where c.cidcodigo = suc.cidcodigo limit 1) limit 1)))))))))) || '%|%' || coalesce(nullif(trim(suc.cplcep::varchar),''),'00000000') || '%|%' || coalesce(nullif(trim(suc.unenumero),''), 'S/N') || '%|%' || coalesce(nullif(trim(left(suc.unecomplemento,30)),''),'S/C') || '%|%' || (CASE suc.linha when 1 then 'true' else 'false' end),'%||%') from (select row_number() OVER (partition by uc.unicodigo order by uc.unicodigo desc) as linha,* from wun.tbunicoendereco as uc where uc.unicodigo = u.unicodigo) as suc group by suc.unicodigo order by suc.unicodigo desc) as enderecos,
 	(select string_agg('Conta Bancaria' || (case suc.linha when 1 then '' else ' ' || cast(suc.linha as varchar) end) || '%|%' || (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','agencia-bancaria', cast(suc.bcaagencia as varchar),cast((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','banco', cast(suc.bcocodigo as varchar)))) as varchar)))) || '%|%' || suc.ifcnumeroconta || '%|%' || suc.ifcdigitoconta || '%|%' || (case when suc.ifctipoconta in (1,4) then 'CORRENTE' when suc.ifctipoconta in (2,6) then 'POUPANCA' when suc.ifctipoconta in (3,5) then 'SALARIO' end) || '%|%' || '1990-01-01' || '%|%' || '1990-01-01' || '%|%' || 'ABERTA' || '%|%' || (CASE suc.linha when 1 then 'true' else 'false' end), '%||%') from (select row_number() OVER (partition by uc.unicodigo order by uc.unicodigo desc) as linha,* from wun.tbunicocontabanco as uc where uc.unicodigo = u.unicodigo) as suc group by suc.unicodigo order by suc.unicodigo desc) as contasBancarias,
 	(case uf.unftipodeficiencia when 2 then 'FISICA' when 3 then 'AUDITIVA' when 4 then 'MENTAL' when 5 then 'MULTIPLA' when 6 then 'AUTISMO' when 7 then 'REABILITADO' when 8 then 'OUTRA' when 9 then 'VISUAL' when 10 then 'MENTAL' when 11 then 'VISUAL' when 12 then 'MULTIPLA' else null end) as deficiencias,
-	((case when uf.unfnomemae is not null then (trim(uf.unfnomemae) || '%|%' || 'MAE%|%BIOLOGICA' || (case when trim(uf.unfnomepai) is not null then '%||%' else null end)) else null end) || (case when trim(uf.unfnomepai) is not null then (trim(uf.unfnomepai) || '%|%' || 'PAI%|%BIOLOGICA') else null end)) as filiacoes
+	((case when uf.unfnomemae is not null then (trim(uf.unfnomemae) || '%|%' || 'MAE%|%BIOLOGICA' || (case when trim(uf.unfnomepai) is not null then '%||%' else null end)) else null end) || (case when trim(uf.unfnomepai) is not null then (trim(uf.unfnomepai) || '%|%' || 'PAI%|%BIOLOGICA') else null end)) as filiacoes,
+	u.uniobservacoes as observacoes,
+	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'pessoa-fisica', left(regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g'),11)))) as id_gerado
 from
 	wun.tbunico as u  join wun.tbunicofisica as uf on uf.unicodigo = u.unicodigo
 where
 	u.unitipopessoa = 1
---and	u.unisituacao = 1
-and
-	length(regexp_replace(u.unicpfcnpj,'[/.-]|[0]|[ ]','','g')) > 0
-	-- length(replace(replace(replace(replace(u.unicpfcnpj,'/',''),'-',''),'.',''),'0','')) > 0
-and
-	uf.unfsexo in (1,2)
-and
-	uf.unfdatanascimento is not null
+and	u.unisituacao = 1
+and length(regexp_replace(u.unicpfcnpj,'[/.-]|[0]|[ ]','','g')) > 0
+-- length(replace(replace(replace(replace(u.unicpfcnpj,'/',''),'-',''),'.',''),'0','')) > 0
+--and	uf.unfsexo in (1,2)
+--and	uf.unfdatanascimento is not null
 -- and (select suc.unicodigo from wun.tbunico as suc where suc.unitipopessoa = 1 and suc.unisituacao = 1 and suc.unicpfcnpj = u.unicpfcnpj order by suc.unicodigo asc limit 1) = u.unicodigo
 ) as a
-where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'pessoa-fisica', cpf))) is null
--- limit 1000
+where id_gerado is not null and observacoes is not null
+limit 1

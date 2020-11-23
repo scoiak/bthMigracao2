@@ -1,1 +1,1 @@
-select 1 as id, url_consulta from controle_migracao_lotes where id_lote <> ''
+select 1 as id, url_consulta from controle_migracao_lotes where id_lote <> '' and data_hora_env >= '20201120'

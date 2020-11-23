@@ -1,6 +1,6 @@
 select * from (
 select
-	 unicodigodep as id,
+	 d.unicodigodep as id,
 	 (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'pessoa-fisica', (select regexp_replace(suc.unicpfcnpj,'[/.-]','','g') from wun.tbunico as suc where suc.unicodigo = d.unicodigores)))) as pessoa,
 	 (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'pessoa-fisica', (select regexp_replace(suc.unicpfcnpj,'[/.-]','','g') from wun.tbunico as suc where suc.unicodigo = d.unicodigodep)))) as pessoaDependente,
 	 null as responsaveis,
@@ -13,22 +13,25 @@ select
 	 'false' as estuda,
 	 null as dataInicioCurso,
 	 null as dataFinalCurso,
-	 (case depir                when 1 then 'false'     when 2 then 'true' end) as irrf,
-	 (case depsf            when 1 then 'false'     when 2 then 'true' end) as salarioFamilia,
-	 null as pensao, --    select * from wfp.tbpensaoalimenticia
-	 null as dataInicioBeneficio,
-	 null as duracao,
-	 null as dataVencimento,
+	 (case depir   when 2 then 'true' else false end) as irrf,
+	 (case depsf   when 2 then 'true' else false end) as salarioFamilia,
+	 --(case when exists (select pa.unicodigores from wfp.tbpensaoalimenticia as pa where pa.unicodigodep = d.unicodigodep and pa.odomesano = 202010) then true else false end) as pensao,
+	 (case when pa.unicodigodep is not null then true else false end) as pensao,
+	 pa.pnsdatainicio::varchar as dataInicioBeneficio,
+	 (case when pa.pnsdatafinal is not null then 'TEMPORARIA' else 'VITALICIA' end) as duracao,
+	 pa.pnsdatafinal::varchar as dataVencimento,
 	 null as alvaraJudicial,
 	 null as dataAlvara,
-	 null as aplicacaoDesconto,
-	 null as valorDesconto,
+	 (case when 1 = 1 then 'VALOR_FIXO' else 'VALOR_PERCENTUAL' end)as aplicacaoDesconto,
+	 pa.pnsreferencia::varchar as valorDesconto,
 	 null as percentualDesconto,
 	 null as percentualPensaoFgts,
 	 null as representanteLegal,
-	 null as formaPagamento
-from wun.tbdependente as d
-	 where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'dependencia', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'pessoa-fisica', (select regexp_replace(suc.unicpfcnpj,'[/.-]','','g') from wun.tbunico as suc where suc.unicodigo = d.unicodigores)))),(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'pessoa-fisica', (select regexp_replace(suc.unicpfcnpj,'[/.-]','','g') from wun.tbunico as suc where suc.unicodigo = d.unicodigodep)))))))  is null
+	 (case when pa.ifcsequencia is not null then 'CREDITO_EM_CONTA' else 'DINHEIRO' end) as formaPagamento,
+	 (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'conta-bancaria', (select left(regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g'),11) from wun.tbunico as u where u.unicodigo = d.unicodigores), (select ucb.ifcnumeroconta from wun.tbunicocontabanco as ucb where ucb.unicodigo = d.unicodigores and ucb.ifcsequencia = pa.ifcsequencia))))::varchar as contaBancaria
+from wun.tbdependente as d join wfp.tbpensaoalimenticia as pa on pa.unicodigodep = d.unicodigodep and pa.odomesano = 202010
+	where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'dependencia', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'pessoa-fisica', (select regexp_replace(suc.unicpfcnpj,'[/.-]','','g') from wun.tbunico as suc where suc.unicodigo = d.unicodigores)))),(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'pessoa-fisica', (select regexp_replace(suc.unicpfcnpj,'[/.-]','','g') from wun.tbunico as suc where suc.unicodigo = d.unicodigodep)))))))  is null
+	-- and  d.unicodigores  = 687693
 ) as s
 where grau is not null
 and pessoa is not null

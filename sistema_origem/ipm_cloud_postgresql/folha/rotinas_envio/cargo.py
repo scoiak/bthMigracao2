@@ -13,15 +13,14 @@ url = 'https://pessoal.cloud.betha.com.br/service-layer/v1/api/cargo'
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
     # E - Realiza a consulta dos dados que serão enviados
-    # dados_assunto = coletar_dados(params_exec)
+    dados_assunto = coletar_dados(params_exec)
 
     # T - Realiza a pré-validação dos dados
-    # dados_enviar = pre_validar(params_exec, dados_assunto)
+    dados_enviar = pre_validar(params_exec, dados_assunto)
 
     # L - Realiza o envio dos dados validados
     if not params_exec.get('somente_pre_validar'):
-        pass
-        # iniciar_envio(params_exec, dados_enviar, 'POST')
+        iniciar_envio(params_exec, dados_enviar, 'POST')
 
     model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
 
@@ -43,6 +42,14 @@ def coletar_dados(params_exec):
 
     finally:
         return df
+
+
+def list_unique(lista):
+    list_of_unique = []
+    for item in lista:
+        if item not in list_of_unique:
+            list_of_unique.append(item)
+    return list_of_unique
 
 
 def pre_validar(params_exec, dados):
@@ -107,15 +114,15 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                     'tipo': 'CARGO',
                     'campos': [
                         {
-                            'id': '5fb40639b94c800104b44811',
+                            'id': '5fafc50a001f7a0104272606',
                             'valor': item['tcetipoquadro']
                         },
                         {
-                            'id': '5fb40639b94c800104b44813',
+                            'id': '5fafc50a001f7a0104272608',
                             'valor': item['tcecodcargo']
                         },
                         {
-                            'id': '5fb40639b94c800104b44812',
+                            'id': '5fafc50a001f7a0104272607',
                             'valor': item['tcetipocargoacu']
                         }
                     ]
@@ -185,7 +192,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                     }
                     lista_niveis.append(dict_item_niveis)
 
-            # print('lista_niveis', lista_niveis)
+            lista_niveis = list_unique(lista_niveis)
             dict_dados['conteudo'].update({
                 'remuneracoes': lista_niveis
             })
@@ -223,15 +230,15 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                         'tipo': 'CARGO',
                         'campos': [
                             {
-                                'id': '5fb40639b94c800104b44811',
+                                'id': '5fafc50a001f7a0104272606',
                                 'valor': dados_historico[26]
                             },
                             {
-                                'id': '5fb40639b94c800104b44813',
+                                'id': '5fafc50a001f7a0104272608',
                                 'valor': dados_historico[27]
                             },
                             {
-                                'id': '5fb40639b94c800104b44812',
+                                'id': '5fafc50a001f7a0104272607',
                                 'valor': dados_historico[28]
                             }
                         ]
@@ -261,10 +268,12 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                             except Exception as error:
                                 print(f"Erro na geração de item {nivel[1]}. ", error)
 
-                    if len(lista_niveis_historico) > 0:
-                        dict_item_historico.update({
-                            'remuneracoes': lista_niveis_historico
-                        })
+                if len(lista_niveis_historico) > 0:
+                    # print('lista_niveis_historico', lista_niveis_historico)
+                    lista_niveis_historico = list_unique(lista_niveis_historico)
+                    dict_item_historico.update({
+                        'remuneracoes': lista_niveis_historico
+                    })
 
                 # Insere lista de históricos no dicionario a ser enviado
                 lista_historico.append(dict_item_historico)
@@ -297,4 +306,5 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         # Insere lote na tabela 'controle_migracao_lotes'
         model.insere_tabela_controle_lote(req_res)
         print('- Envio de dados finalizado.')
+
 

@@ -125,4 +125,4 @@ def ler_lotes():
             # logging.info(f'{url};{dia_envio};{(dt_retorno - dt_envio)}')
             if duracao > 90:
                 logging.info(f';{url};{dia_envio};{dt_envio};{dt_retorno};{duracao}')
-                # print(url, dia_envio, dt_envio, dt_retorno)
+                print(url, dia_envio, dt_envio, dt_retorno)
