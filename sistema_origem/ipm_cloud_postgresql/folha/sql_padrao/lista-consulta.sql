@@ -23,7 +23,8 @@ select * from public.controle_migracao_lotes where tipo_registro = 'matricula';
 select * from public.controle_migracao_registro where tipo_registro = 'matricula';
 select * from public.controle_migracao_registro_ocor where tipo_registro = 'matricula';
 
-select * from public.controle_migracao_registro_ocor where tipo_registro = 'rescisao';
+select * from public.controle_migracao_registro_ocor where tipo_registro = 'periodo-aquisitivo-ferias';
+select * from public.controle_migracao_registro where tipo_registro = 'periodo-aquisitivo-ferias';
 select * from public.controle_migracao_registro where tipo_registro = 'rescisao';
 select * from public.controle_migracao_registro where tipo_registro = 'rescisao' and i_chave_dsk2 ='2041812';
 

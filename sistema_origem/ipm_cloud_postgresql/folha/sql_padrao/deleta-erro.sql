@@ -38,7 +38,8 @@ DO $$ DECLARE
 	-- tr text := 'cargo';
     -- tr text := 'vinculo-empregaticio';
     -- tr text := 'afastamento';
-    tr text := 'dependencia';
+    -- tr text := 'dependencia';
+    tr text := 'periodo-aquisitivo-ferias';
 begin
 	-- delete from public.controle_migracao_lotes where tipo_registro = tr;	
 	-- delete from public.controle_migracao_registro where tipo_registro = tr;	

@@ -5,7 +5,7 @@ select * from (
 	u.uninomerazao as nome,
 	-- replace(replace(replace(u.unicpfcnpj,'/',''),'-',''),'.','') as cpf,
 	left(regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g'),11) as cpf,
-	cast(uf.unfdatanascimento as varchar) as dataNascimento,
+	cast(coalesce(uf.unfdatanascimento,'1990-01-01') as varchar) as dataNascimento,
 	(case uf.unfestadocivil when 1 then 'SOLTEIRO' when 2 then 'CASADO' when 3 then 'SEPARADO_CONSENSUALMENTE' when 4 then 'DIVORCIADO' when 5 then 'VIUVO' when 6 then 'UNIAO_ESTAVEL' else null end) as estadoCivil,
 	(case uf.unfsexo when 1 then 'MASCULINO' when 2 then 'FEMININO' else 'MASCULINO' end) as sexo,
 	(case uf.unfcorpele when 1 then 'BRANCA' when 2 then 'PRETA' when 3 then 'AMARELA' when 4 then 'PARDA' when 5 then 'INDIGENA' else null end) as raca,
@@ -70,7 +70,7 @@ and	u.unisituacao = 1
 and length(regexp_replace(u.unicpfcnpj,'[/.-]|[0]|[ ]','','g')) > 0
 -- length(replace(replace(replace(replace(u.unicpfcnpj,'/',''),'-',''),'.',''),'0','')) > 0
 --and	uf.unfsexo in (1,2)
-and	uf.unfdatanascimento is not null
+--and	uf.unfdatanascimento is not null
 -- and (select suc.unicodigo from wun.tbunico as suc where suc.unitipopessoa = 1 and suc.unisituacao = 1 and suc.unicpfcnpj = u.unicpfcnpj order by suc.unicodigo asc limit 1) = u.unicodigo
 ) as a
 where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'pessoa-fisica', cpf))) is null

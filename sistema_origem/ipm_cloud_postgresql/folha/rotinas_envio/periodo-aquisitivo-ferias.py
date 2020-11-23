@@ -67,30 +67,34 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     for item in dados:
         contador += 1
         print(f'\r- Gerando JSON: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['chave_dsk1'], item['chave_dsk2'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['entidade'], item['matricula'], item['codigo'])
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {
                 'situacao': item['situacao'],
-                'dataInicial': item['dataInicial'],
-                'dataFinal': item['dataFinal'],
-                'competenciaFechamentoProvisao': item['competenciaFechamentoProvisao'],
+                'dataInicial': item['datainicial'],
+                'dataFinal': item['datafinal'],
                 'configuracaoFerias': {
-                    'id': item['configuracaoFerias']
+                    'id': item['configuracaoferias']
                 },
                 'matricula': {
                     'id': item['matricula']
                 },
                 'faltas': item['faltas'],
-                'diasAdquiridos': item['diasAdquiridos'],
+                'diasAdquiridos': item['diasadquiridos'],
                 'cancelados': item['cancelados'],
                 'suspensos': item['suspensos'],
                 'saldo': item['saldo'],
-                'pagou1TercoIntegral': item['pagou1TercoIntegral'],
-                'conversao': item['conversao'],
-                'diasAnuladosRescisao': item['diasAnuladosRescisao'],
             }
         }
+        if 'pagou1tercointegral' in item and item['pagou1tercointegral'] is not None:
+            dict_dados['conteudo'].update({'pagou1TercoIntegral': item['pagou1tercointegral']})
+        if 'diasanuladosrescisao' in item and item['diasanuladosrescisao'] is not None:
+            dict_dados['conteudo'].update({'diasAnuladosRescisao': item['diasanuladosrescisao']})
+        if 'conversao' in item and item['conversao'] is not None:
+            dict_dados['conteudo'].update({'conversao': item['conversao']})
+        if 'competenciafechamentoprovisao' in item and item['competenciafechamentoprovisao'] is not None:
+            dict_dados['conteudo'].update({'competenciaFechamentoProvisao': item['competenciafechamentoprovisao']})
         if item['movimentacoes'] is not None:
             listaconteudo = []
             lista = item['movimentacoes'].split('%||%')
@@ -100,14 +104,21 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                     for idx, val in enumerate(campo):
                         if campo[idx] == '':
                             campo[idx] = None
-                    dict_item_conteudo = {
-                        'dataInicio': campo[1],
-                        'conversao': campo[16]
-                    }
-                    if campo[2] is not None:
+                    dict_item_conteudo = {}
+                    if campo[16] is not None:
                         dict_item_conteudo.update({
-                            'dataFim': campo[2]
+                            'conversao': campo[16]
                         })
+                    if False:
+                        if campo[1] is not None:
+                            dict_item_conteudo.update({
+                                'dataInicio': campo[1]
+                            })
+                    if False:
+                        if campo[2] is not None:
+                            dict_item_conteudo.update({
+                                'dataFim': campo[2]
+                            })
                     if campo[3] is not None:
                         dict_item_conteudo.update({
                             'motivo': campo[3]
@@ -142,30 +153,30 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                         })
                     if campo[11] is not None:
                         dict_item_conteudo.update({
-                            'diasPagosRescisao	': campo[11]
+                            'diasPagosRescisao': campo[11]
                         })
                     if campo[12] is not None:
                         dict_item_conteudo.update({
-                            'ferias	': campo[12]
+                            'ferias': campo[12]
                         })
                     if campo[13] is not None:
                         dict_item_conteudo.update({
-                            'tipo	': campo[13]
+                            'tipo': campo[13]
                         })
                     if campo[14] is not None:
                         dict_item_conteudo.update({
-                            'dataMovimento	': campo[14]
+                            'dataMovimento': campo[14]
                         })
                     if campo[15] is not None:
                         dict_item_conteudo.update({
-                            'quantidade	': campo[15]
+                            'quantidade': campo[15]
                         })
                     listaconteudo.append(dict_item_conteudo)
             if len(listaconteudo) > 0:
                 dict_dados['conteudo'].update({
-                    'lotacoesFisicas': listaconteudo
+                    'movimentacoes': listaconteudo
                 })
-        # print(f'Dados gerados ({contador}): ', dict_dados)
+        print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,
@@ -173,8 +184,10 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'hash_chave_dsk': hash_chaves,
             'descricao_tipo_registro': 'Cadastro de Lotação Física',
             'id_gerado': None,
-            'i_chave_dsk1': item['chave_dsk1'],
-            'i_chave_dsk2': item['chave_dsk2']
+            'json': json.dumps(dict_dados),
+            'i_chave_dsk1': item['entidade'],
+            'i_chave_dsk2': item['matricula'],
+            'i_chave_dsk3': item['codigo']
         })
     print(f'- Processo de transformação finalizado. ({(datetime.now() - dh_inicio).total_seconds()} segundos)')
     if True:
