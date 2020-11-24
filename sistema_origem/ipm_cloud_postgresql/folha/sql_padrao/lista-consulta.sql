@@ -33,6 +33,8 @@ and odomesano = 202010
 select * from wfp.tbdecimocalculado t 
 select * from wfp.tbpagamento wer
 
+select * from public.controle_migracao_registro where tipo_registro = 'calculo-folha-ferias';
+
 select * from public.controle_migracao_registro_ocor where tipo_registro = 'periodo-aquisitivo-decimo-terceiro';
 select * from public.controle_migracao_registro_ocor where tipo_registro = 'periodo-aquisitivo-ferias';
 select * from public.controle_migracao_registro where tipo_registro = 'periodo-aquisitivo-ferias';

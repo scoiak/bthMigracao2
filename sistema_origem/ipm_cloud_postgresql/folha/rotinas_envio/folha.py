@@ -71,28 +71,87 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {
-                'data': item['data'],
+                'tipoProcessamento': item['tipoprocessamento'],
+                'subTipoProcessamento': item['subtipoprocessamento'],
                 'matricula': {
                     'id': item['matricula']
                 },
-                'motivoRescisao': {
-                    'id': item['motivorescisao']
+                'calculo': {
+                    'id': item['matricula']
                 }
             }
         }
+        if 'competencia' in item and item['competencia'] is not None:
+            dict_dados['conteudo'].update({'competencia': item['competencia']})
+        if 'folhapagamento' in item and item['folhapagamento'] is not None:
+            dict_dados['conteudo'].update({'folhaPagamento': item['folhapagamento']})
+        if 'totalbruto' in item and item['totalbruto'] is not None:
+            dict_dados['conteudo'].update({'totalBruto': item['totalbruto']})
+        if 'totaldesconto' in item and item['totaldesconto'] is not None:
+            dict_dados['conteudo'].update({'totalDesconto': item['totaldesconto']})
+        if 'totalliquido' in item and item['totalliquido'] is not None:
+            dict_dados['conteudo'].update({'totalLiquido': item['totalliquido']})
+        if 'datafechamento' in item and item['datafechamento'] is not None:
+            dict_dados['conteudo'].update({'dataFechamento': item['datafechamento']})
+        if 'datapagamento' in item and item['datapagamento'] is not None:
+            dict_dados['conteudo'].update({'dataPagamento': item['datapagamento']})
+        if 'dataliberacao' in item and item['dataliberacao'] is not None:
+            dict_dados['conteudo'].update({'dataLiberacao': item['dataliberacao']})
+        if 'datacalculo' in item and item['datacalculo'] is not None:
+            dict_dados['conteudo'].update({'dataCalculo': item['datacalculo']})
+        if 'situacao' in item and item['situacao'] is not None:
+            dict_dados['conteudo'].update({'situacao': item['situacao']})
         if 'conversao' in item and item['conversao'] is not None:
-            dict_dados['conteudo'].update({'conversao': item['conversao']})
-        if 'saldofgts' in item and item['saldofgts'] is not None:
-            dict_dados['conteudo'].update({'saldoFgts': item['saldofgts']})
-        if 'fgtsmesanterior' in item and item['fgtsmesanterior'] is not None:
-            dict_dados['conteudo'].update({'fgtsMesAnterior': item['fgtsmesanterior']})
-        if 'avisoprevio' in item and item['avisoprevio'] is not None:
-            dict_dados['conteudo'].update({'avisoPrevio': item['avisoprevio']})
-        if 'ato' in item and item['ato'] is not None:
-            dict_dados['conteudo'].update({
-                'ato': {
-                    'id': int(item['ato'])
-                }})
+            dict_dados['conversao'].update({'conversao': item['conversao']})
+        if item['eventos'] is not None:
+            listaconteudo = []
+            lista = item['eventos'].split('%||%')
+            if len(lista) > 0:
+                for listacampo in lista:
+                    campo = listacampo.split('%|%')
+                    for idx, val in enumerate(campo):
+                        if campo[idx] == '':
+                            campo[idx] = None
+                    dict_item_conteudo = {
+                        'configuracao': {
+                            'id': campo[0]
+                        },
+                        'tipo': campo[1],
+                        'referencia': campo[2],
+                        'valor': campo[3],
+                    }
+                    if campo[4] is not None:
+                        dict_item_conteudo.update({
+                            'periodosAquisitivosFerias': campo[4]
+                        })
+                    listaconteudo.append(dict_item_conteudo)
+            if len(listaconteudo) > 0:
+                dict_dados['conteudo'].update({
+                    'eventos': listaconteudo
+                })
+        if item['composicaobases'] is not None:
+            listaconteudo = []
+            lista = item['composicaobases'].split('%||%')
+            if len(lista) > 0:
+                for listacampo in lista:
+                    campo = listacampo.split('%|%')
+                    for idx, val in enumerate(campo):
+                        if campo[idx] == '':
+                            campo[idx] = None
+                    dict_item_conteudo = {
+                        'configuracaoEvento': {
+                            'id': campo[0]
+                        },
+                        'base': {
+                            'id': campo[1]
+                        },
+                        'valor': campo[2],
+                    }
+                    listaconteudo.append(dict_item_conteudo)
+            if len(listaconteudo) > 0:
+                dict_dados['conteudo'].update({
+                    'composicaoBases': listaconteudo
+                })
         print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({

@@ -21,7 +21,7 @@ to_char(varvalor, 'FM99999990.00') as valor,
 null as observacao
 from wfp.tbprovdescvaria as pdv --join wfp.tbcalculoprovdesc as cpd on pdv.calcodigo = cpd.calcodigo 
 --where 0 = 0
---and fcncodigo in (7961)--7316,9782,70
+--where fcncodigo in (14369)--7316,9782,70,7961
 -- and varvalor > 0  
 union ALL 
 select 
@@ -40,7 +40,7 @@ null as observacao
 from wfp.tbparcelamento as p
 where odomesano = 202010
 -- and parvalor > 0
---and fcncodigo in (7961)--7316,9782,70
+--and fcncodigo in (14369)--7316,9782,70,7961
 union ALL 
 select 
 fcncodigo,
@@ -57,7 +57,7 @@ null as observacao
 from wfp.tbprovdescfixo as pdf --join wfp.tbcalculoprovdesc as cpd on pdf.calcodigo = cpd.calcodigo 
 where odomesano = 202010
 -- and fixvalor > 0
---and fcncodigo in (7961)--7316,9782,70
+--and fcncodigo in (14369)--7316,9782,70,7961
 union ALL 
 select 
 fcncodigo,
@@ -75,8 +75,8 @@ from wfp.tbprovdescfixo as pdf join wfp.tbprovdesc as pd on pdf.cpdcodigo = pd.c
 where pdf.odomesano = 202010
 and pd.cpdclasse = 1
 -- and fixvalor > 0
---and fcncodigo in (7961)--7316,9782,70
+--and fcncodigo in (14369)--7316,9782,70,7961
 ) as a
 ) as b
 where matricula is not null
-and (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'lancamento-evento',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),matricula,codigo))) is null
+and (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'lancamento-evento',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),configuracao,tipoProcessamento,subTipoProcessamento,matricula,dataInicial,dataFinal))) is null

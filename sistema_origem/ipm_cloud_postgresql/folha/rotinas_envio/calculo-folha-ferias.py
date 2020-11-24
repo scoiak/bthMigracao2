@@ -67,7 +67,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     for item in dados:
         contador += 1
         # print(f'\r- Gerando JSON: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['entidade'], item['matricula'], item['tipoprocessamento'], item['tipoprocessamento'], item['datapagamento'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['entidade'], item['matricula'], item['tipoprocessamento'], item['subtipoprocessamento'], item['datapagamento'])
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {
@@ -95,10 +95,46 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             dict_dados['conteudo'].update({'dataAgendamento': item['dataagendamento']})
         if 'datapagamento' in item and item['datapagamento'] is not None:
             dict_dados['conteudo'].update({'dataPagamento': item['datapagamento']})
-        if 'competencia' in item and item['competencia'] is not None:
-            dict_dados['conteudo'].update({'competencia': item['competencia']})
-        if 'consideraavosperdidos' in item and item['consideraavosperdidos'] is not None:
-            dict_dados['conteudo'].update({'consideraAvosPerdidos': item['consideraavosperdidos']})
+        if 'tipovinculacaomatricula' in item and item['tipovinculacaomatricula'] is not None:
+            dict_dados['conteudo'].update({'tipoVinculacaoMatricula': item['tipovinculacaomatricula']})
+        if 'conversao' in item and item['conversao'] is not None:
+            dict_dados['conteudo'].update({'conversao': item['conversao']})
+        if 'diasabono' in item and item['diasabono'] is not None:
+            dict_dados['conteudo'].update({'diasAbono': item['diasabono']})
+        if 'diasgozo' in item and item['diasgozo'] is not None:
+            dict_dados['conteudo'].update({'diasGozo': item['diasgozo']})
+        if 'datainicial' in item and item['datainicial'] is not None:
+            dict_dados['conteudo'].update({'dataInicial': item['datainicial']})
+        if 'datafinal' in item and item['datafinal'] is not None:
+            dict_dados['conteudo'].update({'dataFinal': item['datafinal']})
+        if 'coletiva' in item and item['coletiva'] is not None:
+            dict_dados['conteudo'].update({'coletiva': item['coletiva']})
+        if 'pagarumtercointegral' in item and item['pagarumtercointegral'] is not None:
+            dict_dados['conteudo'].update({'pagarUmTercoIntegral': item['pagarumtercointegral']})
+        if 'observacoes' in item and item['observacoes'] is not None:
+            dict_dados['conteudo'].update({'observacoes': item['observacoes']})
+        if 'tipocalculoferias' in item and item['tipocalculoferias'] is not None:
+            dict_dados['conteudo'].update({'tipoCalculoFerias': item['tipocalculoferias']})
+        if 'descontarfaltas' in item and item['descontarfaltas'] is not None:
+            dict_dados['conteudo'].update({'descontarFaltas': item['descontarfaltas']})
+        if 'anodecimoterceiro' in item and item['anodecimoterceiro'] is not None:
+            dict_dados['conteudo'].update({'anoDecimoTerceiro': item['anodecimoterceiro']})
+        if 'consideraavosperdidosdecimoterceiro' in item and item['consideraavosperdidosdecimoterceiro'] is not None:
+            dict_dados['conteudo'].update({'consideraAvosPerdidosDecimoTerceiro': item['consideraavosperdidosdecimoterceiro']})
+        if 'saldo' in item and item['saldo'] is not None:
+            dict_dados['conteudo'].update({'saldo': item['saldo']})
+        if 'diasparagozo' in item and item['diasparagozo'] is not None:
+            dict_dados['conteudo'].update({'diasParaGozo': item['diasparagozo']})
+        if 'ato' in item and item['ato'] is not None:
+            dict_dados['conteudo'].update({
+                'ato': {
+                    'id': int(item['ato'])
+                }})
+        if 'tipoafastamento' in item and item['tipoafastamento'] is not None:
+            dict_dados['conteudo'].update({
+                'tipoAfastamento': {
+                    'id': int(item['tipoafastamento'])
+                }})
         print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
@@ -107,6 +143,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'hash_chave_dsk': hash_chaves,
             'descricao_tipo_registro': 'Cadastro de Rescisao',
             'id_gerado': None,
+            'json': json.dumps(dict_dados),
             'i_chave_dsk1': item['entidade'],
             'i_chave_dsk2': item['matricula'],
             'i_chave_dsk3': item['tipoprocessamento'],
