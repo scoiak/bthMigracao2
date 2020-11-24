@@ -6,15 +6,15 @@ import re
 from datetime import datetime
 
 sistema = 300
-tipo_registro = 'periodo-aquisitivo-ferias'
-url = 'https://pessoal.cloud.betha.com.br/service-layer/v1/api/periodo-aquisitivo-ferias'
+tipo_registro = 'periodo-aquisitivo-decimo-terceiro'
+url = 'https://pessoal.cloud.betha.com.br/service-layer/v1/api/periodo-aquisitivo-decimo-terceiro'
 limite_lote = 1000
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
-    if True:
-        busca_dados(params_exec)
     if False:
+        busca_dados(params_exec)
+    if True:
         dados_assunto = coletar_dados(params_exec)
         dados_enviar = pre_validar(params_exec, dados_assunto)
         if not params_exec.get('somente_pre_validar'):
@@ -28,7 +28,7 @@ def busca_dados(params_exec):
     print(f'- Foram encontrados {len(registros)} registros cadastrados no cloud.')
     registros_formatados = []
     for item in registros:
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, '56', item['matricula']['id'], item['dataInicial'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, '56', item['matricula']['id'], item['anoExercicio'])
         registros_formatados.append({
             'sistema': sistema,
             'tipo_registro': tipo_registro,
@@ -37,7 +37,7 @@ def busca_dados(params_exec):
             'id_gerado': item['id'],
             'i_chave_dsk1': '56',
             'i_chave_dsk2': item['matricula']['id'],
-            'i_chave_dsk3': item['dataInicial']
+            'i_chave_dsk3': item['anoExercicio']
         })
     model.insere_tabela_controle_migracao_registro(params_exec, lista_req=registros_formatados)
     print('- Busca finalizada. Tabelas de controles atualizas com sucesso.')
@@ -91,34 +91,26 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     for item in dados:
         contador += 1
         print(f'\r- Gerando JSON: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['entidade'], item['matricula'], item['datainicial'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['entidade'], item['matricula'], item['anoexercicio'])
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {
-                'situacao': item['situacao'],
                 'dataInicial': item['datainicial'],
                 'dataFinal': item['datafinal'],
-                'configuracaoFerias': {
-                    'id': item['configuracaoferias']
-                },
+                'configuracao': item['configuracao'],
                 'matricula': {
                     'id': item['matricula']
                 },
-                'faltas': item['faltas'],
-                'diasAdquiridos': item['diasadquiridos'],
-                'cancelados': item['cancelados'],
-                'suspensos': item['suspensos'],
-                'saldo': item['saldo'],
+                'avosAdquiridos': item['avosadquiridos'],
+                'avosDireito': item['avosdireito'],
+                'avosPerdidos': item['avosperdidos'],
+                'anoExercicio': item['anoexercicio'],
             }
         }
-        if 'pagou1tercointegral' in item and item['pagou1tercointegral'] is not None:
-            dict_dados['conteudo'].update({'pagou1TercoIntegral': item['pagou1tercointegral']})
-        if 'diasanuladosrescisao' in item and item['diasanuladosrescisao'] is not None:
-            dict_dados['conteudo'].update({'diasAnuladosRescisao': item['diasanuladosrescisao']})
-        if 'conversao' in item and item['conversao'] is not None:
-            dict_dados['conteudo'].update({'conversao': item['conversao']})
-        if 'competenciafechamentoprovisao' in item and item['competenciafechamentoprovisao'] is not None:
-            dict_dados['conteudo'].update({'competenciaFechamentoProvisao': item['competenciafechamentoprovisao']})
+        if 'avosadquiridosfgts' in item and item['avosadquiridosfgts'] is not None:
+            dict_dados['conteudo'].update({'avosAdquiridosFgts': item['avosadquiridosfgts']})
+        if 'situacao' in item and item['situacao'] is not None:
+            dict_dados['conteudo'].update({'situacao': item['situacao']})
         if item['movimentacoes'] is not None:
             listaconteudo = []
             lista = item['movimentacoes'].split('%||%')
@@ -129,71 +121,21 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                         if campo[idx] == '':
                             campo[idx] = None
                     dict_item_conteudo = {}
-                    if campo[16] is not None:
+                    if campo[0] is not None:
                         dict_item_conteudo.update({
-                            'conversao': campo[16]
+                            'motivo': campo[0]
                         })
-                    if False:
-                        if campo[1] is not None:
-                            dict_item_conteudo.update({
-                                'dataInicio': campo[1]
-                            })
-                    if False:
-                        if campo[2] is not None:
-                            dict_item_conteudo.update({
-                                'dataFim': campo[2]
-                            })
+                    if campo[1] is not None:
+                        dict_item_conteudo.update({
+                            'consideraAvosPerdidos': campo[1]
+                        })
+                    if campo[2] is not None:
+                        dict_item_conteudo.update({
+                            'competencia': campo[2]
+                        })
                     if campo[3] is not None:
                         dict_item_conteudo.update({
-                            'motivo': campo[3]
-                        })
-                    if campo[4] is not None:
-                        dict_item_conteudo.update({
-                            'dataCancelamento': campo[4]
-                        })
-                    if campo[5] is not None:
-                        dict_item_conteudo.update({
-                            'dataInicioGozo': campo[5]
-                        })
-                    if campo[6] is not None:
-                        dict_item_conteudo.update({
-                            'dataFimGozo': campo[6]
-                        })
-                    if campo[7] is not None:
-                        dict_item_conteudo.update({
-                            'dataPagamento': campo[7]
-                        })
-                    if campo[8] is not None:
-                        dict_item_conteudo.update({
-                            'diasAbono': campo[8]
-                        })
-                    if campo[9] is not None:
-                        dict_item_conteudo.update({
-                            'diasGozo': campo[9]
-                        })
-                    if campo[10] is not None:
-                        dict_item_conteudo.update({
-                            'diasFalta': campo[10]
-                        })
-                    if campo[11] is not None:
-                        dict_item_conteudo.update({
-                            'diasPagosRescisao': campo[11]
-                        })
-                    if campo[12] is not None:
-                        dict_item_conteudo.update({
-                            'ferias': campo[12]
-                        })
-                    if campo[13] is not None:
-                        dict_item_conteudo.update({
-                            'tipo': campo[13]
-                        })
-                    if campo[14] is not None:
-                        dict_item_conteudo.update({
-                            'dataMovimento': campo[14]
-                        })
-                    if campo[15] is not None:
-                        dict_item_conteudo.update({
-                            'quantidade': campo[15]
+                            'valor': campo[3]
                         })
                     listaconteudo.append(dict_item_conteudo)
             if len(listaconteudo) > 0:
@@ -211,7 +153,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'json': json.dumps(dict_dados),
             'i_chave_dsk1': item['entidade'],
             'i_chave_dsk2': item['matricula'],
-            'i_chave_dsk3': item['datainicial']
+            'i_chave_dsk3': item['anoexercicio']
         })
     print(f'- Processo de transformação finalizado. ({(datetime.now() - dh_inicio).total_seconds()} segundos)')
     if True:

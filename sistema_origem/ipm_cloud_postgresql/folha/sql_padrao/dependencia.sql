@@ -29,7 +29,7 @@ select
 	 null as representanteLegal,
 	 (case when pa.ifcsequencia is not null then 'CREDITO_EM_CONTA' else 'DINHEIRO' end) as formaPagamento,
 	 (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'conta-bancaria', (select left(regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g'),11) from wun.tbunico as u where u.unicodigo = d.unicodigores), (select ucb.ifcnumeroconta from wun.tbunicocontabanco as ucb where ucb.unicodigo = d.unicodigores and ucb.ifcsequencia = pa.ifcsequencia))))::varchar as contaBancaria
-from wun.tbdependente as d join wfp.tbpensaoalimenticia as pa on pa.unicodigodep = d.unicodigodep and pa.odomesano = 202010
+from wun.tbdependente as d left join wfp.tbpensaoalimenticia as pa on pa.unicodigodep = d.unicodigodep and pa.odomesano = 202010
 	where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'dependencia', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'pessoa-fisica', (select regexp_replace(suc.unicpfcnpj,'[/.-]','','g') from wun.tbunico as suc where suc.unicodigo = d.unicodigores)))),(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'pessoa-fisica', (select regexp_replace(suc.unicpfcnpj,'[/.-]','','g') from wun.tbunico as suc where suc.unicodigo = d.unicodigodep)))))))  is null	 
 	-- and  d.unicodigores  = 687693
 ) as s

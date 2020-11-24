@@ -1,7 +1,10 @@
+--SELECT * FROM wfp.tbcalculofolha;
+--select * from wfp.tbrescisaocalculada;
+
 select * from ( select 
 row_number() over() as id,
 (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))) as entidade,
-row_number() over(partition by matricula order by matricula asc, dataRescisao asc) as codigo,
+row_number() over(partition by matricula order by matricula asc, dataPagamento asc) as codigo,
 * from (
 select
 	'RESCISAO' AS tipoProcessamento,
@@ -25,7 +28,7 @@ select
 --where fcncodigo = 56
 union all
 SELECT distinct
-'RESCISAO' AS tipoProcessamento,
+	'RESCISAO' AS tipoProcessamento,
 	(case tipcodigo when 3 then 'INTEGRAL' when 9 then 'COMPLEMENTAR' else null end) AS subTipoProcessamento,
     NULL AS dataAgendamento,
     pagdata::varchar AS dataPagamento,
@@ -48,7 +51,4 @@ SELECT distinct
 ) as a
 ) as b
 where matricula is not null
-and (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'rescisao',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),matricula,codigo))) is not null
-
---SELECT * FROM wfp.tbcalculofolha;
---select * from wfp.tbrescisaocalculada;
+and (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'calculo-folha-rescisao',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),matricula,tipoProcessamento,subTipoProcessamento,dataPagamento))) is null

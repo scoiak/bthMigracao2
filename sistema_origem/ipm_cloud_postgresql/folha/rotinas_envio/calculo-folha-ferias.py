@@ -6,8 +6,8 @@ import re
 from datetime import datetime
 
 sistema = 300
-tipo_registro = 'calculo-folha-rescisao'
-url = 'https://pessoal.cloud.betha.com.br/service-layer/v1/api/calculo-folha-rescisao'
+tipo_registro = 'calculo-folha-ferias'
+url = 'https://pessoal.cloud.betha.com.br/service-layer/v1/api/calculo-folha-ferias'
 limite_lote = 1000
 
 
@@ -78,40 +78,27 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                         },
                         'saldoFgts': item['saldofgts'],
                         'fgtsMesAnterior': item['fgtsmesanterior'],
+                        'periodos': [
+                            {
+                                "id": item['periodos']
+                            }
+                        ]
                     }
-                ],
-                'motivoRescisao': {
-                    'id': item['motivorescisao']
-                }
+                ]
             }
         }
         if 'tipoprocessamento' in item and item['tipoprocessamento'] is not None:
             dict_dados['conteudo'].update({'tipoProcessamento': item['tipoprocessamento']})
-        if 'subtipoprocessamento' in item and item['tipoprocessamento'] is not None:
+        if 'subtipoprocessamento' in item and item['subtipoprocessamento'] is not None:
             dict_dados['conteudo'].update({'subTipoProcessamento': item['subtipoprocessamento']})
         if 'dataagendamento' in item and item['dataagendamento'] is not None:
             dict_dados['conteudo'].update({'dataAgendamento': item['dataagendamento']})
         if 'datapagamento' in item and item['datapagamento'] is not None:
             dict_dados['conteudo'].update({'dataPagamento': item['datapagamento']})
-        if 'tipovinculacaomatricula' in item and item['tipovinculacaomatricula'] is not None:
-            dict_dados['conteudo'].update({'tipoVinculacaoMatricula': item['tipovinculacaomatricula']})
-        if 'avisoprevio' in item and item['avisoprevio'] is not None:
-            dict_dados['conteudo'].update({'avisoPrevio': item['avisoprevio']})
-        if 'datarescisao' in item and item['datarescisao'] is not None:
-            dict_dados['conteudo'].update({'dataRescisao': item['datarescisao']})
-        if 'consideraavosperdidosdecimoterceiro' in item and item['consideraavosperdidosdecimoterceiro'] is not None:
-            dict_dados['conteudo'].update({'consideraAvosPerdidosDecimoTerceiro': item['consideraavosperdidosdecimoterceiro']})
-        if 'descontarfaltasferias' in item and item['descontarfaltasferias'] is not None:
-            dict_dados['conteudo'].update({'descontarFaltasFerias': item['descontarfaltasferias']})
-        if 'trabalhoudiarescisao' in item and item['trabalhoudiarescisao'] is not None:
-            dict_dados['conteudo'].update({'trabalhouDiaRescisao': item['trabalhoudiarescisao']})
-        if 'reporvaga' in item and item['reporvaga'] is not None:
-            dict_dados['conteudo'].update({'reporVaga': item['reporvaga']})
-        if 'ato' in item and item['ato'] is not None:
-            dict_dados['conteudo'].update({
-                'ato': {
-                    'id': int(item['ato'])
-                }})
+        if 'competencia' in item and item['competencia'] is not None:
+            dict_dados['conteudo'].update({'competencia': item['competencia']})
+        if 'consideraavosperdidos' in item and item['consideraavosperdidos'] is not None:
+            dict_dados['conteudo'].update({'consideraAvosPerdidos': item['consideraavosperdidos']})
         print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({

@@ -23,8 +23,20 @@ select * from public.controle_migracao_lotes where tipo_registro = 'matricula';
 select * from public.controle_migracao_registro where tipo_registro = 'matricula';
 select * from public.controle_migracao_registro_ocor where tipo_registro = 'matricula';
 
+select
+(select max(p.pagvalor) from wfp.tbpagamento as p where p.fcncodigo = fg.fcncodigo and p.funcontrato = fg.funcontrato and p.tipcodigo = 2 and p.pagdata between fg.fgodatainicio and fg.fgodatafinal and p.odomesano = fg.odomesano),
+* 
+from wfp.tbferiasgozada as fg 
+where fcncodigo = 4714 
+and odomesano = 202010
+
+select * from wfp.tbdecimocalculado t 
+select * from wfp.tbpagamento wer
+
+select * from public.controle_migracao_registro_ocor where tipo_registro = 'periodo-aquisitivo-decimo-terceiro';
 select * from public.controle_migracao_registro_ocor where tipo_registro = 'periodo-aquisitivo-ferias';
 select * from public.controle_migracao_registro where tipo_registro = 'periodo-aquisitivo-ferias';
+select * from public.controle_migracao_registro where tipo_registro = 'periodo-aquisitivo-decimo-terceiro' and i_chave_dsk2 = '2042775';
 select * from public.controle_migracao_registro where tipo_registro = 'rescisao';
 select * from public.controle_migracao_registro where tipo_registro = 'rescisao' and i_chave_dsk2 ='2041812';
 
