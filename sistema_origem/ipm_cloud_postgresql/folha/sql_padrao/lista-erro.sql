@@ -21,13 +21,16 @@ SELECT
     reg.i_chave_dsk2 AS segundaChave,   
     reg.i_chave_dsk3 AS terceiraChave,   
     reg.i_chave_dsk4 AS quartaChave,   
+    reg.i_chave_dsk5 AS quntaChave,  
+    reg.i_chave_dsk6 AS sextaChave,  
+    reg.i_chave_dsk7 AS setimaChave,  
     ocor.hash_chave_dsk as codigo,
     reg.id_gerado AS idGerado,
     ocor.situacao AS estadoItem,
     ocor.mensagem_erro AS mensagemErro,
     --ocor.json_enviado AS jsonEnviado,
     reg.json_enviado AS jsonEnviado
-    ,lot.conteudo_json AS jsonLote    
+    --,lot.conteudo_json AS jsonLote    
 FROM 
     public.controle_migracao_registro as reg
 left JOIN 
@@ -36,16 +39,18 @@ left JOIN
     public.controle_migracao_lotes as lot on lot.id_lote = ocor.id_integracao 
 WHERE 
 	--ocor.hash_chave_dsk = 'a63ed5889527c9a01211c50e277646f6' AND
-	--reg.hash_chave_dsk = 'a63ed5889527c9a01211c50e277646f6' AND
+	--reg.hash_chave_dsk = 'd383033a39da06faa34a80bbac8dc4c6' AND	
     ocor.id_gerado IS null
 and 
 	reg.id_gerado is null
 AND
     --reg.tipo_registro = 'afastamento'
     --reg.tipo_registro = 'matricula'
-    reg.tipo_registro = 'lancamento-evento'
+    --reg.tipo_registro = 'lancamento-evento'
     --reg.tipo_registro = 'calculo-folha-rescisao'
+    --reg.tipo_registro = 'calculo-folha-decimo-terceiro'
     --reg.tipo_registro = 'periodo-aquisitivo-ferias'
+    reg.tipo_registro = 'calculo-folha-mensal'
 AND 
     ocor.i_sequencial = 
         (

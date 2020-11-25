@@ -92,16 +92,17 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             dict_dados['conteudo'].update({'dataPagamento': item['datapagamento']})
         if 'competencia' in item and item['competencia'] is not None:
             dict_dados['conteudo'].update({'competencia': item['competencia']})
-        if 'consideraavosperdidos' in item and item['consideraavosperdidos'] is not None:
-            dict_dados['conteudo'].update({'consideraAvosPerdidos': item['consideraavosperdidos']})
+        if 'tipovinculacaomatricula' in item and item['tipovinculacaomatricula'] is not None:
+            dict_dados['conteudo'].update({'tipoVinculacaoMatricula': item['tipovinculacaomatricula']})
         print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Rescisao',
+            'descricao_tipo_registro': 'Cadastro do Calculo de Folha Mensal',
             'id_gerado': None,
+            'json': json.dumps(dict_dados),
             'i_chave_dsk1': item['entidade'],
             'i_chave_dsk2': item['matricula'],
             'i_chave_dsk3': item['tipoprocessamento'],

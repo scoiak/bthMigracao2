@@ -12,9 +12,9 @@ limite_lote = 1000
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
-    if True:
-        busca_dados(params_exec)
     if False:
+        busca_dados(params_exec)
+    if True:
         dados_assunto = coletar_dados(params_exec)
         dados_enviar = pre_validar(params_exec, dados_assunto)
         if not params_exec.get('somente_pre_validar'):
@@ -28,20 +28,20 @@ def busca_dados(params_exec):
     print(f'- Foram encontrados {len(registros)} registros cadastrados no cloud.')
     registros_formatados = []
     for item in registros:
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, '56', item['matricula']['id'], item['dataInicial'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, '56', item['matricula']['id'], item['configuracao']['id'], item['tipoProcessamento'], item['subTipoProcessamento'], item['dataInicial'], item['dataFinal'])
         registros_formatados.append({
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Bairro',
+            'descricao_tipo_registro': 'Cadastro do Lancamento de Evento',
             'id_gerado': item['id'],
             'i_chave_dsk1': '56',
             'i_chave_dsk2': item['matricula']['id'],
             'i_chave_dsk3': item['configuracao']['id'],
-            'i_chave_dsk4': item['tipoprocessamento'],
-            'i_chave_dsk5': item['subtipoprocessamento'],
-            'i_chave_dsk6': item['datainicial'],
-            'i_chave_dsk7': item['datafinal']
+            'i_chave_dsk4': item['tipoProcessamento'],
+            'i_chave_dsk5': item['subTipoProcessamento'],
+            'i_chave_dsk6': item['dataInicial'],
+            'i_chave_dsk7': item['dataFinal']
         })
     model.insere_tabela_controle_migracao_registro(params_exec, lista_req=registros_formatados)
     print('- Busca finalizada. Tabelas de controles atualizas com sucesso.')
@@ -121,6 +121,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'hash_chave_dsk': hash_chaves,
             'descricao_tipo_registro': 'Cadastro do Lancamento de Evento',
             'id_gerado': None,
+            'json': json.dumps(dict_dados),
             'i_chave_dsk1': item['entidade'],
             'i_chave_dsk2': item['matricula'],
             'i_chave_dsk3': item['configuracao'],

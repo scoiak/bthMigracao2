@@ -67,7 +67,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     for item in dados:
         contador += 1
         # print(f'\r- Gerando JSON: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['entidade'], item['matricula'], item['codigo'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['entidade'], item['matricula'], item['data'])
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {
@@ -103,7 +103,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'id_gerado': None,
             'i_chave_dsk1': item['entidade'],
             'i_chave_dsk2': item['matricula'],
-            'i_chave_dsk3': item['codigo']
+            'i_chave_dsk3': item['data']
         })
     print(f'- Processo de transformação finalizado. ({(datetime.now() - dh_inicio).total_seconds()} segundos)')
     if True:

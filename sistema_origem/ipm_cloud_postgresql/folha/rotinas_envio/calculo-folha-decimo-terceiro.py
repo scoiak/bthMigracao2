@@ -12,10 +12,11 @@ limite_lote = 1000
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
-    dados_assunto = coletar_dados(params_exec)
-    dados_enviar = pre_validar(params_exec, dados_assunto)
-    if not params_exec.get('somente_pre_validar'):
-        iniciar_envio(params_exec, dados_enviar, 'POST')
+    if True:
+        dados_assunto = coletar_dados(params_exec)
+        dados_enviar = pre_validar(params_exec, dados_assunto)
+        if not params_exec.get('somente_pre_validar'):
+            iniciar_envio(params_exec, dados_enviar, 'POST')
     model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
 
 
@@ -82,6 +83,8 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                 ]
             }
         }
+        if 'tipovinculacaomatricula' in item and item['tipovinculacaomatricula'] is not None:
+            dict_dados['conteudo'].update({'tipoVinculacaoMatricula': item['tipovinculacaomatricula']})
         if 'tipoprocessamento' in item and item['tipoprocessamento'] is not None:
             dict_dados['conteudo'].update({'tipoProcessamento': item['tipoprocessamento']})
         if 'subtipoprocessamento' in item and item['subtipoprocessamento'] is not None:
@@ -102,6 +105,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'hash_chave_dsk': hash_chaves,
             'descricao_tipo_registro': 'Cadastro de Rescisao',
             'id_gerado': None,
+            'json': json.dumps(dict_dados),
             'i_chave_dsk1': item['entidade'],
             'i_chave_dsk2': item['matricula'],
             'i_chave_dsk3': item['tipoprocessamento'],

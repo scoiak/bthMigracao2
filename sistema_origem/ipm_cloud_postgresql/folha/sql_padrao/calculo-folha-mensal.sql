@@ -7,17 +7,19 @@ row_number() over(partition by matricula order by matricula asc, dataPagamento a
 	'MENSAL' AS tipoProcessamento,	 
 	(case tipcodigo  when 8 then 'COMPLEMENTAR' when 10 then 'ADIANTAMENTO' else 'INTEGRAL' end) AS subTipoProcessamento,
 	 null as dataAgendamento,
-	 pagdata as dataPagamento,
+	 pagdata::varchar as dataPagamento,
 	 'TEMPORAL' tipoVinculacaoMatricula,	 
-	 (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'matricula', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), fcncodigo, funcontrato))) as matricula,	 
-	 true as consideraAvosPerdidos,
+	 (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'matricula', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), fcncodigo, funcontrato))) as matricula,	 	 
 	 null as saldoFgts,
 	 false as fgtsMesAnterior,	 
 	 substring(odomesano::varchar,1,4) || '-' || substring(odomesano::varchar,5,2) as competencia
 	FROM wfp.tbpagamento
 	where tipcodigo in (1,8,10)
---	and fcncodigo = 4714  	
+--	
+and fcncodigo in (4714,2,113,15011,56)
+--and odomesano = 202010
+and odomesano >= 202001
 ) as a
 ) as b
 where matricula is not null
-and (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'rescisao',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),matricula,tipoProcessamento,subTipoProcessamento,dataPagamento))) is null
+and (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'calculo-folha-mensal',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),matricula,tipoProcessamento,subTipoProcessamento,dataPagamento))) is null

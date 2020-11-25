@@ -71,7 +71,6 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                 'unidade': None if 'unidade' not in item else item['unidade'],
                 'taxa': None if 'taxa' not in item else item['taxa'],
                 'codigoEsocial': None if 'codigoesocial' not in item else item['codigoesocial'],
-                'ato': None if 'ato' not in item else item['ato'],
                 'incideDsr': None if 'incidedsr' not in item else item['incidedsr'],
                 'naturezaRubrica': None if 'naturezarubrica' not in item else item['naturezarubrica'],
                 'compoemHorasMes': None if 'compoemhorasmes' not in item else item['compoemhorasmes'],
@@ -82,6 +81,11 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                 'configuracaoProcessamentos': None if 'configuracaoprocessamentos' not in item else item['configuracaoprocessamentos'],
             }
         }
+        if 'ato' in item and item['ato'] is not None:
+            dict_dados['conteudo'].update({
+                'ato': {
+                    'id': int(item['ato'])
+                }})
         contador += 1
         print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
