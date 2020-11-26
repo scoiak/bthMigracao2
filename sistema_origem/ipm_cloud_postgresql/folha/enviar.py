@@ -44,7 +44,7 @@ def iniciar():
     # enviar(params_exec, 'organograma')
     # enviar(params_exec, 'lotacao-fisica')
     # enviar(params_exec, 'pessoa-juridica')
-    enviar(params_exec, 'pessoa-fisica')
+    # enviar(params_exec, 'pessoa-fisica')
     # enviar(params_exec, 'pessoa-contas')
     # enviar(params_exec, 'dependencia')
     # enviar(params_exec, 'configuracao-evento')

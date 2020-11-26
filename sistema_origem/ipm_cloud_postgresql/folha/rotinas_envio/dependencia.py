@@ -59,7 +59,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     token = params_exec['token']
     contador = 0
     for item in dados:
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['pessoa'], item['pessoadependente'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['cpf_dependente'], item['cpf_responsavel'], item['datainiciobeneficio'])
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {
@@ -105,11 +105,11 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'descricao_tipo_registro': 'Cadastro de Dependencia',
             'id_gerado': None,
             'json': json.dumps(dict_dados),
-            'i_chave_dsk1': item['pessoa'],
-            'i_chave_dsk2': item['pessoadependente']
-
+            'i_chave_dsk1': item['cpf_dependente'],
+            'i_chave_dsk2': item['cpf_responsavel'],
+            'i_chave_dsk3': item['datainiciobeneficio']
         })
-    model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)
+    model.insere_tabela_controle_migracao_registro2(params_exec, lista_req=lista_controle_migracao)
     req_res = interacao_cloud.preparar_requisicao(lista_dados=lista_dados_enviar,
                                                   token=token,
                                                   url=url,

@@ -142,7 +142,7 @@ def busca_dados_cloud(params_exec, **kwargs):
     dados_coletados = []
     has_next = True
     url = kwargs.get('url')
-    limit = 10
+    limit = 30
     offset = 0
     erros_consecutivos = 0
     rodada_busca = 1
