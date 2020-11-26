@@ -112,28 +112,26 @@ def enviar_lote(lote, *args, **kwargs):
         headers = {'authorization': f'bearer {token}', 'content-type': 'application/json'}
         retorno_req = requests.post(url, headers=headers, data=json_envio_lote)
         # print("DEBUG - Tempo requisição: ", retorno_req.elapsed.total_seconds(), ' segundos.')
-        if 'json' in retorno_req.headers.get('Content-Type'):
-            retorno_json = retorno_req.json()
-
-            if 'id_lote' in retorno_json:
-                retorno_requisicao['id_lote'] = retorno_json['idLote']
-            elif 'id' in retorno_json:
-                retorno_requisicao['id_lote'] = retorno_json['id']
+        if retorno_req.ok:
+            if 'json' in retorno_req.headers.get('Content-Type'):
+                retorno_json = retorno_req.json()
+                if 'id_lote' in retorno_json:
+                    retorno_requisicao['id_lote'] = retorno_json['idLote']
+                elif 'id' in retorno_json:
+                    retorno_requisicao['id_lote'] = retorno_json['id']
+                else:
+                    print('DEBUG - retorno_json: ', retorno_json)
+                    retorno_requisicao['id_lote'] = ''
+                # print('DEBUG - Lote enviado: ', retorno_requisicao['id_lote'])
+                if settings.SISTEMA_ORIGEM == 'folha':
+                    retorno_requisicao['url_consulta'] = url + '/lotes/' + retorno_requisicao['id_lote']
+                else:
+                    retorno_requisicao['url_consulta'] = re.sub('\w+$', f'lotes/{retorno_requisicao["idLote"]}', url)
             else:
-                retorno_requisicao['id_lote'] = ''
-
-            # print('DEBUG - Lote enviado: ', retorno_requisicao['id_lote'])
-
-            if settings.SISTEMA_ORIGEM == 'folha':
-                retorno_requisicao['url_consulta'] = url + '/lotes/' + retorno_requisicao['id_lote']
-            else:
-                retorno_requisicao['url_consulta'] = re.sub('\w+$', f'lotes/{retorno_requisicao["idLote"]}', url)
-        else:
-            print('Retorno não JSON:', retorno_req.status_code, retorno_req.text)
+                print('Retorno não JSON:', retorno_req.status_code, retorno_req.text)
 
     except Exception as error:
         print(f'Erro durante a execução da função enviar_lote. {error}')
-
     finally:
         return retorno_requisicao
 
