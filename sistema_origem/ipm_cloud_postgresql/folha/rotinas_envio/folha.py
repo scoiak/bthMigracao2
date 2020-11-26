@@ -152,6 +152,29 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                         dict_item_conteudo.update({
                             'periodosAquisitivosFerias': campo[4]
                         })
+                    if campo[5] is not None:
+                        campolistaconteudo = []
+                        campolista = campo[5].split('%||%')
+                        if len(lista) > 0:
+                            for campolistacampo in campolista:
+                                campocampo = campolistacampo.split('%|%')
+                                for idx, val in enumerate(campocampo):
+                                    if campocampo[idx] == '':
+                                        campocampo[idx] = None
+                                campodict_item_conteudo = {
+                                    'dependencia': {
+                                        'id': int(campocampo[0])
+                                    }
+                                }
+                                if campocampo[1] is not None:
+                                    campodict_item_conteudo.update({
+                                        'valor': campocampo[1]
+                                    })
+                                campolistaconteudo.append(campodict_item_conteudo)
+                        if len(campolistaconteudo) > 0:
+                            dict_item_conteudo.update({
+                                'rateioDependentes': campolistaconteudo
+                            })
                     listaconteudo.append(dict_item_conteudo)
             if len(listaconteudo) > 0:
                 dict_dados['conteudo'].update({

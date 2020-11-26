@@ -47,7 +47,7 @@ select distinct
 	 pagdata::varchar as dataPagamento,
 	 null as dataLiberacao,
       pagdata::varchar as  dataCalculo,
---  substring(odomesano::varchar,1,4) || '-' || substring(odomesano::varchar,5,2) || '-' || '01' as dataFechamento,
+	--substring(odomesano::varchar,1,4) || '-' || substring(odomesano::varchar,5,2) || '-' || '01' as dataFechamento,
       'FECHADA' as situacao,
 	  --true as conversao, 	  
 	  	(select string_agg(suc.configuracao || '%|%' || suc.tipo || '%|%' || suc.referencia || '%|%' || suc.valor || '%|%' || '','%||%') from (	 select 	 (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'configuracao-evento', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), suc.cpdcodigo))) as configuracao,  	   (select (case sucpd.cpdclasse when 1 then 'VENCIMENTO' when 2 then 'DESCONTO' when 3 then 'INFORMATIVO_MAIS' when 4 then 'INFORMATIVO_MENOS' end)		FROM  wfp.tbprovdesc as sucpd	  where suc.clicodigo =  sucpd.clicodigo	   and suc.odomesano =  sucpd.odomesano	   and suc.cpdcodigo =  sucpd.cpdcodigo ) as tipo,	  pagreferencia as  referencia,	  pagvalor as valor	  	 FROM wfp.tbpagamento as suc	 where suc.fcncodigo = p.fcncodigo and  suc.funcontrato = p.funcontrato and suc.odomesano = p.odomesano and suc.tipcodigo = p.tipcodigo) as suc) as eventos,
