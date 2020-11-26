@@ -282,12 +282,14 @@ where
 --(fc.odomesano = (select max(afc.odomesano) from wfp.tbfuncontrato as afc where afc.fcncodigo = fc.fcncodigo and afc.funcontrato = fc.funcontrato and afc.funtipocontrato not in (4) limit 1) or fc.odomesano = (select max(afc.odomesano) from wfp.tbfuncontrato as afc where afc.fcncodigo = fc.fcncodigo and afc.funcontrato = fc.funcontrato and afc.funtipocontrato in (4) limit 1))
 --fc.odomesano = (select max(afc.odomesano) from wfp.tbfuncontrato as afc where afc.fcncodigo = fc.fcncodigo and afc.funcontrato = fc.funcontrato and afc.funtipocontrato not in (4) limit 1)
 fc.odomesano = 202010
+--and fc.fcncodigo = 56
 -- and fc.funtipocontrato not in (3,4)
 --and fc.fcncodigo in (15605,603,1747,2279,14020,570,12684,1739)
 --and fc.funsituacao in (1,2)
 order by fc.fcncodigo,fc.funcontrato
 limit 600 offset 0
 ) as s
-where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'matricula', clicodigo, fcncodigo, funcontrato))) is null and 
+where 
+(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'matricula', clicodigo, fcncodigo, funcontrato))) is null and 
 pessoa is not null
 and cargo is not null;

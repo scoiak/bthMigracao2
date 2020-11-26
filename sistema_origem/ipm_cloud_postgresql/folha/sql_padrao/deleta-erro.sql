@@ -39,7 +39,7 @@ DO $$ DECLARE
 	-- tr text := 'cargo';
     -- tr text := 'vinculo-empregaticio';
     -- tr text := 'afastamento';
-    -- tr text := 'dependencia';
+    tr text := 'dependencia';
     --tr text := 'lancamento-evento';
     --tr text := 'calculo-folha-decimo-terceiro';
    --tr text := 'calculo-folha-mensal';

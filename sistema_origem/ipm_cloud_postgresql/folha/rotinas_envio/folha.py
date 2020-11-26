@@ -154,10 +154,10 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                         })
                     if campo[5] is not None:
                         campolistaconteudo = []
-                        campolista = campo[5].split('%||%')
+                        campolista = campo[5].split('%&&%')
                         if len(lista) > 0:
                             for campolistacampo in campolista:
-                                campocampo = campolistacampo.split('%|%')
+                                campocampo = campolistacampo.split('%&%')
                                 for idx, val in enumerate(campocampo):
                                     if campocampo[idx] == '':
                                         campocampo[idx] = None

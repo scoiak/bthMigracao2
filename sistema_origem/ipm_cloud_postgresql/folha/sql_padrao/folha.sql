@@ -1,6 +1,9 @@
 create index IF NOT exists idx_p_p on wfp.tbpagamento (fcncodigo, funcontrato, odomesano, tipcodigo);
 create index IF NOT exists idx_p_pb on wfp.tbpagamentobase (fcncodigo, funcontrato, odomesano);
 create index IF NOT exists idx_p_pd on wfp.tbprovdesc (odomesano,cpdcodigo, cpdclasse);
+create index IF NOT exists idx_p_irrf on wfp.tbirrf (odomesano,irrmesano);
+create index IF NOT exists idx_p_pa on wfp.tbpensaoalimenticia (fcncodigo,funcontrato,odomesano);
+
 
 select * from ( select 
 row_number() over() as id,
@@ -50,19 +53,48 @@ select distinct
 	--substring(odomesano::varchar,1,4) || '-' || substring(odomesano::varchar,5,2) || '-' || '01' as dataFechamento,
       'FECHADA' as situacao,
 	  --true as conversao, 	  
-	  	(select string_agg(suc.configuracao || '%|%' || suc.tipo || '%|%' || suc.referencia || '%|%' || suc.valor || '%|%' || '' || '%|%' || '','%||%') from (	 select 	 (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'configuracao-evento', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), 
-	  	/*
-	  	 (case suc.cpdcodigo 
+	  	(select string_agg(suc.configuracao || '%|%' || suc.tipo::varchar || '%|%' || coalesce(suc.referencia,0) || '%|%' || coalesce(suc.valor,0) || '%|%' || coalesce(suc.periodosAquisitivosFerias,'') || '%|%' || coalesce(suc.rateioDependentes,''),'%||%') 
+	  	from ( select sum(suc.valor) as valor,sum(suc.referencia) as referencia,suc.tipo,suc.configuracao,suc.periodosAquisitivosFerias,suc.rateioDependentes from (	 select 	
+	  	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'configuracao-evento', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), 		  	 
+	  	(case suc.cpdcodigo 
 	  	when 675 then 44 
-	  	end )	  	
-	  	 */
-	  	suc.cpdcodigo 
-	  	))) as configuracao, (select (case sucpd.cpdclasse when 1 then 'VENCIMENTO' when 2 then 'DESCONTO' when 3 then 'INFORMATIVO_MAIS' when 4 then 'INFORMATIVO_MENOS' end)		FROM  wfp.tbprovdesc as sucpd	  where suc.clicodigo =  sucpd.clicodigo	   and suc.odomesano =  sucpd.odomesano	   and suc.cpdcodigo =  sucpd.cpdcodigo ) as tipo,	  pagreferencia as  referencia,	  pagvalor as valor	  	 FROM wfp.tbpagamento as suc	 where suc.fcncodigo = p.fcncodigo and  suc.funcontrato = p.funcontrato and suc.odomesano = p.odomesano and suc.tipcodigo = p.tipcodigo) as suc) as eventos,
-		(select string_agg(suc.configuracao || '%|%' || (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'base', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),suc.base))) || '%|%' || suc.valor,'%||%') from (		 	select distinct 			 	(CASE pb.cpdcodigo  	WHEN 36 then 'FGTS'	 WHEN 50 then 'INSS'     WHEN 51 then 'INSS13' 	 WHEN 52 then 'PREVEST' 	 WHEN 53 then 'PREVEST13'	 WHEN 56 then 'FUNDOPREV' 	 WHEN 57 then 'FUNDPREV13' 	 WHEN 58 then 'IRRF' 	 WHEN 59 then  'IRRF13'	 WHEN 91 then 'FUPRFEPR'	 WHEN 92 then 'IRRFFER' 	 WHEN 116 then 'IRRFFERRESC' 	 WHEN 126 then 'SALAFAM'  	 WHEN 127  then 'SALAFAM'  /* 'SALAFAMILUA Estatuatario' Não tem similar no padrão betha Cloud ver se será necessário criar ou deixa como 'SALAFAM' WHEN 401 	"ABATIMENTO PREVBIGUAÇU(Cargo comissionado)" Não tem similar no padrão betha Cloud*/	 WHEN 525 then 'INSS' 	 WHEN 526 then 'INSS13'  	 WHEN 660 then  'FUNDOPREV' end) as base,	 (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'configuracao-evento', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), pb.cpdcodigo))) as configuracao,	 pb.pbavalor as valor		  FROM wfp.tbpagamentobase as pb	where pb.fcncodigo = p.fcncodigo and  pb.funcontrato = p.funcontrato and pb.odomesano = p.odomesano) as suc) as composicaoBases
+	  	when 525 then 50 
+	  	when 526 then 51
+	  	else suc.cpdcodigo 
+	  	end )	  		  		  	
+	  	))) as configuracao, (select (case sucpd.cpdclasse when 1 then 'VENCIMENTO' when 2 then 'DESCONTO' when 3 then 'INFORMATIVO_MAIS' when 4 then 'INFORMATIVO_MENOS' end)		FROM  wfp.tbprovdesc as sucpd	  where suc.clicodigo =  sucpd.clicodigo	   and suc.odomesano =  sucpd.odomesano	   and suc.cpdcodigo =  sucpd.cpdcodigo )  as tipo,	  pagreferencia as  referencia,	  pagvalor as valor,
+	  	null as periodosAquisitivosFerias,
+	  	(case when suc.cpdcodigo in (44,675) then (
+	  	/**/
+	  	select string_agg(coalesce(xuc.dependencia::varchar,'') || '%&%' || coalesce(xuc.valor::varchar,''),'%&&%') from ( select (select id_gerado
+	 	from public.controle_migracao_registro
+	 	where hash_chave_dsk = md5(concat('300','dependencia', (select regexp_replace(suc.unicpfcnpj,'[/.-]','','g') from wun.tbunico as suc where suc.unicodigo = pa.unicodigodep),
+	 									 (select regexp_replace(suc.unicpfcnpj,'[/.-]','','g') from wun.tbunico as suc where suc.unicodigo = (select fc.unicodigo from wfp.tbfuncontrato as fc where fc.fcncodigo = p.fcncodigo and fc.funcontrato = p.funcontrato and fc.odomesano = 202010)),
+	 									   pa.pnsdatainicio::varchar
+	 									  ))) as dependencia,
+	 									  pa.pnsreferencia as valor
+	 									  from wfp.tbpensaoalimenticia as pa
+	 									  where pa.fcncodigo = p.fcncodigo and pa.funcontrato = p.funcontrato and odomesano = 202010
+	  	/**/
+	  	) as xuc where dependencia is not null) else null end) as rateioDependentes
+	  	FROM wfp.tbpagamento as suc	 where suc.fcncodigo = p.fcncodigo and  suc.funcontrato = p.funcontrato and suc.odomesano = p.odomesano and suc.tipcodigo = p.tipcodigo
+	  	) as suc group by configuracao,tipo,periodosAquisitivosFerias,rateioDependentes
+	  	union all
+	  	select	
+	  	((select count(d.unicodigodep) from wun.tbdependente as d where d.unicodigores = (select fc.unicodigo from wfp.tbfuncontrato as fc where fc.fcncodigo = p.fcncodigo and fc.funcontrato = p.funcontrato and fc.odomesano = 202010) and depir in (1,2)) * (select irrf.irrdeducaodep from wfp.tbirrf as irrf where irrf.odomesano = 202010 and (irrf.irrmesano = p.odomesano or irrf.irrmesano < p.odomesano) order by irrf.irrmesano desc limit 1)) as valor,
+	  	(select count(d.unicodigodep) from wun.tbdependente as d where d.unicodigores = (select fc.unicodigo from wfp.tbfuncontrato as fc where fc.fcncodigo = p.fcncodigo and fc.funcontrato = p.funcontrato and fc.odomesano = 202010) and depir in (1,2)) as referencia,	 
+	  	'INFORMATIVO_MENOS' as tipo,	 
+	  	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'configuracao-evento', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),138))) as configuracao,
+	  	null as periodosAquisitivosFerias,
+	  	null as rateioDependentes
+	    where (select count(d.unicodigodep) from wun.tbdependente as d where d.unicodigores = (select fc.unicodigo from wfp.tbfuncontrato as fc where fc.fcncodigo = p.fcncodigo and fc.funcontrato = p.funcontrato and fc.odomesano = 202010) and d.depir in (1,2)) > 0
+	  	) as suc
+	  	) as eventos,	  		  
+		(select string_agg(suc.configuracao || '%|%' || (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'base', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),suc.base))) || '%|%' || coalesce(suc.valor,0),'%||%') from (		 	select distinct 			 	(CASE pb.cpdcodigo  	WHEN 36 then 'FGTS'	 WHEN 50 then 'INSS'     WHEN 51 then 'INSS13' 	 WHEN 52 then 'PREVEST' 	 WHEN 53 then 'PREVEST13'	 WHEN 56 then 'FUNDOPREV' 	 WHEN 57 then 'FUNDPREV13' 	 WHEN 58 then 'IRRF' 	 WHEN 59 then  'IRRF13'	 WHEN 91 then 'FUPRFEPR'	 WHEN 92 then 'IRRFFER' 	 WHEN 116 then 'IRRFFERRESC' 	 WHEN 126 then 'SALAFAM'  	 WHEN 127  then 'SALAFAM'  /* 'SALAFAMILUA Estatuatario' Não tem similar no padrão betha Cloud ver se será necessário criar ou deixa como 'SALAFAM' WHEN 401 	"ABATIMENTO PREVBIGUAÇU(Cargo comissionado)" Não tem similar no padrão betha Cloud*/	 WHEN 525 then 'INSS' 	 WHEN 526 then 'INSS13'  	 WHEN 660 then  'FUNDOPREV' end) as base,	 (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'configuracao-evento', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), pb.cpdcodigo))) as configuracao,	 pb.pbavalor as valor		  FROM wfp.tbpagamentobase as pb	where pb.fcncodigo = p.fcncodigo and  pb.funcontrato = p.funcontrato and pb.odomesano = p.odomesano) as suc) as composicaoBases
 	   FROM wfp.tbpagamento  as p	 
 	 --where odomesano = 202010
 where odomesano >= 202001	 
---and fcncodigo in (4714,2,113,15011,56)
+and fcncodigo in (4714,2,113,15011,56,10438)
 ) as a
 ) as b
 where matricula is not null

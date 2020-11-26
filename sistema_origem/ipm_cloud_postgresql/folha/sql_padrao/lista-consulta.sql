@@ -1,3 +1,6 @@
+select tipo_registro as registro,data_hora_env ,data_hora_ret,(data_hora_ret  - data_hora_env) as totalRetorno, id_lote as lote from public.controle_migracao_lotes where length(id_lote) > 1 order by data_hora_env desc;
+
+select * from controle_migracao_lotes cml  order by data_hora_env desc;
 
 select * from wfp.tbrubricaautonomoplano
 select * from wfp.tbrubricaautonomo
@@ -16,7 +19,6 @@ SELECT to_date(((case when substring('202001',5,2) = '01' then   (substring('202
 select data_hora_env ,data_hora_ret,(data_hora_ret  - data_hora_env) as totalRetorno, id_lote as lote from public.controle_migracao_lotes  order by data_hora_env desc;
 
 select data_hora_env ,data_hora_ret,(data_hora_ret  - data_hora_env) as totalRetorno, id_lote as lote from public.controle_migracao_lotes where tipo_registro = 'matricula' order by data_hora_env desc;
-select tipo_registro as registro,data_hora_env ,data_hora_ret,(data_hora_ret  - data_hora_env) as totalRetorno, id_lote as lote from public.controle_migracao_lotes where length(id_lote) > 1 order by data_hora_env desc;
 
 select * from public.controle_migracao_registro where tipo_registro = 'lancamento-evento' and hash_chave_dsk  = 'cda0b61044d4902674da4698b83dc72d';
 select * from public.controle_migracao_lotes where tipo_registro = 'lancamento-evento' and conteudo_json like '%2738db17a14e99863d1eaf128c7d0122%';
@@ -42,6 +44,10 @@ select * from public.controle_migracao_registro_ocor where tipo_registro = 'lanc
 select * from public.controle_migracao_registro_ocor where tipo_registro = 'calculo-folha-decimo-terceiro';
 select * from public.controle_migracao_registro_ocor where tipo_registro = 'calculo-folha-rescisao';
 select * from public.controle_migracao_registro_ocor where tipo_registro = 'base';
+
+(select irrf.irrdeducaodep from wfp.tbirrf as irrf where irrf.odomesano = 202010 and (irrf.irrmesano = p.odomesano or irrf.irrmesano < p.odomesano) order by irrf.irrmesano desc limit 1)
+
+select * from public.controle_migracao_registro_ocor where tipo_registro = 'dependencia';
 
 select * from public.controle_migracao_registro_ocor where tipo_registro = 'folha';
 select * from public.controle_migracao_registro where tipo_registro = 'folha';
