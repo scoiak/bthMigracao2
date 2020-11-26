@@ -42,10 +42,11 @@ select
 	 									  /* Dt Ini Ben.   */ pa.pnsdatainicio::varchar
 	 									  ))) as id_gerado
 	 from wun.tbdependente as d
-	 left join wfp.tbpensaoalimenticia as pa on d.unicodigodep = pa.unicodigodep and pa.odomesano = 202011
+	 left join wfp.tbpensaoalimenticia as pa on d.unicodigodep = pa.unicodigodep and pa.odomesano = 202010
 	-- and  d.unicodigores  = 687693
 ) as s
 where grau is not null
+--and pensao = true
 and pessoa is not null
 and pessoaDependente is not null
 and pessoa != pessoaDependente
