@@ -27,7 +27,7 @@ from wfp.tbdecimocalculado as dc
 where odomesano = 202010
 and decanopagamento < 2020
 --
-and  dc.fcncodigo IN (4714,2,113,15011,56)
+and  dc.fcncodigo IN (4714,2,113,15011,56,10438)
 union all
 select distinct on (fcncodigo,funcontrato,decanopagamento)
   		dc.fcncodigo as fcncodigo,
@@ -49,7 +49,7 @@ from wfp.tbdecimocalculado as dc
 where odomesano = 202010
 and decanopagamento >= 2020
 --
-and  dc.fcncodigo IN (4714,2,113,15011,56)
+and  dc.fcncodigo IN (4714,2,113,15011,56,10438)
 ) as a
 ) as b
 ) as c

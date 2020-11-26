@@ -27,7 +27,7 @@ SELECT distinct
     FALSE as reporVaga       
 	FROM wfp.tbpagamento as p
 	where tipcodigo in (3,9)
-	and fcncodigo in (4714,2,113,15011,56)
+	and fcncodigo in (4714,2,113,15011,56,10438)
 	union all
 select
 	'RESCISAO' AS tipoProcessamento,
@@ -48,7 +48,7 @@ select
     FALSE AS trabalhouDiaRescisao,
     FALSE as reporVaga       
     from wfp.tbrescisaocalculada
-	where fcncodigo in (4714,2,113,15011,56)
+	where fcncodigo in (4714,2,113,15011,56,10438)
 ) as s
 	) as a
 ) as b
