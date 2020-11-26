@@ -23,7 +23,7 @@ select
 	 pa.pnsdatafinal::varchar as dataVencimento,
 	 null as alvaraJudicial,
 	 null as dataAlvara,
-	 (case when 1 = 1 then 'VALOR_FIXO' else 'VALOR_PERCENTUAL' end) as aplicacaoDesconto,
+	 (case when pa.pnsreferencia is not null then 'VALOR_FIXO' when 2 = 1 then 'VALOR_PERCENTUAL' else  null end) as aplicacaoDesconto,
 	 pa.pnsreferencia::varchar as valorDesconto,
 	 null as percentualDesconto,
 	 null as percentualPensaoFgts,
