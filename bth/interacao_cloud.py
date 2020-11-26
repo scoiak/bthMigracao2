@@ -72,7 +72,8 @@ def preparar_requisicao(lista_dados, *args, **kwargs):
                                         url=kwargs.get('url'),
                                         token=kwargs.get('token'),
                                         tipo_registro=kwargs.get('tipo_registro'))
-                retorno_requisicao.append(ret_envio)
+                if ret_envio['id_lote'] is not None:
+                    retorno_requisicao.append(ret_envio)
 
                 lotes_enviados += 1
                 print(f'\r- Lotes enviados: {lotes_enviados}/{total_lotes}', end='')
@@ -121,7 +122,7 @@ def enviar_lote(lote, *args, **kwargs):
                     retorno_requisicao['id_lote'] = retorno_json['id']
                 else:
                     print('DEBUG - retorno_json: ', retorno_json)
-                    retorno_requisicao['id_lote'] = ''
+                    retorno_requisicao['id_lote'] = None
                 # print('DEBUG - Lote enviado: ', retorno_requisicao['id_lote'])
                 if settings.SISTEMA_ORIGEM == 'folha':
                     retorno_requisicao['url_consulta'] = url + '/lotes/' + retorno_requisicao['id_lote']
