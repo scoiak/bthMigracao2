@@ -8,6 +8,7 @@ tipo_registro = 'pessoa-fisica'
 sistema = 300
 limite_lote = 500
 url = "https://pessoal.cloud.betha.com.br/service-layer/v1/api/pessoa-fisica"
+atualizar_ja_enviados = True
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
@@ -240,8 +241,24 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             dict_dados['conteudo'].update({
                 'naturalizado': item['naturalizado']
             })
+        if item['observacoes'] is not None:
+            dict_dados['conteudo'].update({
+                'camposAdicionais': {
+                    "tipo": "PESSOA_FISICA",
+                    'campos': [
+                        {
+                            'id': item['id_ca_observacoes'],
+                            'valor': item['observacoes']
+                        }
+                    ]
+                }
+            })
+        if atualizar_ja_enviados and item['id_gerado'] != 0:
+            dict_dados['conteudo'].update({
+                'id': item['id_gerado']
+            })
         contador += 1
-        # print(f'Dados gerados ({contador}): ', dict_dados)
+        print(f'Dados gerados ({contador}): ', json.dumps(dict_dados))
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,
@@ -249,6 +266,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'hash_chave_dsk': hash_chaves,
             'descricao_tipo_registro': 'Cadastro de Pessoa Fisica',
             'id_gerado': None,
+            'json': json.dumps(dict_dados),
             'i_chave_dsk1': item['cpf']
         })
     if True:

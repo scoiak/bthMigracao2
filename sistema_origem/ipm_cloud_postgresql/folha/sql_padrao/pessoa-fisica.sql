@@ -1,4 +1,7 @@
-select * from (
+select
+	'5fbbb7e4ed9eb4010438607a' as id_ca_observacoes, -- INSERIR AQUI O ID DO CAMPO ADICIONAL 'OBSERVAÇÕES'
+	*
+from (
 	select
 	u.unicodigo as id,
 	u.unicodigo as codigo,
@@ -61,7 +64,9 @@ select * from (
 	(select string_agg('Endereço' || (case suc.linha when 1 then '' else ' ' || cast(suc.linha as varchar) end) || '%|%' || (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','logradouro', (select left(upper(l.lognome),50) from wun.tblogradouro as l where l.logcodigo = suc.logcodigo),(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','municipio', (select left(c.cidnome,50) from wun.tbcidade as c where c.cidcodigo = suc.cidcodigo limit 1),(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','estado', (select left(e.estnome,20) from wun.tbestado as e where e.estcodigo = (select c.estcodigo from wun.tbcidade as c where c.cidcodigo = suc.cidcodigo limit 1) limit 1)))))))))) || '%|%' || (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','bairro', (select left(upper(b.bainome),50) from wun.tbbairro as b where b.baicodigo = suc.baicodigo),(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','municipio', (select left(c.cidnome,50) from wun.tbcidade as c where c.cidcodigo = suc.cidcodigo limit 1),(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','estado', (select left(e.estnome,20) from wun.tbestado as e where e.estcodigo = (select c.estcodigo from wun.tbcidade as c where c.cidcodigo = suc.cidcodigo limit 1) limit 1)))))))))) || '%|%' || coalesce(nullif(trim(suc.cplcep::varchar),''),'00000000') || '%|%' || coalesce(nullif(trim(suc.unenumero),''), 'S/N') || '%|%' || coalesce(nullif(trim(left(suc.unecomplemento,30)),''),'S/C') || '%|%' || (CASE suc.linha when 1 then 'true' else 'false' end),'%||%') from (select row_number() OVER (partition by uc.unicodigo order by uc.unicodigo desc) as linha,* from wun.tbunicoendereco as uc where uc.unicodigo = u.unicodigo) as suc group by suc.unicodigo order by suc.unicodigo desc) as enderecos,
 	(select string_agg('Conta Bancaria' || (case suc.linha when 1 then '' else ' ' || cast(suc.linha as varchar) end) || '%|%' || (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','agencia-bancaria', cast(suc.bcaagencia as varchar),cast((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','banco', cast(suc.bcocodigo as varchar)))) as varchar)))) || '%|%' || suc.ifcnumeroconta || '%|%' || suc.ifcdigitoconta || '%|%' || (case when suc.ifctipoconta in (1,4) then 'CORRENTE' when suc.ifctipoconta in (2,6) then 'POUPANCA' when suc.ifctipoconta in (3,5) then 'SALARIO' end) || '%|%' || '1990-01-01' || '%|%' || '1990-01-01' || '%|%' || 'ABERTA' || '%|%' || (CASE suc.linha when 1 then 'true' else 'false' end), '%||%') from (select row_number() OVER (partition by uc.unicodigo order by uc.unicodigo desc) as linha,* from wun.tbunicocontabanco as uc where uc.unicodigo = u.unicodigo) as suc group by suc.unicodigo order by suc.unicodigo desc) as contasBancarias,
 	(case uf.unftipodeficiencia when 2 then 'FISICA' when 3 then 'AUDITIVA' when 4 then 'MENTAL' when 5 then 'MULTIPLA' when 6 then 'AUTISMO' when 7 then 'REABILITADO' when 8 then 'OUTRA' when 9 then 'VISUAL' when 10 then 'MENTAL' when 11 then 'VISUAL' when 12 then 'MULTIPLA' else null end) as deficiencias,
-	((case when uf.unfnomemae is not null then (trim(uf.unfnomemae) || '%|%' || 'MAE%|%BIOLOGICA' || (case when trim(uf.unfnomepai) is not null then '%||%' else null end)) else null end) || (case when trim(uf.unfnomepai) is not null then (trim(uf.unfnomepai) || '%|%' || 'PAI%|%BIOLOGICA') else null end)) as filiacoes
+	((case when uf.unfnomemae is not null then (trim(uf.unfnomemae) || '%|%' || 'MAE%|%BIOLOGICA' || (case when trim(uf.unfnomepai) is not null then '%||%' else null end)) else null end) || (case when trim(uf.unfnomepai) is not null then (trim(uf.unfnomepai) || '%|%' || 'PAI%|%BIOLOGICA') else null end)) as filiacoes,
+	u.uniobservacoes as observacoes,
+	coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'pessoa-fisica', left(regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g'),11)))), 0) as id_gerado
 from
 	wun.tbunico as u  join wun.tbunicofisica as uf on uf.unicodigo = u.unicodigo
 where
@@ -73,5 +78,5 @@ and length(regexp_replace(u.unicpfcnpj,'[/.-]|[0]|[ ]','','g')) > 0
 --and	uf.unfdatanascimento is not null
 -- and (select suc.unicodigo from wun.tbunico as suc where suc.unitipopessoa = 1 and suc.unisituacao = 1 and suc.unicpfcnpj = u.unicpfcnpj order by suc.unicodigo asc limit 1) = u.unicodigo
 ) as a
-where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'pessoa-fisica', cpf))) is null
--- limit 1000
+--where id_gerado <> 0
+-- limit 10

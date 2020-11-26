@@ -13,13 +13,13 @@ limite_lote = 500
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
-    # dados_assunto = coletar_dados(params_exec)
-    # dados_enviar = pre_validar(params_exec, dados_assunto)
+    dados_assunto = coletar_dados(params_exec)
+    dados_enviar = pre_validar(params_exec, dados_assunto)
     if not params_exec.get('somente_pre_validar'):
         pass
         # iniciar_envio(params_exec, dados_enviar, 'POST')
 
-    ler_lotes()
+    ler_lotes(params_exec, dados_enviar)
 
 
 def coletar_dados(params_exec):
@@ -40,7 +40,6 @@ def coletar_dados(params_exec):
 
 
 def pre_validar(params_exec, dados):
-    print('- Iniciando pré-validação dos registros.')
     dados_validados = []
     registro_erros = []
     try:
@@ -49,8 +48,6 @@ def pre_validar(params_exec, dados):
             registro_valido = True
             if registro_valido:
                 dados_validados.append(linha)
-        print(f'- Pré-validação finalizada. Registros validados com sucesso: '
-              f'{len(dados_validados)} | Registros com advertência: {len(registro_erros)}')
     except Exception as error:
         logging.error(f'Erro ao executar função "pre_validar". {error}')
     finally:
@@ -91,28 +88,25 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             print('\nErro ao realizar requisição.', r.status_code)
 
 
-def ler_lotes():
-    print('Iniciando leitura de lotes')
-    headers = {'authorization': f'bearer 144e13ad-29ce-49b7-b9dc-7d95ee29b0f6'}
-    f = open("lista_lotes.txt", "r")
-    for x in f:
-        url = x.replace('\n', ' ').replace('\r', '').replace(' ', '')
-        # print('url', url)
-        r = requests.get(url=url, headers=headers)
-        # print(r.status_code, r.content)
+def ler_lotes(params_exec, dados_enviar):
+    headers = {'authorization': f'bearer {params_exec["token"]}'}
+    dados_coletados = []
+    for item in dados_enviar:
+        r = requests.get(url=item['url_consulta'], headers=headers)
         if r.ok:
             retorno_json = r.json()
-
             if re.search('\.', retorno_json['createdIn']):
                 dia_envio = retorno_json['createdIn']
                 dia_envio = datetime.strptime(dia_envio, '%Y-%m-%dT%H:%M:%S.%f').strftime("%d-%m-%Y")
                 dt_envio = retorno_json['createdIn']
                 dt_envio = datetime.strptime(dt_envio, '%Y-%m-%dT%H:%M:%S.%f')
+                hr_envio = datetime.strptime(retorno_json['createdIn'], '%Y-%m-%dT%H:%M:%S.%f').hour
             else:
                 dia_envio = retorno_json['createdIn']
                 dia_envio = datetime.strptime(dia_envio, '%Y-%m-%dT%H:%M:%S').strftime("%d-%m-%Y")
                 dt_envio = retorno_json['createdIn']
                 dt_envio = datetime.strptime(dt_envio, '%Y-%m-%dT%H:%M:%S')
+                hr_envio = datetime.strptime(retorno_json['createdIn'], '%Y-%m-%dT%H:%M:%S').hour
 
             if re.search('\.', retorno_json['updatedIn']):
                 dt_retorno = retorno_json['updatedIn']
@@ -121,8 +115,12 @@ def ler_lotes():
                 dt_retorno = retorno_json['updatedIn']
                 dt_retorno = datetime.strptime(dt_retorno, '%Y-%m-%dT%H:%M:%S')
 
+
             duracao = int((dt_retorno - dt_envio).total_seconds())
-            # logging.info(f'{url};{dia_envio};{(dt_retorno - dt_envio)}')
+
             if duracao > 90:
                 logging.info(f';{url};{dia_envio};{dt_envio};{dt_retorno};{duracao}')
-                # print(url, dia_envio, dt_envio, dt_retorno)
+                print(item['url_consulta'], dia_envio, dt_envio, dt_retorno, hr_envio, duracao)
+                dados_coletados.append([hr_envio, duracao])
+
+    # for d in dados_coletados:
