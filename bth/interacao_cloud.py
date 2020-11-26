@@ -79,9 +79,12 @@ def preparar_requisicao(lista_dados, *args, **kwargs):
                 print(f'\r- Lotes enviados: {lotes_enviados}/{total_lotes}', end='')
                 lote_envio = []
         if len(lote_envio) != 0:
-            ret_envio = enviar_lote(lote_envio, url=kwargs.get('url'),
-                                    token=kwargs.get('token'), tipo_registro=kwargs.get('tipo_registro'))
-            retorno_requisicao.append(ret_envio)
+            ret_envio = enviar_lote(lote_envio,
+                                    url=kwargs.get('url'),
+                                    token=kwargs.get('token'),
+                                    tipo_registro=kwargs.get('tipo_registro'))
+            if ret_envio['id_lote'] is not None:
+                retorno_requisicao.append(ret_envio)
 
         if tamanho_lote != total_lotes:
             print(f'\r- Lotes enviados: {total_lotes}/{total_lotes}', end='')
