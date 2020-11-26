@@ -30,7 +30,8 @@ select
 	 null as representanteLegal,
 	 pa.ifcsequencia,
 	 (case when pa.ifcsequencia is not null then 'CREDITO_EM_CONTA' else 'DINHEIRO' end) as formaPagamento,
-	 (select left(regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g'),11) from wun.tbunico as u where u.unicodigo = d.unicodigores) as cpf,
+	 (select left(regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g'),11) from wun.tbunico as u where u.unicodigo = d.unicodigores) as cpf_responsavel,
+	 (select regexp_replace(suc.unicpfcnpj,'[/.-]','','g') from wun.tbunico as suc where suc.unicodigo = d.unicodigodep) as cpf_dependente,
 	 (select ucb.ifcnumeroconta from wun.tbunicocontabanco ucb where ucb.unicodigo = d.unicodigores and ucb.ifcsequencia = pa.ifcsequencia) as numero_conta,
 	 (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'conta-bancaria', (select left(regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g'),11) from wun.tbunico as u where u.unicodigo = d.unicodigores), (select ucb.ifcnumeroconta from wun.tbunicocontabanco as ucb where ucb.unicodigo = d.unicodigores and ucb.ifcsequencia = pa.ifcsequencia))))::varchar as contaBancaria,
 	 (select id_gerado
@@ -49,3 +50,4 @@ where grau is not null
 and pessoa is not null
 and pessoaDependente is not null
 and pessoa != pessoaDependente
+--and id = 2446731
