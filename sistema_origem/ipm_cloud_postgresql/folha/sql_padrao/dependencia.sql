@@ -1,5 +1,5 @@
 select * from (
-select
+select distinct 
 	 d.unicodigodep as id,
 	 d.unicodigodep,
 	 d.unicodigores,
@@ -9,7 +9,7 @@ select
 	 (case depgrauparentesco when 1 THEN 'CONJUGE' when 2 THEN 'FILHO' when 3 THEN 'PAI_MAE' when 4 THEN 'PAI_MAE' when 8 THEN 'NETO' else null end) as grau, --  when  5 THEN 'OUTROS' when 10 THEN 'EX-CONJUGE'
 	 (case when d.depdataregistro < (select to_date(suc.unfdatanascimento::varchar,'YYYY-MM-DD') from wun.tbunicofisica as suc where suc.unicodigo = d.unicodigodep) then (select suc.unfdatanascimento from wun.tbunicofisica as suc where suc.unicodigo = d.unicodigodep) when d.depdataregistro < (select to_date(suc.unfdatanascimento::varchar,'YYYY-MM-DD') from wun.tbunicofisica as suc where suc.unicodigo = d.unicodigores) then (select to_date(suc.unfdatanascimento::varchar,'YYYY-MM-DD') from wun.tbunicofisica as suc where suc.unicodigo = d.unicodigores) else d.depdataregistro end)::varchar as dataInicio,
 	 'OUTRO' as motivoInicio,
-	 null as dataTermino,
+	 pa.pnsdatafinal as dataTermino,
 	 'OUTRO' as motivoTermino,
 	 null as dataCasamento,
 	 'false' as estuda,
@@ -45,6 +45,7 @@ select
 	 from wun.tbdependente as d
 	 left join wfp.tbpensaoalimenticia as pa on d.unicodigodep = pa.unicodigodep and pa.odomesano = 202010
 	-- and  d.unicodigores  = 687693
+	--where d.unicodigores  = 198803
 ) as s
 where grau is not null
 --and pensao = true
