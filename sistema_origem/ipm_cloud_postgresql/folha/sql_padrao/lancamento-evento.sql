@@ -118,3 +118,4 @@ and pd.cpdclasse = 1
 where matricula is not null
 --and dataInicial > dataFinal
 and (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'lancamento-evento',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),matricula,configuracao,tipoProcessamento,subTipoProcessamento,dataInicial,dataFinal))) is null
+--limit 100

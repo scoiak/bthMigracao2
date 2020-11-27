@@ -27,6 +27,12 @@ select * from public.controle_migracao_lotes where tipo_registro = 'matricula';
 select * from public.controle_migracao_registro where tipo_registro = 'matricula';
 select * from public.controle_migracao_registro_ocor where tipo_registro = 'matricula';
 
+select * from public.controle_migracao_registro_ocor where tipo_registro = 'tipo-afastamento';
+select * from public.controle_migracao_registro where tipo_registro = 'tipo-afastamento' and id_gerado = '7941';
+
+select * from public.controle_migracao_registro_ocor where tipo_registro = 'afastamento';
+select * from public.controle_migracao_registro where tipo_registro = 'afastamento';
+
 select * from public.controle_migracao_registro_ocor where tipo_registro = 'lancamento-evento';
 select * from public.controle_migracao_registro where tipo_registro = 'lancamento-evento';
 

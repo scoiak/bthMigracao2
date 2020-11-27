@@ -60,7 +60,7 @@ def iniciar():
     # enviar(params_exec, 'cargo')
     # enviar(params_exec, 'matricula')
     # enviar(params_exec, 'afastamento')
-    # enviar(params_exec, 'lancamento-evento')
+    enviar(params_exec, 'lancamento-evento')
     # enviar(params_exec, 'rescisao')
     # enviar(params_exec, 'periodo-aquisitivo-ferias')
     # enviar(params_exec, 'periodo-aquisitivo-decimo-terceiro')
