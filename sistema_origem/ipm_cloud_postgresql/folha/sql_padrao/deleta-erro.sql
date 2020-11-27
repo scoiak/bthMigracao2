@@ -39,8 +39,8 @@ DO $$ DECLARE
 	-- tr text := 'cargo';
     -- tr text := 'vinculo-empregaticio';
     -- tr text := 'afastamento';
-    tr text := 'dependencia';
-    --tr text := 'lancamento-evento';
+    --tr text := 'dependencia';
+    tr text := 'lancamento-evento';
     --tr text := 'calculo-folha-decimo-terceiro';
    --tr text := 'calculo-folha-mensal';
    --tr text := 'calculo-folha-rescisao';
@@ -50,6 +50,6 @@ DO $$ DECLARE
     --tr text := 'folha';
 begin
 	-- delete from public.controle_migracao_lotes where tipo_registro = tr;	
-	 delete from public.controle_migracao_registro where tipo_registro = tr;	
+	 --delete from public.controle_migracao_registro where tipo_registro = tr;	
 	delete from public.controle_migracao_registro_ocor where tipo_registro = tr;
 END $$;

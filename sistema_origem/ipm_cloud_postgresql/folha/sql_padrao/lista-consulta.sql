@@ -27,6 +27,9 @@ select * from public.controle_migracao_lotes where tipo_registro = 'matricula';
 select * from public.controle_migracao_registro where tipo_registro = 'matricula';
 select * from public.controle_migracao_registro_ocor where tipo_registro = 'matricula';
 
+select * from public.controle_migracao_registro_ocor where tipo_registro = 'lancamento-evento';
+select * from public.controle_migracao_registro where tipo_registro = 'lancamento-evento';
+
 select
 (select max(p.pagvalor) from wfp.tbpagamento as p where p.fcncodigo = fg.fcncodigo and p.funcontrato = fg.funcontrato and p.tipcodigo = 2 and p.pagdata between fg.fgodatainicio and fg.fgodatafinal and p.odomesano = fg.odomesano),
 * 

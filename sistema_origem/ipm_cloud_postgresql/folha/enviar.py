@@ -68,7 +68,7 @@ def iniciar():
     # enviar(params_exec, 'calculo-folha-ferias')
     # enviar(params_exec, 'calculo-folha-decimo-terceiro')
     # enviar(params_exec, 'calculo-folha-mensal')
-    enviar(params_exec, 'folha')
+    # enviar(params_exec, 'folha')
 
 
 def enviar(params_exec, tipo_registro, *args, **kwargs):
