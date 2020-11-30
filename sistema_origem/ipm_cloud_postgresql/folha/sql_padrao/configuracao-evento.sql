@@ -5,7 +5,7 @@ select
 	cpddescricao as descricao,
 	'1900-01' as inicioVigencia,
 	(case cpdclasse when 1 then 'VENCIMENTO' when 2 then 'DESCONTO' when 3 then 'INFORMATIVO_MAIS' when 4 then 'INFORMATIVO_MENOS' end) as tipo,
-	null as classificacao,
+	'NENHUMA' as classificacao,
 	narcodigo as naturezaRubrica,
 	null as classificacaoBaixaProvisao,
 	(case cpdtipo when 1 then 'HORAS' when 2 then 'PERCENTUAL' when 3 then 'VALOR ' end) as unidade,

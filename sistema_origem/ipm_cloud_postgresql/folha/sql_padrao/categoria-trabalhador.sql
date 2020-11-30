@@ -3,7 +3,7 @@ select
 from (
 	select distinct
 	 row_number() over() as id,
-	 (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', {{clicodigo}}))) as id_entidade,
+	 (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', '2016'))) as id_entidade,
 	 left(catdescricao, 100) as descricao,
 	 case catgrupo
 			   when 1 then 'CLT'
@@ -35,5 +35,13 @@ from (
 	   else 'FUNCIONARIO'
 	end as grupoTrabalhador
 	from wfp.tbcategoriatrabalhador
+	union all 
+	select 41 as id,
+	 (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', '2016'))) as id_entidade,
+	 'MIGRAÇÃO' as descricao,
+	 'OUTROS' as tipo,
+	 null as descricaoregimeprevidenciario,
+	 '987' as codigoesocial,
+	 'FUNCIONARIO' as grupotrabalhador
 ) tb
 where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'categoria-trabalhador', id_entidade, descricao, codigoESocial))) is null

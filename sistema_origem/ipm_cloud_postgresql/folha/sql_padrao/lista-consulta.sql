@@ -50,6 +50,9 @@ select * from public.controle_migracao_registro where tipo_registro = 'calculo-f
 select * from public.controle_migracao_registro where tipo_registro = 'lancamento-evento';
 select * from public.controle_migracao_registro_ocor where tipo_registro = 'lancamento-evento';
 
+select * from public.controle_migracao_registro_ocor where tipo_registro = 'categoria-trabalhador';
+select * from public.controle_migracao_registro_ocor where tipo_registro = 'vinculo-empregaticio';
+
 select * from public.controle_migracao_registro_ocor where tipo_registro = 'calculo-folha-decimo-terceiro';
 select * from public.controle_migracao_registro_ocor where tipo_registro = 'calculo-folha-rescisao';
 select * from public.controle_migracao_registro_ocor where tipo_registro = 'base';

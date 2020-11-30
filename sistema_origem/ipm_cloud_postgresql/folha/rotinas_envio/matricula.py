@@ -6,7 +6,7 @@ from datetime import datetime
 
 tipo_registro = 'matricula'
 sistema = 300
-limite_lote = 250
+limite_lote = 200
 url = "https://pessoal.cloud.betha.com.br/service-layer/v1/api/matricula"
 
 

@@ -36,6 +36,30 @@ FROM
 where odomesano = 202010
 --and fcncodigo in (2)--,70,565
 union all
+select distinct on (matricula) * from (
+SELECT distinct
+	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'matricula', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), fcncodigo, funcontrato))) as matricula,
+	pagdata::varchar as inicioAfastamento,
+	null::varchar as fimAfastamento,
+	null::varchar as retornoTrabalho,
+	null::varchar as quantidade,
+	--null as quantidadeDias,
+	'DIAS' as unidade,
+	'RESCISAO' as decorrente,
+	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'tipo-afastamento',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),64)))::varchar as tipoAfastamento,
+		null as ato,
+	null as motivo,
+	null as descontar,
+	null as competenciaDesconto,
+	null as abonar,
+	null as competenciaAbono,
+	null as afastamentoOrigem,
+	null as pessoaJuridica,
+	null as tipoOnus,
+	null as atestados
+	FROM wfp.tbpagamento as p
+	where tipcodigo in (3,9)	
+union all
 select 
 	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'matricula', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), fcncodigo, funcontrato))) as matricula,
 	rctdatarescisao::varchar as inicioAfastamento,
@@ -57,9 +81,11 @@ select
 	null as tipoOnus,
 	null as atestados
 from  wfp.tbrescisaocontrato as r
+
 where odomesano = 202010
 and not exists (select fc.funsituacao from wfp.tbfuncontrato as fc where fc.funcontrato = r.funcontrato and fc.fcncodigo = r.fcncodigo and fc.odomesano = r.odomesano and fc.funsituacao = 1) 
 --and fcncodigo in (2)--,70,565
+) as a
 union all
 select 
 	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'matricula', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), fcncodigosol, funcontratosol))) as matricula,
