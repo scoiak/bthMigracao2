@@ -1,5 +1,5 @@
 select
-	1 as id,
+	row_number() over() as id,
 	'305' as sistema,
 	'centro-custo' as tipo_registro,
 	*

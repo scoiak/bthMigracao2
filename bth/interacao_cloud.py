@@ -69,9 +69,17 @@ def preparar_requisicao_sem_lote(lista_dados, *args, **kwargs):
             print(f'\r- Dados enviados: {lotes_enviados}/{total_lotes}', '\n' if lotes_enviados == total_lotes else '', end='')
             dict_envio = i
             hash_chaves = None
+
             if 'idIntegracao' in dict_envio:
                 hash_chaves = dict_envio['idIntegracao']
                 del dict_envio['idIntegracao']
+
+            if 'url' in dict_envio:
+                url = dict_envio['url']
+                del dict_envio['url']
+            else:
+                url = kwargs.get('url')
+
             json_envio = json.dumps(dict_envio)
             retorno_requisicao = {
                 'hash_chave': hash_chaves,
@@ -79,7 +87,7 @@ def preparar_requisicao_sem_lote(lista_dados, *args, **kwargs):
                 'mensagem': None
             }
             headers = {'authorization': f'bearer {kwargs.get("token")}', 'content-type': 'application/json'}
-            retorno_req = requests.post(kwargs.get('url'), headers=headers, data=json_envio)
+            retorno_req = requests.post(url, headers=headers, data=json_envio)
 
             if retorno_req.ok:
                 retorno_requisicao['id_gerado'] = int(retorno_req.text)

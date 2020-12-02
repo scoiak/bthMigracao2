@@ -18,7 +18,14 @@ def iniciar():
     # enviar(params_exec, 'configuracoes-organogramas')
     # enviar(params_exec, 'orgao')
     # enviar(params_exec, 'unidade')
-    enviar(params_exec, 'centro-custo')
+    # enviar(params_exec, 'centro-custo')
+    # enviar(params_exec, 'parametro-exercicio')
+    # enviar(params_exec, 'parametro-exercicio-compras')
+    # enviar(params_exec, 'forma-julgamento')
+    # enviar(params_exec, 'grupo')
+    # enviar(params_exec, 'classe')
+    enviar(params_exec, 'unidade-medida')
+
     # enviar(params_exec, 'mede-lotes')
 
 
