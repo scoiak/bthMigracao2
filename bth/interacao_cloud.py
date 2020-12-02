@@ -56,6 +56,52 @@ def get_dados_token(token):
         return r
 
 
+def preparar_requisicao_sem_lote(lista_dados, *args, **kwargs):
+    print('- Iniciando montagem e envio de lotes.')
+    lista_retorno = []
+    dh_inicio = datetime.now()
+    lotes_enviados = 0
+    total_lotes = len(lista_dados)
+    total_erros = 0
+    try:
+        for i in lista_dados:
+            lotes_enviados += 1
+            print(f'\r- Dados enviados: {lotes_enviados}/{total_lotes}', '\n' if lotes_enviados == total_lotes else '', end='')
+            dict_envio = i
+            hash_chaves = None
+            if 'idIntegracao' in dict_envio:
+                hash_chaves = dict_envio['idIntegracao']
+                del dict_envio['idIntegracao']
+            json_envio = json.dumps(dict_envio)
+            retorno_requisicao = {
+                'hash_chave': hash_chaves,
+                'id_gerado': None,
+                'mensagem': None
+            }
+            headers = {'authorization': f'bearer {kwargs.get("token")}', 'content-type': 'application/json'}
+            retorno_req = requests.post(kwargs.get('url'), headers=headers, data=json_envio)
+
+            if retorno_req.ok:
+                retorno_requisicao['id_gerado'] = int(retorno_req.text)
+                lista_retorno.append(retorno_requisicao)
+            else:
+                retorno_json = retorno_req.json()
+                if 'message' in retorno_json:
+                    retorno_requisicao['mensagem'] = retorno_json['message']
+                    # print('Erro: ', retorno_json['message'])
+
+            if retorno_requisicao['id_gerado'] is None:
+                total_erros += 1
+
+            lista_retorno.append(retorno_requisicao)
+        print(f'- Envio finalizado. {total_erros} registro(s) retornaram inconsistência.')
+
+    except Exception as error:
+        print(f'Erro durante a execução da função preparar_requisicao. {error}')
+    finally:
+        return lista_retorno
+
+
 def preparar_requisicao(lista_dados, *args, **kwargs):
     print('- Iniciando montagem e envio de lotes.')
     dh_inicio = datetime.now()

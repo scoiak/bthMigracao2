@@ -58,7 +58,7 @@ def iniciar():
     # enviar(params_exec, 'matricula')
     # enviar(params_exec, 'afastamento')
     # enviar(params_exec, 'lancamento-evento')
-    # enviar(params_exec, 'mede-lotes')
+    enviar(params_exec, 'mede-lotes')
 
 
 def enviar(params_exec, tipo_registro, *args, **kwargs):

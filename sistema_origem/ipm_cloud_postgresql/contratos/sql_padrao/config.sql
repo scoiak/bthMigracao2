@@ -7,7 +7,7 @@ CREATE TABLE public.controle_migracao_registro
 (
     sistema integer NOT NULL,
     tipo_registro text NOT NULL,
-    hash_chave_dsk text NOT NULL,
+    hash_chave_dsk text NOT NULL UNIQUE,
     descricao_tipo_registro text NOT NULL,
     id_gerado integer,
     i_chave_dsk1 text NOT NULL,
@@ -21,7 +21,8 @@ CREATE TABLE public.controle_migracao_registro
     i_chave_dsk9 text,
     i_chave_dsk10 text,
     i_chave_dsk11 text,
-    i_chave_dsk12 text
+    i_chave_dsk12 text,
+    json_enviado text
 );
 %/%
 
@@ -76,8 +77,34 @@ ALTER TABLE public.controle_migracao_lotes
     OWNER to postgres;
 %/%
 
+
 --
---  4 - CRIA FUNCTION  bth_get_hash_chave_dsk
+--  4 - CRIA TABELA bth_indicadores_migracao
+--
+CREATE TABLE public.bth_indicadores_migracao
+(
+    sistema integer,
+    dh_registro timestamp without time zone
+    tipo_registro text,
+    qtd_registros integer,
+    tempo_consulta_cloud numeric,
+    tempo_extracao numeric,
+    tempo_registro_controle numeric,
+    tempo_registro_ocor numeric,
+    tempo_montagem_lotes numeric,
+    tempo_envio numeric,
+    tempo_processamento_lotes numeric,
+    tempo_desempacotamento_lotes numeric,
+    tempo_total numeric
+
+);
+
+ALTER TABLE public.bth_indicadores_migracao
+    OWNER to postgres;
+%/%
+
+--
+--  5 - CRIA FUNCTION  bth_get_hash_chave_dsk
 --
 CREATE OR REPLACE FUNCTION bth_get_hash_chave
 (
@@ -136,7 +163,7 @@ END $$
 %/%
 
 --
---  5 - CRIA FUNCTION  bth_get_id_gerado
+--  6 - CRIA FUNCTION  bth_get_id_gerado
 --
 CREATE OR REPLACE FUNCTION bth_get_id_gerado
 (
@@ -171,7 +198,7 @@ END $$;
 %/%
 
 --
---  6 - CRIA FUNCTION  bth_get_id_gerado
+--  7 - CRIA FUNCTION  bth_get_id_gerado
 --
 CREATE OR REPLACE FUNCTION bth_get_situacao_registro
 (
