@@ -7,7 +7,7 @@ import math
 from datetime import datetime
 
 sistema = 305
-tipo_registro = 'orgao'
+tipo_registro = 'centro-custo'
 url = 'https://compras.betha.cloud/compras-services/api/organogramas'
 
 

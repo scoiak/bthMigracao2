@@ -7,7 +7,7 @@ import math
 from datetime import datetime
 
 sistema = 305
-tipo_registro = 'orgao'
+tipo_registro = 'unidade'
 url = 'https://compras.betha.cloud/compras-services/api/organogramas'
 
 
@@ -97,7 +97,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             }
         }
 
-        # print(f'Dados gerados ({contador}): ', dict_dados)
+        print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,

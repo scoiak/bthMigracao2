@@ -15,8 +15,10 @@ def iniciar():
     mensagem_inicio(params_exec)
     interacao_cloud.verifica_token(params_exec['token'])
     verifica_tabelas_controle()
-    enviar(params_exec, 'configuracoes-organogramas')
-
+    # enviar(params_exec, 'configuracoes-organogramas')
+    # enviar(params_exec, 'orgao')
+    # enviar(params_exec, 'unidade')
+    enviar(params_exec, 'centro-custo')
     # enviar(params_exec, 'mede-lotes')
 
 
