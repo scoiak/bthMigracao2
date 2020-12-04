@@ -23,10 +23,15 @@ select data_hora_env ,data_hora_ret,(data_hora_ret  - data_hora_env) as totalRet
 select * from public.controle_migracao_registro where tipo_registro = 'lancamento-evento' and hash_chave_dsk  = 'cda0b61044d4902674da4698b83dc72d';
 select * from public.controle_migracao_lotes where tipo_registro = 'lancamento-evento' and conteudo_json like '%2738db17a14e99863d1eaf128c7d0122%';
 
+
+
 select * from public.controle_migracao_lotes where tipo_registro = 'matricula';
 select * from public.controle_migracao_registro where tipo_registro = 'matricula';
 select * from public.controle_migracao_registro_ocor where tipo_registro = 'matricula';
 
+select * from public.controle_migracao_registro where tipo_registro = 'lancamento-evento' and i_chave_dsk2 14936
+
+select * from public.controle_migracao_registro where tipo_registro = 'matricula' and i_chave_dsk2 = '15011';
 select * from public.controle_migracao_registro_ocor where tipo_registro = 'tipo-afastamento';
 select * from public.controle_migracao_registro where tipo_registro = 'tipo-afastamento' and id_gerado = '7941';
 

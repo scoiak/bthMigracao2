@@ -9,7 +9,7 @@ select distinct
 	 (case depgrauparentesco   when 6 THEN 'CONJUGE' when 10 THEN 'CONJUGE' when 1 THEN 'CONJUGE' when 2 THEN 'FILHO' when 3 THEN 'PAI_MAE' when 4 THEN 'PAI_MAE' when 8 THEN 'NETO' when 9 THEN 'BISNETO' when 7 THEN 'IRMAO' else null end) as grau, --  when  5 THEN 'OUTROS' when 10 THEN 'EX-CONJUGE'
 	 (case when d.depdataregistro < (select to_date(suc.unfdatanascimento::varchar,'YYYY-MM-DD') from wun.tbunicofisica as suc where suc.unicodigo = d.unicodigodep) then (select suc.unfdatanascimento from wun.tbunicofisica as suc where suc.unicodigo = d.unicodigodep) when d.depdataregistro < (select to_date(suc.unfdatanascimento::varchar,'YYYY-MM-DD') from wun.tbunicofisica as suc where suc.unicodigo = d.unicodigores) then (select to_date(suc.unfdatanascimento::varchar,'YYYY-MM-DD') from wun.tbunicofisica as suc where suc.unicodigo = d.unicodigores) else d.depdataregistro end)::varchar as dataInicio,
 	 'OUTRO' as motivoInicio,
-	 pa.pnsdatafinal as dataTermino,
+	 pa.pnsdatafinal::varchar as dataTermino,
 	 'OUTRO' as motivoTermino,
 	 null as dataCasamento,
 	 'false' as estuda,
@@ -37,7 +37,7 @@ select distinct
 	 left join wfp.tbpensaoalimenticia as pa on d.unicodigodep = pa.unicodigodep and pa.odomesano = 202010
 	-- and  d.unicodigores  = 687693
 	--where d.unicodigores  = 198803
-	where d.unicodigores  = 898090
+	--where d.unicodigores  = 898090
 	--and d.unicodigores = 2446731
 ) as s
 where grau is not null

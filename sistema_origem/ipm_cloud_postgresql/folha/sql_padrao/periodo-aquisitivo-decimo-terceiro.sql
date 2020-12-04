@@ -26,8 +26,7 @@ select distinct on (fcncodigo,funcontrato,decanopagamento)
 from wfp.tbdecimocalculado as dc 
 where odomesano = 202010
 and decanopagamento < 2020
---
-and  dc.fcncodigo IN (4714,2,113,15011,56,10438)
+--and  dc.fcncodigo IN (4714,2,113,15011,56,10438)
 union all
 select distinct on (fcncodigo,funcontrato,decanopagamento)
   		dc.fcncodigo as fcncodigo,
@@ -48,10 +47,10 @@ select distinct on (fcncodigo,funcontrato,decanopagamento)
 from wfp.tbdecimocalculado as dc 
 where odomesano = 202010
 and decanopagamento >= 2020
---
-and  dc.fcncodigo IN (4714,2,113,15011,56,10438)
+--and  dc.fcncodigo IN (4714,2,113,15011,56,10438)
 ) as a
 ) as b
 ) as c
 where matricula is not null
+and (select fc.funsituacao from wfp.tbfuncontrato as fc where fc.fcncodigo = fcncodigo and fc.funcontrato = funcontrato and fc.odomesano = odomesano limit 1) = 1
 and (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'periodo-aquisitivo-decimo-terceiro',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),matricula,anoExercicio))) is null

@@ -35,11 +35,11 @@ update public.controle_migracao_registro set tipo_registro = 'conta-bancaria',ha
 update public.controle_migracao_registro set hash_chave_dsk = md5(concat('300', 'lancamento-evento', i_chave_dsk1, i_chave_dsk2,i_chave_dsk3,i_chave_dsk4,i_chave_dsk5,i_chave_dsk6,i_chave_dsk7)) where tipo_registro = 'lancamento-evento';
 
 DO $$ DECLARE
-	 tr text := 'matricula';
+	-- tr text := 'matricula';
 	-- tr text := 'cargo';
      --tr text := 'vinculo-empregaticio';
      --tr text := 'afastamento';
-    --tr text := 'dependencia';
+    tr text := 'dependencia';
     --tr text := 'lancamento-evento';
     --tr text := 'calculo-folha-decimo-terceiro';
    --tr text := 'calculo-folha-mensal';
