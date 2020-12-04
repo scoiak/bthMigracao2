@@ -57,7 +57,7 @@ def get_dados_token(token):
 
 
 def preparar_requisicao_sem_lote(lista_dados, *args, **kwargs):
-    print('- Iniciando montagem e envio de lotes.')
+    # print('- Iniciando montagem e envio de lotes.')
     lista_retorno = []
     dh_inicio = datetime.now()
     lotes_enviados = 0
@@ -66,7 +66,7 @@ def preparar_requisicao_sem_lote(lista_dados, *args, **kwargs):
     try:
         for i in lista_dados:
             lotes_enviados += 1
-            print(f'\r- Dados enviados: {lotes_enviados}/{total_lotes}', '\n' if lotes_enviados == total_lotes else '', end='')
+            # print(f'\r- Dados enviados: {lotes_enviados}/{total_lotes}', '\n' if lotes_enviados == total_lotes else '', end='')
             dict_envio = i
             hash_chaves = None
 
@@ -102,7 +102,7 @@ def preparar_requisicao_sem_lote(lista_dados, *args, **kwargs):
                 total_erros += 1
 
             lista_retorno.append(retorno_requisicao)
-        print(f'- Envio finalizado. {total_erros} registro(s) retornaram inconsistência.')
+        # print(f'- Envio finalizado. {total_erros} registro(s) retornaram inconsistência.')
 
     except Exception as error:
         print(f'Erro durante a execução da função preparar_requisicao. {error}')

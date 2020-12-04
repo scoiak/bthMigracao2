@@ -24,7 +24,8 @@ def iniciar():
     # enviar(params_exec, 'forma-julgamento')
     # enviar(params_exec, 'grupo')
     # enviar(params_exec, 'classe')
-    enviar(params_exec, 'unidade-medida')
+    # enviar(params_exec, 'unidade-medida')
+    enviar(params_exec, 'material')
 
     # enviar(params_exec, 'mede-lotes')
 
