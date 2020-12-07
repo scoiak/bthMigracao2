@@ -1,3 +1,6 @@
+-- insert into public.controle_migracao_registro (sistema, tipo_registro, hash_chave_dsk, descricao_tipo_registro, id_gerado, i_chave_dsk1)
+-- values ('300', 'configuracao-organograma', md5(concat('300', 'configuracao-organograma', '1')), 'Configuração de Organograma', 799, '1')
+
 select *,ROW_NUMBER() OVER()::varchar as id,ROW_NUMBER() OVER()::varchar as codigo from (select
 'Configuração Organograma 2020' as descricao,
             'true' as emUso,

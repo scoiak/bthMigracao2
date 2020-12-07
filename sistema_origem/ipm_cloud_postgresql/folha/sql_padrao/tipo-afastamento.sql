@@ -35,7 +35,7 @@ from (
 	select
 	(select max(motcodigo +1 ) from wfp.tbmotivoafasta) as id,
 	(select max(motcodigo +1 ) from wfp.tbmotivoafasta) as codigo,
-	'2734' as id_entidade,  -- ESSA INFORMAÇÃO DEVE SER INSERIDA MANUALMENTE
+	'6098' as id_entidade,  -- ESSA INFORMAÇÃO DEVE SER INSERIDA MANUALMENTE
 	'DEMITIDO' as descricao,
 	'DEMITIDO' as classificacao,
 	null as tipoMovimentacaoPessoal,

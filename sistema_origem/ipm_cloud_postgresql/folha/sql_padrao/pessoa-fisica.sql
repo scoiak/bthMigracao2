@@ -1,5 +1,5 @@
 select
-	'5fbbb7e4ed9eb4010438607a' as id_ca_observacoes, -- INSERIR AQUI O ID DO CAMPO ADICIONAL 'OBSERVAÇÕES'
+	'5fcc090bc54eee00e3d550ea' as id_ca_observacoes, -- INSERIR AQUI O ID DO CAMPO ADICIONAL 'OBSERVAÇÕES'
 	*
 from (
 	select

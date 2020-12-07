@@ -85,7 +85,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     for item in dados:
         lista_dados_enviar = []
         contador += 1
-        print(f'\r- Gerando JSON: {contador}/{total_dados}9', '\n' if contador == total_dados else '', end='')
+        print(f'\r- Gerando JSON: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
         hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['chave_dsk1'])
         dict_dados = {
             'idIntegracao': hash_chaves,
@@ -139,11 +139,13 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         })
 
         if True:
-            model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)
-            req_res = interacao_cloud.preparar_requisicao_sem_lote(lista_dados=lista_dados_enviar,
-                                                                    token=token,
-                                                                    url=url,
-                                                                    tipo_registro=tipo_registro)
+            # model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)
+            req_res = interacao_cloud\
+                .preparar_requisicao_sem_lote(
+                    lista_dados=lista_dados_enviar,
+                    token=token,
+                    url=url,
+                    tipo_registro=tipo_registro)
             model.atualiza_tabelas_controle_envio_sem_lote(params_exec, req_res, tipo_registro=tipo_registro)
     print('- Envio de dados finalizado.')
 

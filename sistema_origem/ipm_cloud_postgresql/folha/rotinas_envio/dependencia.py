@@ -16,6 +16,7 @@ def iniciar_processo_envio(params_exec, *args, **kwargs):
         dados_enviar = pre_validar(params_exec, dados_assunto)
         if not params_exec.get('somente_pre_validar'):
             iniciar_envio(params_exec, dados_enviar, 'POST')
+    if True:
         model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
 
 
@@ -95,8 +96,14 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                 'formaPagamento': item['formapagamento']
             }
         }
+        if 'contabancaria' in item and item['contabancaria'] is not None:
+            dict_dados['conteudo'].update({
+                'contaBancaria': {
+                    'id': int(item['contabancaria'])
+                }
+            })
         contador += 1
-        # print(f'Dados gerados ({contador}): ', dict_dados)
+        print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,

@@ -6,7 +6,7 @@ from datetime import datetime
 
 tipo_registro = 'matricula'
 sistema = 300
-limite_lote = 250
+limite_lote = 200
 url = "https://pessoal.cloud.betha.com.br/service-layer/v1/api/matricula"
 
 
@@ -18,6 +18,7 @@ def iniciar_processo_envio(params_exec, *args, **kwargs):
         dados_enviar = pre_validar(params_exec, dados_assunto)
         if not params_exec.get('somente_pre_validar'):
             iniciar_envio(params_exec, dados_enviar, 'POST')
+    if True:
         model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
 
 

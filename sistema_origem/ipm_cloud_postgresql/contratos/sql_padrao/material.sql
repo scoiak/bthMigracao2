@@ -31,4 +31,4 @@ where id_gerado is null
 and id_grupo is not null
 and id_classe is not null
 and id_un_medida is not null
---limit 10
+-- limit 10

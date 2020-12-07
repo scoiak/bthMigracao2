@@ -114,15 +114,15 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                     'tipo': 'CARGO',
                     'campos': [
                         {
-                            'id': '5fafc50a001f7a0104272606',
+                            'id': '5fcc08fde2c3cf00e344c97a',
                             'valor': item['tcetipoquadro']
                         },
                         {
-                            'id': '5fafc50a001f7a0104272608',
+                            'id': '5fcc08fde2c3cf00e344c979',
                             'valor': item['tcecodcargo']
                         },
                         {
-                            'id': '5fafc50a001f7a0104272607',
+                            'id': '5fcc08fde2c3cf00e344c978',
                             'valor': item['tcetipocargoacu']
                         }
                     ]
@@ -185,12 +185,13 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             for n in item['niveis_vigentes']:
                 dados_niveis = n.split(':')
                 if not re.search('\?', dados_niveis[1]):
-                    dict_item_niveis = {
-                        'nivelSalarial': {
-                            'id': int(dados_niveis[1])
+                    if dados_niveis[1] != '' and dados_niveis[1] is not None:
+                        dict_item_niveis = {
+                            'nivelSalarial': {
+                                'id': int(dados_niveis[1])
+                            }
                         }
-                    }
-                    lista_niveis.append(dict_item_niveis)
+                        lista_niveis.append(dict_item_niveis)
 
             lista_niveis = list_unique(lista_niveis)
             dict_dados['conteudo'].update({
@@ -230,15 +231,15 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                         'tipo': 'CARGO',
                         'campos': [
                             {
-                                'id': '5fafc50a001f7a0104272606',
+                                'id': '5fcc08fde2c3cf00e344c97a',
                                 'valor': dados_historico[26]
                             },
                             {
-                                'id': '5fafc50a001f7a0104272608',
+                                'id': '5fcc08fde2c3cf00e344c979',
                                 'valor': dados_historico[27]
                             },
                             {
-                                'id': '5fafc50a001f7a0104272607',
+                                'id': '5fcc08fde2c3cf00e344c978',
                                 'valor': dados_historico[28]
                             }
                         ]
@@ -258,12 +259,13 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                         nivel = item_niveis.split(':')
                         if not re.search('\?', nivel[1]):
                             try:
-                                dict_item_niveis = {
-                                    'nivelSalarial': {
-                                        'id': int(nivel[1])
+                                if nivel[1] != '' and nivel[1] is not None:
+                                    dict_item_niveis = {
+                                        'nivelSalarial': {
+                                            'id': int(nivel[1])
+                                        }
                                     }
-                                }
-                                lista_niveis_historico.append(dict_item_niveis)
+                                    lista_niveis_historico.append(dict_item_niveis)
 
                             except Exception as error:
                                 print(f"Erro na geração de item {nivel[1]}. ", error)

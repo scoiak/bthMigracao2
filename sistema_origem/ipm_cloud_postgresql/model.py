@@ -194,7 +194,7 @@ def insere_tabela_controle_registro_ocor(req_res):
 def insere_tabela_controle_migracao_registro(params_exec, lista_req):
     logging.info(f'Inserindo dados na tabela de controle de registros.')
     pgcnn = None
-    itens_por_insert = 500
+    itens_por_insert = 200
     data_list = []
     sql = 'INSERT INTO public.controle_migracao_registro ' \
           '(sistema, tipo_registro, hash_chave_dsk, descricao_tipo_registro, id_gerado, i_chave_dsk1, ' \
