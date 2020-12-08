@@ -18,7 +18,7 @@ row_number() over(partition by matricula order by matricula asc, dataPagamento a
 	FROM wfp.tbpagamento
 	where tipcodigo in (4,5,6)
 --
-and fcncodigo in (56, 2 ,7959, 10438, 4714)
+--and fcncodigo in (4714,2,113,15011,56,10438)
 and odomesano >= 202001
 ) as a
 ) as b

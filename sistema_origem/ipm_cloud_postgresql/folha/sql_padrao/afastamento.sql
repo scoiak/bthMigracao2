@@ -17,12 +17,13 @@ SELECT
 	 when motcodigo in (5,6,7,8,25,15,9,33,32,31, 13,34,35,36,37,38,39,40,41,42,14) then 'RESCISAO'
 	 when motcodigo in (20,12,11) then 'CEDENCIA'
 	 when motcodigo in (3,4) then 'FALTAS'
+	 else 'LICENCA'
 	 end
 	) as decorrente,
 	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'tipo-afastamento',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), motcodigo)))::varchar as tipoAfastamento,
 	--(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'ato', (select concat(tj.txjnumero, '/', tj.txjano) from wlg.tbtextojuridico tj where tj.txjcodigo = fa.txjcodigo), (select cat.tctdescricao from wlg.tbtextojuridico tj inner join wlg.tbcategoriatexto cat on cat.tctcodigo = tj.tctcodigo where tj.txjcodigo = fa.txjcodigo limit 1))))::varchar as ato,
 	null as ato,
-	afaobs as motivo,
+	left(afaobs, 150) as motivo,
 	null as descontar,
 	null as competenciaDesconto,
 	null as abonar,
@@ -33,7 +34,7 @@ SELECT
 	null as atestados
 FROM
 	wfp.tbfunafastamento as fa
-where odomesano = 202010
+where odomesano = 202011
 --and fcncodigo in (2)--,70,565
 union all
 select distinct on (matricula) * from (
@@ -81,8 +82,7 @@ select
 	null as tipoOnus,
 	null as atestados
 from  wfp.tbrescisaocontrato as r
-
-where odomesano = 202010
+where odomesano = 202011
 and not exists (select fc.funsituacao from wfp.tbfuncontrato as fc where fc.funcontrato = r.funcontrato and fc.fcncodigo = r.fcncodigo and fc.odomesano = r.odomesano and fc.funsituacao = 1)
 --and fcncodigo in (2)--,70,565
 ) as a
@@ -108,7 +108,7 @@ select
 	null as tipoOnus,
 	null as atestados
 from wfp.tbfuntransferencia as ft
-where odomesano = 202010
+where odomesano = 202011
 --and fcncodigo in (2)--,70,565
 union all
 select
@@ -132,7 +132,7 @@ select
 	null as tipoOnus,
 	null as atestados
 from wfp.tbferiasgozada as fg
-where odomesano = 202010
+where odomesano = 202011
 --and fcncodigo in (3876)--,70,565,2
 ) as a
 ) as b

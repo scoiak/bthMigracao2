@@ -24,8 +24,8 @@ select distinct on (fcncodigo,funcontrato,decanopagamento)
        'QUITADO' as situacao,
        (select string_agg((case suc.tipo when 4 then 'GRATIFICACAO_NATALINA' when 5 then 'ADIANTAMENTO_DECIMO_TERCEIRO' when 6 then 'GRATIFICACAO_NATALINA' end) ||'%|%' || 'true' || '%|%' || substring(suc.competencia::varchar,1,4) || '-' || substring(suc.competencia::varchar,5,2) || '%|%'|| suc.total ,'%||%') from (select sum(suc.pagvalor) as total,suc.tipcodigo as tipo,suc.odomesano as competencia from wfp.tbpagamento as suc where suc.fcncodigo = dc.fcncodigo and suc.funcontrato = dc.funcontrato and (substring(suc.odomesano::varchar,1,4))::int = dc.decanopagamento::int  and suc.tipcodigo in (4,5,6) and suc.cpdcodigo in (select ax.cpdcodigo from wfp.tbprovdesc as ax where ax.cpdclasse = 1) group by tipcodigo,odomesano) as suc) as movimentacoes
 from wfp.tbdecimocalculado as dc
-where odomesano = 202010
-and dc.fcncodigo IN (56, 2 ,7959, 10438, 4714)
+where odomesano = 202011
+--and dc.fcncodigo IN (56, 2 ,7959, 10438, 4714)
 and decanopagamento < 2020
 --and  dc.fcncodigo IN (4714,2,113,15011,56,10438)
 union all
@@ -46,9 +46,9 @@ select distinct on (fcncodigo,funcontrato,decanopagamento)
        (select string_agg((case suc.tipo when 4 then 'GRATIFICACAO_NATALINA' when 5 then 'ADIANTAMENTO_DECIMO_TERCEIRO' when 6 then 'GRATIFICACAO_NATALINA' end) ||'%|%' || 'true' || '%|%' || substring(suc.competencia::varchar,1,4) || '-' || substring(suc.competencia::varchar,5,2) || '%|%'|| suc.total ,'%||%') from (select sum(suc.pagvalor) as total,suc.tipcodigo as tipo,suc.odomesano as competencia from wfp.tbpagamento as suc where suc.fcncodigo = dc.fcncodigo and suc.funcontrato = dc.funcontrato and (substring(suc.odomesano::varchar,1,4))::int = dc.decanopagamento::int  and suc.tipcodigo in (4,5,6) and suc.cpdcodigo in (select ax.cpdcodigo from wfp.tbprovdesc as ax where ax.cpdclasse = 1) group by tipcodigo,odomesano) as suc) as movimentacoes
        -- null as movimentacoes
 from wfp.tbdecimocalculado as dc
-where odomesano = 202010
+where odomesano = 202011
 and decanopagamento >= 2020
-and dc.fcncodigo IN (56, 2 ,7959, 10438, 4714)
+--and dc.fcncodigo IN (56, 2 ,7959, 10438, 4714)
 ) as a
 ) as b
 ) as c

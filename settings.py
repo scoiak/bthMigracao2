@@ -33,13 +33,13 @@ DB_PW = 'bethadba'
 
 """
 
-
+"""
 DB_HOST = '192.168.60.50'
 DB_PORT = '7666'
 DB_NAME = 'biguacu'
 DB_USER = 'postgres'
 DB_PW = 'bethadba'
-
+"""
 
 """
 DB_HOST = '192.168.60.50'
@@ -50,6 +50,11 @@ DB_PW = 'bethadba'
 """
 
 
+DB_HOST = 'localhost'
+DB_PORT = '5433'
+DB_NAME = 'bigua_dezembro'
+DB_USER = 'postgres'
+DB_PW = 'admin'
 
 def iniciar_migracao():
     start_logging()

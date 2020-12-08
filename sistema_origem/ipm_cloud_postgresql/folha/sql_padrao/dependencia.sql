@@ -34,7 +34,7 @@ select distinct
 	 (select ucb.ifcnumeroconta from wun.tbunicocontabanco ucb where ucb.unicodigo = d.unicodigores and ucb.ifcsequencia = pa.ifcsequencia) as numero_conta,
 	 (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'conta-bancaria', (select left(regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g'),11) from wun.tbunico as u where u.unicodigo = d.unicodigores), (select ucb.ifcnumeroconta from wun.tbunicocontabanco as ucb where ucb.unicodigo = d.unicodigores and ucb.ifcsequencia = pa.ifcsequencia))))::varchar as contaBancaria
 	 from wun.tbdependente as d
-	 left join wfp.tbpensaoalimenticia as pa on d.unicodigodep = pa.unicodigodep and pa.odomesano = 202010
+	 left join wfp.tbpensaoalimenticia as pa on d.unicodigodep = pa.unicodigodep and pa.odomesano = 202011
 	-- and  d.unicodigores  = 687693
 	--where d.unicodigores  = 198803
 	--where d.unicodigores  = 898090

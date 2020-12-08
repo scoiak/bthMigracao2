@@ -18,7 +18,7 @@ SELECT distinct
     false AS fgtsMesAnterior,
     --TRUE AS conversao,
     null AS avisoPrevio,
-	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','motivo-rescisao',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), '9'))) AS motivoRescisao,
+	coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','motivo-rescisao',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), '9'))), 0) AS motivoRescisao,
     pagdata::varchar AS dataRescisao,
     --NULL AS ato,
     false AS consideraAvosPerdidosDecimoTerceiro,
@@ -27,7 +27,7 @@ SELECT distinct
     FALSE as reporVaga
 	FROM wfp.tbpagamento as p
 	where tipcodigo in (3,9)
-	and fcncodigo in (56, 2 ,7959, 10438, 4714)
+	--and fcncodigo in (56, 2 ,7959, 10438, 4714)
 	union all
 select
 	'RESCISAO' AS tipoProcessamento,
@@ -48,10 +48,12 @@ select
     FALSE AS trabalhouDiaRescisao,
     FALSE as reporVaga
     from wfp.tbrescisaocalculada
-	where fcncodigo in (56, 2 ,7959, 10438, 4714)
+	--where fcncodigo in (56, 2 ,7959, 10438, 4714)
 ) as s
 	) as a
 ) as b
 where matricula is not null
+and motivoRescisao > 0
 --and matricula in (select id_gerado from controle_migracao_registro where tipo_registro = 'matricula' and i_chave_dsk2 in ('56'))
 and (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'calculo-folha-rescisao',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),matricula,tipoProcessamento,subTipoProcessamento,dataPagamento))) is null
+--limit 10

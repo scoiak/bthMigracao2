@@ -34,8 +34,9 @@ row_number() over(partition by matricula order by matricula asc, dataPagamento a
 	substring(pagdata::varchar,1,7) as competencia
 	FROM wfp.tbpagamento as p
 	where (tipcodigo in (2) or (tipcodigo in (1) and cpdcodigo in (77)))
-and fcncodigo in (56, 2 ,7959, 10438, 4714)
+    --and fcncodigo in (56, 2 ,7959, 10438, 4714)
 ) as a
 ) as b
 where matricula is not null
 and (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'calculo-folha-ferias',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),matricula,tipoProcessamento,subTipoProcessamento,dataPagamento))) is null
+and (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'periodo-aquisitivo-ferias',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),matricula,datainicial))) is not null

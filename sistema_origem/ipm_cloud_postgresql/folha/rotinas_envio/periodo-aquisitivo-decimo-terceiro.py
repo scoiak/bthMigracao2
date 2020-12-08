@@ -12,14 +12,15 @@ limite_lote = 1000
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
-    if False:
-        busca_dados(params_exec)
     if True:
+        busca_dados(params_exec)
+    if False:
         dados_assunto = coletar_dados(params_exec)
         dados_enviar = pre_validar(params_exec, dados_assunto)
         if not params_exec.get('somente_pre_validar'):
             iniciar_envio(params_exec, dados_enviar, 'POST')
-        model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
+
+    model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
 
 
 def busca_dados(params_exec):

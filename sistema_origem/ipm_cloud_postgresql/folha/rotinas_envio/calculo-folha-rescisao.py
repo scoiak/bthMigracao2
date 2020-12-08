@@ -95,7 +95,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             dict_dados['conteudo'].update({'dataPagamento': item['datapagamento']})
         if 'tipovinculacaomatricula' in item and item['tipovinculacaomatricula'] is not None:
             dict_dados['conteudo'].update({'tipoVinculacaoMatricula': item['tipovinculacaomatricula']})
-        if 'avisoprevio' in item and item['avisoprevio'] is not None:
+        if None and 'avisoprevio' in item and item['avisoprevio'] is not None:
             dict_dados['conteudo'].update({'avisoPrevio': item['avisoprevio']})
         if 'datarescisao' in item and item['datarescisao'] is not None:
             dict_dados['conteudo'].update({'dataRescisao': item['datarescisao']})

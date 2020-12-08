@@ -74,7 +74,7 @@ select distinct
 	 									  ))) as dependencia,
 	 									  pa.pnsreferencia as valor
 	 									  from wfp.tbpensaoalimenticia as pa
-	 									  where pa.fcncodigo = p.fcncodigo and pa.funcontrato = p.funcontrato and odomesano = 202010
+	 									  where pa.fcncodigo = p.fcncodigo and pa.funcontrato = p.funcontrato and odomesano = 202011
 	  	/**/
 	  	) as xuc where dependencia is not null) else null end) as rateioDependentes
 	  	FROM wfp.tbpagamento as suc	 where suc.fcncodigo = p.fcncodigo and  suc.funcontrato = p.funcontrato and suc.odomesano = p.odomesano and suc.tipcodigo = p.tipcodigo
@@ -94,9 +94,9 @@ select distinct
 	   FROM wfp.tbpagamento  as p	 
 	 --where odomesano = 202010
 where odomesano >= 202001	 
-and fcncodigo in (56, 2 ,7959, 10438, 4714)
+--and fcncodigo in (56, 2 ,7959, 10438, 4714)
 ) as a
 ) as b
 where matricula is not null
---and calculo is not null
+and calculo is not null
 and (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'folha',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),matricula,tipoprocessamento,subtipoprocessamento,competencia,dataPagamento))) is null
