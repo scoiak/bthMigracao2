@@ -172,7 +172,7 @@ def atualiza_tabela_controle_lote(**kwargs):
 
 def insere_tabela_controle_registro_ocor(req_res):
     pgcnn = None
-    logging.info(f'Inserindo daods na tabela de controle de ocorrências.')
+    logging.info(f'Inserindo dados na tabela de controle de ocorrências.')
     if req_res is not None and len(req_res) != 0:
         try:
             pgcnn = PostgreSQLConnection()
@@ -194,7 +194,7 @@ def insere_tabela_controle_registro_ocor(req_res):
 def insere_tabela_controle_migracao_registro(params_exec, lista_req):
     logging.info(f'Inserindo dados na tabela de controle de registros.')
     pgcnn = None
-    itens_por_insert = 500
+    itens_por_insert = 200
     data_list = []
     sql = 'INSERT INTO public.controle_migracao_registro ' \
           '(sistema, tipo_registro, hash_chave_dsk, descricao_tipo_registro, id_gerado, i_chave_dsk1, ' \
@@ -292,6 +292,30 @@ def insere_tabela_controle_migracao_registro2(params_exec, lista_req):
 
         finally:
             pgcnn.close_connection()
+
+
+def atualiza_tabelas_controle_envio_sem_lote(params_exec, req_res, *args, **kwargs):
+    # print('req_res', req_res)
+    lista_sucesso = []
+    lista_inconsistencia = []
+    dados_inserir_ocor = []
+
+    try:
+        for item in req_res:
+            if item['id_gerado'] is None:
+                lista_inconsistencia.append(item)
+            else:
+                atualiza_controle_migracao_registro(item['id_gerado'], item['hash_chave'])
+
+        for item in lista_inconsistencia:
+            dados_inserir_ocor.append((0, item['hash_chave'], get_codigo_sistema(),
+                                       kwargs.get('tipo_registro'), None, 9, 9,
+                                       9, 1, item['hash_chave'],
+                                       item['mensagem'], '', '', None))
+        insere_tabela_controle_registro_ocor(dados_inserir_ocor)
+
+    except Exception as error:
+        print("Erro ao executar função 'atualiza_tabelas_controle_envio_sem_lote'.", error)
 
 
 def atualiza_controle_migracao_registro(id_gerado, hash_chave):
@@ -553,6 +577,8 @@ def get_codigo_sistema():
     elif desc_sistema == 'protocolo':
         cod_sistema = 304
     elif desc_sistema == 'compras':
+        cod_sistema = 305
+    elif desc_sistema == 'contratos':
         cod_sistema = 305
     elif desc_sistema == 'frotas':
         cod_sistema = 306

@@ -31,7 +31,7 @@ from (
 		(case WHEN UPPER(motdescricao) ~ 'APOSENTADORIA' then (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','tipo-afastamento', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', clicodigo))), '13'))) ELSE (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','tipo-afastamento', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', clicodigo))), '64'))) end ) as tipoAfastamento
 	from wfp.tbmotivoafasta
 	where mottipo = 4
-	and odomesano = 202009
+	and odomesano = 202010
 	order by motdescricao
 ) tb
 where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','motivo-rescisao', id_entidade, codigo))) is null

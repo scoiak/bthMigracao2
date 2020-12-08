@@ -1,4 +1,7 @@
-select '2734' as id_entidade, * from (
+select
+    (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', {{clicodigo}}))) as id_entidade,
+    *
+from (
 	select 1 as codigo,1 as id,'Efetivo' as descricao,'EFETIVO' as classificacao
 	union
 	select 2 as codigo,2 as id,'Comissionado' as descricao,'COMISSIONADO' as classificacao

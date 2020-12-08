@@ -541,6 +541,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                                 'id': int(campo[1])
                             },
                         })
+
                     if campo[19] is not None:
                         dict_item_historico.update({
                             'cargo': {
@@ -787,12 +788,22 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                                 'id': campo[63]
                             }
                         })
+                    """    
                     if campo[64] is not None:
                         dict_item_historico.update({
                             'formacao': {
                                 'id': int(campo[64])
                             }
                         })
+                    """
+                    if item['formacao'] is not None:
+                        dict_item_historico.update({
+                            'formacao': {
+                                'id': int(item['formacao'])
+                            }
+                        })
+
+
                     if campo[72] is not None:
                         dict_item_historico.update({
                             'categoriaTrabalhador': {
@@ -877,7 +888,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                     'historicos': listahistorico
                 })
         contador += 1
-        print(f'Dados gerados ({contador}): ', dict_dados)
+        # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,

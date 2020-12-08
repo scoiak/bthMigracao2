@@ -16,7 +16,7 @@ select
 	/* 3 */coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'cbo', cbo))),0) as id_cbo,
 	/* 4 */coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'tipo-cargo', id_entidade, cartipocargo))), 0) as id_tipo_cargo,
 	/* 5 */coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'ato', (select concat(tj.txjnumero, '/', tj.txjano) from wlg.tbtextojuridico tj where tj.txjcodigo = nv.txjcodigocri), (select cat.tctdescricao from wlg.tbtextojuridico tj inner join wlg.tbcategoriatexto cat on cat.tctcodigo = tj.tctcodigo where tj.txjcodigo = nv.txjcodigocri limit 1)))),0) as id_ato_criacao,
-	/* 6 */coalesce((case cartemferias when 1 then 464 else null end), 0) as id_conf_ferias,
+	/* 6 */coalesce((case cartemferias when 1 then 492 else null end), 0) as id_conf_ferias,
 	*
 into temporary table temp_cargos
 from (
@@ -92,8 +92,8 @@ from (
 			nv.cnidatarelaciona,
 			nv.txjcodigo
 		from wfp.tbcargonivel nv
-		where nv.carcodigo in (477, 394, 440, 523, 2, 381, 779, 438, 778, 507, 3, 471, 312, 494, 194, 476, 439, 332, 380, 436, 755, 767, 230, 517, 178, 399, 112, 119, 430, 460)
-		--where nv.carcodigo = 524
+		--where nv.carcodigo in (477, 394, 440, 523, 2, 381, 779, 438, 778, 507, 3, 471, 312, 494, 194, 476, 439, 332, 380, 436, 755, 767, 230, 517, 178, 399, 112, 119, 430, 460)
+		--where nv.carcodigo = 7
 		group by 1, 2, 3
 		order by 1, 2
 	) as nv
@@ -149,7 +149,7 @@ from (
 		coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'ato', (select concat(tj.txjnumero, '/', tj.txjano) from wlg.tbtextojuridico tj where tj.txjcodigo = c.txjcodigocri), (select cat.tctdescricao from wlg.tbtextojuridico tj inner join wlg.tbcategoriatexto cat on cat.tctcodigo = tj.tctcodigo where tj.txjcodigo = c.txjcodigocri limit 1)))),0) as id_ato,
 		c.cartemferias,
 		(case c.cartemferias
-			when 1 then 464
+			when 1 then 492
 		else null end) as id_conf_ferias,
 		'MENSALISTA' as unidadePagamento,
 		'NAO_ACUMULAVEL' as acumuloCargos,
@@ -190,9 +190,9 @@ from (
 		c.clicodigo,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', {{clicodigo}}))) as id_entidade
 	from wfp.tbcargo c
-	where c.odomesano = 202011
-	and c.carcodigo in (477, 394, 440, 523, 2, 381, 779, 438, 778, 507, 3, 471, 312, 494, 194, 476, 439, 332, 380, 436, 755, 767, 230, 517, 178, 399, 112, 119, 430, 460)
-	--and c.carcodigo = 524
+	where c.odomesano = 202010
+	--and c.carcodigo in (477, 394, 440, 523, 2, 381, 779, 438, 778, 507, 3, 471, 312, 494, 194, 476, 439, 332, 380, 436, 755, 767, 230, 517, 178, 399, 112, 119, 430, 460)
+	--and c.carcodigo = 7
 	order by c.carcodigo
 ) cargos
 where cargos.id_gerado = 0

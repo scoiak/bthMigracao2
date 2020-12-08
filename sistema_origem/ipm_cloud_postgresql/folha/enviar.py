@@ -1,6 +1,8 @@
 import settings
 import sistema_origem.ipm_cloud_postgresql.model as model
 import bth.interacao_cloud as interacao_cloud
+import winsound
+
 from datetime import datetime
 
 
@@ -69,6 +71,8 @@ def iniciar():
     # enviar(params_exec, 'calculo-folha-decimo-terceiro')
     # enviar(params_exec, 'calculo-folha-mensal')
     # enviar(params_exec, 'folha')
+    # enviar(params_exec, 'mede-lotes')
+    winsound.PlaySound("SystemAsterisk", winsound.SND_ALIAS)
 
 
 def enviar(params_exec, tipo_registro, *args, **kwargs):

@@ -1,39 +1,47 @@
-"""
-    ROTINA PRINCIPAL QUE É CHAMADA ARA O ENVIO
-"""
 import settings
 import sistema_origem.ipm_cloud_postgresql.model as model
 import bth.interacao_cloud as interacao_cloud
+from datetime import datetime
 
 
 def iniciar():
+    print(':: Iniciando migração do sistema Folha')
     params_exec = {
+        'clicodigo': '2016',
         'somente_pre_validar': False,
-        'token': '',
-        'ano': '',
-        'clicode': ''
+        'token': 'b9f9dc47-e89e-471d-8f3d-59f66df420a4',
+        'ano': 2020
     }
-    # Exibe mensagem inicial de início de execução
     mensagem_inicio(params_exec)
-
-    # Realiza a validação do token informado
     interacao_cloud.verifica_token(params_exec['token'])
-
-    # Verifica existência de tabelas e funções de controle
     verifica_tabelas_controle()
+    # enviar(params_exec, 'configuracoes-organogramas')
+    # enviar(params_exec, 'orgao')
+    # enviar(params_exec, 'unidade')
+    # enviar(params_exec, 'centro-custo')
+    # enviar(params_exec, 'parametro-exercicio')
+    # enviar(params_exec, 'parametro-exercicio-compras')
+    # enviar(params_exec, 'forma-julgamento')
+    # enviar(params_exec, 'grupo')
+    # enviar(params_exec, 'classe')
+    # enviar(params_exec, 'unidade-medida')
+    enviar(params_exec, 'material')
 
-    # Inicia chamadas de rotinas de envio de dados
+    # enviar(params_exec, 'mede-lotes')
 
 
 def enviar(params_exec, tipo_registro, *args, **kwargs):
     print(f'\n:: Iniciando execução do assunto {tipo_registro}')
-    path_padrao = 'sistema_origem.ipm_cloud_postgresql.contabil.rotinas_envio'
-    modulo = __import__(f'{path_padrao}.{tipo_registro}', globals(), locals(), ['iniciar_envio'], 0)
+    tempo_inicio = datetime.now()
+    path_padrao = f'sistema_origem.{settings.BASE_ORIGEM}.{settings.SISTEMA_ORIGEM}.rotinas_envio'
+    modulo = __import__(f'{path_padrao}.{tipo_registro}', globals(), locals(), ['iniciar_processo_envio'], 0)
     modulo.iniciar_processo_envio(params_exec)
+    print(f'- Rotina de {tipo_registro} finalizada. '
+          f'\nTempo total de execução: {(datetime.now() - tempo_inicio).total_seconds()} segundos.')
 
 
 def mensagem_inicio(params_exec):
-    print(f':: Iniciando execução da migração do sistema {settings.BASE_ORIGEM} para Betha Cloud utilicando os '
+    print(f'\n:: Iniciando execução da migração do sistema {settings.BASE_ORIGEM} para Betha Cloud utilicando os '
           f'seguintes parâmetros: \n- {params_exec}')
 
 
