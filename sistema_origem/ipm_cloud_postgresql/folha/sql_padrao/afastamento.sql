@@ -81,7 +81,6 @@ select
 	null as tipoOnus,
 	null as atestados
 from  wfp.tbrescisaocontrato as r
-
 where odomesano = 202010
 and not exists (select fc.funsituacao from wfp.tbfuncontrato as fc where fc.funcontrato = r.funcontrato and fc.fcncodigo = r.fcncodigo and fc.odomesano = r.odomesano and fc.funsituacao = 1) 
 --and fcncodigo in (2)--,70,565

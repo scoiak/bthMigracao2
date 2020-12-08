@@ -94,7 +94,7 @@ select distinct
 	   FROM wfp.tbpagamento  as p	 
 	 --where odomesano = 202010
 where odomesano >= 202001	 
-and fcncodigo in (4714,2,113,15011,56,10438,11166)
+and fcncodigo in (15200)--(4714,2,113,15011,56,10438,11166,15079)
 ) as a
 ) as b
 where matricula is not null

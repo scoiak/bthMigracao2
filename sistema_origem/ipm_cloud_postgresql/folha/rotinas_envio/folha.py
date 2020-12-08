@@ -216,7 +216,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'i_chave_dsk2': item['matricula'],
             'i_chave_dsk3': item['tipoprocessamento'],
             'i_chave_dsk4': item['subtipoprocessamento'],
-            'i_chave_dsk5': item['datapagamento'],
+            'i_chave_dsk5': item['competencia'],
             'i_chave_dsk6': item['datapagamento']
         })
     print(f'- Processo de transformação finalizado. ({(datetime.now() - dh_inicio).total_seconds()} segundos)')

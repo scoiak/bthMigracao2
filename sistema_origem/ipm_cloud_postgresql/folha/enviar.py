@@ -63,7 +63,7 @@ def iniciar():
     # enviar(params_exec, 'lancamento-evento')
     # enviar(params_exec, 'rescisao')
     # enviar(params_exec, 'periodo-aquisitivo-ferias')
-    enviar(params_exec, 'periodo-aquisitivo-decimo-terceiro')
+    # enviar(params_exec, 'periodo-aquisitivo-decimo-terceiro')
     # enviar(params_exec, 'calculo-folha-rescisao')
     # enviar(params_exec, 'calculo-folha-ferias')
     # enviar(params_exec, 'calculo-folha-decimo-terceiro')

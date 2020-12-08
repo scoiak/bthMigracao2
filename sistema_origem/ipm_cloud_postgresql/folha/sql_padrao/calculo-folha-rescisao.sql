@@ -26,10 +26,10 @@ SELECT distinct
     FALSE AS trabalhouDiaRescisao,
     FALSE as reporVaga       
 	FROM wfp.tbpagamento as p
-	where tipcodigo in (3,9)
-	and fcncodigo in (4714,2,113,15011,56,10438)
+	where tipcodigo in (3,9)	
+	and fcncodigo in (15200)--(4714,2,113,15011,56,10438,11166,15079)
 	union all
-select
+select distinct
 	'RESCISAO' AS tipoProcessamento,
 	(case tipcodigo when 3 then 'INTEGRAL' when 9 then 'COMPLEMENTAR' else null end) AS subTipoProcessamento,
     NULL AS dataAgendamento,
@@ -48,7 +48,7 @@ select
     FALSE AS trabalhouDiaRescisao,
     FALSE as reporVaga       
     from wfp.tbrescisaocalculada
-	where fcncodigo in (4714,2,113,15011,56,10438)
+	where fcncodigo in (15200)--(4714,2,113,15011,56,10438,11166,15079)
 ) as s
 	) as a
 ) as b
