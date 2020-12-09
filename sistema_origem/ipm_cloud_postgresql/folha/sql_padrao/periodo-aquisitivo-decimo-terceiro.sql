@@ -2,7 +2,9 @@ create index IF NOT exists idx_contrato_codAno_admissao on wfp.tbfuncontrato (fc
 create index IF NOT exists idx_rescisao_porfunc on wfp.tbrescisaocalculada (fcncodigo, funcontrato, resdatarescisao);
 create index IF NOT exists idx_dc_p on wfp.tbpagamento (fcncodigo, funcontrato, odomesano, tipcodigo, cpdcodigo);
 
-select * from ( select
+select
+(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'periodo-aquisitivo-decimo-terceiro',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),matricula,anoExercicio))) as id_gerado,
+* from ( select
 row_number() over() as id,
 (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))) as entidade,
 row_number() over(partition by matricula order by matricula asc, dataInicial asc) as codigo,
@@ -27,7 +29,7 @@ from wfp.tbdecimocalculado as dc
 where odomesano = 202011
 --and dc.fcncodigo IN (56, 2 ,7959, 10438, 4714)
 and decanopagamento < 2020
---and  dc.fcncodigo IN (4714,2,113,15011,56,10438)
+and  dc.fcncodigo IN (7998)
 union all
 select distinct on (fcncodigo,funcontrato,decanopagamento)
   		dc.fcncodigo as fcncodigo,
@@ -48,11 +50,12 @@ select distinct on (fcncodigo,funcontrato,decanopagamento)
 from wfp.tbdecimocalculado as dc
 where odomesano = 202011
 and decanopagamento >= 2020
---and dc.fcncodigo IN (56, 2 ,7959, 10438, 4714)
+and dc.fcncodigo IN (7998)
 ) as a
 ) as b
 ) as c
 where matricula is not null
+and anoexercicio >= 2018
 --and matricula in (select id_gerado from controle_migracao_registro where tipo_registro = 'matricula' and i_chave_dsk2 in ('7959'))
 and (select fc.funsituacao from wfp.tbfuncontrato as fc where fc.fcncodigo = fcncodigo and fc.funcontrato = funcontrato and fc.odomesano = odomesano limit 1) = 1
 and (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'periodo-aquisitivo-decimo-terceiro',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),matricula,anoExercicio))) is null
