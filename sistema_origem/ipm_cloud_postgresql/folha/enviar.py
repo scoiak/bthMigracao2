@@ -17,7 +17,6 @@ def iniciar():
         # 'token': '38c0eaad-808c-4130-86ea-e07b1cfaf0b9', # Homologação 5
         'token': 'c420e8c5-bc8a-44c4-8b34-e46df7867a3e', # Token base oficial
         # 'token': '144e13ad-29ce-49b7-b9dc-7d95ee29b0f6', # Token FAMABI
-        'ano': 2020
     }
     mensagem_inicio(params_exec)
     interacao_cloud.verifica_token(params_exec['token'])
@@ -71,7 +70,7 @@ def iniciar():
     # enviar(params_exec, 'calculo-folha-ferias')
     # enviar(params_exec, 'calculo-folha-decimo-terceiro')
     # enviar(params_exec, 'calculo-folha-mensal')
-    enviar(params_exec, 'folha')
+    # enviar(params_exec, 'folha')
     # enviar(params_exec, 'mede-lotes')
     winsound.PlaySound("SystemAsterisk", winsound.SND_ALIAS)
 
