@@ -11,12 +11,7 @@ def iniciar():
     params_exec = {
         'clicodigo': '2016',
         'somente_pre_validar': False,
-        # 'token': '72612895-9758-467d-a2ef-36b8b57c3198', # Token Homolog 1
-        # 'token': '58924393-e014-43f4-9269-5646a39b127d', # Token Homolog 2
-        # 'token': 'c52c4510-0a8f-468f-a501-1f68b32795c8', # Homologação 3
-        # 'token': '38c0eaad-808c-4130-86ea-e07b1cfaf0b9', # Homologação 5
-        'token': 'c420e8c5-bc8a-44c4-8b34-e46df7867a3e', # Token base oficial
-        # 'token': '144e13ad-29ce-49b7-b9dc-7d95ee29b0f6', # Token FAMABI
+        'ano': 2020
     }
     mensagem_inicio(params_exec)
     interacao_cloud.verifica_token(params_exec['token'])
