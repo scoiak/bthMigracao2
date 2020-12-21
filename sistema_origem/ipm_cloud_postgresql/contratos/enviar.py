@@ -27,10 +27,10 @@ def iniciar():
     # enviar(params_exec, 'material')
     # enviar(params_exec, 'tipo-objeto')
     # enviar(params_exec, 'regime-execucao')
-    #enviar(params_exec, 'prazo-entrega')
-    enviar(params_exec, 'tipo-interposicao-recurso')
-
-
+    # enviar(params_exec, 'prazo-entrega')
+    # enviar(params_exec, 'tipo-interposicao-recurso')
+    # enviar(params_exec, 'tipo-publicacao')
+    enviar(params_exec, 'modalidade')
 
     # enviar(params_exec, 'mede-lotes')
 
