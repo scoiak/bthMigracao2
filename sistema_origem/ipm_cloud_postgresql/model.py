@@ -24,6 +24,7 @@ class PostgreSQLConnection:
                 dbname=settings.DB_NAME,
                 user=settings.DB_USER,
                 password=settings.DB_PW)
+
         except (Exception, psycopg2.DatabaseError) as error:
             print("Erro ao executar função 'PostgreSQLConnection:connect'.", error)
 
@@ -39,6 +40,17 @@ class PostgreSQLConnection:
             print("Erro ao executar função 'PostgreSQLConnection:exec_sql'.", error)
         finally:
             return dataframe
+
+    def exec_insert(self, sql, **kwargs):
+        try:
+            if self.conn is not None:
+                cursor = self.conn.cursor()
+                result = cursor.execute(sql)
+                if result is not None:
+                    print(result)
+                self.conn.commit()
+        except Exception as error:
+            print("Erro ao executar função 'PostgreSQLConnection:configura_banco'.", error)
 
     def close_connection(self):
         try:
@@ -295,23 +307,19 @@ def insere_tabela_controle_migracao_registro2(params_exec, lista_req):
 
 
 def atualiza_tabelas_controle_envio_sem_lote(params_exec, req_res, *args, **kwargs):
-    # print('req_res', req_res)
-    lista_sucesso = []
     lista_inconsistencia = []
     dados_inserir_ocor = []
 
     try:
         for item in req_res:
             if item['id_gerado'] is None:
-                lista_inconsistencia.append(item)
+                dados_inserir_ocor.append((0, item['hash_chave'], get_codigo_sistema(),
+                                           kwargs.get('tipo_registro'), None, 9, 9,
+                                           9, 1, item['hash_chave'],
+                                           item['mensagem'], '', '', None))
             else:
                 atualiza_controle_migracao_registro(item['id_gerado'], item['hash_chave'])
 
-        for item in lista_inconsistencia:
-            dados_inserir_ocor.append((0, item['hash_chave'], get_codigo_sistema(),
-                                       kwargs.get('tipo_registro'), None, 9, 9,
-                                       9, 1, item['hash_chave'],
-                                       item['mensagem'], '', '', None))
         insere_tabela_controle_registro_ocor(dados_inserir_ocor)
 
     except Exception as error:
@@ -322,19 +330,13 @@ def atualiza_controle_migracao_registro(id_gerado, hash_chave):
     pgcnn = None
     try:
         pgcnn = PostgreSQLConnection()
-
         sql = f'UPDATE public.controle_migracao_registro ' \
               f'SET id_gerado = {id_gerado} ' \
-              f'WHERE hash_chave_dsk = \'{hash_chave}\''
-        cursor = pgcnn.conn.cursor()
-        result = cursor.execute(sql)
-        pgcnn.conn.commit()
+              f'WHERE hash_chave_dsk = \'{hash_chave}\';'
+        pgcnn.exec_insert(sql)
 
     except Exception as error:
         print("Erro ao executar função 'atualiza_controle_migracao_registro'.", error)
-
-    finally:
-        pgcnn.close_connection()
 
 
 def valida_lotes_enviados(params_exec, *args, **kwargs):
@@ -558,7 +560,6 @@ def atualiza_dados_controle_migracao(lista_dados):
         for item in list_slice:
             cursor.executemany(sql, item)
             pgcnn.conn.commit()
-
     except Exception as error:
         print("Erro ao executar função 'atualiza_dados_controle_migracao'.", error)
 

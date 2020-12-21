@@ -5,11 +5,10 @@ from datetime import datetime
 
 
 def iniciar():
-    print(':: Iniciando migração do sistema Folha')
+    print(':: Iniciando migração do sistema Compras/Contratos')
     params_exec = {
         'clicodigo': '2016',
         'somente_pre_validar': False,
-        'token': 'b9f9dc47-e89e-471d-8f3d-59f66df420a4',
         'ano': 2020
     }
     mensagem_inicio(params_exec)
@@ -25,7 +24,13 @@ def iniciar():
     # enviar(params_exec, 'grupo')
     # enviar(params_exec, 'classe')
     # enviar(params_exec, 'unidade-medida')
-    enviar(params_exec, 'material')
+    # enviar(params_exec, 'material')
+    # enviar(params_exec, 'tipo-objeto')
+    # enviar(params_exec, 'regime-execucao')
+    #enviar(params_exec, 'prazo-entrega')
+    enviar(params_exec, 'tipo-interposicao-recurso')
+
+
 
     # enviar(params_exec, 'mede-lotes')
 

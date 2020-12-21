@@ -1,13 +1,11 @@
 BASE_ORIGEM = 'ipm_cloud_postgresql'
-SISTEMA_ORIGEM = 'folha'
+SISTEMA_ORIGEM = 'contratos'
 
-"""
 DB_HOST = 'localhost'
 DB_PORT = '5433'
 DB_NAME = 'ipm_bigua'
 DB_USER = 'postgres'
 DB_PW = 'admin'
-"""
 
 """
 DB_HOST = '192.168.60.52'
@@ -17,13 +15,13 @@ DB_USER = 'postgres'
 DB_PW = 'bethadba'
 """
 
-"""
-DB_HOST = 'localhost'
+
+"""DB_HOST = 'localhost'
 DB_PORT = '5433'
 DB_NAME = 'ipm_simulador'
 DB_USER = 'postgres'
-DB_PW = 'admin'
-"""
+DB_PW = 'admin'"""
+
 """
 DB_HOST = '192.168.60.50'
 DB_PORT = '7666'
@@ -49,11 +47,12 @@ DB_USER = 'postgres'
 DB_PW = 'bethadba'
 """
 
-DB_HOST = 'localhost'
+
+"""DB_HOST = 'localhost'
 DB_PORT = '5433'
 DB_NAME = 'bigua_dezembro'
 DB_USER = 'postgres'
-DB_PW = 'admin'
+DB_PW = 'admin'"""
 
 """
 DB_HOST = '192.168.60.50'

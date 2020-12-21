@@ -89,9 +89,12 @@ def preparar_requisicao_sem_lote(lista_dados, *args, **kwargs):
             headers = {'authorization': f'bearer {kwargs.get("token")}', 'content-type': 'application/json'}
             retorno_req = requests.post(url, headers=headers, data=json_envio)
 
+            # print('response', retorno_req.content)
+
+            # print('retorno_req', retorno_req, retorno_req.text)
             if retorno_req.ok:
                 retorno_requisicao['id_gerado'] = int(retorno_req.text)
-                lista_retorno.append(retorno_requisicao)
+                # lista_retorno.append(retorno_requisicao)
             else:
                 retorno_json = retorno_req.json()
                 if 'message' in retorno_json:
@@ -212,6 +215,7 @@ def busca_dados_cloud(params_exec, **kwargs):
 
             if r.ok:
                 retorno_json = r.json()
+                # print('retorno_json', retorno_json)
                 has_next = retorno_json['hasNext']
                 if 'content' in retorno_json:
                     for i in retorno_json['content']:

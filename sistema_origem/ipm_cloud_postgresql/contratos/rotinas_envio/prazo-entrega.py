@@ -7,8 +7,8 @@ import math
 from datetime import datetime
 
 sistema = 305
-tipo_registro = 'material'
-url = 'https://compras.betha.cloud/compras-services/api/materiais'
+tipo_registro = 'prazo-entrega'
+url = 'https://compras.betha.cloud/compras-services/api/prazos-entrega'
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
@@ -81,65 +81,41 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     token = params_exec['token']
     total_dados = len(dados)
     contador = 0
+    total_erros = 0
 
     for item in dados:
         lista_dados_enviar = []
+        lista_controle_migracao = []
         contador += 1
-        print(f'\r- Gerando JSON: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['chave_dsk1'])
+        print(f'\r- Enviando registros: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['id_entidade'], item['descricao'])
         dict_dados = {
             'idIntegracao': hash_chaves,
-            'codigoMaterial': item['chave_dsk1'],
             'descricao': item['descricao'],
-            'ativo': item['ativo'],
-            'estocavel': item['estocavel'],
-            'tipoMaterial': {
-                'valor': item['tipo_material']
+            'tipoExecucao': {
+                'valor': item['tipo_execucao']
             },
-            'classificacao': {
-                'valor': item['classificacao']
+            'unidadeEntrega': {
+                'valor': item['unidade_entrega']
             },
-            'tipoCombustivel': {
-                'valor': item['tipocombustivel']
-            },
-            'unidadeCompra': {
-                'id': item['id_un_medida']
-            },
-            'unidadeEstoque': {
-                'id': item['id_un_medida']
-            },
-            'classe': {
-                'id': item['id_classe']
-            },
-            'grupo': {
-                'id': item['id_grupo']
-            },
-            'especificacoes': [
-                {
-                    'descricao': item['especificacao']
-                }
-            ]
+            'numDiasMeses': item['num_dias_meses']
         }
 
-        if 'datainativacao' in item and item['datainativacao'] is not None:
-            dict_dados.update({
-                'dataInativacao': item['datainativacao']
-            })
-
-        print(f'Dados gerados ({contador}): ', dict_dados)
+        # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Materiais',
+            'descricao_tipo_registro': 'Cadastro de Prazos de Entrega',
             'id_gerado': None,
             'json': json.dumps(dict_dados),
-            'i_chave_dsk1': item['chave_dsk1']
+            'i_chave_dsk1': item['id_entidade'],
+            'i_chave_dsk2': item['descricao']
         })
 
         if True:
-            # model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)
+            model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)
             req_res = interacao_cloud\
                 .preparar_requisicao_sem_lote(
                     lista_dados=lista_dados_enviar,
@@ -147,6 +123,11 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                     url=url,
                     tipo_registro=tipo_registro)
             model.atualiza_tabelas_controle_envio_sem_lote(params_exec, req_res, tipo_registro=tipo_registro)
-    print('- Envio de dados finalizado.')
+            if req_res[0]['mensagem'] is not None:
+                total_erros += 1
+    if total_erros > 0:
+        print(f'- Envio finalizado. Foram encontrados um total de {total_erros} inconsistência(s) de envio.')
+    else:
+        print('- Envio de dados finalizado sem inconsistências.')
 
 
