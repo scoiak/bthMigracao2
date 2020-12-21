@@ -30,7 +30,9 @@ def iniciar():
     # enviar(params_exec, 'prazo-entrega')
     # enviar(params_exec, 'tipo-interposicao-recurso')
     # enviar(params_exec, 'tipo-publicacao')
-    enviar(params_exec, 'modalidade')
+    # enviar(params_exec, 'modalidade')
+    # enviar(params_exec, 'forma-pagamento')
+    enviar(params_exec, 'local-entrega')
 
     # enviar(params_exec, 'mede-lotes')
 
