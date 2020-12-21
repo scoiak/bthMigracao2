@@ -32,7 +32,13 @@ def iniciar():
     # enviar(params_exec, 'tipo-publicacao')
     # enviar(params_exec, 'modalidade')
     # enviar(params_exec, 'forma-pagamento')
-    enviar(params_exec, 'local-entrega')
+    # enviar(params_exec, 'local-entrega')
+    # enviar(params_exec, 'tipo-documento')
+    # enviar(params_exec, 'pais')
+    # enviar(params_exec, 'estado')
+    # enviar(params_exec, 'municipio')
+    # enviar(params_exec, 'cargo')
+    enviar(params_exec, 'tipo-ato')
 
     # enviar(params_exec, 'mede-lotes')
 
