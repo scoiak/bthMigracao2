@@ -79,5 +79,5 @@ from (
     from wlg.tbcategoriatexto
   order by tctcodigo
 ) tab
---where id_gerado is null
+where id_gerado is null
 --limit 2

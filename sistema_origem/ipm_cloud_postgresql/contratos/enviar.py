@@ -14,6 +14,8 @@ def iniciar():
     mensagem_inicio(params_exec)
     interacao_cloud.verifica_token(params_exec['token'])
     verifica_tabelas_controle()
+
+    # Envio Compras
     # enviar(params_exec, 'configuracoes-organogramas')
     # enviar(params_exec, 'orgao')
     # enviar(params_exec, 'unidade')
@@ -38,9 +40,14 @@ def iniciar():
     # enviar(params_exec, 'estado')
     # enviar(params_exec, 'municipio')
     # enviar(params_exec, 'cargo')
-    enviar(params_exec, 'tipo-ato')
+    # enviar(params_exec, 'tipo-ato')
+    # enviar(params_exec, 'fonte-divulgacao')
+    # enviar(params_exec, 'natureza-texto-juridico')
+    enviar(params_exec, 'ato')
 
-    # enviar(params_exec, 'mede-lotes')
+    # Envio Contratos
+
+
 
 
 def enviar(params_exec, tipo_registro, *args, **kwargs):

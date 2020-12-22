@@ -87,6 +87,7 @@ def preparar_requisicao_sem_lote(lista_dados, *args, **kwargs):
                 'mensagem': None
             }
             headers = {'authorization': f'bearer {kwargs.get("token")}', 'content-type': 'application/json'}
+            # print('json', json_envio)
             retorno_req = requests.post(url, headers=headers, data=json_envio)
 
             # print('response', retorno_req.content)
