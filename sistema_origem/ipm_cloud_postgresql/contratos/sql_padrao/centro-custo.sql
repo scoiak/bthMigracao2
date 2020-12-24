@@ -1,3 +1,6 @@
+-- O sistema da IPM permite vincular solicitações com organogramas de outros exercícios. Possivelmente será necessário
+-- realizar cadastro manual de organogramas no Betha Cloud para sanar tal situação
+
 select
 	row_number() over() as id,
 	'305' as sistema,

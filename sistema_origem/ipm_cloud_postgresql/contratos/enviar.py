@@ -8,8 +8,8 @@ def iniciar():
     print(':: Iniciando migração do sistema Compras/Contratos')
     params_exec = {
         'clicodigo': '2016',
+        'ano': 2015,
         'somente_pre_validar': False,
-        'ano': 2020
     }
     mensagem_inicio(params_exec)
     interacao_cloud.verifica_token(params_exec['token'])
@@ -27,6 +27,7 @@ def iniciar():
     # enviar(params_exec, 'classe')
     # enviar(params_exec, 'unidade-medida')
     # enviar(params_exec, 'material')
+    enviar(params_exec, 'material-especificacao')
     # enviar(params_exec, 'tipo-objeto')
     # enviar(params_exec, 'regime-execucao')
     # enviar(params_exec, 'prazo-entrega')
@@ -43,7 +44,12 @@ def iniciar():
     # enviar(params_exec, 'tipo-ato')
     # enviar(params_exec, 'fonte-divulgacao')
     # enviar(params_exec, 'natureza-texto-juridico')
-    enviar(params_exec, 'ato')
+    # enviar(params_exec, 'ato')
+    # enviar(params_exec, 'tipo-revogacao-anulacao')
+    # enviar(params_exec, 'solicitacao')
+
+    # enviar(params_exec, 'despesa')
+    # enviar(params_exec, 'solicitacao-item')
 
     # Envio Contratos
 

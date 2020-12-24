@@ -238,3 +238,53 @@ def busca_dados_cloud(params_exec, **kwargs):
 
     finally:
         return dados_coletados
+
+
+def busca_api_fonte_dados(params_exec, **kwargs):
+    dados_coletados = []
+    has_next = True
+    url = kwargs.get('url')
+    offset = 0
+    erros_consecutivos = 0
+    rodada_busca = 1
+    campos = 'id' if 'campos' not in kwargs else kwargs.get('campos')
+    criterio = None if 'criterio' not in kwargs else kwargs.get('criterio')
+    ordenacao = None if 'ordenacao' not in kwargs else kwargs.get('ordenacao')
+    limit = 100 if 'limit' not in kwargs else kwargs.get('limit')
+    headers = {'authorization': f'bearer {params_exec["token"]}'}
+
+    try:
+        while has_next:
+            params = {'offset': offset, 'limit': limit, 'fields': campos}
+
+            if criterio is not None:
+                params.update({'filter': criterio})
+
+            if ordenacao is not None:
+                params.update({'sort': ordenacao})
+
+            r = requests.get(url=url, params=params, headers=headers)
+
+            if r.ok:
+                retorno_json = r.json()
+                # print('retorno_json', retorno_json)
+                has_next = retorno_json['hasNext']
+                if 'content' in retorno_json:
+                    for i in retorno_json['content']:
+                        # print('DEBUG', i)
+                        dados_coletados.append(i)
+                rodada_busca += 1
+                offset += limit
+                erros_consecutivos = 0
+            else:
+                erros_consecutivos += 1
+                print('\nErro ao realizar requisição.', r.status_code)
+
+            if erros_consecutivos >= 10:
+                print('Diversas requisições consecutivas retornaram erro. Verificar se o servidor está ativo.')
+                has_next = False
+    except Exception as error:
+        print(f'Erro durante a execução da função busca_dados. {error}')
+
+    finally:
+        return dados_coletados
