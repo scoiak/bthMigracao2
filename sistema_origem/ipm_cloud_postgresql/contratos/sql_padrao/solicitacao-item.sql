@@ -44,4 +44,4 @@ where id_gerado is null
 and id_material is not null
 and id_especificacao is not null
 and id_solicitacao is not null
-limit 2
+--limit 5

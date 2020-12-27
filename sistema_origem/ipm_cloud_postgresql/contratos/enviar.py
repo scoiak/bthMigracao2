@@ -27,7 +27,7 @@ def iniciar():
     # enviar(params_exec, 'classe')
     # enviar(params_exec, 'unidade-medida')
     # enviar(params_exec, 'material')
-    enviar(params_exec, 'material-especificacao')
+    # enviar(params_exec, 'material-especificacao')
     # enviar(params_exec, 'tipo-objeto')
     # enviar(params_exec, 'regime-execucao')
     # enviar(params_exec, 'prazo-entrega')
@@ -49,7 +49,7 @@ def iniciar():
     # enviar(params_exec, 'solicitacao')
 
     # enviar(params_exec, 'despesa')
-    # enviar(params_exec, 'solicitacao-item')
+    enviar(params_exec, 'solicitacao-item')
 
     # Envio Contratos
 

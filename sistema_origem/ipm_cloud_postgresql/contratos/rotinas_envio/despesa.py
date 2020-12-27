@@ -23,7 +23,6 @@ def iniciar_processo_envio(params_exec, *args, **kwargs):
         iniciar_envio(params_exec, dados_enviar, 'POST')
 
 
-
 def coletar_dados(params_exec):
     print('- Iniciando a consulta dos dados a enviar.')
     df = None

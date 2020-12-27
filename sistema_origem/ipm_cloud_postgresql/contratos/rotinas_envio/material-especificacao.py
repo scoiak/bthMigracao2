@@ -32,7 +32,7 @@ def busca_dados_cloud(params_exec, dados_base):
         registro_cloud = interacao_cloud.busca_api_fonte_dados(params_exec, url=url, campos=campos, criterio=criterio)
 
         if registro_cloud is not None:
-            hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, registro_cloud[0]['material']['id'])
+            hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item["codigo_produto"])
             registro_encontrado = {
                 'sistema': sistema,
                 'tipo_registro': tipo_registro,
