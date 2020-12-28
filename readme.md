@@ -9,15 +9,14 @@ Procedimento para utilização da ferramenta.
 ##### Configurando ambiente
 
 ```
-1 - Realizar a instalação do Python versão 3.7 ou superior.
-    Recomentda-se utilização do pacote pycharm (https://www.jetbrains.com/pt-br/pycharm/download/#section=windows)
+1 - Realizar a instalação do Python versão 3.7 ou superior.    
 
-2 - Realizar a instalação de todos os pacotes contidos no arquivo 'requirements.txt'
+2 - Baixar o projeto do repositório atual e abrir com a aplicação (VSCode,PyCharm,...).
+
+3 - Realizar a instalação de todos os pacotes contidos no arquivo 'requirements.txt'
     Recomenda-se a utilização de ambiente virtual do python.
 
-3 - Baixar o projeto do repositório atual e abrir com o pycharm.
-
-4 - Realizar a configuração do arquivo settings.py.
+4 - Realizar a configuração do arquivo settings.py (Conexão com o Banco de Dados).
 
 5 - Analisar o modulo enviar.py e executar a aplicação.
 ```
@@ -29,7 +28,7 @@ Após configurar o ambiente, deve-se realizar a configuração do arquivo settin
 para a execução da aplicação. O arquivo possui as seguitnes variáveis:
 
 - BASE_ORIGEM: Indica qual o sistema de origem a ser considerado para executar o processo de extração de dados.
-Opções disponíveis: [ipm_cloud_postgresql]
+Opções disponíveis: [padrao]
 
 SISTEMA_ORIGEM: Indica qual linha de produtos Betha Cloud se refere a migração.
 Opções disponíveis [contabil|contratos|folha|educacao|livro|saude|tributos]
@@ -38,9 +37,9 @@ DB_HOST: Indica qual o endereço da rede do servidor que se encontra o banco de 
 para realizar a migração. Padrão: localhost
 
 DB_PORT: Indica qual o número da porta do servidor que se encontra o banco de dados.
-Padrão: 5433
+Padrão: 5432
 
-DB_NAME: Indica qual o nome do database do servidor de dados. Padrão: 'ipm_bigua'
+DB_NAME: Indica qual o nome do database do servidor de dados. Padrão: 'migracao'
 
 DB_USER: Indica qual o usuário que será utilizado para acessar o banco. Padrão: 'postgres'
 
