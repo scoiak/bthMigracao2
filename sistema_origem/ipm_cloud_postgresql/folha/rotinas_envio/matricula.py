@@ -13,7 +13,7 @@ url = "https://pessoal.cloud.betha.com.br/service-layer/v1/api/matricula"
 def iniciar_processo_envio(params_exec, *args, **kwargs):
     if False:
         busca_dados(params_exec)
-    if True:
+    if False:
         dados_assunto = coletar_dados(params_exec)
         dados_enviar = pre_validar(params_exec, dados_assunto)
         if not params_exec.get('somente_pre_validar'):

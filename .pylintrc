@@ -151,7 +151,9 @@ disable=print-statement,
 		lost-exception,
 		logging-fstring-interpolation,
 		too-many-nested-blocks,
-		unused-variable
+		unused-variable,
+		trailing-whitespace,
+		unused-import
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option

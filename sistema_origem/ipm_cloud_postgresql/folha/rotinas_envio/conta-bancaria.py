@@ -1,3 +1,7 @@
+from datetime import datetime
+import re
+import json
+import logging
 import sistema_origem.ipm_cloud_postgresql.model as model
 import bth.interacao_cloud as interacao_cloud
 
@@ -15,7 +19,7 @@ def iniciar_processo_envio(params_exec, *args, **kwargs):
 def busca_dados_cloud(params_exec):
     print('- Iniciando busca de dados no cloud.')
     registros = interacao_cloud.busca_dados_cloud(params_exec, url=url)
-    print(f'- Busca de pessoas finalizada, iniciando verificação dos dados obtidos.')
+    print('- Busca de pessoas finalizada, iniciando verificação dos dados obtidos.')
     registros_formatados = []
     total_contas = 0
     try:

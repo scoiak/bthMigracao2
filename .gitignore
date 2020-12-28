@@ -3,3 +3,4 @@ __pycache__/*
 bth/__pycache__/*
 sistema_origem/ipm_cloud_postgresql/__pycache__/*
 sistema_origem/ipm_cloud_postgresql/folha/__pycache__/*
+sistema_origem/ipm_cloud_postgresql/folha/rotinas_envio/__pycache__/*

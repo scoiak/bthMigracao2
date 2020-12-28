@@ -1,9 +1,10 @@
+from datetime import datetime
+import logging
+import json
+import re
 import sistema_origem.ipm_cloud_postgresql.model as model
 import bth.interacao_cloud as interacao_cloud
-import json
-import logging
-import re
-from datetime import datetime
+
 
 sistema = 300
 tipo_registro = 'vinculo-empregaticio'

@@ -1,10 +1,13 @@
-import sistema_origem.ipm_cloud_postgresql.model as model
+from datetime import datetime
 import re
-import requests
+import json
 import logging
 import pandas as pd
-from datetime import datetime
+import requests
 import matplotlib.pyplot as plt
+import sistema_origem.ipm_cloud_postgresql.model as model
+import bth.interacao_cloud as interacao_cloud
+
 
 sistema = 300
 tipo_registro = 'mede-lotes'
@@ -52,7 +55,7 @@ def ler_lotes(params_exec, dados_lotes):
         r = requests.get(url=item['url_consulta'], headers=headers)
         if r.ok:
             retorno_json = r.json()
-            if re.search('\.', retorno_json['createdIn']):
+            if re.search('r\.', retorno_json['createdIn']):
                 dia_envio = retorno_json['createdIn']
                 dia_envio = datetime.strptime(dia_envio, '%Y-%m-%dT%H:%M:%S.%f').strftime("%d-%m-%Y")
                 dt_envio = retorno_json['createdIn']
@@ -65,7 +68,7 @@ def ler_lotes(params_exec, dados_lotes):
                 dt_envio = datetime.strptime(dt_envio, '%Y-%m-%dT%H:%M:%S')
                 hr_envio = datetime.strptime(retorno_json['createdIn'], '%Y-%m-%dT%H:%M:%S').hour
 
-            if re.search('\.', retorno_json['updatedIn']):
+            if re.search('r\.', retorno_json['updatedIn']):
                 dt_retorno = retorno_json['updatedIn']
                 dt_retorno = datetime.strptime(dt_retorno, '%Y-%m-%dT%H:%M:%S.%f')
             else:

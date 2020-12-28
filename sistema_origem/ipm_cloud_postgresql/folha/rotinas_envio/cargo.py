@@ -1,10 +1,9 @@
-import sistema_origem.ipm_cloud_postgresql.model as model
-import bth.interacao_cloud as interacao_cloud
+from datetime import datetime
+import re
 import json
 import logging
-import re
-import math
-from datetime import datetime
+import sistema_origem.ipm_cloud_postgresql.model as model
+import bth.interacao_cloud as interacao_cloud
 
 sistema = 300
 tipo_registro = 'cargo'
