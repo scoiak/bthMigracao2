@@ -1,10 +1,8 @@
+from datetime import datetime
 import settings
 import sistema_origem.ipm_cloud_postgresql.model as model
 import bth.interacao_cloud as interacao_cloud
 # import winsound
-
-from datetime import datetime
-
 
 def iniciar():
     print(':: Iniciando migração do sistema Folha')
@@ -60,7 +58,7 @@ def iniciar():
     # enviar(params_exec, 'plano-cargo-salario')
     # enviar(params_exec, 'nivel-salarial')
     # enviar(params_exec, 'cargo')
-    # enviar(params_exec, 'matricula')
+    enviar(params_exec, 'matricula')
     # enviar(params_exec, 'afastamento')
     # enviar(params_exec, 'lancamento-evento')
     # enviar(params_exec, 'rescisao')

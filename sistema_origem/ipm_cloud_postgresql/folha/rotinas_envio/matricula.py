@@ -1,8 +1,8 @@
-import sistema_origem.ipm_cloud_postgresql.model as model
-import bth.interacao_cloud as interacao_cloud
+from datetime import datetime
 import json
 import logging
-from datetime import datetime
+import bth.interacao_cloud as interacao_cloud
+import sistema_origem.ipm_cloud_postgresql.model as model
 
 tipo_registro = 'matricula'
 sistema = 300
@@ -791,14 +791,13 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                                 'id': campo[63]
                             }
                         })
-                    """    
-                    if campo[64] is not None:
-                        dict_item_historico.update({
-                            'formacao': {
-                                'id': int(campo[64])
-                            }
-                        })
-                    """
+                    if False:
+                        if campo[64] is not None:
+                            dict_item_historico.update({
+                                'formacao': {
+                                    'id': int(campo[64])
+                                }
+                            })                    
                     if item['formacao'] is not None:
                         dict_item_historico.update({
                             'formacao': {
