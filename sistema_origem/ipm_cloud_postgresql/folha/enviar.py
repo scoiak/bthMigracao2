@@ -11,11 +11,11 @@ def iniciar():
     params_exec = {
         'clicodigo': '2016',
         'somente_pre_validar': False,
-        # 'token': '72612895-9758-467d-a2ef-36b8b57c3198', # Homologação 1
-        # 'token': '58924393-e014-43f4-9269-5646a39b127d', # Homologação 2
-        'token': 'c52c4510-0a8f-468f-a501-1f68b32795c8', # Homologação 3
-        # 'token': 'c420e8c5-bc8a-44c4-8b34-e46df7867a3e', # Prefeitura
-        # 'token': '144e13ad-29ce-49b7-b9dc-7d95ee29b0f6', # FAMABI
+        # 'token': '72612895-9758-467d-a2ef-36b8b57c3198',  # Homologação 1
+        # 'token': '58924393-e014-43f4-9269-5646a39b127d',  # Homologação 2
+        # 'token': 'c52c4510-0a8f-468f-a501-1f68b32795c8',  # Homologação 3
+        'token': 'c420e8c5-bc8a-44c4-8b34-e46df7867a3e',  # Prefeitura
+        # 'token': '144e13ad-29ce-49b7-b9dc-7d95ee29b0f6',  # FAMABI
         'ano': 2020
     }
     mensagem_inicio(params_exec)
@@ -60,7 +60,7 @@ def iniciar():
     # enviar(params_exec, 'plano-cargo-salario')
     # enviar(params_exec, 'nivel-salarial')
     # enviar(params_exec, 'cargo')
-    # enviar(params_exec, 'matricula')
+    enviar(params_exec, 'matricula')
     # enviar(params_exec, 'afastamento')
     # enviar(params_exec, 'lancamento-evento')
     # enviar(params_exec, 'rescisao')

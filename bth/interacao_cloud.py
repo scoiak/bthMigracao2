@@ -168,8 +168,11 @@ def enviar_lote(lote, *args, **kwargs):
         url = kwargs.get('url')
         token = kwargs.get('token')
         headers = {'authorization': f'bearer {token}', 'content-type': 'application/json'}
+        print("headers: ", headers)
+        print("url: ", url)
+        # print("json_envio_lote: ", json_envio_lote)
         retorno_req = requests.post(url, headers=headers, data=json_envio_lote)
-        # print("DEBUG - Tempo requisição: ", retorno_req.elapsed.total_seconds(), ' segundos.')
+        print("DEBUG - Tempo requisição: ", retorno_req.elapsed.total_seconds(), ' segundos.')
         if retorno_req.ok:
             if 'json' in retorno_req.headers.get('Content-Type'):
                 retorno_json = retorno_req.json()
@@ -198,7 +201,7 @@ def busca_dados_cloud(params_exec, **kwargs):
     dados_coletados = []
     has_next = True
     url = kwargs.get('url')
-    limit = 200
+    limit = 20
     offset = 0
     erros_consecutivos = 0
     rodada_busca = 1

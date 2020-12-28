@@ -45,7 +45,7 @@ from (
      else 'false'
     end ) as vinculoTemporario,
 	(CASE
-     when regcodigo in(1,2,5,8,10,15,19,21,23,24,25,27) then '5691' -- ajustar par final
+     when regcodigo in(1,2,5,8,10,15,19,21,23,24,25,27) then '5491' -- ajustar par final
      else null
     end ) as motivoRescisao, -- REFERENCIAR TABELA DE MOTIVO DE RESCISÃO
 	false as dataFinalObrigatoria,

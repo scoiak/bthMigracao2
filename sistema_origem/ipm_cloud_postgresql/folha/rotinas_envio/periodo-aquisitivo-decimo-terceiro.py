@@ -12,9 +12,9 @@ limite_lote = 1000
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
-    if False:
-        busca_dados(params_exec)
     if True:
+        busca_dados(params_exec)
+    if False:
         dados_assunto = coletar_dados(params_exec)
         dados_enviar = pre_validar(params_exec, dados_assunto)
         if not params_exec.get('somente_pre_validar'):
@@ -33,7 +33,7 @@ def busca_dados(params_exec):
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Bairro',
+            'descricao_tipo_registro': 'Cadastro do Periodo Aquisitov de Decimo Terceiro',
             'id_gerado': item['id'],
             'i_chave_dsk1': '56',
             'i_chave_dsk2': item['matricula']['id'],
@@ -148,7 +148,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Lotação Física',
+            'descricao_tipo_registro': 'Cadastro do Periodo Aquisitov de Decimo Terceiro',
             'id_gerado': None,
             'json': json.dumps(dict_dados),
             'i_chave_dsk1': item['entidade'],

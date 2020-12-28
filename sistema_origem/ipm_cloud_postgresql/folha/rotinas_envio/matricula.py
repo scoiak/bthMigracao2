@@ -6,14 +6,14 @@ from datetime import datetime
 
 tipo_registro = 'matricula'
 sistema = 300
-limite_lote = 200
+limite_lote = 50
 url = "https://pessoal.cloud.betha.com.br/service-layer/v1/api/matricula"
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
     if False:
         busca_dados(params_exec)
-    if False:
+    if True:
         dados_assunto = coletar_dados(params_exec)
         dados_enviar = pre_validar(params_exec, dados_assunto)
         if not params_exec.get('somente_pre_validar'):
@@ -28,7 +28,8 @@ def busca_dados(params_exec):
     print(f'- Foram encontrados {len(registros)} registros cadastrados no cloud.')
     registros_formatados = []
     for item in registros:
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, 56, item['codigoMatricula']['numero'], item['codigoMatricula']['contrato'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, 56, item['codigoMatricula']['numero'],
+                                              item['codigoMatricula']['contrato'])
         registros_formatados.append({
             'sistema': sistema,
             'tipo_registro': tipo_registro,
@@ -83,7 +84,8 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     token = params_exec['token']
     contador = 0
     for item in dados:
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['clicodigo'], item['fcncodigo'], item['funcontrato'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['clicodigo'], item['fcncodigo'],
+                                              item['funcontrato'])
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {}
@@ -211,7 +213,8 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         if 'tipoinclusaocontratotemporario' in item and item['tipoinclusaocontratotemporario'] is not None:
             dict_dados['conteudo'].update({'tipoInclusaoContratoTemporario': item['tipoinclusaocontratotemporario']})
         if 'dataprorrogacaocontratotemporario' in item and item['dataprorrogacaocontratotemporario'] is not None:
-            dict_dados['conteudo'].update({'dataProrrogacaoContratoTemporario': item['dataprorrogacaocontratotemporario']})
+            dict_dados['conteudo'].update(
+                {'dataProrrogacaoContratoTemporario': item['dataprorrogacaocontratotemporario']})
         if 'numerocartaoponto' in item and item['numerocartaoponto'] is not None:
             dict_dados['conteudo'].update({'numeroCartaoPonto': item['numerocartaoponto']})
         if 'indicativoprovimento' in item and item['indicativoprovimento'] is not None:
@@ -802,8 +805,6 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                                 'id': int(item['formacao'])
                             }
                         })
-
-
                     if campo[72] is not None:
                         dict_item_historico.update({
                             'categoriaTrabalhador': {
@@ -888,7 +889,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                     'historicos': listahistorico
                 })
         contador += 1
-        # print(f'Dados gerados ({contador}): ', dict_dados)
+        print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,

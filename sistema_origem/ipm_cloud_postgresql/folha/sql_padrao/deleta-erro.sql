@@ -35,21 +35,21 @@ update public.controle_migracao_registro set tipo_registro = 'conta-bancaria',ha
 update public.controle_migracao_registro set hash_chave_dsk = md5(concat('300', 'lancamento-evento', i_chave_dsk1, i_chave_dsk2,i_chave_dsk3,i_chave_dsk4,i_chave_dsk5,i_chave_dsk6,i_chave_dsk7)) where tipo_registro = 'lancamento-evento';
 
 DO $$ DECLARE
-	-- tr text := 'matricula';
-	-- tr text := 'cargo';
-     --tr text := 'vinculo-empregaticio';
-     --tr text := 'afastamento';
-    tr text := 'dependencia';
+	tr text := 'matricula';
+	--tr text := 'cargo';
+    --tr text := 'vinculo-empregaticio';
+    --tr text := 'afastamento';
+    --tr text := 'dependencia';
     --tr text := 'lancamento-evento';
     --tr text := 'calculo-folha-decimo-terceiro';
-   --tr text := 'calculo-folha-mensal';
-   --tr text := 'calculo-folha-rescisao';
-    -- tr text := 'periodo-aquisitivo-ferias';
-     --tr text := 'periodo-aquisitivo-decimo-terceiro';
-    --tr text := 'rescisao';
+    --tr text := 'calculo-folha-mensal';
+    --tr text := 'calculo-folha-rescisao';
+    --tr text := 'periodo-aquisitivo-ferias';
+    --tr text := 'periodo-aquisitivo-decimo-terceiro';
+	--tr text := 'rescisao';
     --tr text := 'folha';
 begin
-	-- delete from public.controle_migracao_lotes where tipo_registro = tr;	
-	 --delete from public.controle_migracao_registro where tipo_registro = tr;	
+	--delete from public.controle_migracao_lotes where tipo_registro = tr;	
+	--delete from public.controle_migracao_registro where tipo_registro = tr;	
 	delete from public.controle_migracao_registro_ocor where tipo_registro = tr;
 END $$;

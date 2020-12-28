@@ -12,11 +12,40 @@ limite_lote = 1000
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
-    dados_assunto = coletar_dados(params_exec)
-    dados_enviar = pre_validar(params_exec, dados_assunto)
-    if not params_exec.get('somente_pre_validar'):
-        iniciar_envio(params_exec, dados_enviar, 'POST')
-    model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
+    if False:
+        busca_dados(params_exec)
+    if True:
+        dados_assunto = coletar_dados(params_exec)
+        dados_enviar = pre_validar(params_exec, dados_assunto)
+        if not params_exec.get('somente_pre_validar'):
+            iniciar_envio(params_exec, dados_enviar, 'POST')
+        model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
+
+
+def busca_dados(params_exec):
+    print('- Iniciando busca de dados no cloud.')
+    registros = interacao_cloud.busca_dados_cloud(params_exec, url=url)
+    print(f'- Foram encontrados {len(registros)} registros cadastrados no cloud.')
+    registros_formatados = []
+    for item in registros:
+        for matricula in item['calculoFolhaMatriculas']:
+            hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, '56', matricula['matricula']['id'],
+                                                  item['tipoProcessamento'], item['subTipoProcessamento'],
+                                                  item['dataPagamento'])
+            registros_formatados.append({
+                'sistema': sistema,
+                'tipo_registro': tipo_registro,
+                'hash_chave_dsk': hash_chaves,
+                'descricao_tipo_registro': 'Cadastro do Calculo da Folha de Rescisao',
+                'id_gerado': item['id'],
+                'i_chave_dsk1': '56',
+                'i_chave_dsk2': matricula['matricula']['id'],
+                'i_chave_dsk3': item['tipoProcessamento'],
+                'i_chave_dsk4': item['subTipoProcessamento'],
+                'i_chave_dsk5': item['dataPagamento']
+            })
+    model.insere_tabela_controle_migracao_registro(params_exec, lista_req=registros_formatados)
+    print('- Busca finalizada. Tabelas de controles atualizas com sucesso.')
 
 
 def coletar_dados(params_exec):
@@ -67,7 +96,9 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     for item in dados:
         contador += 1
         # print(f'\r- Gerando JSON: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['entidade'], item['matricula'], item['tipoprocessamento'], item['subtipoprocessamento'], item['datapagamento'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['entidade'], item['matricula'],
+                                              item['tipoprocessamento'], item['subtipoprocessamento'],
+                                              item['datapagamento'])
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {
@@ -95,12 +126,14 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             dict_dados['conteudo'].update({'dataPagamento': item['datapagamento']})
         if 'tipovinculacaomatricula' in item and item['tipovinculacaomatricula'] is not None:
             dict_dados['conteudo'].update({'tipoVinculacaoMatricula': item['tipovinculacaomatricula']})
-        if 'avisoprevio' in item and item['avisoprevio'] is not None:
-            dict_dados['conteudo'].update({'avisoPrevio': item['avisoprevio']})
+        if False:
+            if 'avisoprevio' in item and item['avisoprevio'] is not None:
+                dict_dados['conteudo'].update({'avisoPrevio': item['avisoprevio']})
         if 'datarescisao' in item and item['datarescisao'] is not None:
             dict_dados['conteudo'].update({'dataRescisao': item['datarescisao']})
         if 'consideraavosperdidosdecimoterceiro' in item and item['consideraavosperdidosdecimoterceiro'] is not None:
-            dict_dados['conteudo'].update({'consideraAvosPerdidosDecimoTerceiro': item['consideraavosperdidosdecimoterceiro']})
+            dict_dados['conteudo'].update(
+                {'consideraAvosPerdidosDecimoTerceiro': item['consideraavosperdidosdecimoterceiro']})
         if 'descontarfaltasferias' in item and item['descontarfaltasferias'] is not None:
             dict_dados['conteudo'].update({'descontarFaltasFerias': item['descontarfaltasferias']})
         if 'trabalhoudiarescisao' in item and item['trabalhoudiarescisao'] is not None:
@@ -118,8 +151,9 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Rescisao',
+            'descricao_tipo_registro': 'Cadastro do Calculo da Folha de Rescisao',
             'id_gerado': None,
+            'json': json.dumps(dict_dados),
             'i_chave_dsk1': item['entidade'],
             'i_chave_dsk2': item['matricula'],
             'i_chave_dsk3': item['tipoprocessamento'],

@@ -12,9 +12,9 @@ limite_lote = 1000
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
-    if False:
-        busca_dados(params_exec)
     if True:
+        busca_dados(params_exec)
+    if False:
         dados_assunto = coletar_dados(params_exec)
         dados_enviar = pre_validar(params_exec, dados_assunto)
         if not params_exec.get('somente_pre_validar'):
@@ -28,12 +28,12 @@ def busca_dados(params_exec):
     print(f'- Foram encontrados {len(registros)} registros cadastrados no cloud.')
     registros_formatados = []
     for item in registros:
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, '56', item['matricula']['id'], item['dataInicial'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, '56', item['sigla'])
         registros_formatados.append({
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Bairro',
+            'descricao_tipo_registro': 'Cadastro de Base',
             'id_gerado': item['id'],
             'i_chave_dsk1': '56',
             'i_chave_dsk2': item['sigla']

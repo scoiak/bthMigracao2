@@ -1,14 +1,20 @@
 create index IF NOT exists idx_p_p on wfp.tbpagamento (fcncodigo, funcontrato, odomesano, tipcodigo);
+--create index IF NOT exists idxo_p_p ON wfp.tbpagamento  (info NULLS FIRST);
 create index IF NOT exists idx_p_pb on wfp.tbpagamentobase (fcncodigo, funcontrato, odomesano);
 create index IF NOT exists idx_p_pd on wfp.tbprovdesc (odomesano,cpdcodigo, cpdclasse);
 create index IF NOT exists idx_p_irrf on wfp.tbirrf (odomesano,irrmesano);
 create index IF NOT exists idx_p_pa on wfp.tbpensaoalimenticia (fcncodigo,funcontrato,odomesano);
+create index IF NOT exists idx_cmr_f on public.controle_migracao_registro (hash_chave_dsk);
+create index IF NOT exists idx_p_d on wun.tbdependente (unicodigores,depir);
 
-
-select * from ( select 
+--EXPLAIN (ANALYZE, COSTS, VERBOSE, BUFFERS, FORMAT JSON)
+select *
+,(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'folha',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),matricula,tipoprocessamento,subtipoprocessamento,competencia,dataPagamento))) as idCloud 
+from ( select 
 row_number() over() as id,
 (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))) as entidade,
 row_number() over(partition by matricula order by matricula asc, dataPagamento asc) as codigo,
+--select * from public.controle_migracao_registro where i_chave_dsk2 = '2614788' and tipo_registro = 'calculo-folha-rescisao'
 (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', tipoCalculo, (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), matricula, tipoProcessamento, subTipoProcessamento, dataPagamento))) as calculo,
 * from (
 select distinct
@@ -90,11 +96,11 @@ select distinct
 	    where (select count(d.unicodigodep) from wun.tbdependente as d where d.unicodigores = (select fc.unicodigo from wfp.tbfuncontrato as fc where fc.fcncodigo = p.fcncodigo and fc.funcontrato = p.funcontrato and fc.odomesano = 202010) and d.depir in (1,2)) > 0
 	  	) as suc
 	  	) as eventos,	  		  
-		(select string_agg(suc.configuracao || '%|%' || (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'base', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),suc.base))) || '%|%' || coalesce(suc.valor,0),'%||%') from (		 	select distinct 			 	(CASE pb.cpdcodigo  	WHEN 36 then 'FGTS'	 WHEN 50 then 'INSS'     WHEN 51 then 'INSS13' 	 WHEN 52 then 'PREVEST' 	 WHEN 53 then 'PREVEST13'	 WHEN 56 then 'FUNDOPREV' 	 WHEN 57 then 'FUNDPREV13' 	 WHEN 58 then 'IRRF' 	 WHEN 59 then  'IRRF13'	 WHEN 91 then 'FUPRFEPR'	 WHEN 92 then 'IRRFFER' 	 WHEN 116 then 'IRRFFERRESC' 	 WHEN 126 then 'SALAFAM'  	 WHEN 127  then 'SALAFAM'  /* 'SALAFAMILUA Estatuatario' Não tem similar no padrão betha Cloud ver se será necessário criar ou deixa como 'SALAFAM' WHEN 401 	"ABATIMENTO PREVBIGUAÇU(Cargo comissionado)" Não tem similar no padrão betha Cloud*/	 WHEN 525 then 'INSS' 	 WHEN 526 then 'INSS13'  	 WHEN 660 then  'FUNDOPREV' end) as base,	 (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'configuracao-evento', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), pb.cpdcodigo))) as configuracao,	 pb.pbavalor as valor		  FROM wfp.tbpagamentobase as pb	where pb.fcncodigo = p.fcncodigo and  pb.funcontrato = p.funcontrato and pb.odomesano = p.odomesano) as suc) as composicaoBases
+		(select string_agg(suc.configuracao || '%|%' || (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'base', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),suc.base))) || '%|%' || coalesce(suc.valor,0),'%||%') from (		 	select distinct 			 	(CASE pb.cpdcodigo  	WHEN 36 then 'FGTS'	 WHEN 50 then 'INSS'     WHEN 51 then 'INSS13' 	 WHEN 52 then 'PREVEST' 	 WHEN 53 then 'PREVEST13'	 WHEN 56 then 'FUNDOPREV' 	 WHEN 57 then 'FUNDPREV13' 	 WHEN 58 then 'IRRF' 	 WHEN 59 then  'IRRF13'	 WHEN 91 then 'FUPRFEPR'	 WHEN 92 then 'IRRFFER' 	 WHEN 116 then 'IRRFFERRESC' 	 WHEN 126 then 'SALAFAM'  	 WHEN 127  then 'SALAFAM'  /* 'SALAFAMILUA Estatuatario' Não tem similar no padrão betha Cloud ver se será necessário criar ou deixa como 'SALAFAM' WHEN 401 	"ABATIMENTO PREVBIGUAÇU(Cargo comissionado)" Não tem similar no padrão betha Cloud*/	 WHEN 525 then 'INSS' 	 WHEN 526 then 'INSS13'  	 WHEN 660 then  'FUNDOPREV' end) as base,	 (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'configuracao-evento', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), pb.cpdcodigo))) as configuracao,	 pb.pbavalor as valor		  FROM wfp.tbpagamentobase as pb	where pb.fcncodigo = p.fcncodigo and  pb.funcontrato = p.funcontrato and pb.odomesano = p.odomesano) as suc) as composicaoBases		
 	   FROM wfp.tbpagamento  as p	 
 	 --where odomesano = 202010
 where odomesano >= 202001	 
-and fcncodigo in (15200)--(4714,2,113,15011,56,10438,11166,15079)
+--and fcncodigo in (15200)--(4714,2,113,15011,56,10438,11166,15079)
 ) as a
 ) as b
 where matricula is not null

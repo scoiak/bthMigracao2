@@ -6,6 +6,8 @@ select * from wfp.tbrubricaautonomoplano
 select * from wfp.tbrubricaautonomo
 select * from wfp.tbgpsgcencusautonomo
 
+select count(*) from controle_migracao_registro 
+
 select * from wfp.tbfuntransferencia where odomesano = 202010
 
 select * from wfp.tbpensaoalimenticia where fcncodigo = 7944 and odomesano = 202010
@@ -48,8 +50,19 @@ from wfp.tbferiasgozada as fg
 where fcncodigo = 4714 
 and odomesano = 202010
 
+select 1 as a union select 2 as b
+
+select * from public.controle_migracao_registro where tipo_registro = 'periodo-aquisitivo-decimo-terceiro' and i_chave_dsk2::int in (7096,7450,8091,8107);
+
 select * from wfp.tbdecimocalculado t 
 select * from wfp.tbpagamento wer
+
+select * from public.controle_migracao_registro where tipo_registro = 'rescisao' and i_chave_dsk2::int in (2393015,2395520,2395525,2395530,2409290);
+
+select * from public.controle_migracao_registro where tipo_registro = 'rescisao' and i_chave_dsk2 = '2409290'
+
+select * from public.controle_migracao_registro_ocor where tipo_registro = 'rescisao';
+select * from public.controle_migracao_registro where tipo_registro = 'rescisao';
 
 select * from public.controle_migracao_registro where tipo_registro = 'calculo-folha-ferias';
 select * from public.controle_migracao_registro where tipo_registro = 'lancamento-evento';
@@ -60,6 +73,10 @@ select * from public.controle_migracao_registro_ocor where tipo_registro = 'vinc
 
 select * from public.controle_migracao_registro_ocor where tipo_registro = 'calculo-folha-decimo-terceiro';
 select * from public.controle_migracao_registro_ocor where tipo_registro = 'calculo-folha-rescisao';
+select * from public.controle_migracao_registro where tipo_registro = 'calculo-folha-rescisao';
+
+select * from public.controle_migracao_registro where tipo_registro = 'calculo-folha-rescisao' and i_chave_dsk2  = 2;
+select * from public.controle_migracao_registro where tipo_registro = 'calculo-folha-mensal'
 select * from public.controle_migracao_registro_ocor where tipo_registro = 'base';
 
 (select irrf.irrdeducaodep from wfp.tbirrf as irrf where irrf.odomesano = 202010 and (irrf.irrmesano = p.odomesano or irrf.irrmesano < p.odomesano) order by irrf.irrmesano desc limit 1)
@@ -80,8 +97,14 @@ select * from public.controle_migracao_registro_ocor where tipo_registro = 'lanc
 
 select * from public.controle_migracao_registro where tipo_registro = 'matricula' and id_gerado = 2000180;
 
-select * from public.controle_migracao_registro where tipo_registro = 'matricula' and id_gerado is not null;
+select * from public.controle_migracao_registro where tipo_registro = 'matricula' and id_gerado is null;
 
+select * from public.controle_migracao_registro_ocor where tipo_registro = 'matricula';
+
+select * from public.controle_migracao_registro where tipo_registro = 'organograma'
+
+select * from public.controle_migracao_registro_ocor where tipo_registro = 'vinculo-empregaticio'
+select * from public.controle_migracao_registro where tipo_registro = 'vinculo-empregaticio'
 
 select * from public.controle_migracao_registro_ocor where tipo_registro = 'afastamento';
 select * from public.controle_migracao_registro where tipo_registro = 'afastamento' and id_gerado is null;
