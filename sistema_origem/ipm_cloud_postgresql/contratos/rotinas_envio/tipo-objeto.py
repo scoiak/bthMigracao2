@@ -7,11 +7,14 @@ import math
 from datetime import datetime
 
 sistema = 305
-tipo_registro = 'material'
-url = 'https://compras.betha.cloud/compras-services/api/materiais'
+tipo_registro = 'tipo-objeto'
+url = 'https://compras.betha.cloud/compras-services/api/tipos-objeto'
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
+    # Busca os dados cadastrados no cloud
+    busca_dados_cloud(params_exec)
+
     # E - Realiza a consulta dos dados que serão enviados
     dados_assunto = coletar_dados(params_exec)
 
@@ -21,6 +24,28 @@ def iniciar_processo_envio(params_exec, *args, **kwargs):
     # L - Realiza o envio dos dados validados
     if not params_exec.get('somente_pre_validar'):
         iniciar_envio(params_exec, dados_enviar, 'POST')
+
+
+def busca_dados_cloud(params_exec):
+    print('- Iniciando busca de dados no cloud.')
+    registros = interacao_cloud.busca_dados_cloud(params_exec, url=url)
+    print(f'- Foram encontrados {len(registros)} registros cadastrados no cloud.')
+    registros_formatados = []
+    try:
+        for item in registros:
+            hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['descricao'])
+            registros_formatados.append({
+                'sistema': sistema,
+                'tipo_registro': tipo_registro,
+                'hash_chave_dsk': hash_chaves,
+                'descricao_tipo_registro': 'Cadastro de Tipos de Objeto',
+                'id_gerado': item['id'],
+                'i_chave_dsk1': item['descricao'],
+            })
+        model.insere_tabela_controle_migracao_registro2(params_exec, lista_req=registros_formatados)
+        print(f'- Busca de {tipo_registro} finalizada. Tabelas de controles atualizas com sucesso.')
+    except Exception as error:
+        print(f'Erro ao executar função "busca_dados_cloud". {error}')
 
 
 def coletar_dados(params_exec):
@@ -76,6 +101,7 @@ def pre_validar(params_exec, dados):
 
 def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     print('- Iniciando envio dos dados.')
+    lista_dados_enviar = []
     lista_controle_migracao = []
     hoje = datetime.now().strftime("%Y-%m-%d")
     token = params_exec['token']
@@ -83,48 +109,17 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     contador = 0
 
     for item in dados:
-        lista_dados_enviar = []
         contador += 1
         print(f'\r- Gerando JSON: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['chave_dsk1'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['descricao'])
         dict_dados = {
             'idIntegracao': hash_chaves,
-            'codigoMaterial': item['chave_dsk1'],
             'descricao': item['descricao'],
-            'ativo': item['ativo'],
-            'estocavel': item['estocavel'],
-            'tipoMaterial': {
-                'valor': item['tipo_material']
+            'tipo': {
+                'valor': item['tipo']
             },
-            'classificacao': {
-                'valor': item['classificacao']
-            },
-            'tipoCombustivel': {
-                'valor': item['tipocombustivel']
-            },
-            'unidadeCompra': {
-                'id': item['id_un_medida']
-            },
-            'unidadeEstoque': {
-                'id': item['id_un_medida']
-            },
-            'classe': {
-                'id': item['id_classe']
-            },
-            'grupo': {
-                'id': item['id_grupo']
-            },
-            'especificacoes': [
-                {
-                    'descricao': item['especificacao']
-                }
-            ]
+            'bemPublico': item['bem_publico']
         }
-
-        if 'datainativacao' in item and item['datainativacao'] is not None:
-            dict_dados.update({
-                'dataInativacao': item['datainativacao']
-            })
 
         print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
@@ -132,21 +127,19 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Materiais',
+            'descricao_tipo_registro': 'Cadastro de Tipos de Objeto',
             'id_gerado': None,
             'json': json.dumps(dict_dados),
-            'i_chave_dsk1': item['chave_dsk1']
+            'i_chave_dsk1': item['descricao']
         })
 
-        if True:
-            # model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)
-            req_res = interacao_cloud\
-                .preparar_requisicao_sem_lote(
-                    lista_dados=lista_dados_enviar,
-                    token=token,
-                    url=url,
-                    tipo_registro=tipo_registro)
-            model.atualiza_tabelas_controle_envio_sem_lote(params_exec, req_res, tipo_registro=tipo_registro)
-    print('- Envio de dados finalizado.')
+    if True:
+        model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)
+        req_res = interacao_cloud.preparar_requisicao_sem_lote(lista_dados=lista_dados_enviar,
+                                                                token=token,
+                                                                url=url,
+                                                                tipo_registro=tipo_registro)
+        model.atualiza_tabelas_controle_envio_sem_lote(params_exec, req_res, tipo_registro=tipo_registro)
+        print('- Envio de dados finalizado.')
 
 

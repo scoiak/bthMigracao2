@@ -1,0 +1,2 @@
+insert into public.controle_migracao_registro (sistema, tipo_registro, descricao_tipo_registro, id_gerado, i_chave_dsk1, hash_chave_dsk) values 
+('305', 'entidade', 'Cadastro de Entidades', 5961,	'2016', md5(concat('305', 'entidade', '2016')))

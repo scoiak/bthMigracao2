@@ -5,16 +5,17 @@ from datetime import datetime
 
 
 def iniciar():
-    print(':: Iniciando migração do sistema Folha')
+    print(':: Iniciando migração do sistema Compras/Contratos')
     params_exec = {
         'clicodigo': '2016',
+        'ano': 2015,
         'somente_pre_validar': False,
-        'token': 'b9f9dc47-e89e-471d-8f3d-59f66df420a4',
-        'ano': 2020
     }
     mensagem_inicio(params_exec)
     interacao_cloud.verifica_token(params_exec['token'])
     verifica_tabelas_controle()
+
+    # Envio Compras
     # enviar(params_exec, 'configuracoes-organogramas')
     # enviar(params_exec, 'orgao')
     # enviar(params_exec, 'unidade')
@@ -25,9 +26,34 @@ def iniciar():
     # enviar(params_exec, 'grupo')
     # enviar(params_exec, 'classe')
     # enviar(params_exec, 'unidade-medida')
-    enviar(params_exec, 'material')
+    # enviar(params_exec, 'material')
+    # enviar(params_exec, 'material-especificacao')
+    # enviar(params_exec, 'tipo-objeto')
+    # enviar(params_exec, 'regime-execucao')
+    # enviar(params_exec, 'prazo-entrega')
+    # enviar(params_exec, 'tipo-interposicao-recurso')
+    # enviar(params_exec, 'tipo-publicacao')
+    # enviar(params_exec, 'modalidade')
+    # enviar(params_exec, 'forma-pagamento')
+    # enviar(params_exec, 'local-entrega')
+    # enviar(params_exec, 'tipo-documento')
+    # enviar(params_exec, 'pais')
+    # enviar(params_exec, 'estado')
+    # enviar(params_exec, 'municipio')
+    # enviar(params_exec, 'cargo')
+    # enviar(params_exec, 'tipo-ato')
+    # enviar(params_exec, 'fonte-divulgacao')
+    # enviar(params_exec, 'natureza-texto-juridico')
+    # enviar(params_exec, 'ato')
+    # enviar(params_exec, 'tipo-revogacao-anulacao')
+    # enviar(params_exec, 'solicitacao')
 
-    # enviar(params_exec, 'mede-lotes')
+    # enviar(params_exec, 'despesa')
+    enviar(params_exec, 'solicitacao-item')
+
+    # Envio Contratos
+
+
 
 
 def enviar(params_exec, tipo_registro, *args, **kwargs):

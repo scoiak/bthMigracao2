@@ -61,10 +61,16 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     token = params_exec['token']
     contador = 0
     for item in dados:
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['cpf_dependente'], item['cpf_responsavel'], item['datainiciobeneficio'])
+        if item['datainiciobeneficio'] is not None:
+            data_chave = item['datainiciobeneficio']
+        else:
+            data_chave = item['datainicio']
+
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['cpf_dependente'], item['cpf_responsavel'], data_chave)
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {
+                'id': item['id_gerado'],
                 'pessoa': {
                     'id': item['pessoa']
                 },
@@ -73,9 +79,9 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                 },
                 'responsaveis': item['responsaveis'],
                 'grau': item['grau'],
-                'dataInicio': item['datainicio'],
-                'motivoInicio': item['motivoinicio'],
+                'dataInicio': item['datainicio'], #  item['dt_nascimento_dependente'],
                 'dataTermino': item['datatermino'],
+                'motivoInicio': item['motivoinicio'],
                 'motivoTermino': item['motivotermino'],
                 'dataCasamento': item['datacasamento'],
                 'estuda': item['estuda'],
@@ -97,7 +103,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                 'formaPagamento': item['formapagamento']
             }
         }
-        if 'contabancaria' in item and item['contabancaria'] is not None:
+        if None and 'contabancaria' in item and item['contabancaria'] is not None:
             dict_dados['conteudo'].update({
                 'contaBancaria': {
                     'id': int(item['contabancaria'])
@@ -115,13 +121,14 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'json': json.dumps(dict_dados),
             'i_chave_dsk1': item['cpf_dependente'],
             'i_chave_dsk2': item['cpf_responsavel'],
-            'i_chave_dsk3': item['datainiciobeneficio']
+            'i_chave_dsk3': data_chave
         })
-    model.insere_tabela_controle_migracao_registro2(params_exec, lista_req=lista_controle_migracao)
-    req_res = interacao_cloud.preparar_requisicao(lista_dados=lista_dados_enviar,
-                                                  token=token,
-                                                  url=url,
-                                                  tipo_registro=tipo_registro,
-                                                  tamanho_lote=limite_lote)
-    model.insere_tabela_controle_lote(req_res)
-    print('- Envio de dados finalizado.')
+    if True:
+        model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)
+        req_res = interacao_cloud.preparar_requisicao(lista_dados=lista_dados_enviar,
+                                                      token=token,
+                                                      url=url,
+                                                      tipo_registro=tipo_registro,
+                                                      tamanho_lote=limite_lote)
+        model.insere_tabela_controle_lote(req_res)
+        print('- Envio de dados finalizado.')

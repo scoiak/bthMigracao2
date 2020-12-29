@@ -7,7 +7,7 @@ from (
 	select distinct
         organo as chave_dsk1,
         (select id_gerado from public.controle_migracao_registro	where hash_chave_dsk = md5(concat(305, 'configuracoes-organogramas', organo))) as id_configuracao_organograma,
-		(select id_gerado from public.controle_migracao_registro	where hash_chave_dsk = md5(concat(305, 'parametros-exercicio', organo))) as id_gerado
+		(select id_gerado from public.controle_migracao_registro	where hash_chave_dsk = md5(concat(305, 'parametro-exercicio', organo))) as id_gerado
 	from wun.tborgao
 	where organo between 2015 and 2020
 ) tab
