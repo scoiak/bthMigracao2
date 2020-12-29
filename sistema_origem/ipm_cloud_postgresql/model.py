@@ -1,14 +1,12 @@
-import pandas as pd
-import psycopg2
-import settings
+from datetime import datetime
 import hashlib
-import requests
 import time
 import logging
 import re
-from datetime import datetime
-
-
+import requests
+import pandas as pd
+import psycopg2
+import settings
 class PostgreSQLConnection:
     conn = None
 
@@ -131,7 +129,7 @@ def gerar_hash_chaves(*args):
 
 def insere_tabela_controle_lote(req_res):
     pgcnn = None
-    logging.info(f'Inserindo daods na tabela de controle de lotes.')
+    logging.info('Inserindo daods na tabela de controle de lotes.')
     if req_res is not None and len(req_res) != 0:
         try:
             pgcnn = PostgreSQLConnection()
@@ -172,7 +170,7 @@ def atualiza_tabela_controle_lote(**kwargs):
 
 def insere_tabela_controle_registro_ocor(req_res):
     pgcnn = None
-    logging.info(f'Inserindo dados na tabela de controle de ocorrências.')
+    logging.info('Inserindo dados na tabela de controle de ocorrências.')
     if req_res is not None and len(req_res) != 0:
         try:
             pgcnn = PostgreSQLConnection()
@@ -192,7 +190,7 @@ def insere_tabela_controle_registro_ocor(req_res):
 
 
 def insere_tabela_controle_migracao_registro(params_exec, lista_req):
-    logging.info(f'Inserindo dados na tabela de controle de registros.')
+    logging.info('Inserindo dados na tabela de controle de registros.')
     pgcnn = None
     itens_por_insert = 200
     data_list = []
@@ -252,7 +250,7 @@ def insere_tabela_controle_migracao_registro(params_exec, lista_req):
 
 def insere_tabela_controle_migracao_registro2(params_exec, lista_req):
     pgcnn = None
-    logging.info(f'Inserindo dados na tabela de controle de registros.')
+    logging.info('Inserindo dados na tabela de controle de registros.')
     if lista_req is not None:
         pgcnn = PostgreSQLConnection()
 
@@ -394,10 +392,12 @@ def valida_lotes_enviados(params_exec, *args, **kwargs):
                         if status in ['AGUARDANDO_EXECUCAO', 'EXECUTANDO']:
                             existe_pendencia = True
                         else:
-                            retorno_analise_lote = analisa_retorno_lote(params_exec,
+                            retorno_analise_lote_novo = analisa_retorno_lote(params_exec,
                                                                         retorno_json,
                                                                         id_lote=id_lote,
                                                                         tipo_registro=kwargs.get('tipo_registro'))
+                            retorno_analise_lote["incosistencia_registros"] += retorno_analise_lote_novo["incosistencia_registros"]
+                            retorno_analise_lote["incosistencia_lotes"] += retorno_analise_lote_novo["incosistencia_lotes"]
                             lotes_validados += 1
                             print(f'\r- Lotes executados: {lotes_validados}/{total_lotes}', end='')
                     else:
@@ -456,9 +456,9 @@ def analisa_retorno_lote(params_exec, retorno_json, **kwargs):
 
         # Armazena o horário de finalização de execução do lote
         if 'updatedIn' in retorno_json:
-            if re.match('\d{2}\.\d+$', retorno_json['updatedIn']):
+            if re.match('\\d{2}\\.\\d+$', retorno_json['updatedIn']):
                 data_hora_ret = datetime.strptime(retorno_json['updatedIn'], '%Y-%m-%dT%H:%M:%S.%f')
-            elif re.match('\d{2}\:\d{2}\:\d{2}$', retorno_json['updatedIn']):
+            elif re.match('\\d{2}\\:\\d{2}\\:\\d{2}$', retorno_json['updatedIn']):
                 data_hora_ret = datetime.strptime(retorno_json['updatedIn'], '%Y-%m-%dT%H:%M:%S')
             else:
                 data_hora_ret = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -543,8 +543,8 @@ def analisa_retorno_lote(params_exec, retorno_json, **kwargs):
 
 def atualiza_dados_controle_migracao(lista_dados):
     itens_por_insert = 500
-    sql = f'UPDATE public.controle_migracao_registro ' \
-          f'SET id_gerado = %s WHERE hash_chave_dsk = %s'
+    sql = 'UPDATE public.controle_migracao_registro ' \
+          'SET id_gerado = %s WHERE hash_chave_dsk = %s'
 
     try:
         data_list = []
