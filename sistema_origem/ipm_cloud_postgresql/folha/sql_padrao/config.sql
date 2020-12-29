@@ -84,7 +84,7 @@ ALTER TABLE public.controle_migracao_lotes
 CREATE TABLE public.bth_indicadores_migracao
 (
     sistema integer,
-    dh_registro timestamp without time zone
+    dh_registro timestamp without time zone,
     tipo_registro text,
     qtd_registros integer,
     tempo_consulta_cloud numeric,

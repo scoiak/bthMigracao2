@@ -9,7 +9,7 @@ if False:
     DB_NAME = 'biguacu'
     DB_USER = 'postgres'
     DB_PW = 'bethadba'
-if True:
+if False:
     DB_HOST = '192.168.60.50'
     DB_PORT = '7666'
     DB_NAME = 'biguacu_nova'
@@ -21,6 +21,12 @@ if False:
     DB_NAME = 'ipm_bigua'
     DB_USER = 'postgres'
     DB_PW = 'admin'
+if True:
+    DB_HOST = 'localhost'
+    DB_PORT = '5432'
+    DB_NAME = 'biguacu'
+    DB_USER = 'postgres'
+    DB_PW = 'bethadba'
 
 
 def iniciar_migracao():
