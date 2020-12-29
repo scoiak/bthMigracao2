@@ -294,4 +294,4 @@ order by fc.fcncodigo,fc.funcontrato
 where 
 (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'matricula', clicodigo, fcncodigo, funcontrato))) is null and 
 pessoa is not null
-limit 1 offset 0
+--limit 1 offset 0
