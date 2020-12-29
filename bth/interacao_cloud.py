@@ -241,6 +241,15 @@ def busca_dados_cloud(params_exec, **kwargs):
 
 
 def busca_api_fonte_dados(params_exec, **kwargs):
+    """
+    Função para realizar a busca através das API's de fonte de dados Betha
+    :param params_exec: Parâmetros de contexto da execução
+    :param kwargs: Parâmetros
+    :param campos: Listagem de campos que serão retornados da fonte
+    :param criterio: Filtros que serão aplicados na busca da fonte
+    :param ordenacao: Ordenação dos campos que serão retornados
+    :return: Retorna um objeto <List> contendo os JSON's obtidos da fonte.
+    """
     dados_coletados = []
     has_next = True
     url = kwargs.get('url')

@@ -7,8 +7,8 @@ import math
 from datetime import datetime
 
 sistema = 305
-tipo_registro = 'solicitacao-item'
-url = 'https://compras.betha.cloud/compras-services/api/exercicios/{exercicio}/solicitacoes/{solicitacaoId}/itens'
+tipo_registro = 'solicitacao-despesa'
+url = 'https://compras.betha.cloud/compras-services/api/exercicios/{exercicio}/solicitacoes/{solicitacaoId}/despesas'
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
@@ -95,20 +95,13 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'solicitacao': {
                 'id': item['id_solicitacao']
             },
-            'material': {
-                'id': item['id_material']
+            'despesa': {
+                'id': item['id_despesa']
             },
-            "materialEspecificacao": {
-                'id': item['id_especificacao']
+            "parametrosExerc": {
+                'id': item['id_exercicio']
             },
-            'numero': item['numero'],
-            'quantidade': item['quantidade'],
-            'valorUnitario': item['valor_unitario'],
-            'valorTotal': item['valor_total'],
-            'status': {
-                'valor': item['status']
-            },
-            'amostra': item['amostra']
+            'valorEstimado': item['valor_estimado']
         }
 
         # print(f'Dados gerados ({contador}): ', dict_dados)
@@ -117,7 +110,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Item da Solicitações de Compra',
+            'descricao_tipo_registro': 'Cadastro de Despesa da Solicitações de Compra',
             'id_gerado': None,
             'json': json.dumps(dict_dados),
             'i_chave_dsk1': item['chave_dsk1'],

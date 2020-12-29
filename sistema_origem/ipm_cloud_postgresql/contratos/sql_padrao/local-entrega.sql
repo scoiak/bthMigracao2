@@ -8,18 +8,33 @@ select
 	'local-entrega' as tipo_registro,
 	*
 from (
-	select distinct
-	       (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'entidade', clicodigo))) as chave_dsk1,
-	       wco.tblocalentrega.loccodigo as chave_dsk2,
-	       left(locdescricao, 100) as descricao,
-	       (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305,
-	       																							  'local-entrega',
-	       																							  (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'entidade', clicodigo))),
-	       																							  wco.tblocalentrega.loccodigo))) as id_gerado
-	 from wco.tblocalentminuta, wco.tblocalentrega
-	 where wco.tblocalentminuta.loccodigo = wco.tblocalentrega.loccodigo
+	select distinct * from (
+	  	(select distinct
+		   (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'entidade', clicodigo))) as chave_dsk1,
+		   wco.tblocalentrega.loccodigo as chave_dsk2,
+		   left(locdescricao, 100) as descricao,
+		   (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305,
+		   																							  'local-entrega',
+		   																							  (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'entidade', clicodigo))),
+		   																							  wco.tblocalentrega.loccodigo))) as id_gerado
+		 from wco.tblocalentminuta, wco.tblocalentrega
+		 where wco.tblocalentminuta.loccodigo = wco.tblocalentrega.loccodigo
+		 and clicodigo = {{clicodigo}}
+		 order by 1, 2)
+	 union all
+	 (select distinct
+       (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'entidade', clicodigo))) as chave_dsk1,
+       wco.tblocalentrega.loccodigo as chave_dsk2,
+       left(locdescricao, 100) as descricao,
+       (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305,
+       																							  'local-entrega',
+       																							  (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'entidade', clicodigo))),
+       																							  wco.tblocalentrega.loccodigo))) as id_gerado
+	 from wco.tbreqcomp , wco.tblocalentrega
+	 where wco.tbreqcomp .loccodigo = wco.tblocalentrega.loccodigo
 	 and clicodigo = {{clicodigo}}
-	 order by 1, 2
+	 order by 1, 2)
+	 ) as reg
 ) as tab
 where id_gerado is null
 --limit 5
