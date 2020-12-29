@@ -168,11 +168,11 @@ def enviar_lote(lote, *args, **kwargs):
         url = kwargs.get('url')
         token = kwargs.get('token')
         headers = {'authorization': f'bearer {token}', 'content-type': 'application/json'}
-        print("headers: ", headers)
-        print("url: ", url)
+        # print("headers: ", headers)
+        # print("url: ", url)
         # print("json_envio_lote: ", json_envio_lote)
         retorno_req = requests.post(url, headers=headers, data=json_envio_lote)
-        print("DEBUG - Tempo requisição: ", retorno_req.elapsed.total_seconds(), ' segundos.')
+        # print("DEBUG - Tempo requisição: ", retorno_req.elapsed.total_seconds(), ' segundos.')
         if retorno_req.ok:
             if 'json' in retorno_req.headers.get('Content-Type'):
                 retorno_json = retorno_req.json()
@@ -187,7 +187,7 @@ def enviar_lote(lote, *args, **kwargs):
                 if settings.SISTEMA_ORIGEM == 'folha':
                     retorno_requisicao['url_consulta'] = url + '/lotes/' + retorno_requisicao['id_lote']
                 else:
-                    retorno_requisicao['url_consulta'] = re.sub('\w+$', f'lotes/{retorno_requisicao["idLote"]}', url)
+                    retorno_requisicao['url_consulta'] = re.sub('\\w+$', f'lotes/{retorno_requisicao["idLote"]}', url)
             else:
                 print('Retorno não JSON:', retorno_req.status_code, retorno_req.text)
 

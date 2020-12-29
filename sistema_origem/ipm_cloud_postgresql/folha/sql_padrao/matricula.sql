@@ -3,7 +3,8 @@
 create index IF NOT exists idx_f_fhs on wfp.tbfunhistoricosalarial (fcncodigo, funcontrato, odomesano);
 create index IF NOT exists idx_f_fc on wfp.tbfuncontrato (fcncodigo, funcontrato, odomesano);
 create index IF NOT exists idx_fl_fc on wfp.tbfunlocais (fcncodigo, funcontrato, odomesano);
-create index IF NOT exists idx_fc on wfp.tbfuncontrato (funtipocontrato);
+create index IF NOT exists idx_fc on wfp.tbfuncontrato (odomesano);
+create index IF NOT exists idx_fc_o on wfp.tbfuncontrato (funtipocontrato);
 create index IF NOT exists idx_fc_f on wfp.tbfuncionario (fcncodigo, odomesano);
 create index IF NOT EXISTs idx_fp_fc on wfp.tbfunpreviden (fcncodigo, funcontrato, odomesano);
 create index IF NOT exists idx_rc_fc on wfp.tbrescisaocalculada (fcncodigo, funcontrato);
