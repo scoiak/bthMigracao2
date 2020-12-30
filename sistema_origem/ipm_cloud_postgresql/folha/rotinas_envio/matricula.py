@@ -6,7 +6,7 @@ import sistema_origem.ipm_cloud_postgresql.model as model
 
 tipo_registro = 'matricula'
 sistema = 300
-limite_lote = 50
+limite_lote = 10
 url = "https://pessoal.cloud.betha.com.br/service-layer/v1/api/matricula"
 
 

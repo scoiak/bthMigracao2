@@ -24,13 +24,11 @@ select distinct on (matricula,dataPagamento) * from (
     --NULL AS ato,
     false AS consideraAvosPerdidosDecimoTerceiro,
     true AS descontarFaltasFerias,
-    FALSE AS trabalhouDiaRescisao,,
-    0
+    FALSE AS trabalhouDiaRescisao,
     FALSE as reporVaga       
 	FROM wfp.tbpagamento as p
 	where tipcodigo in (3,9)	
-	--	
-	and fcncodigo in (16273,17595,17723)--(4714,2,113,15011,56,10438,11166,15079,15200)		
+	-- and fcncodigo in (16273,17595,17723)--(4714,2,113,15011,56,10438,11166,15079,15200)		
 	union all
 	select 
 	'RESCISAO' AS tipoProcessamento,
@@ -52,8 +50,7 @@ select distinct on (matricula,dataPagamento) * from (
     FALSE AS trabalhouDiaRescisao,
     FALSE as reporVaga       
     from wfp.tbrescisaocalculada
-	--   
-	 where fcncodigo in (16273,17595,17723)--(4714,2,113,15011,56,10438,11166,15079,15200)
+	-- where fcncodigo in (16273,17595,17723)--(4714,2,113,15011,56,10438,11166,15079,15200)
 ) as s
 ) as a
 ) as b
