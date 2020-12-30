@@ -35,7 +35,7 @@ def iniciar():
     # enviar(params_exec, 'tipo-publicacao')
     # enviar(params_exec, 'modalidade')
     # enviar(params_exec, 'forma-pagamento')
-    enviar(params_exec, 'local-entrega')
+    # enviar(params_exec, 'local-entrega')
     # enviar(params_exec, 'tipo-documento')
     # enviar(params_exec, 'pais')
     # enviar(params_exec, 'estado')
@@ -48,7 +48,7 @@ def iniciar():
     # enviar(params_exec, 'tipo-revogacao-anulacao')
     # enviar(params_exec, 'despesa')
     # enviar(params_exec, 'solicitacao')
-    # enviar(params_exec, 'solicitacao-item') # REENVIAR!!!
+    enviar(params_exec, 'solicitacao-item') # REENVIAR!!!
     # enviar(params_exec, 'solicitacao-despesa')
 
     # Envio Contratos

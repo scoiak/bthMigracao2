@@ -56,3 +56,6 @@ from (
 	order by chave_dsk1, chave_dsk2 desc, chave_dsk3 desc, chave_dsk5
 ) as tab
 where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'solicitacao-item', chave_dsk1, chave_dsk2, chave_dsk3, chave_dsk4, chave_dsk5))) is null
+and id_solicitacao is not null
+and id_material is not null
+and id_especificacao is not null
