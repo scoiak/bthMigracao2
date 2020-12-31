@@ -25,13 +25,13 @@ select data_hora_env ,data_hora_ret,(data_hora_ret  - data_hora_env) as totalRet
 select * from public.controle_migracao_registro where tipo_registro = 'lancamento-evento' and hash_chave_dsk  = 'cda0b61044d4902674da4698b83dc72d';
 select * from public.controle_migracao_lotes where tipo_registro = 'lancamento-evento' and conteudo_json like '%2738db17a14e99863d1eaf128c7d0122%';
 
-
+select  then fundataadmissao::varchar else null end) as database, --0		
 
 select * from public.controle_migracao_lotes where tipo_registro = 'matricula';
 select * from public.controle_migracao_registro where tipo_registro = 'matricula';
 select * from public.controle_migracao_registro_ocor where tipo_registro = 'matricula';
 
-select count(*),mensagem_erro from public.controle_migracao_registro_ocor where tipo_registro = 'matricula' group by mensagem_erro 
+select count(*),mensagem_erro from public.controle_migracao_registro_ocor where tipo_registro = 'afastamento' group by mensagem_erro 
 
 select * from public.controle_migracao_registro where tipo_registro = 'lancamento-evento' and i_chave_dsk2 14936
 

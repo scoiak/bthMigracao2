@@ -1,20 +1,20 @@
-import sistema_origem.ipm_cloud_postgresql.model as model
-import bth.interacao_cloud as interacao_cloud
+from datetime import datetime
+import re
 import json
 import logging
-import re
-from datetime import datetime
+import sistema_origem.ipm_cloud_postgresql.model as model
+import bth.interacao_cloud as interacao_cloud
 
 sistema = 300
 tipo_registro = 'afastamento'
 url = 'https://pessoal.cloud.betha.com.br/service-layer/v1/api/afastamento'
-limite_lote = 1000
+limite_lote = 500
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
-    if True:
-        busca_dados(params_exec)
     if False:
+        busca_dados(params_exec)
+    if True:
         dados_assunto = coletar_dados(params_exec)
         dados_enviar = pre_validar(params_exec, dados_assunto)
         if not params_exec.get('somente_pre_validar'):
@@ -138,7 +138,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                 'ato': {
                     'id': int(item['ato'])
                 }})
-        print(f'Dados gerados ({contador}): ', dict_dados)
+        # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,

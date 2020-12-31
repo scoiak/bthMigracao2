@@ -12,9 +12,9 @@ limite_lote = 1000
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
-    if False:
-        busca_dados(params_exec)
     if True:
+        busca_dados(params_exec)
+    if False:
         dados_assunto = coletar_dados(params_exec)
         dados_enviar = pre_validar(params_exec, dados_assunto)
         if not params_exec.get('somente_pre_validar'):
@@ -117,7 +117,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                 'ato': {
                     'id': int(item['ato'])
                 }})
-        print(f'Dados gerados ({contador}): ', dict_dados)
+        # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,

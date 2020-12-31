@@ -45,18 +45,28 @@ cpdcodigo as evento,
 to_char((case when (select (case when fc.funtipocontrato in (2) then coalesce(fc.fundataadmissao::date,('2021-01-01')::date) else fc.fundataadmissao  end) from wfp.tbfuncontrato as fc where fc.fcncodigo = p.fcncodigo and fc.funcontrato = p.funcontrato and fc.odomesano = p.odomesano limit 1) < date(concat(parmesanoinicio, '01')) then date(concat(parmesanoinicio, '01')) else (select (case when fc.funtipocontrato in (2) then coalesce(fc.fundataadmissao::date,('2021-01-01')::date) else fc.fundataadmissao  end) from wfp.tbfuncontrato as fc where fc.fcncodigo = p.fcncodigo and fc.funcontrato = p.funcontrato and fc.odomesano = p.odomesano limit 1) end), 'yyyy-MM-dd') as dataInicial,
 --to_date(coalesce((select (case when substring(aux.parmesanoinicio,4,2) - 1) || '01' from wfp.tbparcelamento as aux where p.fcncodigo = aux.fcncodigo and p.funcontrato = aux.funcontrato and aux.cpdcodigo = p.cpdcodigo and p.parmesanofinal > aux.parmesanoinicio and p.parmesanoinicio < aux.parmesanoinicio order by aux.parmesanoinicio asc limit 1),parmesanofinal || '01'),'YYYYMMDD')::varchar as dataFinal,
 --to_date(coalesce((select ((case when substring(aux.parmesanoinicio::varchar,5,2) = '01' then concat(substring(aux.parmesanoinicio::varchar,1,4)::int - 1,'12'/*substring(aux.parmesanoinicio::varchar,5,2)::varchar*/) else (aux.parmesanoinicio - 1)::varchar end)) || '01' from wfp.tbparcelamento as aux where p.fcncodigo = aux.fcncodigo and p.funcontrato = aux.funcontrato and aux.cpdcodigo = p.cpdcodigo and p.parmesanofinal > aux.parmesanoinicio and p.parmesanoinicio < aux.parmesanoinicio order by aux.parmesanoinicio asc limit 1),parmesanofinal || '01'),'YYYYMMDD')::varchar as dataFinal,
-to_char((case 
+case
+when (
+to_char((case
 when (select fc.fundataadmissao from wfp.tbfuncontrato as fc where fc.fcncodigo = p.fcncodigo and fc.funcontrato = p.funcontrato and fc.odomesano = p.odomesano limit 1) > to_date(coalesce((select ((case when substring(aux.parmesanoinicio::varchar,5,2) = '01' then concat(substring(aux.parmesanoinicio::varchar,1,4)::int - 1,'12'/*substring(aux.parmesanoinicio::varchar,5,2)::varchar*/) else (aux.parmesanoinicio - 1)::varchar end)) || '01' from wfp.tbparcelamento as aux where p.fcncodigo = aux.fcncodigo and p.funcontrato = aux.funcontrato and aux.cpdcodigo = p.cpdcodigo and p.parmesanofinal > aux.parmesanoinicio and p.parmesanoinicio < aux.parmesanoinicio order by aux.parmesanoinicio asc limit 1),parmesanofinal || '01'),'YYYYMMDD')
-then (select fc.fundataadmissao from wfp.tbfuncontrato as fc where fc.fcncodigo = p.fcncodigo and fc.funcontrato = p.funcontrato and fc.odomesano = p.odomesano limit 1) 
+then (select fc.fundataadmissao from wfp.tbfuncontrato as fc where fc.fcncodigo = p.fcncodigo and fc.funcontrato = p.funcontrato and fc.odomesano = p.odomesano limit 1)
 when (select (case when fc.funtipocontrato in (2) then coalesce(fc.fundatatermcont::date,('2021-01-01')::date) else ('3000-01-01')::date end)  from wfp.tbfuncontrato as fc where fc.fcncodigo = p.fcncodigo and fc.funcontrato = p.funcontrato and fc.odomesano = p.odomesano limit 1) < to_date(coalesce((select ((case when substring(aux.parmesanoinicio::varchar,5,2) = '01' then concat(substring(aux.parmesanoinicio::varchar,1,4)::int - 1,'12'/*substring(aux.parmesanoinicio::varchar,5,2)::varchar*/) else (aux.parmesanoinicio - 1)::varchar end)) || '01' from wfp.tbparcelamento as aux where p.fcncodigo = aux.fcncodigo and p.funcontrato = aux.funcontrato and aux.cpdcodigo = p.cpdcodigo and p.parmesanofinal > aux.parmesanoinicio and p.parmesanoinicio < aux.parmesanoinicio order by aux.parmesanoinicio asc limit 1),parmesanofinal || '01'),'YYYYMMDD')
-then (select fc.fundatatermcont  from wfp.tbfuncontrato as fc where fc.fcncodigo = p.fcncodigo and fc.funcontrato = p.funcontrato and fc.odomesano = p.odomesano limit 1) 
+then (select fc.fundatatermcont  from wfp.tbfuncontrato as fc where fc.fcncodigo = p.fcncodigo and fc.funcontrato = p.funcontrato and fc.odomesano = p.odomesano limit 1)
 else to_date(coalesce((select ((case when substring(aux.parmesanoinicio::varchar,5,2) = '01' then concat(substring(aux.parmesanoinicio::varchar,1,4)::int - 1,'12'/*substring(aux.parmesanoinicio::varchar,5,2)::varchar*/) else (aux.parmesanoinicio - 1)::varchar end)) || '01' from wfp.tbparcelamento as aux where p.fcncodigo = aux.fcncodigo and p.funcontrato = aux.funcontrato and aux.cpdcodigo = p.cpdcodigo and p.parmesanofinal > aux.parmesanoinicio and p.parmesanoinicio < aux.parmesanoinicio order by aux.parmesanoinicio asc limit 1),parmesanofinal || '01'),'YYYYMMDD')
-end), 'yyyy-MM-dd')::varchar as dataFinal,
+end), 'yyyy-MM-dd')::varchar)::date >= '2020-11-01' then '2020-11-01' else
+to_char((case
+when (select fc.fundataadmissao from wfp.tbfuncontrato as fc where fc.fcncodigo = p.fcncodigo and fc.funcontrato = p.funcontrato and fc.odomesano = p.odomesano limit 1) > to_date(coalesce((select ((case when substring(aux.parmesanoinicio::varchar,5,2) = '01' then concat(substring(aux.parmesanoinicio::varchar,1,4)::int - 1,'12'/*substring(aux.parmesanoinicio::varchar,5,2)::varchar*/) else (aux.parmesanoinicio - 1)::varchar end)) || '01' from wfp.tbparcelamento as aux where p.fcncodigo = aux.fcncodigo and p.funcontrato = aux.funcontrato and aux.cpdcodigo = p.cpdcodigo and p.parmesanofinal > aux.parmesanoinicio and p.parmesanoinicio < aux.parmesanoinicio order by aux.parmesanoinicio asc limit 1),parmesanofinal || '01'),'YYYYMMDD')
+then (select fc.fundataadmissao from wfp.tbfuncontrato as fc where fc.fcncodigo = p.fcncodigo and fc.funcontrato = p.funcontrato and fc.odomesano = p.odomesano limit 1)
+when (select (case when fc.funtipocontrato in (2) then coalesce(fc.fundatatermcont::date,('2021-01-01')::date) else ('3000-01-01')::date end)  from wfp.tbfuncontrato as fc where fc.fcncodigo = p.fcncodigo and fc.funcontrato = p.funcontrato and fc.odomesano = p.odomesano limit 1) < to_date(coalesce((select ((case when substring(aux.parmesanoinicio::varchar,5,2) = '01' then concat(substring(aux.parmesanoinicio::varchar,1,4)::int - 1,'12'/*substring(aux.parmesanoinicio::varchar,5,2)::varchar*/) else (aux.parmesanoinicio - 1)::varchar end)) || '01' from wfp.tbparcelamento as aux where p.fcncodigo = aux.fcncodigo and p.funcontrato = aux.funcontrato and aux.cpdcodigo = p.cpdcodigo and p.parmesanofinal > aux.parmesanoinicio and p.parmesanoinicio < aux.parmesanoinicio order by aux.parmesanoinicio asc limit 1),parmesanofinal || '01'),'YYYYMMDD')
+then (select fc.fundatatermcont  from wfp.tbfuncontrato as fc where fc.fcncodigo = p.fcncodigo and fc.funcontrato = p.funcontrato and fc.odomesano = p.odomesano limit 1)
+else to_date(coalesce((select ((case when substring(aux.parmesanoinicio::varchar,5,2) = '01' then concat(substring(aux.parmesanoinicio::varchar,1,4)::int - 1,'12'/*substring(aux.parmesanoinicio::varchar,5,2)::varchar*/) else (aux.parmesanoinicio - 1)::varchar end)) || '01' from wfp.tbparcelamento as aux where p.fcncodigo = aux.fcncodigo and p.funcontrato = aux.funcontrato and aux.cpdcodigo = p.cpdcodigo and p.parmesanofinal > aux.parmesanoinicio and p.parmesanoinicio < aux.parmesanoinicio order by aux.parmesanoinicio asc limit 1),parmesanofinal || '01'),'YYYYMMDD')
+end), 'yyyy-MM-dd')::varchar end
+as dataFinal,
 --parvalor::varchar as valor,
 coalesce(to_char(parvalor, 'FM99999990.00'),'0.00') as valor,
 null as observacao
 from wfp.tbparcelamento as p
-where odomesano = 202010
+where odomesano = 202011
 -- and parvalor > 0
 --and fcncodigo in (17586)--7316,9782,70,7961,14369,461,17586,4714
 union ALL 
@@ -83,7 +93,7 @@ end),
 coalesce(to_char(fixvalor, 'FM99999990.00'),'0.00') as valor,
 null as observacao
 from wfp.tbprovdescfixo as pdf --join wfp.tbcalculoprovdesc as cpd on pdf.calcodigo = cpd.calcodigo 
-where odomesano = 202010
+where odomesano = 202011
 -- and fixvalor > 0
 --and fcncodigo in (17586)--7316,9782,70,7961,14369,461,17586,4714
 union ALL 
@@ -108,8 +118,10 @@ end),
 --fixvalor::varchar as valor,
 coalesce(to_char(fixvalor, 'FM99999990.00'),'0.00') as valor,
 null as observacao
-from wfp.tbprovdescfixo as pdf join wfp.tbprovdesc as pd on pdf.cpdcodigo = pd.cpdcodigo  and pdf.odomesano = pd.odomesano
-where pdf.odomesano = 202010
+from wfp.tbprovdescfixo as pdf
+join wfp.tbprovdesc as pd on pdf.cpdcodigo = pd.cpdcodigo  and pdf.odomesano = pd.odomesano
+and exists (select 1 from wfp.tbparamprovdesc param where param.cpdcodigo = pdf.cpdcodigo and param.odomesano = pdf.odomesano and param.ppdbase13sdiferenca = 1 limit 1)
+where pdf.odomesano = 202011
 and pd.cpdclasse = 1
 -- and fixvalor > 0
 --and fcncodigo in (17586)--7316,9782,70,7961,14369,461,17586,4714
