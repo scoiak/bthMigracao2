@@ -1,9 +1,20 @@
 BASE_ORIGEM = 'ipm_cloud_postgresql'
 SISTEMA_ORIGEM = 'contratos'
 
+
+"""
+# Esta conexão é usada para o envio da base de homologação do compras
 DB_HOST = 'localhost'
 DB_PORT = '5433'
 DB_NAME = 'ipm_bigua'
+DB_USER = 'postgres'
+DB_PW = 'admin'
+"""
+
+# Esta conexão é usada para o envio das entidades oficiais do compras
+DB_HOST = 'localhost'
+DB_PORT = '5433'
+DB_NAME = 'bigua_dezembro'
 DB_USER = 'postgres'
 DB_PW = 'admin'
 

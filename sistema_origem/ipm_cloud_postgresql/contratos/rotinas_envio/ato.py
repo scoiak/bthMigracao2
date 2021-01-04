@@ -105,7 +105,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         if item['ementa'] is not None:
             dict_dados.update({'ementa': model.cleanhtml(item['ementa'])})
 
-        print(f'Dados gerados ({contador}): ', dict_dados)
+        # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,

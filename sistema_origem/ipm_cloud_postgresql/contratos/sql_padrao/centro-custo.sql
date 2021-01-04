@@ -19,6 +19,6 @@ from (
 ) tab
 where id_configuracao_organograma is not null
 and id_gerado is null
-and chave_dsk1 in (2015, 2016, 2017, 2018, 2019, 2020)
+and chave_dsk1 in (2020)
 order by chave_dsk1, nivel, chave_dsk2
 --limit 5

@@ -10,6 +10,8 @@ def iniciar():
         'clicodigo': '2016',
         'ano': 2015,
         'somente_pre_validar': False,
+        #  'token': '55d73a4b-cc32-4da2-9734-854b28f50196' #ignoreline base de teste
+        'token': 'c420e8c5-bc8a-44c4-8b34-e46df7867a3e' #oficial:Município de Biguaçu
     }
     mensagem_inicio(params_exec)
     interacao_cloud.verifica_token(params_exec['token'])
@@ -26,14 +28,14 @@ def iniciar():
     # enviar(params_exec, 'grupo')
     # enviar(params_exec, 'classe')
     # enviar(params_exec, 'unidade-medida')
-    # enviar(params_exec, 'material')
-    # enviar(params_exec, 'material-especificacao')
+    enviar(params_exec, 'material') # A ENVIAR!!!!!!!!!!!!!!!!!!!!
+    # enviar(params_exec, 'material-especificacao')  # A ENVIAR!!!!!!!!!!!!!!!!!!!!
     # enviar(params_exec, 'tipo-objeto')
     # enviar(params_exec, 'regime-execucao')
     # enviar(params_exec, 'prazo-entrega')
     # enviar(params_exec, 'tipo-interposicao-recurso')
     # enviar(params_exec, 'tipo-publicacao')
-    # enviar(params_exec, 'modalidade')
+    # enviar(params_exec, 'modalidade-licitacao')
     # enviar(params_exec, 'forma-pagamento')
     # enviar(params_exec, 'local-entrega')
     # enviar(params_exec, 'tipo-documento')
@@ -48,7 +50,7 @@ def iniciar():
     # enviar(params_exec, 'tipo-revogacao-anulacao')
     # enviar(params_exec, 'despesa')
     # enviar(params_exec, 'solicitacao')
-    enviar(params_exec, 'solicitacao-item') # REENVIAR!!!
+    # enviar(params_exec, 'solicitacao-item')
     # enviar(params_exec, 'solicitacao-despesa')
 
     # Envio Contratos

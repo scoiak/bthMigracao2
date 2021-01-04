@@ -9,8 +9,8 @@ from (
        p.prdcodigo as identificadorPrimeiro,
        p.grpcodigo AS grupo,
        p.clacodigo AS classe,
-       --left(p.prddescricao, 500) AS descricao,
-       left(p.prdcodigo || ' - ' || p.prddescricao, 500) AS descricao,
+       left(p.prddescricao, 500) AS descricao,
+       --left(p.prdcodigo || ' - ' || p.prddescricao, 500) AS descricao,
        (case p.prdclassificacao when 2 then 'PERMANENTE' when 3 then 'SERVICO' else 'MATERIAL' end) as tipo_material,
        (select up.cnicodigo from wun.tbunipro up where up.prdcodigo = p.prdcodigo limit 1) as unidade,
        coalesce(p.prddescdet, p.prddescricao) as especificacao,
@@ -32,4 +32,4 @@ where id_gerado is null
 and id_grupo is not null
 and id_classe is not null
 and id_un_medida is not null
--- limit 10
+--limit 10

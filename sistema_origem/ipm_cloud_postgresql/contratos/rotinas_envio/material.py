@@ -76,13 +76,14 @@ def pre_validar(params_exec, dados):
 
 def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     print('- Iniciando envio dos dados.')
-    lista_controle_migracao = []
     hoje = datetime.now().strftime("%Y-%m-%d")
     token = params_exec['token']
     total_dados = len(dados)
     contador = 0
+    total_erros = 0
 
     for item in dados:
+        lista_controle_migracao = []
         lista_dados_enviar = []
         contador += 1
         print(f'\r- Gerando JSON: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
@@ -126,7 +127,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                 'dataInativacao': item['datainativacao']
             })
 
-        print(f'Dados gerados ({contador}): ', dict_dados)
+        # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,
@@ -139,7 +140,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         })
 
         if True:
-            # model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)
+            model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)
             req_res = interacao_cloud\
                 .preparar_requisicao_sem_lote(
                     lista_dados=lista_dados_enviar,
@@ -147,6 +148,9 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                     url=url,
                     tipo_registro=tipo_registro)
             model.atualiza_tabelas_controle_envio_sem_lote(params_exec, req_res, tipo_registro=tipo_registro)
-    print('- Envio de dados finalizado.')
+    if total_erros > 0:
+        print(f'- Envio finalizado. Foram encontrados um total de {total_erros} inconsistência(s) de envio.')
+    else:
+        print('- Envio de dados finalizado sem inconsistências.')
 
 

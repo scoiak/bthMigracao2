@@ -1,4 +1,6 @@
-select * from (
+select
+row_number () over() as id,
+* from (
 	select 'codigo da entidade' as entidade,
 			2020 as ano,
 			'##.###.###.###.###' as mascara,

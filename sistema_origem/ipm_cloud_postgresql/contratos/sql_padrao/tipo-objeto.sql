@@ -23,7 +23,7 @@ from (
 		   when 6 then 'Aquisição de Bens'
 		   when 7 then 'Contratação de Serviços'
 		   else 'Compras Outros Serviços' end) as descricao,
-	   false as bemPublico,
+	   false as bem_publico,
 	   (select id_gerado from public.controle_migracao_registro	where hash_chave_dsk = md5(concat(305,'tipo-objeto', (case mintipoobjeto
 																												       when 1 then 'Compras e Outros Serviços'
 																													   when 2 then 'Obras e Serviços de Engenharia'
