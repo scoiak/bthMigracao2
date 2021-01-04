@@ -31,6 +31,11 @@ select * from public.controle_migracao_lotes where tipo_registro = 'matricula';
 select * from public.controle_migracao_registro where tipo_registro = 'matricula';
 select * from public.controle_migracao_registro_ocor where tipo_registro = 'matricula';
 
+
+select * from public.controle_migracao_lotes where tipo_registro = 'rescisao';
+select * from public.controle_migracao_registro where tipo_registro = 'rescisao';
+select * from public.controle_migracao_registro_ocor where tipo_registro = 'rescisao';
+
 select count(*),mensagem_erro from public.controle_migracao_registro_ocor where tipo_registro = 'afastamento' group by mensagem_erro 
 
 select * from public.controle_migracao_registro where tipo_registro = 'lancamento-evento' and i_chave_dsk2 14936

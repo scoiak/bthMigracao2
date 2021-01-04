@@ -8,17 +8,18 @@ import bth.interacao_cloud as interacao_cloud
 sistema = 300
 tipo_registro = 'rescisao'
 url = 'https://pessoal.cloud.betha.com.br/service-layer/v1/api/rescisao'
-limite_lote = 1000
+limite_lote = 1
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
-    if True:
-        busca_dados(params_exec)
     if False:
+        busca_dados(params_exec)
+    if True:
         dados_assunto = coletar_dados(params_exec)
         dados_enviar = pre_validar(params_exec, dados_assunto)
         if not params_exec.get('somente_pre_validar'):
             iniciar_envio(params_exec, dados_enviar, 'POST')
+    if True:
         model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
 
 
@@ -43,18 +44,17 @@ def busca_dados(params_exec):
     print('- Busca finalizada. Tabelas de controles atualizas com sucesso.')
 
 
+
 def coletar_dados(params_exec):
     print('- Iniciando a consulta dos dados a enviar.')
     df = None
     try:
-        dh_inicio = datetime.now()
-        query = model.get_consulta(params_exec, f'{tipo_registro}.sql')
+        query = model.get_consulta(params_exec, tipo_registro + '.sql')
         pgcnn = model.PostgreSQLConnection()
         df = pgcnn.exec_sql(query, index_col='id')
-        print(f'- {len(df.index)} registro(s) encontrado(s).',
-              f'\n- Consulta finalizada. ({(datetime.now() - dh_inicio).total_seconds()} segundos)')
+        print(f'- Consulta finalizada. {len(df.index)} registro(s) encontrado(s).')
     except Exception as error:
-        print(f'Erro ao executar função "enviar_assunto". {error}')
+        print(f'Erro ao executar função {tipo_registro}. {error}')
     finally:
         return df
 
@@ -90,7 +90,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     contador = 0
     for item in dados:
         contador += 1
-        # print(f'\r- Gerando JSON: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
+        print(f'\r- Gerando JSON: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
         hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['entidade'], item['matricula'], item['data'])
         dict_dados = {
             'idIntegracao': hash_chaves,
@@ -117,7 +117,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                 'ato': {
                     'id': int(item['ato'])
                 }})
-        # print(f'Dados gerados ({contador}): ', dict_dados)
+        print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,
@@ -133,9 +133,11 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     print(f'- Processo de transformação finalizado. ({(datetime.now() - dh_inicio).total_seconds()} segundos)')
     if True:
         model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)
+    if True:
         req_res = interacao_cloud.preparar_requisicao(lista_dados=lista_dados_enviar,
                                                       token=token,
                                                       url=url,
                                                       tipo_registro=tipo_registro,
                                                       tamanho_lote=limite_lote)
         model.insere_tabela_controle_lote(req_res)
+        print('- Envio de dados finalizado.')
