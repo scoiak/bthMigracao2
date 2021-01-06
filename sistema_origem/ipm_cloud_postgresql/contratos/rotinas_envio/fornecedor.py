@@ -7,8 +7,8 @@ import math
 from datetime import datetime
 
 sistema = 305
-tipo_registro = 'responsavel'
-url = 'https://compras.betha.cloud/compras-services/api/responsaveis'
+tipo_registro = 'fornecedor'
+url = 'https://compras.betha.cloud/compras-services/api/fornecedores'
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
@@ -80,17 +80,62 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         lista_controle_migracao = []
         contador += 1
         print(f'\r- Enviando registros: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['cpf'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['cpf_cnpj'])
         dict_dados = {
-            "idIntegracao": hash_chaves,
-            "nome": item['nome'],
-            "cpf": item['cpf'],
-            "ehResponsavelMunicipio": item['eh_responsavel_municipio'],
-            "funcao": item['cargo']
+            'idIntegracao': hash_chaves,
+            'cpfCnpj': item['cpf_cnpj'],
+            'dataInclusao': item['datainclusao'],
+            'nome': item['nome'],
+            'tipo': {
+                'valor': item['tipo_pessoa']
+            },
+            'situacao': {
+                'valor': item['situacao']
+            }
         }
 
-        if item['id_cargo'] != 0:
-            dict_dados.update({'cargo': {'id': item['id_cargo']}})
+        if item['tipo_pessoa'] == 'JURIDICA':
+            if item['nome_fantasia'] is not None:
+                dict_dados.update({'nomeFantasia': item['nome_fantasia']})
+            if item['inscricao_estadual'] is not None and item['estadoInscricao']['id'] is not None:
+                dict_dados.update({'inscricaoEstadual': item['inscricao_estadual']})
+                dict_dados.update({'estadoInscricao': {'id': item['estadoInscricao']['id']}})
+
+        if len(item['array_emails']) > 0:
+            dict_dados.update({
+                'email': {
+                    'descricao': item['array_emails'][0]
+                }
+            })
+
+        if len(item['array_telefones']) > 0:
+            dict_dados.update({
+                'telefone': {
+                    'descricao': item['array_telefones'][0]
+                }
+            })
+
+        if len(item['array_enderecos']) > 0:
+            print(type(item['array_enderecos']), item['array_enderecos'])
+            if item['array_enderecos'][0]['bairro'] is not None \
+                    and item['array_enderecos'][0]['logradouro'] \
+                    and item['array_enderecos'][0]['municipio']:
+                dict_dados.update({
+                    'endereco': {
+                        'bairro': {
+                            'id': item['array_enderecos'][0]['id_bairro']
+                        },
+                        'municipio': {
+                            'id': item['array_enderecos'][0]['id_municipio']
+                        },
+                        'logradouro': {
+                            'id': item['array_enderecos'][0]['id_logradouro']
+                        },
+                        'cep': item['array_enderecos'][0]['cep'],
+                        'complemento': item['array_enderecos'][0]['complemento'],
+                        'numero': item['array_enderecos'][0]['numero']
+                    }
+                })
 
         # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
@@ -101,17 +146,17 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'descricao_tipo_registro': 'Cadastro de Responsáveis',
             'id_gerado': None,
             'json': json.dumps(dict_dados),
-            'i_chave_dsk1': item['cpf'],
+            'i_chave_dsk1': item['cpf_cnpj'],
         })
 
         if True:
             model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)
-            req_res = interacao_cloud\
+            req_res = interacao_cloud \
                 .preparar_requisicao_sem_lote(
-                    lista_dados=lista_dados_enviar,
-                    token=token,
-                    url=url,
-                    tipo_registro=tipo_registro)
+                lista_dados=lista_dados_enviar,
+                token=token,
+                url=url,
+                tipo_registro=tipo_registro)
             model.atualiza_tabelas_controle_envio_sem_lote(params_exec, req_res, tipo_registro=tipo_registro)
             if req_res[0]['mensagem'] is not None:
                 total_erros += 1
@@ -119,5 +164,3 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         print(f'- Envio finalizado. Foram encontrados um total de {total_erros} inconsistência(s) de envio.')
     else:
         print('- Envio de dados finalizado sem inconsistências.')
-
-

@@ -11,7 +11,7 @@ def iniciar():
         'ano': 2015,
         'somente_pre_validar': False,
         'token': '55d73a4b-cc32-4da2-9734-854b28f50196' #ignoreline base de teste
-        #  'token': 'c420e8c5-bc8a-44c4-8b34-e46df7867a3e' #oficial:Município de Biguaçu
+        # 'token': 'c420e8c5-bc8a-44c4-8b34-e46df7867a3e' #oficial:Município de Biguaçu
     }
     mensagem_inicio(params_exec)
     interacao_cloud.verifica_token(params_exec['token'])
@@ -29,7 +29,7 @@ def iniciar():
     # enviar(params_exec, 'classe')
     # enviar(params_exec, 'unidade-medida')
     # enviar(params_exec, 'material')
-    # enviar(params_exec, 'material-especificacao')  # A ENVIAR!!!!!!!!!!!!!!!!!!!!
+    # enviar(params_exec, 'material-especificacao')
     # enviar(params_exec, 'tipo-objeto')
     # enviar(params_exec, 'regime-execucao')
     # enviar(params_exec, 'prazo-entrega')
@@ -55,8 +55,8 @@ def iniciar():
     # enviar(params_exec, 'solicitacao')
     # enviar(params_exec, 'solicitacao-item')
     # enviar(params_exec, 'solicitacao-despesa')
-
     # enviar(params_exec, 'responsavel')
+    enviar(params_exec, 'fornecedor')
 
     # Envio Contratos
 

@@ -6,8 +6,8 @@ select
 from (
 	select
 		p.*,
-		'A' as situacao,
-		'1900-01-01' as dataInclusao,
+		'ATIVO' as situacao,
+		coalesce((select rhadatahora::date from wun.tbunicohistalt where unicodigo = p.unicodigo and rhasequencia = 1)::text, '1900-01-01') as dataInclusao,
 		pj.unicodigores as responsavel,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'responsavel', cpf_cnpj))) as id_responsavel,
 		'NAO_CLASSIFICADA' as porte_empresa,
@@ -73,7 +73,7 @@ from (
 			) as aux
 		) as array_enderecos,
 		null as contas_bancarias,
-		null as id_gerado
+		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'fornecedor', cpf_cnpj))) as id_gerado
 	from (
 		-- Coleta dados de todas as empresas do cadastro único
 		(select distinct
@@ -110,3 +110,4 @@ from (
 	order by nome
 ) as tab
 where id_gerado is null
+limit 2
