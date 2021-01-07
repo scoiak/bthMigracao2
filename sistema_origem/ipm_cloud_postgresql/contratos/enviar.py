@@ -56,7 +56,9 @@ def iniciar():
     # enviar(params_exec, 'solicitacao-item')
     # enviar(params_exec, 'solicitacao-despesa')
     # enviar(params_exec, 'responsavel')
-    enviar(params_exec, 'fornecedor')
+    # enviar(params_exec, 'fornecedor')
+
+    enviar(params_exec, 'processo')
 
     # Envio Contratos
 

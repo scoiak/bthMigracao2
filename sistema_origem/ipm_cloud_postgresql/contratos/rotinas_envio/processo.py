@@ -7,14 +7,14 @@ import math
 from datetime import datetime
 
 sistema = 305
-tipo_registro = 'bairro'
-url = 'https://compras.betha.cloud/compras-services/api/bairros'
+tipo_registro = 'processo'
+url = 'https://compras.betha.cloud/compras-services/api/exercicios/{exercicio}/processos-administrativo'
+
+# Seta valor padrão para
+id_local_entrega_padrao = 13803
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
-    # Realiza a busca dos dados ja contidos no cloud
-    # busca_dados_cloud(params_exec)
-
     # E - Realiza a consulta dos dados que serão enviados
     dados_assunto = coletar_dados(params_exec)
 
@@ -24,29 +24,6 @@ def iniciar_processo_envio(params_exec, *args, **kwargs):
     # L - Realiza o envio dos dados validados
     if not params_exec.get('somente_pre_validar'):
         iniciar_envio(params_exec, dados_enviar, 'POST')
-
-
-def busca_dados_cloud(params_exec):
-    print('- Iniciando busca de dados no cloud.')
-    registros = interacao_cloud.busca_dados_cloud(params_exec, url=url)
-    print(f'- Foram encontrados {len(registros)} registros cadastrados no cloud.')
-    registros_formatados = []
-    try:
-        for item in registros:
-            hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['nome'], item['municipio']['id'])
-            registros_formatados.append({
-                'sistema': sistema,
-                'tipo_registro': tipo_registro,
-                'hash_chave_dsk': hash_chaves,
-                'descricao_tipo_registro': 'Cadastro de Bairros',
-                'id_gerado': item['id'],
-                'i_chave_dsk1': item['nome'],
-                'i_chave_dsk2': item['municipio']['id']
-            })
-        model.insere_tabela_controle_migracao_registro(params_exec, lista_req=registros_formatados)
-        print(f'- Busca de {tipo_registro} finalizada. Tabelas de controles atualizas com sucesso.')
-    except Exception as error:
-        print(f'Erro ao executar função "busca_dados_cloud". {error}')
 
 
 def coletar_dados(params_exec):
@@ -66,6 +43,14 @@ def coletar_dados(params_exec):
 
     finally:
         return df
+
+
+def list_unique(lista):
+    list_of_unique = []
+    for item in lista:
+        if item not in list_of_unique:
+            list_of_unique.append(item)
+    return list_of_unique
 
 
 def pre_validar(params_exec, dados):
@@ -106,26 +91,67 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         lista_controle_migracao = []
         contador += 1
         print(f'\r- Enviando registros: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['nome_bairro'], item['id_cidade'])
+        hash_chaves = model.gerar_hash_chaves(sistema,
+                                              tipo_registro,
+                                              item['clicodigo'],
+                                              item['ano_processo'],
+                                              item['nr_processo'])
+        url_parametrizada = url.replace('{exercicio}', str(item['ano_processo']))
         dict_dados = {
-            "idIntegracao": hash_chaves,
-            "nome": item['nome_bairro'],
-            "municipio": {
-                "id": item['id_cidade']
-            }
+            'idIntegracao': hash_chaves,
+            'url': url_parametrizada,
+            'parametroExerc': {
+                'id': item['id_parametro_exercicio']
+            },
+            'localEntrega': {
+                'id': (id_local_entrega_padrao if item['id_local_entrega'] is None else item['id_local_entrega'])
+            },
+            'tipoObjeto': {
+                'id': item['id_tipo_objeto']
+            },
+            'formaJulgamento': {
+                'id': item['id_forma_julgamento']
+            },
+            'prazoEntrega': {
+                'id': item['id_prazo_entrega']
+            },
+            'formaPagamento': {
+                'id': item['id_forma_pagamento']
+            },
+            'dataProcesso': item['data_processo'],
+            'numeroProcesso': item['nr_processo'],
+            'numeroProtocolo': item['numero_protocolo'],
+            'anoProtocolo': item['ano_protocolo'],
+            'controleSaldo': {
+                'valor': item['controle_saldo']
+            },
+            'previsaoSubcontratacao': item['previsao_subcontratacao'],
+            'objeto': item['objeto'],
+            'destinatarioEducacao': item['destinatario_educacao'],
+            'destinatarioSaude': item['destinatario_saude']
         }
 
-        # print(f'Dados gerados ({contador}): ', dict_dados)
+        if item['observacao'] is not None:
+            dict_dados.update({'observacao': item['observacao']})
+
+        if item['justificativa'] is not None:
+            dict_dados.update({'justificativa': item['justificativa']})
+
+        if item['id_regime_execucao'] != 0:
+            dict_dados.update({'regimeExecucao': {'id': item['id_regime_execucao']}})
+
+        print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Bairros',
+            'descricao_tipo_registro': 'Cadastro de Processos Administrativos',
             'id_gerado': None,
             'json': json.dumps(dict_dados),
-            'i_chave_dsk1': item['nome_bairro'],
-            'i_chave_dsk2': item['id_cidade'],
+            'i_chave_dsk1': item['clicodigo'],
+            'i_chave_dsk2': item['ano_processo'],
+            'i_chave_dsk3': item['nr_processo']
         })
 
         if True:
@@ -143,3 +169,5 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         print(f'- Envio finalizado. Foram encontrados um total de {total_erros} inconsistência(s) de envio.')
     else:
         print('- Envio de dados finalizado sem inconsistências.')
+
+
