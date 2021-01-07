@@ -97,9 +97,10 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         if item['tipo_pessoa'] == 'JURIDICA':
             if item['nome_fantasia'] is not None:
                 dict_dados.update({'nomeFantasia': item['nome_fantasia']})
-            if item['inscricao_estadual'] is not None and item['estadoInscricao']['id'] is not None:
+
+            """if item['inscricao_estadual'] is not None and item['estadoInscricao'] is not None:
                 dict_dados.update({'inscricaoEstadual': item['inscricao_estadual']})
-                dict_dados.update({'estadoInscricao': {'id': item['estadoInscricao']['id']}})
+                dict_dados.update({'estadoInscricao': {'id': item['estadoInscricao']}})"""
 
         if len(item['array_emails']) > 0:
             dict_dados.update({
@@ -116,7 +117,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             })
 
         if len(item['array_enderecos']) > 0:
-            print(type(item['array_enderecos']), item['array_enderecos'])
+            # print(type(item['array_enderecos']), item['array_enderecos'])
             if item['array_enderecos'][0]['bairro'] is not None \
                     and item['array_enderecos'][0]['logradouro'] \
                     and item['array_enderecos'][0]['municipio']:

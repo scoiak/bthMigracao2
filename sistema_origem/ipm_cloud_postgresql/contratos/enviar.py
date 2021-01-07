@@ -62,10 +62,11 @@ def iniciar():
     # enviar(params_exec, 'fornecedor')
     # enviar(params_exec, 'comissao')
     # enviar(params_exec, 'processo')
-
+    # enviar(params_exec, 'processo-documento')
+    # enviar(params_exec, 'processo-entidade')
+    # enviar(params_exec, 'processo-despesa')
+    enviar(params_exec, 'processo-item')
     # Envio Contratos
-
-
 
 
 def enviar(params_exec, tipo_registro, *args, **kwargs):

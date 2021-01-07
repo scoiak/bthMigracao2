@@ -7,8 +7,8 @@ import math
 from datetime import datetime
 
 sistema = 305
-tipo_registro = 'processo-documento'
-url = 'https://compras.betha.cloud/compras-services/api/exercicios/{exercicio}/processos-administrativo/{processoAdministrativoId}/documentos'
+tipo_registro = 'processo-item'
+url = 'https://compras.betha.cloud/compras-services/api/exercicios/{exercicio}/processos-administrativo/{processoAdministrativoId}/itens'
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
@@ -89,18 +89,45 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         contador += 1
         print(f'\r- Enviando registros: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
         hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['clicodigo'], item['ano_processo'],
-                                              item['nro_processo'], item['nro_documento'])
+                                              item['nro_processo'], item['numero_item'])
         url_parametrizada = url.replace('{exercicio}', str(item['ano_processo']))\
                                .replace('{processoAdministrativoId}', str(item['id_processo']))
         dict_dados = {
             'idIntegracao': hash_chaves,
             'url': url_parametrizada,
-            'processoAdm': {
+            'processoAdministrativo': {
                 'id': item['id_processo']
             },
-            'tipoDocumento': {
-                'id': item['id_tipo_documento']
-            }
+            'configuracaoItem': {
+                'processoAdministrativo': {
+                    'id': item['id_processo']
+                },
+                'materialEspecificacao': {
+                    'id': item['id_material_especificacao']
+                },
+                'valorUnitario': item['valor_unitario'],
+                'valorTotal': item['valor_total'],
+                'quantidadeTotal': item['quantidade'],
+                'tipoBeneficio': {
+                    'valor': item['tipo_beneficio']
+                },
+                'amostra': item['amostra']
+            },
+            'numero': item['numero_item'],
+            'quantidade': item['quantidade'],
+            'valorUnitario': item['valor_unitario'],
+            'valorTotal': item['valor_total'],
+            'percentual': item['percentual'],
+            'tipoParticipacao': {
+                'valor': item['tipo_participacao']
+            },
+            'material': {
+                'id': item['id_material']
+            },
+            'materialEspecificacao': {
+                'id': item['id_material_especificacao']
+            },
+            'amostra': item['amostra']
         }
 
         # print(f'Dados gerados ({contador}): ', dict_dados)
@@ -109,13 +136,13 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Documentos do Processo',
+            'descricao_tipo_registro': 'Cadastro de Item Livre do Processo',
             'id_gerado': None,
             'json': json.dumps(dict_dados),
             'i_chave_dsk1': item['clicodigo'],
             'i_chave_dsk2': item['ano_processo'],
             'i_chave_dsk3': item['nro_processo'],
-            'i_chave_dsk4': item['nro_documento']
+            'i_chave_dsk4': item['numero_item']
         })
 
         if True:

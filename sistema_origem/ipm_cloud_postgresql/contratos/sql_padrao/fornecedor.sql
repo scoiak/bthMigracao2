@@ -14,7 +14,7 @@ from (
 		false as optante_simples,
 		null as natureza_juridica,
 		array(
-			select e.uncdescricao
+			select lower(e.uncdescricao)
 			from wun.tbunicocontato e
 			where e.unctipocontato = 5
 			and e.uncdescricao ~ '^\w{1}.+@.+\..+$'
@@ -110,4 +110,4 @@ from (
 	order by nome
 ) as tab
 where id_gerado is null
-limit 2
+--limit 2
