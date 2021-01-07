@@ -55,10 +55,13 @@ def iniciar():
     # enviar(params_exec, 'solicitacao')
     # enviar(params_exec, 'solicitacao-item')
     # enviar(params_exec, 'solicitacao-despesa')
+    # enviar(params_exec, 'tipo-sessao-julgamento')
+    # enviar(params_exec, 'natureza-juridica')
+    # enviar(params_exec, 'fundamento-legal')
     # enviar(params_exec, 'responsavel')
     # enviar(params_exec, 'fornecedor')
-
-    enviar(params_exec, 'processo')
+    # enviar(params_exec, 'comissao')
+    # enviar(params_exec, 'processo')
 
     # Envio Contratos
 
