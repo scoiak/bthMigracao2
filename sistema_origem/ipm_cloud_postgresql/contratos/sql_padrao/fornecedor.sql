@@ -110,4 +110,4 @@ from (
 	order by nome
 ) as tab
 where id_gerado is null
---limit 2
+--limit 10

@@ -10,8 +10,8 @@ def iniciar():
         'clicodigo': '2016',
         'ano': 2015,
         'somente_pre_validar': False,
-        'token': '55d73a4b-cc32-4da2-9734-854b28f50196' #ignoreline base de teste
-        # 'token': 'c420e8c5-bc8a-44c4-8b34-e46df7867a3e' #oficial:Município de Biguaçu
+        # 'token': '55d73a4b-cc32-4da2-9734-854b28f50196' #ignoreline base de teste
+        'token': 'c420e8c5-bc8a-44c4-8b34-e46df7867a3e' #oficial:Município de Biguaçu
     }
     mensagem_inicio(params_exec)
     interacao_cloud.verifica_token(params_exec['token'])
@@ -59,15 +59,16 @@ def iniciar():
     # enviar(params_exec, 'natureza-juridica')
     # enviar(params_exec, 'fundamento-legal')
     # enviar(params_exec, 'responsavel')
-    # enviar(params_exec, 'fornecedor')
+    enviar(params_exec, 'fornecedor')
     # enviar(params_exec, 'comissao')
     # enviar(params_exec, 'processo')
     # enviar(params_exec, 'processo-documento')
     # enviar(params_exec, 'processo-entidade')
     # enviar(params_exec, 'processo-despesa')
-    enviar(params_exec, 'processo-item')
+    # enviar(params_exec, 'processo-item')
     # enviar(params_exec, 'processo-lote')
     # enviar(params_exec, 'processo-lote-item')
+    # enviar(params_exec, 'processo-entidade-item')
     # Envio Contratos
 
 
