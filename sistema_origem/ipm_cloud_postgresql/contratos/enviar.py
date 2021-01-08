@@ -66,6 +66,8 @@ def iniciar():
     # enviar(params_exec, 'processo-entidade')
     # enviar(params_exec, 'processo-despesa')
     enviar(params_exec, 'processo-item')
+    # enviar(params_exec, 'processo-lote')
+    # enviar(params_exec, 'processo-lote-item')
     # Envio Contratos
 
 

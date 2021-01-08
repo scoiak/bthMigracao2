@@ -7,7 +7,7 @@ import math
 from datetime import datetime
 
 sistema = 305
-tipo_registro = 'processo-item'
+tipo_registro = 'processo-lote-item'
 url = 'https://compras.betha.cloud/compras-services/api/exercicios/{exercicio}/processos-administrativo/{processoAdministrativoId}/itens'
 
 
@@ -89,8 +89,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         contador += 1
         print(f'\r- Enviando registros: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
         hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['clicodigo'], item['ano_processo'],
-                                              item['nro_processo'], item['separador'],
-                                              item['nro_lote'], item['separador'], item['numero_item_original'])
+                                              item['nro_processo'], item['numero_item'])
         url_parametrizada = url.replace('{exercicio}', str(item['ano_processo']))\
                                .replace('{processoAdministrativoId}', str(item['id_processo']))
         dict_dados = {
@@ -143,10 +142,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'i_chave_dsk1': item['clicodigo'],
             'i_chave_dsk2': item['ano_processo'],
             'i_chave_dsk3': item['nro_processo'],
-            'i_chave_dsk4': item['separador'],
-            'i_chave_dsk5': item['nro_lote'],
-            'i_chave_dsk6': item['separador'],
-            'i_chave_dsk7': item['numero_item_original']
+            'i_chave_dsk4': item['numero_item']
         })
 
         if True:

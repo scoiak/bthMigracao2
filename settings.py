@@ -17,6 +17,7 @@ DB_USER = 'postgres'
 DB_PW = 'admin'
 """
 
+
 def iniciar_migracao():
     start_logging()
     path = f'sistema_origem.{BASE_ORIGEM}.{SISTEMA_ORIGEM}.enviar'
