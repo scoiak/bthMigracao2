@@ -10,6 +10,11 @@ sistema = 305
 tipo_registro = 'processo-entidade-item'
 url = 'https://compras.betha.cloud/compras-services/api/exercicios/{exercicio}/processos-administrativo/{processoAdministrativoId}/itens/{itemId}/entidades'
 
+"""
+Foi desenvolvido um script chamado 'ks - limpa divisao itens por entidade do processo' para realizar a limpeza
+dos processos que possuem mais de um entidade participante. Deve-se executar esse script antes dessa rotina.
+A rotina também está configurada para realizar o envio das divisões apenas de processos com mais de uma entidade.
+"""
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
     # E - Realiza a consulta dos dados que serão enviados
@@ -104,10 +109,10 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'entidadeParticipante': {
                 'id': item['id_entidade_participante']
             },
-            'quantidadeDistribuida': item['qtd_distribuida']
+            'quantidadeDistribuida': item['qtd_final']
         }
 
-        print(f'Dados gerados ({contador}): ', dict_dados)
+        # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,
