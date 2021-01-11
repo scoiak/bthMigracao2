@@ -68,7 +68,10 @@ def iniciar():
     # enviar(params_exec, 'processo-item')
     # enviar(params_exec, 'processo-lote')
     # enviar(params_exec, 'processo-lote-item')
-    enviar(params_exec, 'processo-entidade-item')
+    # enviar(params_exec, 'processo-entidade-item')
+    # enviar(params_exec, 'processo-convidado')
+    # enviar(params_exec, 'processo-publicacao')
+    # enviar(params_exec, 'processo-impugnacao')
 
     # Envio Contratos
 

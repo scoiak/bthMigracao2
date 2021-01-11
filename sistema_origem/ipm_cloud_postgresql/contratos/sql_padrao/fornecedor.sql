@@ -106,7 +106,7 @@ from (
 		and u.unitipopessoa = 1
 		order by 3)
 	) as p
-	join wun.tbunicojuridica pj on pj.unicodigo = p.unicodigo
+	left join wun.tbunicojuridica pj on pj.unicodigo = p.unicodigo
 	order by nome
 ) as tab
 where id_gerado is null
