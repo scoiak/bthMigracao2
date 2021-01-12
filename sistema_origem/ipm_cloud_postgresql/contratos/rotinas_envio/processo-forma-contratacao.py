@@ -88,8 +88,8 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         lista_controle_migracao = []
         contador += 1
         print(f'\r- Enviando registros: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['clicodigo'], item['ano_processo'],
-                                              item['nro_processo'], item['sequencial'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['clicodigo'],
+                                              item['ano_processo'], item['nro_processo'])
         url_parametrizada = url.replace('{exercicio}', str(item['ano_processo']))\
                                .replace('{processoAdministrativoId}', str(item['id_processo']))
         dict_dados = {
@@ -97,23 +97,30 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'url': url_parametrizada,
             'processoAdmistrativo': {
                 'id': item['id_processo']
+            },
+            'formaContratacao': {
+                'valor': item['forma_contratacao']
+            },
+            'desclassificaPropostaInvalidaLote': {
+                'valor': item['desc_prop_invalida_lote']
+            },
+            'desclassificaPropostaInvalida': {
+                'valor': item['desc_prop_invalida']
+            },
+            'modalidade': {
+                'id': item['id_modalidade']
+            },
+            'responsavel': {
+                'id': item['id_responsavel']
             }
         }
-
+        """
         if item['id_comissao'] is not None:
             dict_dados.update({'comissao': {'id': item['id_comissao']}})
-
-        if item['id_membro_comissao'] is not None:
-            dict_dados.update({'membroComissao': {'id': item['id_membro_comissao']}})
-
-        if item['id_modalidade'] is not None:
-            dict_dados.update({'modalidade': {'id': item['id_modalidade']}})
+        """
 
         if item['id_responsavel'] is not None:
-            dict_dados.update({'responsavel': {'id': item['id_responsavel']}})
-
-        if item['forma_contratacao'] is not None:
-            dict_dados.update({'formaContratacao': {'valor': item['forma_contratacao']}})
+            dict_dados.update({'membroComissao': {'id': item['id_responsavel']}})
 
         if item['registro_preco'] is not None:
             dict_dados.update({'registroPreco':  item['registro_preco']})
@@ -127,32 +134,10 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         if item['dh_abertura_envelopes'] is not None:
             dict_dados.update({'dataAberturaEnvelope':  item['dh_abertura_envelopes']})
 
-        if item['exclusivo_mpe'] is not None:
-            dict_dados.update({'itemExclusivoMPE':  item['exclusivo_mpe']})
-
-        if item['previsao_subcontratacao'] is not None:
-            dict_dados.update({'exigeSubcontratacao':  item['previsao_subcontratacao']})
-
-        if item['beneficia_mpe_locais'] is not None:
-            dict_dados.update({'beneficiaMPELocais':  item['beneficia_mpe_locais']})
-
-        if item['indica_percent_cota_reservada'] is not None:
-            dict_dados.update({'indicaPercentCotaReservada':  item['indica_percent_cota_reservada']})
-
-        if item['situacao_lances'] is not None:
-            dict_dados.update({'situacaoLances':  {'valor': item['situacao_lances']}})
-
         if item['data_autorizacao_rp'] is not None:
             dict_dados.update({'dataAutorizacaoAdesaoAtaRegPreco':  item['data_autorizacao_rp']})
 
-        if item['desclassifica_proposta_invalida'] is not None:
-            dict_dados.update({'desclassificaPropostaInvalida':  {'valor': item['desclassifica_proposta_invalida']}})
-
-        if item['desclassifica_proposta_invalida_lote'] is not None:
-            dict_dados.update({'desclassificaPropostaInvalidaLote':  {
-                'valor': item['desclassifica_proposta_invalida_lote']}})
-
-        # print(f'Dados gerados ({contador}): ', dict_dados)
+        print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,
@@ -163,7 +148,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'json': json.dumps(dict_dados),
             'i_chave_dsk1': item['clicodigo'],
             'i_chave_dsk2': item['ano_processo'],
-            'i_chave_dsk3': item['nro_processo'],
+            'i_chave_dsk3': item['nro_processo']
         })
 
         if True:
