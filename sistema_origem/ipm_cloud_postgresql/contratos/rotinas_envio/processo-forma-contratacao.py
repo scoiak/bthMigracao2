@@ -7,11 +7,8 @@ import math
 from datetime import datetime
 
 sistema = 305
-tipo_registro = 'processo'
-url = 'https://compras.betha.cloud/compras-services/api/exercicios/{exercicio}/processos-administrativo'
-
-# Seta valor padrão para
-id_local_entrega_padrao = 13803
+tipo_registro = 'processo-forma-contratacao'
+url = 'https://compras.betha.cloud/compras-services/api/exercicios/{exercicio}/processos-administrativo/{processoAdministrativoId}/forma-contratacao'
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
@@ -91,54 +88,69 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         lista_controle_migracao = []
         contador += 1
         print(f'\r- Enviando registros: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
-        hash_chaves = model.gerar_hash_chaves(sistema,
-                                              tipo_registro,
-                                              item['clicodigo'],
-                                              item['ano_processo'],
-                                              item['nr_processo'])
-        url_parametrizada = url.replace('{exercicio}', str(item['ano_processo']))
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['clicodigo'], item['ano_processo'],
+                                              item['nro_processo'], item['sequencial'])
+        url_parametrizada = url.replace('{exercicio}', str(item['ano_processo']))\
+                               .replace('{processoAdministrativoId}', str(item['id_processo']))
         dict_dados = {
             'idIntegracao': hash_chaves,
             'url': url_parametrizada,
-            'parametroExerc': {
-                'id': item['id_parametro_exercicio']
-            },
-            'localEntrega': {
-                'id': (id_local_entrega_padrao if item['id_local_entrega'] is None else item['id_local_entrega'])
-            },
-            'tipoObjeto': {
-                'id': item['id_tipo_objeto']
-            },
-            'formaJulgamento': {
-                'id': item['id_forma_julgamento']
-            },
-            'prazoEntrega': {
-                'id': item['id_prazo_entrega']
-            },
-            'formaPagamento': {
-                'id': item['id_forma_pagamento']
-            },
-            'dataProcesso': item['data_processo'],
-            'numeroProcesso': item['nr_processo'],
-            'numeroProtocolo': item['numero_protocolo'],
-            'anoProtocolo': item['ano_protocolo'],
-            'controleSaldo': {
-                'valor': item['controle_saldo']
-            },
-            'previsaoSubcontratacao': item['previsao_subcontratacao'],
-            'objeto': item['objeto'],
-            'destinatarioEducacao': item['destinatario_educacao'],
-            'destinatarioSaude': item['destinatario_saude']
+            'processoAdmistrativo': {
+                'id': item['id_processo']
+            }
         }
 
-        if item['observacao'] is not None:
-            dict_dados.update({'observacao': item['observacao']})
+        if item['id_comissao'] is not None:
+            dict_dados.update({'comissao': {'id': item['id_comissao']}})
 
-        if item['justificativa'] is not None:
-            dict_dados.update({'justificativa': item['justificativa']})
+        if item['id_membro_comissao'] is not None:
+            dict_dados.update({'membroComissao': {'id': item['id_membro_comissao']}})
 
-        if item['id_regime_execucao'] != 0:
-            dict_dados.update({'regimeExecucao': {'id': item['id_regime_execucao']}})
+        if item['id_modalidade'] is not None:
+            dict_dados.update({'modalidade': {'id': item['id_modalidade']}})
+
+        if item['id_responsavel'] is not None:
+            dict_dados.update({'responsavel': {'id': item['id_responsavel']}})
+
+        if item['forma_contratacao'] is not None:
+            dict_dados.update({'formaContratacao': {'valor': item['forma_contratacao']}})
+
+        if item['registro_preco'] is not None:
+            dict_dados.update({'registroPreco':  item['registro_preco']})
+
+        if item['dh_inicio_recebimento_envelopes'] is not None:
+            dict_dados.update({'dataInicioRecebimentoEnvelope':  item['dh_inicio_recebimento_envelopes']})
+
+        if item['dh_final_recebimento_envelopes'] is not None:
+            dict_dados.update({'dataFinalRecebimentoEnvelope':  item['dh_final_recebimento_envelopes']})
+
+        if item['dh_abertura_envelopes'] is not None:
+            dict_dados.update({'dataAberturaEnvelope':  item['dh_abertura_envelopes']})
+
+        if item['exclusivo_mpe'] is not None:
+            dict_dados.update({'itemExclusivoMPE':  item['exclusivo_mpe']})
+
+        if item['previsao_subcontratacao'] is not None:
+            dict_dados.update({'exigeSubcontratacao':  item['previsao_subcontratacao']})
+
+        if item['beneficia_mpe_locais'] is not None:
+            dict_dados.update({'beneficiaMPELocais':  item['beneficia_mpe_locais']})
+
+        if item['indica_percent_cota_reservada'] is not None:
+            dict_dados.update({'indicaPercentCotaReservada':  item['indica_percent_cota_reservada']})
+
+        if item['situacao_lances'] is not None:
+            dict_dados.update({'situacaoLances':  {'valor': item['situacao_lances']}})
+
+        if item['data_autorizacao_rp'] is not None:
+            dict_dados.update({'dataAutorizacaoAdesaoAtaRegPreco':  item['data_autorizacao_rp']})
+
+        if item['desclassifica_proposta_invalida'] is not None:
+            dict_dados.update({'desclassificaPropostaInvalida':  {'valor': item['desclassifica_proposta_invalida']}})
+
+        if item['desclassifica_proposta_invalida_lote'] is not None:
+            dict_dados.update({'desclassificaPropostaInvalidaLote':  {
+                'valor': item['desclassifica_proposta_invalida_lote']}})
 
         # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
@@ -146,12 +158,12 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Processos Administrativos',
+            'descricao_tipo_registro': 'Cadastro de Forma de Contratação do Processo',
             'id_gerado': None,
             'json': json.dumps(dict_dados),
             'i_chave_dsk1': item['clicodigo'],
             'i_chave_dsk2': item['ano_processo'],
-            'i_chave_dsk3': item['nr_processo']
+            'i_chave_dsk3': item['nro_processo'],
         })
 
         if True:
@@ -169,5 +181,3 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         print(f'- Envio finalizado. Foram encontrados um total de {total_erros} inconsistência(s) de envio.')
     else:
         print('- Envio de dados finalizado sem inconsistências.')
-
-

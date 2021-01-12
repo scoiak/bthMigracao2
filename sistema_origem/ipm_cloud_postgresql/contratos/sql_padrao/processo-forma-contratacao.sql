@@ -1,7 +1,7 @@
 select
 	row_number() over() as id,
 	'305' as sistema,
-	'processo' as tipo_registro,
+	'processos' as tipo_registro,
 	concat(nr_processo, '/', ano_processo) as proc_formatado,
 	concat(numero_protocolo, '/', ano_protocolo) as lic_formatado,
 	*
