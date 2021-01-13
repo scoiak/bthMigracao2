@@ -122,7 +122,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         if item['cpf_representante'] is not None:
             dict_dados.update({'cpfRepresentante': item['cpf_representante']})
 
-        print(f'Dados gerados ({contador}): ', dict_dados)
+        # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,

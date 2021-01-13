@@ -19,10 +19,13 @@ from (
 		p.pcsano as parametro_exercicio,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'parametro-exercicio', p.pcsano))) as id_parametro_exercicio,
 		l.loccodigo as local_entrega,
-		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'local-entrega', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'entidade', p.clicodigo))), l.loccodigo))) as id_local_entrega,
+		coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'local-entrega', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'entidade', p.clicodigo))), l.loccodigo))), 0) as id_local_entrega,
 		m.mintipoobjeto as tipo_objeto,
-	    (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305,'tipo-objeto', (case m.mintipoobjeto when 1 then 'Compras e Outros Serviços' when 2 then 'Obras e Serviços de Engenharia' when 3 then 'Concessoes e Permissões de Serviços Públicos' when 4 then 'Alienação de bens'  when 5 then 'Concessão e Permissão de Uso de Bem Público' when 6 then 'Aquisição de bens' when 7 then 'Contratação de Serviços' else 'Compras Outros Serviços' end)))) as id_tipo_objeto,
-		concat(coalesce(m.mintipojulgamento, 1), '-', m.mintipocomparacao) as forma_julgamento,
+		(case  -- Regra para garantir que RP seja sempre Compras e Serviços, caso contrário retornará erro na forma de contratação
+			when (m.mintipoconcorrencia = 2 and m.mintipoobjeto not in (1, 2)) then 10 -- 10: Compras e Servicos
+			else (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305,'tipo-objeto', (case m.mintipoobjeto when 1 then 'Compras e Outros Serviços' when 2 then 'Obras e Serviços de Engenharia' when 3 then 'Concessoes e Permissões de Serviços Públicos' when 4 then 'Alienação de bens'  when 5 then 'Concessão e Permissão de Uso de Bem Público' when 6 then 'Aquisição de bens' when 7 then 'Contratação de Serviços' else 'Compras Outros Serviços' end))))
+		end) as id_tipo_objeto,
+	    concat(coalesce(m.mintipojulgamento, 1), '-', m.mintipocomparacao) as forma_julgamento,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'forma-julgamento', m.clicodigo, coalesce(m.mintipojulgamento, 1), m.mintipocomparacao))) as id_forma_julgamento,
 		e.edtpreventrmat as prazo_entrega,
 	    (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'prazo-entrega', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'entidade', p.clicodigo))), upper(unaccent(left(coalesce(trim(e.edtpreventrmat),'Imediata'), 50)))))) as id_prazo_entrega,
@@ -37,11 +40,6 @@ from (
 		false as destinatario_saude,
 		(case when p.modcodigo in (7, 8) then 'CONTRATACAO_DIRETA' else 'LICITACAO' end) as forma_contratacao,
 		'CLASSIFICA' as desclassifica_proposta_invalida,
-		8666 as lei_nro,
-		1993 as lei_ano,
-		null as lei_artigo,
-		null as lei_inciso,
-		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo', 1993, 8666, null, null))) as id_fundamento_legal,
 		(select (regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g')) from wun.tbunico u where u.unicodigo = (select i.unicodigo from wco.tbintegrante i where i.cmlcodigo = m.cmlcodigo and i.mbcatribuicao in(3,6) limit 1)) as cpf_responsavel,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'responsavel', (select (regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g')) from wun.tbunico u where u.unicodigo = (select i.unicodigo from wco.tbintegrante i where i.cmlcodigo = m.cmlcodigo and i.mbcatribuicao in(3,6) limit 1))))) as id_responsavel,
 		m.cmlcodigo as cod_comissao,
@@ -67,10 +65,11 @@ from (
 	left join wco.tblicitacao lic on (lic.clicodigo = m.clicodigo and lic.minano = m.minano and lic.minnro = m.minnro)
 	left join wco.tblocalentminuta l on (l.clicodigo = m.clicodigo and l.minano = m.minano and l.minnro = m.minnro)
 	left join wco.tbedital e on (e.clicodigo = m.clicodigo and e.minnro = m.minnro and e.minano = m.minano)
-	where m.clicodigo = 2016
-	and p.pcsano >= 2020
+	where m.clicodigo = {{clicodigo}}
+	and m.minano >= {{ano}}
+	and m.minnro = 80
 	order by 1, 2 desc, 3 desc
 ) tab
 where id_gerado is null
 and id_parametro_exercicio is not null
-limit 10
+limit 1

@@ -9,7 +9,6 @@ DB_NAME = 'ipm_bigua'
 DB_USER = 'postgres'
 DB_PW = 'admin'
 
-
 """
 # Esta conexão é usada para o envio das entidades oficiais do compras
 DB_HOST = 'localhost'
@@ -18,8 +17,6 @@ DB_NAME = 'bigua_dezembro'
 DB_USER = 'postgres'
 DB_PW = 'admin'
 """
-
-
 
 def iniciar_migracao():
     start_logging()

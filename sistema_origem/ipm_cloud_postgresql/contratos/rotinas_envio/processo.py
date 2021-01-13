@@ -104,7 +104,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                 'id': item['id_parametro_exercicio']
             },
             'localEntrega': {
-                'id': (id_local_entrega_padrao if item['id_local_entrega'] is None else item['id_local_entrega'])
+                'id': (id_local_entrega_padrao if item['id_local_entrega'] == 0 else item['id_local_entrega'])
             },
             'tipoObjeto': {
                 'id': item['id_tipo_objeto']

@@ -16,12 +16,15 @@ from (
 		'N' as auto_convocacao,
 		null as nro_protocolo,
 		null as observacao,
+		pr.modcodigo,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo', p.clicodigo, p.minano, p.minnro))) as id_processo,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'fornecedor', (regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g'))))) as id_fornecedor,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo-convidado', p.clicodigo, p.minano, p.minnro, (regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g'))))) as id_gerado
 	from wco.tbparlic p
 	inner join wun.tbunico u on (u.unicodigo = p.unicodigo)
+	left join wco.tbprocesso pr on (pr.clicodigo = p.clicodigo and pr.pcsano = p.minano and pr.pcsnro = p.minnro)
 	where p.clicodigo = {{clicodigo}}
+	and pr.modcodigo = 1
 	order by 1, 2 desc, 3 desc
 ) tab
 where id_gerado is null

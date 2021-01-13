@@ -24,14 +24,17 @@ from (
 	    true as renunciou_recurso,
 	    null as observacao,
 	    'OUTRAS' as sede_mpe,
+	    pr.modcodigo,
 	    (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo', p.clicodigo, p.minano, p.minnro))) as id_processo,
 	    (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'fornecedor', (regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g'))))) as id_fornecedor,
 	    (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo-participante', p.clicodigo, p.minano, p.minnro, (regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g'))))) as id_gerado
 	from wco.tbparlic p
 	left join wco.tbedital e on (e.clicodigo = p.clicodigo and e.minano = p.minano and e.minnro = p.minnro)
 	left join wco.tbminuta m on (m.clicodigo = p.clicodigo and m.minano = p.minano and m.minnro = p.minnro)
+	left join wco.tbprocesso pr on (pr.clicodigo = p.clicodigo and pr.pcsano = p.minano and pr.pcsnro = p.minnro)
 	natural join wun.tbunico u
-	where p.clicodigo = {{clicodigo}}
+	where p.clicodigo = 2016--{{clicodigo}}
+	and pr.modcodigo <> 1
 	order by 1, 2 desc, 3 desc
 ) tab
 where id_gerado is null
