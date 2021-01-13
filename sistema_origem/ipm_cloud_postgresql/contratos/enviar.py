@@ -74,7 +74,9 @@ def iniciar():
     # enviar(params_exec, 'processo-convidado')
     # enviar(params_exec, 'processo-publicacao')
     # enviar(params_exec, 'processo-impugnacao')
-    enviar(params_exec, 'processo-sessao')
+    # enviar(params_exec, 'processo-sessao')
+    # enviar(params_exec, 'processo-participante')
+    enviar(params_exec, 'processo-participante-documento')
 
     # Envio Contratos
 
