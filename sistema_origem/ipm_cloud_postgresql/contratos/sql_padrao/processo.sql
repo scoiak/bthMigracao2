@@ -22,8 +22,8 @@ from (
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'local-entrega', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'entidade', p.clicodigo))), l.loccodigo))) as id_local_entrega,
 		m.mintipoobjeto as tipo_objeto,
 	    (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305,'tipo-objeto', (case m.mintipoobjeto when 1 then 'Compras e Outros Serviços' when 2 then 'Obras e Serviços de Engenharia' when 3 then 'Concessoes e Permissões de Serviços Públicos' when 4 then 'Alienação de bens'  when 5 then 'Concessão e Permissão de Uso de Bem Público' when 6 then 'Aquisição de bens' when 7 then 'Contratação de Serviços' else 'Compras Outros Serviços' end)))) as id_tipo_objeto,
-		m.mintipojulgamento as forma_julgamento,
-		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'forma-julgamento', m.clicodigo, m.mintipojulgamento, m.mintipocomparacao))) as id_forma_julgamento,
+		concat(coalesce(m.mintipojulgamento, 1), '-', m.mintipocomparacao) as forma_julgamento,
+		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'forma-julgamento', m.clicodigo, coalesce(m.mintipojulgamento, 1), m.mintipocomparacao))) as id_forma_julgamento,
 		e.edtpreventrmat as prazo_entrega,
 	    (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'prazo-entrega', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'entidade', p.clicodigo))), upper(unaccent(left(coalesce(trim(e.edtpreventrmat),'Imediata'), 50)))))) as id_prazo_entrega,
 		e.edtcondpgto as forma_pagamento,
@@ -67,10 +67,10 @@ from (
 	left join wco.tblicitacao lic on (lic.clicodigo = m.clicodigo and lic.minano = m.minano and lic.minnro = m.minnro)
 	left join wco.tblocalentminuta l on (l.clicodigo = m.clicodigo and l.minano = m.minano and l.minnro = m.minnro)
 	left join wco.tbedital e on (e.clicodigo = m.clicodigo and e.minnro = m.minnro and e.minano = m.minano)
-	where m.clicodigo = {{clicodigo}}
-	and p.pcsano >= {{ano}}
+	where m.clicodigo = 2016
+	and p.pcsano >= 2020
 	order by 1, 2 desc, 3 desc
 ) tab
 where id_gerado is null
 and id_parametro_exercicio is not null
-limit 3
+limit 10

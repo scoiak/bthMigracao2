@@ -7,8 +7,8 @@ import math
 from datetime import datetime
 
 sistema = 305
-tipo_registro = 'processo-lote'
-url = 'https://compras.betha.cloud/compras-services/api/exercicios/{exercicio}/processos-administrativo/{processoAdministrativoId}/lotes'
+tipo_registro = 'processo-sessao'
+url = 'https://compras.betha.cloud/compras-services/api/exercicios/{exercicio}/processos-administrativo/{processoAdministrativoId}/sessao-julgamento'
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
@@ -89,7 +89,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         contador += 1
         print(f'\r- Enviando registros: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
         hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['clicodigo'], item['ano_processo'],
-                                              item['nro_processo'], item['numero_lote'])
+                                              item['nro_processo'])
         url_parametrizada = url.replace('{exercicio}', str(item['ano_processo']))\
                                .replace('{processoAdministrativoId}', str(item['id_processo']))
         dict_dados = {
@@ -98,13 +98,27 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'processoAdministrativo': {
                 'id': item['id_processo']
             },
-            'numeroLote': item['numero_lote'],
-            'precoMaximo': item['preco_maximo'],
-            'descricao': item['descricao_lote'],
-            'tipoParticipacao': {
-                'valor': item['tipo_participacao']
-            }
+            'tipoSessaoJulgamento': {
+                'id': item['id_tipo_sessao_julgamento']
+            },
+            'dataHoraAndamento': item['dh_andamento'],
+            'sessaoJulgamentoAndamento': [
+                {
+                    'situacao': {
+                        'valor': item['situacao']
+                    },
+                    'dataHoraAndamento': item['dh_andamento']
+                }
+            ]
         }
+
+        if len(item['array_membros']) > 0 and item['compra_direta'] == 'N':
+            lista_membros = []
+            for i in item['array_membros']:
+                lista_membros.append({
+                    'id': i
+                })
+            dict_dados.update({'sessaoJulgamentoMembro': lista_membros})
 
         # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
@@ -112,13 +126,12 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Lote do Processo',
+            'descricao_tipo_registro': 'Cadastro de Sessão do Processo',
             'id_gerado': None,
             'json': json.dumps(dict_dados),
             'i_chave_dsk1': item['clicodigo'],
             'i_chave_dsk2': item['ano_processo'],
             'i_chave_dsk3': item['nro_processo'],
-            'i_chave_dsk4': item['numero_lote']
         })
 
         if True:

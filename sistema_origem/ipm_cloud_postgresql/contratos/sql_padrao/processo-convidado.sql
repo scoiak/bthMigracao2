@@ -11,7 +11,7 @@ from (
 		p.unicodigo,
 		(regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g')) as cpf_cnpj,
 		u.uninomerazao as nome_fornecedor,
-		null as data_convite,
+		concat((select m.mindata from wco.tbminuta m where m.clicodigo = p.clicodigo and m.minano = p.minano and m.minnro = p.minnro)::varchar, ' 00:00:00') as data_convite,
 		null as data_recebimento,
 		'N' as auto_convocacao,
 		null as nro_protocolo,

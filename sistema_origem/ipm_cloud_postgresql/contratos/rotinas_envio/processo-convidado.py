@@ -101,14 +101,12 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'fornecedor': {
                 'id': item['id_fornecedor']
             },
-            'autoConvocacao': item['auto_convocacao']
+            'autoConvocacao': item['auto_convocacao'],
+            'dataConvite': item['data_convite']
         }
 
-        if item['numeroProtocolo'] is not None:
-            dict_dados.update({'numeroProtocolo': item['numeroProtocolo']})
-
-        if item['data_convite'] is not None:
-            dict_dados.update({'dataConvite': item['data_convite']})
+        if item['nro_protocolo'] is not None:
+            dict_dados.update({'numeroProtocolo': item['nro_protocolo']})
 
         if item['data_recebimento'] is not None:
             dict_dados.update({'dataRecebimento': item['data_recebimento']})

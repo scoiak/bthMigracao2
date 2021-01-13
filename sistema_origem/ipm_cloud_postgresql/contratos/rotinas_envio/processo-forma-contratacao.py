@@ -10,6 +10,8 @@ sistema = 305
 tipo_registro = 'processo-forma-contratacao'
 url = 'https://compras.betha.cloud/compras-services/api/exercicios/{exercicio}/processos-administrativo/{processoAdministrativoId}/forma-contratacao'
 
+# Define responsável padrao caso o SQL nao encontre um registro
+id_responsavel_padrao = 5461912
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
     # E - Realiza a consulta dos dados que serão enviados
@@ -111,16 +113,21 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                 'id': item['id_modalidade']
             },
             'responsavel': {
-                'id': item['id_responsavel']
+                'id': id_responsavel_padrao if item['id_responsavel'] == 0 else item['id_responsavel']
             }
         }
-        """
-        if item['id_comissao'] is not None:
-            dict_dados.update({'comissao': {'id': item['id_comissao']}})
-        """
 
-        if item['id_responsavel'] is not None:
-            dict_dados.update({'membroComissao': {'id': item['id_responsavel']}})
+        if item['ano_sequencial'] is not None:
+            dict_dados.update({'anoSequencial': item['ano_sequencial']})
+
+        if item['nro_sequencial'] is not None:
+            dict_dados.update({'numeroSequencial': item['nro_sequencial']})
+
+        if item['id_fundamento_legal'] is not None and item['id_fundamento_legal'] != 0:
+            dict_dados.update({'fundamentacaoLegal': {'id': item['id_fundamento_legal']}})
+
+        if item['id_membro_comissao'] is not None and item['id_membro_comissao'] != 0:
+            dict_dados.update({'membroComissao': {'id': item['id_membro_comissao']}})
 
         if item['registro_preco'] is not None:
             dict_dados.update({'registroPreco':  item['registro_preco']})
@@ -137,7 +144,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         if item['data_autorizacao_rp'] is not None:
             dict_dados.update({'dataAutorizacaoAdesaoAtaRegPreco':  item['data_autorizacao_rp']})
 
-        print(f'Dados gerados ({contador}): ', dict_dados)
+        # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,
