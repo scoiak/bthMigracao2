@@ -78,7 +78,11 @@ def iniciar():
     # enviar(params_exec, 'processo-participante')
     # enviar(params_exec, 'processo-participante-documento')
     # enviar(params_exec, 'processo-participante-proposta')
-    enviar(params_exec, 'processo-sessao-ata')
+    # enviar(params_exec, 'processo-sessao-ata')
+    # enviar(params_exec, 'processo-interposicao')
+    enviar(params_exec, 'processo-ato-final')
+
+    # enviar(params_exec, 'processo-proposta-pendente') # !!! Usar individualmente no processo
 
     # Envio Contratos
 
