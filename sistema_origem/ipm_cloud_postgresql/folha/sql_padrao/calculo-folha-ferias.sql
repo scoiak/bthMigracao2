@@ -28,13 +28,13 @@ row_number() over(partition by matricula order by matricula asc, dataPagamento a
 	null as anoDecimoTerceiro,
 	true as consideraAvosPerdidosDecimoTerceiro,	
 	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'tipo-afastamento',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),44)))::varchar as tipoAfastamento,
-	(select fg.ferdatainicio from wfp.tbferiasgozada as fg where fg.odomesano = 202010 and fg.fcncodigo = p.fcncodigo and fg.funcontrato = p.funcontrato and substring(pagdata::varchar,1,7) between substring(fg.fgodatainicio::varchar,1,7) and substring(fg.fgodatafinal::varchar,1,7) limit 1)::varchar as dataInicial,	 
+	(select fg.ferdatainicio from wfp.tbferiasgozada as fg where fg.odomesano = 202011 and fg.fcncodigo = p.fcncodigo and fg.funcontrato = p.funcontrato and substring(pagdata::varchar,1,7) between substring(fg.fgodatainicio::varchar,1,7) and substring(fg.fgodatafinal::varchar,1,7) limit 1)::varchar as dataInicial,	 
 	(select pf.ferdatafinal from wfp.tbperiodoferia as pf where pf.fcncodigo = p.fcncodigo and pf.funcontrato = p.funcontrato and pf.odomesano = p.odomesano and pf.ferdatainicio = (select fg.ferdatainicio from wfp.tbferiasgozada as fg where fg.odomesano = 202010 and fg.fcncodigo = p.fcncodigo and fg.funcontrato = p.funcontrato and substring(pagdata::varchar,1,7) between substring(fg.fgodatainicio::varchar,1,7) and substring(fg.fgodatafinal::varchar,1,7) limit 1))::varchar as dataFinal,
 	--substring(odomesano::varchar,1,4) || '-' || substring(odomesano::varchar,5,2) as competencia
 	substring(pagdata::varchar,1,7) as competencia
 	FROM wfp.tbpagamento as p
 	where (tipcodigo in (2) or (tipcodigo in (1) and cpdcodigo in (77)))
-and fcncodigo = 4714
+--and fcncodigo = 4714
 ) as a
 ) as b
 where matricula is not null

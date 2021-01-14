@@ -29,7 +29,7 @@ and ferpaga not in (1)
 --	and fcncodigo = 126
 --	and fcncodigo = 266
 --and fcncodigo = 2
-and fcncodigo = 4714
+--and fcncodigo = 4714
 ) as a
 ) as b
 where matricula is not null
