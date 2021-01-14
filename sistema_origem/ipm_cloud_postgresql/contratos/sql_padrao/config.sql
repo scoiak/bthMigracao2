@@ -250,3 +250,31 @@ BEGIN
 	RETURN ret_situacao;
 END $$;
 %/%
+
+CREATE OR REPLACE FUNCTION bth_delete_proc
+(
+	sis 		integer default 0,
+	clicodigo 	text default '',
+	ano_proc 	text default '',
+	nro_proc 	text default ''
+)
+RETURNS text
+LANGUAGE plpgsql AS $$
+declare
+	a text;
+begin
+	delete from public.controle_migracao_registro cmr
+	where sistema = sis
+	and i_chave_dsk1 = clicodigo
+	and i_chave_dsk2 = ano_proc
+	and i_chave_dsk3 = nro_proc
+	and tipo_registro in (
+		'processo', 'processo-forma-contratacao', 'processo-documento', 'processo-entidade', 'processo-despesa', 'processo-item', 'processo-lote',
+		'processo-lote-item', 'processo-entidade-item', 'processo-convidado', 'processo-publicacao', 'processo-impugnacao', 'processo-sessao',
+		'processo-participante', 'processo-participante-documento', 'processo-participante-proposta', 'processo-sessao-ata', 'processo-interposicao',
+		'processo-ato-final', 'processo-revogacao'
+	);
+	a := concat('Excluido processo ', nro_proc, '/' , ano_proc, ' (', clicodigo, ') das tabelas de controle.');
+	return a;
+END $$;
+%/%

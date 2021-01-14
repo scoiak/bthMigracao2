@@ -5,7 +5,7 @@ select
 	'@' as separador,
 	*
 from (
-  select
+  select distinct
   	a.clicodigo,
   	a.minano as ano_processo,
   	a.minnro as nro_processo,

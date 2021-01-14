@@ -28,8 +28,14 @@ from (
 		coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'responsavel', (select (regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g')) from wun.tbunico u where u.unicodigo = (select i.unicodigo from wco.tbintegrante i where i.cmlcodigo = m.cmlcodigo and i.mbcatribuicao in(3,6) limit 1))))), 0) as id_responsavel,
 		m.cmlcodigo as cod_comissao,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'comissao', m.cmlcodigo))) as id_comissao,
-		(select i_chave_dsk2 from public.controle_migracao_registro where sistema = '305' and tipo_registro = 'comissao-membros' and i_chave_dsk1 = (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'comissao', m.cmlcodigo)))::varchar and i_chave_dsk3 in ('PRESIDENTE', 'PREGOEIRO') limit 1) as cpf_membro_comissao,
-		coalesce((select id_gerado from public.controle_migracao_registro where sistema = '305' and tipo_registro = 'comissao-membros' and i_chave_dsk1 = (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'comissao', m.cmlcodigo)))::varchar and i_chave_dsk3 in ('PRESIDENTE', 'PREGOEIRO') limit 1), 0) as id_membro_comissao,
+		(case
+			when p.modcodigo = 5 then (select i_chave_dsk2 from public.controle_migracao_registro where sistema = '305' and tipo_registro = 'comissao-membros' and i_chave_dsk1 = (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'comissao', m.cmlcodigo)))::varchar and i_chave_dsk3 in ('LEILOEIRO') limit 1)
+			else (select i_chave_dsk2 from public.controle_migracao_registro where sistema = '305' and tipo_registro = 'comissao-membros' and i_chave_dsk1 = (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'comissao', m.cmlcodigo)))::varchar and i_chave_dsk3 in ('PRESIDENTE', 'PREGOEIRO') limit 1)
+		end) as cpf_membro_comissao,
+		(case
+			when p.modcodigo = 5 then coalesce((select id_gerado from public.controle_migracao_registro where sistema = '305' and tipo_registro = 'comissao-membros' and i_chave_dsk1 = (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'comissao', m.cmlcodigo)))::varchar and i_chave_dsk3 in ('LEILOEIRO') limit 1), 0)
+			else coalesce((select id_gerado from public.controle_migracao_registro where sistema = '305' and tipo_registro = 'comissao-membros' and i_chave_dsk1 = (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'comissao', m.cmlcodigo)))::varchar and i_chave_dsk3 in ('PRESIDENTE', 'PREGOEIRO') limit 1), 0)
+		end) as id_membro_comissao,
 		p.modcodigo as cod_modalidade,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'modalidade-licitacao', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'entidade', p.clicodigo))), p.modcodigo, m.mintipopregao))) as id_modalidade,
 		(case when e.edtdataentrprop is null then null else concat(e.edtdataentrprop, ' ', coalesce(e.edthoraentrprop, '00:00:00')) end) as dh_inicio_recebimento_envelopes,
@@ -51,4 +57,4 @@ from (
 where id_gerado is null
 and id_processo is not null
 --and id_responsavel is not null
-limit 10
+--limit 10

@@ -8,7 +8,7 @@ def iniciar():
     print(':: Iniciando migração do sistema Compras/Contratos')
     params_exec = {
         'clicodigo': '2016',
-        'ano': 2015,
+        'ano': 2020,
         'somente_pre_validar': False,
         'token': '55d73a4b-cc32-4da2-9734-854b28f50196' #ignoreline base de teste
         # 'token': 'b8ddcd70-e359-4814-bdfb-6aff6f02522d' #oficial:Município de Biguaçu
@@ -75,12 +75,13 @@ def iniciar():
     # enviar(params_exec, 'processo-publicacao')
     # enviar(params_exec, 'processo-impugnacao')
     # enviar(params_exec, 'processo-sessao')
-    # enviar(params_exec, 'processo-participante')
+    enviar(params_exec, 'processo-participante')
     # enviar(params_exec, 'processo-participante-documento')
     # enviar(params_exec, 'processo-participante-proposta')
     # enviar(params_exec, 'processo-sessao-ata')
     # enviar(params_exec, 'processo-interposicao')
-    enviar(params_exec, 'processo-ato-final')
+    # enviar(params_exec, 'processo-ato-final')
+    # enviar(params_exec, 'processo-revogacao')
 
     # enviar(params_exec, 'processo-proposta-pendente') # !!! Usar individualmente no processo
 
