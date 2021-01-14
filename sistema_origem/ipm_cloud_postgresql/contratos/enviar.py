@@ -10,6 +10,8 @@ def iniciar():
         'clicodigo': '2016',
         'ano': 2015,
         'somente_pre_validar': False,
+        'token': '55d73a4b-cc32-4da2-9734-854b28f50196' #ignoreline base de teste
+        # 'token': 'b8ddcd70-e359-4814-bdfb-6aff6f02522d' #oficial:Município de Biguaçu
     }
     mensagem_inicio(params_exec)
     interacao_cloud.verifica_token(params_exec['token'])
@@ -33,13 +35,16 @@ def iniciar():
     # enviar(params_exec, 'prazo-entrega')
     # enviar(params_exec, 'tipo-interposicao-recurso')
     # enviar(params_exec, 'tipo-publicacao')
-    # enviar(params_exec, 'modalidade')
+    # enviar(params_exec, 'modalidade-licitacao')
     # enviar(params_exec, 'forma-pagamento')
-    enviar(params_exec, 'local-entrega')
+    # enviar(params_exec, 'local-entrega')
     # enviar(params_exec, 'tipo-documento')
     # enviar(params_exec, 'pais')
     # enviar(params_exec, 'estado')
     # enviar(params_exec, 'municipio')
+    # enviar(params_exec, 'bairro')
+    # enviar(params_exec, 'tipo-logradouro')
+    # enviar(params_exec, 'logradouro')
     # enviar(params_exec, 'cargo')
     # enviar(params_exec, 'tipo-ato')
     # enviar(params_exec, 'fonte-divulgacao')
@@ -48,12 +53,38 @@ def iniciar():
     # enviar(params_exec, 'tipo-revogacao-anulacao')
     # enviar(params_exec, 'despesa')
     # enviar(params_exec, 'solicitacao')
-    # enviar(params_exec, 'solicitacao-item') # REENVIAR!!!
+    # enviar(params_exec, 'solicitacao-item')
     # enviar(params_exec, 'solicitacao-despesa')
+    # enviar(params_exec, 'tipo-sessao-julgamento')
+    # enviar(params_exec, 'natureza-juridica')
+    # enviar(params_exec, 'fundamento-legal')
+    # enviar(params_exec, 'responsavel')
+    # enviar(params_exec, 'fornecedor')
+    # enviar(params_exec, 'comissao')
+    # enviar(params_exec, 'comissao-membros')
+    # enviar(params_exec, 'processo')
+    # enviar(params_exec, 'processo-forma-contratacao')
+    # enviar(params_exec, 'processo-documento')
+    # enviar(params_exec, 'processo-entidade')
+    # enviar(params_exec, 'processo-despesa')
+    # enviar(params_exec, 'processo-item')
+    # enviar(params_exec, 'processo-lote')
+    # enviar(params_exec, 'processo-lote-item')
+    # enviar(params_exec, 'processo-entidade-item')
+    # enviar(params_exec, 'processo-convidado')
+    # enviar(params_exec, 'processo-publicacao')
+    # enviar(params_exec, 'processo-impugnacao')
+    # enviar(params_exec, 'processo-sessao')
+    # enviar(params_exec, 'processo-participante')
+    # enviar(params_exec, 'processo-participante-documento')
+    # enviar(params_exec, 'processo-participante-proposta')
+    # enviar(params_exec, 'processo-sessao-ata')
+    # enviar(params_exec, 'processo-interposicao')
+    enviar(params_exec, 'processo-ato-final')
+
+    # enviar(params_exec, 'processo-proposta-pendente') # !!! Usar individualmente no processo
 
     # Envio Contratos
-
-
 
 
 def enviar(params_exec, tipo_registro, *args, **kwargs):

@@ -7,8 +7,8 @@ import math
 from datetime import datetime
 
 sistema = 305
-tipo_registro = 'material'
-url = 'https://compras.betha.cloud/compras-services/api/materiais'
+tipo_registro = 'processo-participante-proposta'
+url = 'https://compras.betha.cloud/compras-services/api/exercicios/{exercicio}/processos-administrativo/{processoAdministrativoId}/proposta-participante'
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
@@ -76,6 +76,7 @@ def pre_validar(params_exec, dados):
 
 def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     print('- Iniciando envio dos dados.')
+    lista_controle_migracao = []
     hoje = datetime.now().strftime("%Y-%m-%d")
     token = params_exec['token']
     total_dados = len(dados)
@@ -83,49 +84,36 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     total_erros = 0
 
     for item in dados:
-        lista_controle_migracao = []
         lista_dados_enviar = []
+        lista_controle_migracao = []
         contador += 1
-        print(f'\r- Gerando JSON: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['chave_dsk1'])
+        print(f'\r- Enviando registros: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['clicodigo'], item['ano_processo'],
+                                              item['nro_processo'], item['cpf_participante'], item['cmiid'])
+        url_parametrizada = url.replace('{exercicio}', str(item['ano_processo']))\
+                               .replace('{processoAdministrativoId}', str(item['id_processo']))
         dict_dados = {
             'idIntegracao': hash_chaves,
-            'codigoMaterial': item['chave_dsk1'],
-            'descricao': item['descricao'],
-            'ativo': item['ativo'],
-            'estocavel': item['estocavel'],
-            'tipoMaterial': {
-                'valor': item['tipo_material']
+            'url': url_parametrizada,
+            'processoAdministrativo': {
+                'id': item['id_processo']
             },
-            'classificacao': {
-                'valor': item['classificacao']
+            'participante': {
+                'id': item['id_participante']
             },
-            'tipoCombustivel': {
-                'valor': item['tipocombustivel']
+            'item': {
+                'id': item['id_item']
             },
-            'unidadeCompra': {
-                'id': item['id_un_medida']
+            'situacao': {
+                'valor': item['situacao']
             },
-            'unidadeEstoque': {
-                'id': item['id_un_medida']
-            },
-            'classe': {
-                'id': item['id_classe']
-            },
-            'grupo': {
-                'id': item['id_grupo']
-            },
-            'especificacoes': [
-                {
-                    'descricao': item['especificacao']
-                }
-            ]
+            'quantidade': item['quantidade'],
+            'valorUnitarioPercentual': item['valor_unitario'],
+            'colocacao': item['colocacao']
         }
 
-        if 'datainativacao' in item and item['datainativacao'] is not None:
-            dict_dados.update({
-                'dataInativacao': item['datainativacao']
-            })
+        if item['marca'] is not None:
+            dict_dados.update({'marca': item['marca']})
 
         # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
@@ -133,10 +121,14 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Materiais',
+            'descricao_tipo_registro': 'Cadastro de Propostas dos Participantes do Processo',
             'id_gerado': None,
             'json': json.dumps(dict_dados),
-            'i_chave_dsk1': item['chave_dsk1']
+            'i_chave_dsk1': item['clicodigo'],
+            'i_chave_dsk2': item['ano_processo'],
+            'i_chave_dsk3': item['nro_processo'],
+            'i_chave_dsk4': item['cpf_participante'],
+            'i_chave_dsk5': item['cmiid']
         })
 
         if True:
@@ -148,9 +140,9 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                     url=url,
                     tipo_registro=tipo_registro)
             model.atualiza_tabelas_controle_envio_sem_lote(params_exec, req_res, tipo_registro=tipo_registro)
+            if req_res[0]['mensagem'] is not None:
+                total_erros += 1
     if total_erros > 0:
         print(f'- Envio finalizado. Foram encontrados um total de {total_erros} inconsistência(s) de envio.')
     else:
         print('- Envio de dados finalizado sem inconsistências.')
-
-

@@ -1,4 +1,5 @@
 -- Insere template nas tabelas de controle
+/*
 insert into public.controle_migracao_registro (sistema, tipo_registro, descricao_tipo_registro, id_gerado, i_chave_dsk1, i_chave_dsk2, i_chave_dsk3, hash_chave_dsk) values
 (305, 'modalidade-licitacao', 'Modalidade Licitação (Padrão)', 7,  (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'entidade', {{clicodigo}}))), 1, null, '1'),
 (305, 'modalidade-licitacao', 'Modalidade Licitação (Padrão)', 8,  (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'entidade', {{clicodigo}}))), 2, null, '2'),
@@ -14,12 +15,13 @@ update public.controle_migracao_registro
 set hash_chave_dsk = md5(concat(sistema, tipo_registro, i_chave_dsk1, i_chave_dsk2, i_chave_dsk3))
 where tipo_registro = 'modalidade-licitacao'
 and sistema = '305';
+*/
 
 -- Envia itens que não estão contidos no template
 select
 	row_number() over() as id,
 	'305' as sistema,
-	'tipo-publicacao' as tipo_registro,
+	'modalidade-licitacao' as tipo_registro,
 	*
 from (
 	select distinct

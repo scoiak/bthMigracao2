@@ -7,8 +7,8 @@ import math
 from datetime import datetime
 
 sistema = 305
-tipo_registro = 'material'
-url = 'https://compras.betha.cloud/compras-services/api/materiais'
+tipo_registro = 'fornecedor'
+url = 'https://compras.betha.cloud/compras-services/api/fornecedores'
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
@@ -42,14 +42,6 @@ def coletar_dados(params_exec):
         return df
 
 
-def list_unique(lista):
-    list_of_unique = []
-    for item in lista:
-        if item not in list_of_unique:
-            list_of_unique.append(item)
-    return list_of_unique
-
-
 def pre_validar(params_exec, dados):
     print('- Iniciando pré-validação dos registros.')
     dados_validados = []
@@ -76,6 +68,7 @@ def pre_validar(params_exec, dados):
 
 def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     print('- Iniciando envio dos dados.')
+    lista_controle_migracao = []
     hoje = datetime.now().strftime("%Y-%m-%d")
     token = params_exec['token']
     total_dados = len(dados)
@@ -83,49 +76,67 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     total_erros = 0
 
     for item in dados:
-        lista_controle_migracao = []
         lista_dados_enviar = []
+        lista_controle_migracao = []
         contador += 1
-        print(f'\r- Gerando JSON: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['chave_dsk1'])
+        print(f'\r- Enviando registros: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['cpf_cnpj'])
         dict_dados = {
             'idIntegracao': hash_chaves,
-            'codigoMaterial': item['chave_dsk1'],
-            'descricao': item['descricao'],
-            'ativo': item['ativo'],
-            'estocavel': item['estocavel'],
-            'tipoMaterial': {
-                'valor': item['tipo_material']
+            'cpfCnpj': item['cpf_cnpj'],
+            'dataInclusao': item['datainclusao'],
+            'nome': item['nome'],
+            'tipo': {
+                'valor': item['tipo_pessoa']
             },
-            'classificacao': {
-                'valor': item['classificacao']
-            },
-            'tipoCombustivel': {
-                'valor': item['tipocombustivel']
-            },
-            'unidadeCompra': {
-                'id': item['id_un_medida']
-            },
-            'unidadeEstoque': {
-                'id': item['id_un_medida']
-            },
-            'classe': {
-                'id': item['id_classe']
-            },
-            'grupo': {
-                'id': item['id_grupo']
-            },
-            'especificacoes': [
-                {
-                    'descricao': item['especificacao']
-                }
-            ]
+            'situacao': {
+                'valor': item['situacao']
+            }
         }
 
-        if 'datainativacao' in item and item['datainativacao'] is not None:
+        if item['tipo_pessoa'] == 'JURIDICA':
+            if item['nome_fantasia'] is not None:
+                dict_dados.update({'nomeFantasia': item['nome_fantasia']})
+
+            """if item['inscricao_estadual'] is not None and item['estadoInscricao'] is not None:
+                dict_dados.update({'inscricaoEstadual': item['inscricao_estadual']})
+                dict_dados.update({'estadoInscricao': {'id': item['estadoInscricao']}})"""
+
+        if len(item['array_emails']) > 0:
             dict_dados.update({
-                'dataInativacao': item['datainativacao']
+                'email': {
+                    'descricao': item['array_emails'][0]
+                }
             })
+
+        if len(item['array_telefones']) > 0:
+            dict_dados.update({
+                'telefone': {
+                    'descricao': item['array_telefones'][0]
+                }
+            })
+
+        if len(item['array_enderecos']) > 0:
+            # print(type(item['array_enderecos']), item['array_enderecos'])
+            if item['array_enderecos'][0]['bairro'] is not None \
+                    and item['array_enderecos'][0]['logradouro'] \
+                    and item['array_enderecos'][0]['municipio']:
+                dict_dados.update({
+                    'endereco': {
+                        'bairro': {
+                            'id': item['array_enderecos'][0]['id_bairro']
+                        },
+                        'municipio': {
+                            'id': item['array_enderecos'][0]['id_municipio']
+                        },
+                        'logradouro': {
+                            'id': item['array_enderecos'][0]['id_logradouro']
+                        },
+                        'cep': item['array_enderecos'][0]['cep'],
+                        'complemento': item['array_enderecos'][0]['complemento'],
+                        'numero': item['array_enderecos'][0]['numero']
+                    }
+                })
 
         # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
@@ -133,24 +144,24 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Materiais',
+            'descricao_tipo_registro': 'Cadastro de Responsáveis',
             'id_gerado': None,
             'json': json.dumps(dict_dados),
-            'i_chave_dsk1': item['chave_dsk1']
+            'i_chave_dsk1': item['cpf_cnpj'],
         })
 
         if True:
             model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)
-            req_res = interacao_cloud\
+            req_res = interacao_cloud \
                 .preparar_requisicao_sem_lote(
-                    lista_dados=lista_dados_enviar,
-                    token=token,
-                    url=url,
-                    tipo_registro=tipo_registro)
+                lista_dados=lista_dados_enviar,
+                token=token,
+                url=url,
+                tipo_registro=tipo_registro)
             model.atualiza_tabelas_controle_envio_sem_lote(params_exec, req_res, tipo_registro=tipo_registro)
+            if req_res[0]['mensagem'] is not None:
+                total_erros += 1
     if total_erros > 0:
         print(f'- Envio finalizado. Foram encontrados um total de {total_erros} inconsistência(s) de envio.')
     else:
         print('- Envio de dados finalizado sem inconsistências.')
-
-
