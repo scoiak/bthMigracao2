@@ -1,12 +1,12 @@
-import requests
+from datetime import datetime
 import json
 import re
 import getpass
-import settings
 import math
 import sys
 import logging
-from datetime import datetime
+import requests
+import settings
 
 
 def verifica_token(token):
@@ -17,7 +17,6 @@ def verifica_token(token):
         params = {'access_token': token}
         req = requests.get(url=url, params=params)
         data = req.json()
-
         if 'error' in data.keys():
             r['error'] = data['error']
         if 'user' in data:
@@ -26,12 +25,10 @@ def verifica_token(token):
             r['databaseId'] = re.search("(?<=databaseId\" : \")(\\d+)(?!=\")", str(dados_json)).group()
         if 'expired' in data:
             r['expired'] = data['expired']
-
         if not r['expired']:
             print(f'- Token ativo. \n- Database: {r["databaseId"]} \n- Entidade: {r["entityId"]}')
         else:
             print('- Token inválido. Execução será finalizada.')
-
     except Exception as error:
         print(f'Erro ao executar função "verifica_token". {error}')
 
@@ -43,15 +40,12 @@ def get_dados_token(token):
         params = {'access_token': token}
         req = requests.get(url=url, params=params)
         data = req.json()
-
         if 'user' in data:
             dados_json = data['user']['attributes']['singleAccess']
             r['entityId'] = re.search("(?<=entityId\" : \")(\\d+)(?!=\")", str(dados_json)).group()
             r['databaseId'] = re.search("(?<=databaseId\" : \")(\\d+)(?!=\")", str(dados_json)).group()
-
     except Exception as error:
         print(f'Erro ao executar função "get_dados_token". {error}')
-
     finally:
         return r
 
@@ -69,17 +63,14 @@ def preparar_requisicao_sem_lote(lista_dados, *args, **kwargs):
             # print(f'\r- Dados enviados: {lotes_enviados}/{total_lotes}', '\n' if lotes_enviados == total_lotes else '', end='')
             dict_envio = i
             hash_chaves = None
-
             if 'idIntegracao' in dict_envio:
                 hash_chaves = dict_envio['idIntegracao']
                 del dict_envio['idIntegracao']
-
             if 'url' in dict_envio:
                 url = dict_envio['url']
                 del dict_envio['url']
             else:
                 url = kwargs.get('url')
-
             json_envio = json.dumps(dict_envio)
             retorno_requisicao = {
                 'hash_chave': hash_chaves,
@@ -89,9 +80,7 @@ def preparar_requisicao_sem_lote(lista_dados, *args, **kwargs):
             headers = {'authorization': f'bearer {kwargs.get("token")}', 'content-type': 'application/json'}
             # print('json', json_envio)
             retorno_req = requests.post(url, headers=headers, data=json_envio)
-
             # print('response', retorno_req.content)
-
             # print('retorno_req', retorno_req, retorno_req.text)
             if retorno_req.ok:
                 retorno_requisicao['id_gerado'] = int(retorno_req.text)
@@ -101,13 +90,10 @@ def preparar_requisicao_sem_lote(lista_dados, *args, **kwargs):
                 if 'message' in retorno_json:
                     retorno_requisicao['mensagem'] = retorno_json['message']
                     # print('Erro: ', retorno_json['message'])
-
             if retorno_requisicao['id_gerado'] is None:
                 total_erros += 1
-
             lista_retorno.append(retorno_requisicao)
         # print(f'- Envio finalizado. {total_erros} registro(s) retornaram inconsistência.')
-
     except Exception as error:
         print(f'Erro durante a execução da função preparar_requisicao. {error}')
     finally:
@@ -132,7 +118,6 @@ def preparar_requisicao(lista_dados, *args, **kwargs):
                                         tipo_registro=kwargs.get('tipo_registro'))
                 if ret_envio['id_lote'] is not None:
                     retorno_requisicao.append(ret_envio)
-
                 lotes_enviados += 1
                 print(f'\r- Lotes enviados: {lotes_enviados}/{total_lotes}', end='')
                 lote_envio = []
@@ -143,15 +128,11 @@ def preparar_requisicao(lista_dados, *args, **kwargs):
                                     tipo_registro=kwargs.get('tipo_registro'))
             if ret_envio['id_lote'] is not None:
                 retorno_requisicao.append(ret_envio)
-
         if tamanho_lote != total_lotes:
             print(f'\r- Lotes enviados: {total_lotes}/{total_lotes}', end='')
-
         print(f'\n- Envio de lotes finalizado. ({(datetime.now() - dh_inicio).total_seconds()} segundos)')
-
     except Exception as error:
         print(f'Erro durante a execução da função preparar_requisicao. {error}')
-
     finally:
         return retorno_requisicao
 
@@ -194,7 +175,6 @@ def enviar_lote(lote, *args, **kwargs):
                     retorno_requisicao['url_consulta'] = re.sub('\\w+$', f'lotes/{retorno_requisicao["idLote"]}', url)
             else:
                 print('Retorno não JSON:', retorno_req.status_code, retorno_req.text)
-
     except Exception as error:
         print(f'Erro durante a execução da função enviar_lote. {error}')
     finally:
@@ -210,7 +190,6 @@ def busca_dados_cloud(params_exec, **kwargs):
     erros_consecutivos = 0
     rodada_busca = 1
     headers = {'authorization': f'bearer {params_exec["token"]}'}
-
     try:
         while has_next:
             print(f'\r- Realizando busca na página {rodada_busca}', end='')
@@ -238,7 +217,6 @@ def busca_dados_cloud(params_exec, **kwargs):
         print('\n- Busca de páginas finalizada.')
     except Exception as error:
         print(f'Erro durante a execução da função busca_dados. {error}')
-
     finally:
         return dados_coletados
 
@@ -264,19 +242,14 @@ def busca_api_fonte_dados(params_exec, **kwargs):
     ordenacao = None if 'ordenacao' not in kwargs else kwargs.get('ordenacao')
     limit = 100 if 'limit' not in kwargs else kwargs.get('limit')
     headers = {'authorization': f'bearer {params_exec["token"]}'}
-
     try:
         while has_next:
             params = {'offset': offset, 'limit': limit, 'fields': campos}
-
             if criterio is not None:
                 params.update({'filter': criterio})
-
             if ordenacao is not None:
                 params.update({'sort': ordenacao})
-
             r = requests.get(url=url, params=params, headers=headers)
-
             if r.ok:
                 retorno_json = r.json()
                 # print('retorno_json', retorno_json)
@@ -291,12 +264,10 @@ def busca_api_fonte_dados(params_exec, **kwargs):
             else:
                 erros_consecutivos += 1
                 print('\nErro ao realizar requisição.', r.status_code)
-
             if erros_consecutivos >= 10:
                 print('Diversas requisições consecutivas retornaram erro. Verificar se o servidor está ativo.')
                 has_next = False
     except Exception as error:
         print(f'Erro durante a execução da função busca_dados. {error}')
-
     finally:
         return dados_coletados
