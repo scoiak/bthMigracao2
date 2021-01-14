@@ -33,7 +33,7 @@ def busca_dados(params_exec):
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Tipo de Logradouro',
+            'descricao_tipo_registro': 'Cadastro de Logradouro',
             'id_gerado': item['id'],
             'i_chave_dsk1': item['descricao'].upper(),
             'i_chave_dsk2': item['municipio']['id']
@@ -96,6 +96,11 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                 'cep': item['cep']
             }
         }
+        if params_exec.get('atualizar') is True:
+            if item['id'] is not None:
+                dict_dados['conteudo'].update({
+                    'id': int(item['id'])
+                })
         contador += 1
         # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
@@ -105,8 +110,9 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'hash_chave_dsk': hash_chaves,
             'descricao_tipo_registro': 'Cadastro de Logradouro',
             'id_gerado': None,
+            'json': json.dumps(dict_dados),
             'i_chave_dsk1': item['descricao'].upper(),
-            'i_chave_dsk2': item['municipio']
+            'i_chave_dsk2': item['municipio'] # identificador
         })
     model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)
     req_res = interacao_cloud.preparar_requisicao(lista_dados=lista_dados_enviar,

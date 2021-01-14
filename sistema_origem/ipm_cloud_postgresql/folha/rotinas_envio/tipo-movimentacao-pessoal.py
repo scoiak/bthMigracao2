@@ -35,7 +35,7 @@ def busca_dados_cloud(params_exec):
                 'sistema': sistema,
                 'tipo_registro': tipo_registro,
                 'hash_chave_dsk': hash_chaves,
-                'descricao_tipo_registro': 'Cadastro de Tipo de Movimentacao Pessoal',
+                'descricao_tipo_registro': 'Cadastro do Tipo de Movimentacao Pessoal',
                 'id_gerado': item['id'],
                 'i_chave_dsk1': id_entidade,
                 'i_chave_dsk2': item['descricao'],
@@ -99,6 +99,11 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                 "classificacao": item['classificacao'],
             }
         }
+        if params_exec.get('atualizar') is True:
+            if item['id'] is not None:
+                dict_dados['conteudo'].update({
+                    'id': int(item['id'])
+                })
         contador += 1
         # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
@@ -106,9 +111,10 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Tipo de Movimentação Pessoal',
+            'descricao_tipo_registro': 'Cadastro do Tipo de Movimentacao Pessoal',
             'id_gerado': None,
-            'i_chave_dsk1': item['id_entidade'],
+            'json': json.dumps(dict_dados),
+            'i_chave_dsk1': params_exec.get('entidade'),
             'i_chave_dsk2': item['descricao'],
             'i_chave_dsk3': item['classificacao']
         })

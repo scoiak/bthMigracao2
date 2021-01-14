@@ -32,13 +32,13 @@ def busca_dados_cloud(params_exec):
                 'sistema': sistema,
                 'tipo_registro': tipo_registro,
                 'hash_chave_dsk': hash_chaves,
-                'descricao_tipo_registro': 'Cadastro de Município',
+                'descricao_tipo_registro': 'Cadastro de Municipio',
                 'id_gerado': item['id'],
                 'i_chave_dsk1': item['nome'],
                 'i_chave_dsk2': item['estado']['id']
             })
         model.insere_tabela_controle_migracao_registro(params_exec, lista_req=registros_formatados)
-        print('- Busca de paises finalizada. Tabelas de controles atualizas com sucesso.')
+        print('- Busca de municipio finalizada. Tabelas de controles atualizas com sucesso.')
     except Exception as error:
         print(f'Erro ao executar função "busca_dados_cloud". {error}')
 
@@ -97,6 +97,11 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             dict_dados['conteudo'].update({
                 'cep': item['cep']
             })
+        if params_exec.get('atualizar') is True:
+            if item['id'] is not None:
+                dict_dados['conteudo'].update({
+                    'id': int(item['id'])
+                })
         contador += 1
         # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
@@ -106,8 +111,9 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'hash_chave_dsk': hash_chaves,
             'descricao_tipo_registro': 'Cadastro de Municipio',
             'id_gerado': None,
+            'json': json.dumps(dict_dados),
             'i_chave_dsk1': item['nome'],
-            'i_chave_dsk2': item['estado']
+            'i_chave_dsk2': item['estado'] # identificador
         })
     if True:
         model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)

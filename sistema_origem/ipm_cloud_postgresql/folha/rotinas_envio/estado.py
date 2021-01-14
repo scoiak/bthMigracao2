@@ -104,6 +104,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'hash_chave_dsk': hash_chaves,
             'descricao_tipo_registro': 'Cadastro de Estado',
             'id_gerado': None,
+            'json': json.dumps(dict_dados),
             'i_chave_dsk1': item['nome']
         })
     if True:

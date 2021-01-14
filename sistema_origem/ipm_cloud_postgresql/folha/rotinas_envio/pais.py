@@ -31,4 +31,4 @@ def busca_dados(params_exec):
             'i_chave_dsk1': item['nome']
         })
     model.insere_tabela_controle_migracao_registro(params_exec, lista_req=registros_formatados)
-    print('- Busca de paises finalizada. Tabelas de controles atualizas com sucesso.')
+    print('- Busca de pais finalizada. Tabelas de controles atualizas com sucesso.')
