@@ -13,9 +13,9 @@ def iniciar():
         # 'token': 'c52c4510-0a8f-468f-a501-1f68b32795c8',  # Homologação 3
         # 'token': 'c420e8c5-bc8a-44c4-8b34-e46df7867a3e',  # Prefeitura
         # 'token': '144e13ad-29ce-49b7-b9dc-7d95ee29b0f6',  # FAMABI
-        'token': '144e13ad-29ce-49b7-b9dc-7d95ee29b0f6',  # Camara
-        'ano': 2020,
-        'codigo': 11968,
+        'token': '7a88626f-77a8-4b13-bec6-554191c18c9e',  # Camara
+        'ano': 2021,
+        'codigo': 11968
     }
     mensagem_inicio(params_exec)
     interacao_cloud.verifica_token(params_exec['token'])

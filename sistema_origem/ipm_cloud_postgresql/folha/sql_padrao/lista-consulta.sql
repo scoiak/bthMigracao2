@@ -1,5 +1,7 @@
 select tipo_registro as registro,data_hora_env ,data_hora_ret,(data_hora_ret  - data_hora_env) as totalRetorno, id_lote as lote from public.controle_migracao_lotes where length(id_lote) > 1 order by data_hora_env desc;
 
+SELECT * FROM wfp.tbfuncionario t 
+
 select * from controle_migracao_lotes cml  order by data_hora_env desc;
 select * from controle_migracao_registro cmr where hash_chave_dsk = '410277bfd49c9a7a341820fc0cb94082'
 select * from wfp.tbrubricaautonomoplano
@@ -7,6 +9,7 @@ select * from wfp.tbrubricaautonomo
 select * from wfp.tbgpsgcencusautonomo
 
 select count(*) from controle_migracao_registro 
+select count(*) from controle_migracao_registro_ocor cmro 
 
 select * from wfp.tbfuntransferencia where odomesano = 202010
 
