@@ -7,7 +7,7 @@ import math
 from datetime import datetime
 
 sistema = 305
-tipo_registro = 'processo-participante-proposta'
+tipo_registro = 'processo-proposta-pendente'
 url = 'https://compras.betha.cloud/compras-services/api/exercicios/{exercicio}/processos-administrativo/{processoAdministrativoId}/proposta-participante'
 
 
@@ -114,7 +114,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         if item['marca'] is not None:
             dict_dados.update({'marca': item['marca']})
 
-        print(f'Dados gerados ({contador}): ', dict_dados)
+        # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,

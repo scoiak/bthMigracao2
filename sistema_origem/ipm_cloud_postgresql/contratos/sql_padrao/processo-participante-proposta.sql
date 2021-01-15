@@ -14,10 +14,13 @@ from (
 		qcp.qcpvlrunit as valor_unitario,
 		i.cmiqtde as quantidade,
 		left(mc.mardescricao, 20) as marca,
-		(case when qcp.qcpvencedor = 1 then 'VENCEU' else 'PERDEU' end) as situacao,
+		qcp.qcpvencedor,
+		p.modcodigo,
+		(case when (p.modcodigo = 7 and qcp.qcpposicao = 1) then 'VENCEU' when qcp.qcpvencedor = 1 then 'VENCEU' else 'PERDEU' end) as situacao,
 		(case
+			when (p.modcodigo = 6 and qcp.qcpvencedor = 0 and qcp.qcpposicao = 1) then 2
 			when qcp.qcpvencedor = 1 then 1
-			when qcp.qcpvencedor <> 1 and qcp.qcpposicao = 0 then 2
+			when qcp.qcpvencedor <> 1 and (qcp.qcpposicao = 0 or qcp.qcpposicao is null) then 2
 			else qcp.qcpposicao
 		end) as colocacao,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo', qcp.clicodigo, qcp.minano, qcp.minnro))) as id_processo,
@@ -27,7 +30,11 @@ from (
 	from wco.tbcadqcp qcp
 	left join wco.tbitemin i on (i.clicodigo = qcp.clicodigo and i.minano = qcp.minano and i.minnro = qcp.minnro and i.cmiid = qcp.cmiid)
 	left join wun.tbmarca mc on (mc.marcodigo = qcp.marcodigo)
+	left join wco.tbprocesso p on (p.clicodigo = qcp.clicodigo and p.pcsano = qcp.minano and p.pcsnro = qcp.minnro)
 	inner join wun.tbunico u on (u.unicodigo = qcp.unicodigo)
+	where qcp.clicodigo = {{clicodigo}}
+	and qcp.minano >= {{ano}}
+	--and qcp.minnro = 7
 	order by 1, 2 desc, 3 desc, 4 asc
 ) tab
 where id_gerado is null

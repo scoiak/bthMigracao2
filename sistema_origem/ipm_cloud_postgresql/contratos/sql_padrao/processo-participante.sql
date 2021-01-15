@@ -35,6 +35,7 @@ from (
 	left join wco.tbprocesso pr on (pr.clicodigo = p.clicodigo and pr.pcsano = p.minano and pr.pcsnro = p.minnro)
 	natural join wun.tbunico u
 	where p.clicodigo = {{clicodigo}}
+    and p.minano = {{ano}}
 	and pr.modcodigo <> 1
 	order by 1, 2 desc, 3 desc
 ) tab

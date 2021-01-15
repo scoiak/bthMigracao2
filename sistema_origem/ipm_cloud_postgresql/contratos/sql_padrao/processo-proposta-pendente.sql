@@ -1,10 +1,11 @@
 select distinct
+    row_number() over() as id,
 	aux.*,
 	(regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g')) as cpf_participante,
 	0.00 as valor_unitario,
 	i.cmiqtde as quantidade,
 	null as marca,
-	'PERDEU' as situacao,
+	'NAO_COTOU' as situacao,
 	null as colocacao,
 	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo', aux.clicodigo, aux.minano, aux.minnro))) as id_processo,
 	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo-participante', aux.clicodigo, aux.minano, aux.minnro, (regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g'))))) as id_participante,
@@ -23,14 +24,14 @@ from (
 		where pl.prlhabilitacao <> 2
 		and pl.clicodigo = 2016
 		and pl.minano = 2020
-		and pl.minnro = 80
+		and pl.minnro = 4
 	) participante
 	cross join (
 		select it.clicodigo, it.minano, it.minnro, it.cmiid
 		from wco.tbitemin it
 		where it.clicodigo = 2016
 		and it.minano = 2020
-		and it.minnro = 80
+		and it.minnro = 4
 	) item
 ) aux
 left join wco.tbitemin i on (i.clicodigo = aux.clicodigo and i.minano = aux.minano and i.minnro = aux.minnro and i.cmiid = aux.cmiid)
