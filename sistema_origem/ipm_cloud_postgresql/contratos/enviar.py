@@ -83,7 +83,10 @@ def iniciar():
     # enviar(params_exec, 'processo-interposicao')
     # enviar(params_exec, 'processo-ato-final')
     # enviar(params_exec, 'processo-revogacao')
-    enviar(params_exec, 'ata-rp')
+    # enviar(params_exec, 'processo-item-configuracao')
+    # enviar(params_exec, 'ata-rp')
+    # enviar(params_exec, 'ata-rp-item')
+
     # Envio Contratos
 
 
