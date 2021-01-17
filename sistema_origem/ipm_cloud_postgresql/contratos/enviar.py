@@ -55,6 +55,7 @@ def iniciar():
     # enviar(params_exec, 'solicitacao')
     # enviar(params_exec, 'solicitacao-item')
     # enviar(params_exec, 'solicitacao-despesa')
+    # enviar(params_exec, 'solicitacao-atualiza-status')
     # enviar(params_exec, 'tipo-sessao-julgamento')
     # enviar(params_exec, 'natureza-juridica')
     # enviar(params_exec, 'fundamento-legal')
@@ -88,6 +89,12 @@ def iniciar():
     # enviar(params_exec, 'ata-rp-item')
 
     # Envio Contratos
+    # enviar(params_exec, 'tipo-aditivo')
+    # enviar(params_exec, 'tipo-administracao')
+    # enviar(params_exec, 'tipo-sancao')
+    # enviar(params_exec, 'tipo-responsavel-contrato')
+    enviar(params_exec, 'compra-direta')
+
 
 
 def enviar(params_exec, tipo_registro, *args, **kwargs):

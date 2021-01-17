@@ -26,7 +26,7 @@ from (
 	 	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'material-especificacao', i.prdcodigo))) as id_material_especificacao,
 	 	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo-item', rp.clicodigo, rp.minano, rp.minnro, '@', coalesce(i.lotcodigo ,0), '@', i.cmiitem))) as id_item,
 	 	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo-item-configuracao', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo', rp.clicodigo, rp.minano, rp.minnro))), (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo-item', rp.clicodigo, rp.minano, rp.minnro, '@', coalesce(i.lotcodigo ,0), '@', i.cmiitem)))))) as id_config_item,
-	 	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo', rp.clicodigo, rp.minano, rp.minnro, rp.unicodigo, qcp.cmiid))) as id_gerado
+	 	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'ata-rp-item', rp.clicodigo, rp.arpano, rp.arpnro, rp.unicodigo, qcp.cmiid))) as id_gerado
 	 from wco.tbataregpreco rp
 	 inner join wun.tbunico u on u.unicodigo = rp.unicodigo
 	 left join wco.tbcadqcp qcp on (qcp.clicodigo = rp.clicodigo
