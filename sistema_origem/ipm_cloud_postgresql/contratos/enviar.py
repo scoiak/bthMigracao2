@@ -93,9 +93,9 @@ def iniciar():
     # enviar(params_exec, 'tipo-administracao')
     # enviar(params_exec, 'tipo-sancao')
     # enviar(params_exec, 'tipo-responsavel-contrato')
-    enviar(params_exec, 'compra-direta')
-
-
+    # enviar(params_exec, 'compra-direta')
+    # enviar(params_exec, 'compra-direta-item')
+    enviar(params_exec, 'compra-direta-despesa')
 
 def enviar(params_exec, tipo_registro, *args, **kwargs):
     print(f'\n:: Iniciando execução do assunto {tipo_registro}')
