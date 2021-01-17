@@ -7,8 +7,8 @@ import math
 from datetime import datetime
 
 sistema = 305
-tipo_registro = 'compra-direta-despesa'
-url = 'https://contratos.betha.cloud/contratacao-services/api/exercicios/{exercicio}/contratacoes/{contratacaoId}/despesas'
+tipo_registro = 'contratacao'
+url = 'https://contratos.betha.cloud/contratacao-services/api/exercicios/{exercicio}/contratacoes'
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
@@ -88,38 +88,54 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         lista_controle_migracao = []
         contador += 1
         print(f'\r- Enviando registros: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['clicodigo'], item['ano_cd'],
-                                              item['nro_cd'], item['dotcodigo'])
-        url_parametrizada = url.replace('{exercicio}', str(item['ano_cd']))\
-                               .replace('{contratacaoId}', str(item['id_contratacao']))
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['clicodigo'], item['ano_contrato'], item['nro_contrato'])
+        url_parametrizada = url.replace('{exercicio}', str(item['ano_termo']))
         dict_dados = {
             'idIntegracao': hash_chaves,
             'url': url_parametrizada,
-            'parametroExercicio': {
-                'id': item['id_exercicio']
+            'sequencial': item['nro_contrato'],
+            'tipoInstrumento': {
+                'id': item['id_tipo_instrumento']
             },
-            'contratacao': {
-                'id': item['id_contratacao']
+            'tipoObjeto': {
+                'id': item['id_tipo_objeto']
             },
-            'despesa': {
-                'id': item['id_despesa']
+            'numeroTermo': item['nro_contrato'],
+            'ano': item['ano_contrato'],
+            'objetoContratacao': item['objeto'],
+            'tipoControleSaldo': {
+                'valor': item['tipo_controle_saldo']
             },
-            'valorEstimado': item['valor_estimado']
+            'fornecedor': {
+                'id': item['id_fornecedor']
+            },
+            'dataAssinatura': item['dt_assinatura'],
+            'dataInicioVigencia': item['dt_inicio_vigencia'],
+            'dataFimVigencia': item['dt_fim_vigencia'],
+            'origem': {
+                'valor': item['origem']
+            },
+            'observacao': item['observacao'],
+            "situacao": {
+                "valor": item['situacao']
+            }
         }
 
-        # print(f'Dados gerados ({contador}): ', dict_dados)
+        if item['valor_original'] != 0.0:
+            dict_dados.update({'valorOriginal': item['valor_original']})
+
+        print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Despesas de Compras Diretas',
+            'descricao_tipo_registro': 'Cadastro de Compras Diretas',
             'id_gerado': None,
             'json': json.dumps(dict_dados),
             'i_chave_dsk1': item['clicodigo'],
-            'i_chave_dsk2': item['ano_cd'],
-            'i_chave_dsk3': item['nro_cd'],
-            'i_chave_dsk4': item['dotcodigo'],
+            'i_chave_dsk2': item['ano_contrato'],
+            'i_chave_dsk3': item['nro_contrato']
         })
 
         if True:
