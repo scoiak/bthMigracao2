@@ -51,7 +51,7 @@ def iniciar():
     # enviar(params_exec, 'natureza-texto-juridico')
     # enviar(params_exec, 'ato')
     # enviar(params_exec, 'tipo-revogacao-anulacao')
-    # enviar(params_exec, 'despesa')
+    enviar(params_exec, 'despesa')
     # enviar(params_exec, 'solicitacao')
     # enviar(params_exec, 'solicitacao-item')
     # enviar(params_exec, 'solicitacao-despesa')
@@ -96,7 +96,7 @@ def iniciar():
     # enviar(params_exec, 'compra-direta')
     # enviar(params_exec, 'compra-direta-item')
     # enviar(params_exec, 'compra-direta-despesa')
-    enviar(params_exec, 'contratacao')
+    # enviar(params_exec, 'contratacao')
 
 def enviar(params_exec, tipo_registro, *args, **kwargs):
     print(f'\n:: Iniciando execução do assunto {tipo_registro}')
