@@ -72,7 +72,6 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     hoje = datetime.now().strftime("%Y-%m-%d")
     token = params_exec['token']
     total_dados = len(dados)
-    total_erros = 0
 
     for reg in dados:
         query = f'''select
@@ -142,7 +141,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         pgcnn = model.PostgreSQLConnection()
         df = pgcnn.exec_sql(query, index_col='id')
         lista_dados = [i for i in df.to_dict('records')]
-
+        total_erros = 0
         contador = 0
         total_dados = len(lista_dados)
         if total_dados > 0:
@@ -205,7 +204,8 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                 model.atualiza_tabelas_controle_envio_sem_lote(params_exec, req_res, tipo_registro=tipo_registro)
                 if req_res[0]['mensagem'] is not None:
                     total_erros += 1
-        if total_erros > 0 and total_dados > 0:
-            print(f'- Envio finalizado. Foram encontrados um total de {total_erros} inconsistência(s) de envio.')
-        else:
-            print('- Envio de dados finalizado sem inconsistências.')
+        if total_dados > 0:
+            if total_erros > 0:
+                print(f'- Envio finalizado. Foram encontrados um total de {total_erros} inconsistência(s) de envio.')
+            else:
+                print('- Envio de dados finalizado sem inconsistências.')

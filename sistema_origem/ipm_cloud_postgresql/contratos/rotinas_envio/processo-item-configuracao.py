@@ -21,7 +21,7 @@ def busca_dados_cloud(params_exec):
     campos = 'configuracao(id), id, configuracao.processoAdministrativo.id'
     lista_dados = []
 
-    registros_cloud = interacao_cloud.busca_api_fonte_dados(params_exec, url=url, campos=campos, criterio='configuracao.processoAdministrativo.id = 209956')
+    registros_cloud = interacao_cloud.busca_api_fonte_dados(params_exec, url=url, campos=campos)
 
     if registros_cloud is not None and len(registros_cloud) > 0:
         for item in registros_cloud:

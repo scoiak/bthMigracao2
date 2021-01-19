@@ -94,11 +94,21 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'idIntegracao': hash_chaves,
             'url': url_parametrizada,
             'sequencial': item['nro_contrato'],
+            'entidade': {
+                'id': item['id_entidade']
+            },
             'tipoInstrumento': {
                 'id': item['id_tipo_instrumento']
             },
             'tipoObjeto': {
                 'id': item['id_tipo_objeto']
+            },
+            'processoAdministrativo': {
+              'entidade': {
+                  'id': item['id_entidade']
+              },
+              'numero': item['nro_processo'],
+              'ano': item['ano_processo']
             },
             'numeroTermo': item['nro_contrato'],
             'ano': item['ano_contrato'],
@@ -124,7 +134,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         if item['valor_original'] != 0.0:
             dict_dados.update({'valorOriginal': item['valor_original']})
 
-        print(f'Dados gerados ({contador}): ', dict_dados)
+        # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,

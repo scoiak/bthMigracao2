@@ -31,10 +31,10 @@ from (
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'compra-direta', c.clicodigo, c.copano, c.copnro))) as id_gerado
 	from wco.tbcompra c
 	inner join wun.tbunico u on (u.unicodigo = c.unicodigo)
-	where c.clicodigo = 2016 -- {{clicodigo}}
+	where c.clicodigo = {{clicodigo}}
 	and c.minano is null
 	and c.minnro is null
-	and c.copano >= 2020 -- {{ano}}
+	and c.copano >= {{ano}}
 	order by 1, 2 desc, 3 asc
 ) tab
 where id_gerado is null
@@ -42,4 +42,4 @@ and id_exercicio is not null
 and id_entidade is not null
 and id_fornecedor is not null
 and id_forma_pagamento is not null
-limit 5
+--limit 5

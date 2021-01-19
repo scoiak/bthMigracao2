@@ -272,7 +272,7 @@ begin
 		'processo', 'processo-forma-contratacao', 'processo-documento', 'processo-entidade', 'processo-despesa', 'processo-item', 'processo-lote',
 		'processo-lote-item', 'processo-entidade-item', 'processo-convidado', 'processo-publicacao', 'processo-impugnacao', 'processo-sessao',
 		'processo-participante', 'processo-participante-documento', 'processo-participante-proposta', 'processo-sessao-ata', 'processo-interposicao',
-		'processo-ato-final', 'processo-revogacao'
+		'processo-ato-final', 'processo-revogacao', 'processo-proposta-pendente'
 	);
 	a := concat('Excluido processo ', nro_proc, '/' , ano_proc, ' (', clicodigo, ') das tabelas de controle.');
 	return a;

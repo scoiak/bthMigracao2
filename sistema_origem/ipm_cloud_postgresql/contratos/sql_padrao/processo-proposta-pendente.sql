@@ -6,5 +6,5 @@ select distinct
 from wco.tbcadqcp qcp
 where qcp.clicodigo = {{clicodigo}}
 and qcp.minano = {{ano}}
---and qcp.minnro = 139
+--and qcp.minnro = 76
 order by 1, 2 desc, 3 desc
