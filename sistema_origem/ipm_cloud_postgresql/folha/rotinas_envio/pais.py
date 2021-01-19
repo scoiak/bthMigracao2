@@ -12,7 +12,9 @@ url = 'https://pessoal.cloud.betha.com.br/service-layer/v1/api/pais'
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
-    busca_dados(params_exec)
+    if True:
+        if params_exec.get('buscar') is True:
+            busca_dados(params_exec)
 
 
 def busca_dados(params_exec):

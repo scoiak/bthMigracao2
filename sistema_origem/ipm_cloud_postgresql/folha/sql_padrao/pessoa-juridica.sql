@@ -29,7 +29,7 @@ from
 	wun.tbunico as u left join wun.tbunicojuridica as uj on uj.unicodigo = u.unicodigo
 where
 	u.unitipopessoa = 2
---and	u.unisituacao = 1
+and	u.unisituacao = 1
 and
 	length(regexp_replace(u.unicpfcnpj,'[/.-]|[0]','','g')) > 0
 and

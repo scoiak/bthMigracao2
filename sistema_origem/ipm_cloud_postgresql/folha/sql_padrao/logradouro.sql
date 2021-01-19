@@ -2,7 +2,7 @@ select * from (
 select
 	l.logcodigo as id,
 	l.logcodigo as codigo,
-	left(upper(l.lognome),50) as descricao,
+	replace(replace(replace(replace(replace(left(upper(l.lognome),50),'é','É'),'á','Á'),'ó','Ó'),'ã','Ã'),'õ','Õ') as descricao,
 	null as cep,
 	-- public.bth_get_id_gerado('300', 'tipo-logradouro', (select substring(upper(tl.tplnome),1,20) from wun.tbtipolograd as tl where tl.tplcodigo = l.tplcodigo limit 1)) as tipoLogradouro,
 	-- public.bth_get_id_gerado('300', 'cidades', (select c.cidnome from wun.tbcidade as c where c.cidcodigo = l.cidcodigo limit 1)) as municipio,

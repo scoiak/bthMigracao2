@@ -1,14 +1,15 @@
-select
+select * from (select
 	cpdcodigo as id,
 	cpdcodigo as codigo,
-	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))) as entidade,
+	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))) as entidade,
 	cpddescricao as descricao,
 	'1900-01' as inicioVigencia,
 	(case cpdclasse when 1 then 'VENCIMENTO' when 2 then 'DESCONTO' when 3 then 'INFORMATIVO_MAIS' when 4 then 'INFORMATIVO_MENOS' end) as tipo,
 	'NENHUMA' as classificacao,
-	narcodigo as naturezaRubrica,
+	--narcodigo::varchar as naturezaRubrica,
+	null as naturezaRubrica,
 	null as classificacaoBaixaProvisao,
-	(case cpdtipo when 1 then 'HORAS' when 2 then 'PERCENTUAL' when 3 then 'VALOR ' end) as unidade,
+	(case cpdtipo when 1 then 'HORAS' when 2 then 'PERCENTUAL' when 3 then 'VALOR' end) as unidade,
 	(case cpdportaltransparencia when 3 then 'true' else 'false' end) as enviaTransparencia,
 	null as codigoEsocial,
 	--txjcodigo as ato,
@@ -21,4 +22,6 @@ select
 from
 	wfp.tbprovdesc
 where
-	odomesano = 202010
+	odomesano = 202012
+) as a
+where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'configuracao-evento',entidade, codigo))) is null

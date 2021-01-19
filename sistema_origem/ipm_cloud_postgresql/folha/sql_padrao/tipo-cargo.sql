@@ -1,5 +1,6 @@
+select * from (
 select
-    (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', {{clicodigo}}))) as id_entidade,
+    (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))) as entidade,
     *
 from (
 	select 1 as codigo,1 as id,'Efetivo' as descricao,'EFETIVO' as classificacao
@@ -17,4 +18,6 @@ from (
 	select 7 as codigo,7 as id,'Conselheiro' as descricao,'FUNCAO_PUBLICA' as classificacao
 	union
 	select 99 as codigo,99 as id,'Outros' as descricao,'NAO_CLASSIFICADO' as classificacao
-) as s order by 1
+) as a
+) as b
+where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','tipo-cargo', entidade, codigo))) is null

@@ -13,7 +13,8 @@ limite_lote = 1000
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
     if False:
-        busca_dados_cloud(params_exec)
+        if params_exec.get('buscar') is True:
+            busca_dados_cloud(params_exec)
     if True:
         dados_assunto = coletar_dados(params_exec)
         dados_enviar = pre_validar(params_exec, dados_assunto)
@@ -34,7 +35,7 @@ def busca_dados_cloud(params_exec):
                 'sistema': sistema,
                 'tipo_registro': tipo_registro,
                 'hash_chave_dsk': hash_chaves,
-                'descricao_tipo_registro': 'Cadastro de Atos',
+                'descricao_tipo_registro': 'Cadastro de Ato',
                 'id_gerado': item['id'],
                 'i_chave_dsk1': item['numeroOficial'],
                 'i_chave_dsk2': item['tipo']['id'],
@@ -103,10 +104,11 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                 },
                 'naturezaTextoJuridico': {
                     'id': item['naturezatextojuridico']
-                },
-                'dataCriacao': item['datacriacao'].strftime("%Y-%m-%d")
+                }
             }
         }
+        if 'datacriacao' in item and item['datacriacao'] is not None:
+            dict_dados['conteudo'].update({'dataCriacao': item['datacriacao'].strftime("%Y-%m-%d")})
         if 'ementa' in item and item['ementa'] is not None:
             dict_dados['conteudo'].update({'ementa': model.cleanhtml(item['ementa'])})
         if 'datavigorar' in item and item['datavigorar'] is not None:
@@ -115,16 +117,22 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             dict_dados['conteudo'].update({'dataPublicacao': item['datapublicacao'].strftime("%Y-%m-%d")})
         if 'dataresolucao' in item and item['dataresolucao'] is not None:
             dict_dados['conteudo'].update({'dataResolucao': item['dataresolucao'].strftime("%Y-%m-%d")})
-        print(f'Dados gerados ({contador}): ', dict_dados)
+        if params_exec.get('atualizar') is True:
+            if item['idcloud'] is not None:
+                dict_dados['conteudo'].update({
+                    'id': int(item['idcloud'])
+                })
+        # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Atos',
+            'descricao_tipo_registro': 'Cadastro de Ato',
             'id_gerado': None,
+            'json': json.dumps(dict_dados),            
             'i_chave_dsk1': item['numerooficial'],
-            'i_chave_dsk2': item['tipo']
+            'i_chave_dsk2': item['tipo'] # identificador
         })
     print(f'- Processo de transformação finalizado. ({(datetime.now() - dh_inicio).total_seconds()} segundos)')
     if True:

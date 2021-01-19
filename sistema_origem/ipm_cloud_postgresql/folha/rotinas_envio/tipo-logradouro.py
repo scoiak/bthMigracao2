@@ -13,7 +13,8 @@ url = "https://pessoal.cloud.betha.com.br/service-layer/v1/api/tipo-logradouro"
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
     if True:
-        busca_dados(params_exec)
+        if params_exec.get('buscar') is True:
+            busca_dados(params_exec)
     if True:
         dados_assunto = coletar_dados(params_exec)
         dados_enviar = pre_validar(params_exec, dados_assunto)
@@ -82,7 +83,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Tipo de Logradouro',
+            'descricao_tipo_registro': 'Cadastro do Tipo de Logradouro',
             'id_gerado': None,
             'json': json.dumps(dict_dados),
             'i_chave_dsk1': item['descricao'].upper(),
@@ -108,7 +109,7 @@ def busca_dados(params_exec):
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Tipo de Logradouro',
+            'descricao_tipo_registro': 'Cadastro do Tipo de Logradouro',
             'id_gerado': item['id'],
             'i_chave_dsk1': item['descricao'].upper(),
         })

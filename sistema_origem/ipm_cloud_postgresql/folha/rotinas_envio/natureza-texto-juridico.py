@@ -13,8 +13,9 @@ limite_lote = 500
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
     if True:
-        busca_dados_cloud(params_exec)
-    if True:
+        if params_exec.get('buscar') is True:
+            busca_dados_cloud(params_exec)
+    if False:
         dados_assunto = coletar_dados(params_exec)
         dados_enviar = pre_validar(params_exec, dados_assunto)
         if not params_exec.get('somente_pre_validar'):
@@ -29,14 +30,14 @@ def busca_dados_cloud(params_exec):
     registros_formatados = []
     try:
         for item in registros:
-            hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['descricao'])
+            hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['descricao'].upper())
             registros_formatados.append({
                 'sistema': sistema,
                 'tipo_registro': tipo_registro,
                 'hash_chave_dsk': hash_chaves,
                 'descricao_tipo_registro': 'Cadastro da Natureza do Texto Juridico',
                 'id_gerado': item['id'],
-                'i_chave_dsk1': item['descricao']})
+                'i_chave_dsk1': item['descricao'].upper()})
         model.insere_tabela_controle_migracao_registro2(params_exec, lista_req=registros_formatados)
         print(f'- Busca de {tipo_registro} finalizada. Tabelas de controles atualizas com sucesso.')
     except Exception as error:

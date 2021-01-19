@@ -1,9 +1,11 @@
-select *
+select 
+(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'tipo-movimentacao-pessoal', entidade, descricao, classificacao))) as idCloud,
+*
 from (
 	select
 		codigo as id,
 		codigo as codigo,
-		'2734' as id_entidade,
+		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))) as entidade,
 		(case  codigo
 			when 1  then 'Movimento de Admissão'
 			 when 2  then 'Movimento de Afastamento'
@@ -63,4 +65,4 @@ from (
 		     else 'NENHUMA'
 		  end ) as classificacao
 	  from (select codigo from generate_series (1,26) as codigo) as aux) as xua
-where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'tipo-movimentacao-pessoal', id_entidade, descricao, classificacao))) is null
+where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'tipo-movimentacao-pessoal', entidade, descricao, classificacao))) is null

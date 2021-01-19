@@ -1,7 +1,8 @@
+select * from (
 SELECT 
 row_number() over() as id,
 --row_number() over() as codigo,
-(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))) as entidade,
+(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))) as entidade,
 null as orgaoClasse,
 null as segurancaTrabalho,
 null as ufOrgaoClasse,
@@ -57,4 +58,5 @@ select
 'Nao Informado' AS descricao,
 'ENSINO_FUNDAMENTAL' AS nivel
 ) AS a
-where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'formacao', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), codigo))) is null
+) AS b
+where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'formacao', entidade, codigo))) is null

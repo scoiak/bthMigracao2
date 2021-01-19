@@ -1,7 +1,7 @@
 		select 
 		row_number() over() as id,
 		row_number() over() as codigo,
-		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))) as entidade,
+		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))) as entidade,
 		* from ( select            
             'PROVISÃO - BASE AUXILIAR DISTORÇÕES 13º SALÁRIO' AS descricao,
             'PRBAAUDI13SA' AS sigla,

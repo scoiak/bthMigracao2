@@ -12,11 +12,35 @@ limite_lote = 500
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
-    dados_assunto = coletar_dados(params_exec)
-    dados_enviar = pre_validar(params_exec, dados_assunto)
-    if not params_exec.get('somente_pre_validar'):
-        iniciar_envio(params_exec, dados_enviar, 'POST')
-    model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
+    if False: # Sem Funcionamento
+        if params_exec.get('buscar') is True:
+            busca_dados(params_exec)
+    if True:
+        dados_assunto = coletar_dados(params_exec)
+        dados_enviar = pre_validar(params_exec, dados_assunto)
+        if not params_exec.get('somente_pre_validar'):
+            iniciar_envio(params_exec, dados_enviar, 'POST')
+        model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
+
+
+def busca_dados(params_exec):
+    print('- Iniciando busca de dados no cloud.')
+    registros = interacao_cloud.busca_dados_cloud(params_exec, url=url)
+    print(f'- Foram encontrados {len(registros)} registros cadastrados no cloud.')
+    registros_formatados = []
+    for item in registros:
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, params_exec.get('entidade'), item['sigla'])
+        registros_formatados.append({
+            'sistema': sistema,
+            'tipo_registro': tipo_registro,
+            'hash_chave_dsk': hash_chaves,
+            'descricao_tipo_registro': 'Cadastro de Base',
+            'id_gerado': item['id'],
+            'i_chave_dsk1': params_exec.get('entidade'),
+            'i_chave_dsk2': item['sigla']
+        })
+    model.insere_tabela_controle_migracao_registro(params_exec, lista_req=registros_formatados)
+    print('- Busca finalizada. Tabelas de controles atualizas com sucesso.')
 
 
 def coletar_dados(params_exec):
@@ -73,7 +97,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     for item in dados:
         contador += 1
         print(f'\r- Gerando JSON: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['chave_dsk1'], item['chave_dsk2'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['entidade'], item['codigo'])
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {
@@ -85,16 +109,26 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                 'pagaDecimoTerceiroSalario': item['pagadecimoterceirosalario'],
                 'contagemEspecial': item['contagemespecial'],
                 'quantidadeVagasPcd': item['quantidadevagaspcd'],
-                'extinto': item['extinto'],
-                'ato': {
-                    'id': item['id_ato']
-                },
-                'cbo': {
-                    'id': item['id_cbo']
-                },
+                'extinto': item['extinto'],           
                 'tipo': {
-                    'id': item['id_tipo_cargo']
-                },
+                    'id': item['tipocargo']
+                }                
+             }
+        }
+        if 'cbo' in item and item['cbo'] is not None:
+            dict_dados['conteudo'].update({
+                'cbo': {
+                    'id': item['cbo']
+                }
+            })
+        if 'ato' in item and item['ato'] is not None:
+            dict_dados['conteudo'].update({
+                'ato': {
+                    'id': item['ato']
+                }
+            })
+        if 'camposadicionais' in item and item['camposadicionais'] is not None:
+            dict_dados['conteudo'].update({
                 'camposAdicionais': {
                     'tipo': 'CARGO',
                     'campos': [
@@ -112,12 +146,11 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                         }
                     ]
                 }
-             }
-        }
-        if 'configuracao_ferias' in item and item['configuracao_ferias'] is not None:
+            })
+        if 'configuracaoferias' in item and item['configuracaoferias'] is not None:
             dict_dados['conteudo'].update({
                 'configuracaoFerias': {
-                    'id': item['configuracao_ferias']
+                    'id': item['configuracaoferias']
                 }
             })
         if 'grauinstrucao' in item and item['grauinstrucao'] is not None:
@@ -137,18 +170,13 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         if 'extinto' in item and item['extinto'] is not None:
             dict_dados['conteudo'].update({'extinto': item['extinto']})
         if 'configuracaolicencapremio' in item and item['configuracaolicencapremio'] is not None:
-            dict_dados['conteudo'].update({'configuracaoLicencaPremio': item['configuracaolicencapremio']})
-        if 'id_conf_ferias' in item and item['id_conf_ferias'] is not None:
-            dict_dados['conteudo'].update({
-                'configuracaoFerias': {
-                    'id': item['id_conf_ferias']
-                }
-            })
-        if 'niveis_vigentes' in item and item['niveis_vigentes'] is not None:
+            dict_dados['conteudo'].update({'configuracaoLicencaPremio': item['configuracaolicencapremio']})        
+        if 'nivelsalarial' in item and item['nivelsalarial'] is not None:
             lista_niveis = []
-            for n in item['niveis_vigentes']:
+            for n in item['nivelsalarial']:
                 dados_niveis = n.split(':')
-                if not re.search('\?', dados_niveis[1]):
+                # print('dados_niveis', dados_niveis)
+                if not re.search(r'\?', dados_niveis[1]):
                     dict_item_niveis = {
                         'nivelSalarial': {
                             'id': int(dados_niveis[1])
@@ -160,7 +188,6 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             dict_dados['conteudo'].update({
                 'remuneracoes': lista_niveis
             })
-
         if 'historico' in item and item['historico'] is not None:
             lista_historico = []
             for h in item['historico'].split('%/%'):
@@ -170,54 +197,70 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                     pass
                     # print(idx, val)
                 dict_item_historico = {
-                    'descricao': dados_historico[11],
-                    'inicioVigencia': dados_historico[12] + ' 01:00:00',
-                    'pagaDecimoTerceiroSalario': True if dados_historico[24] == 't' else False,
-                    'contagemEspecial': dados_historico[23],
-                    'acumuloCargos': dados_historico[17],
-                    'quantidadeVagasPcd': dados_historico[25],
-                    'extinto': True if dados_historico[29] == 't' else False,
-                    'grauInstrucao': dados_historico[20],
-                    'quantidadeVagas': dados_historico[18],
-                    'dedicacaoExclusiva': True if dados_historico[22] == 't' else False,
-                    'ato': {
+                    'descricao': dados_historico[8],
+                    'inicioVigencia': dados_historico[9] + ' 01:00:00',
+                    'pagaDecimoTerceiroSalario': dados_historico[21],
+                    'contagemEspecial': dados_historico[20],
+                    'acumuloCargos': dados_historico[14],
+                    'quantidadeVagasPcd': dados_historico[22],
+                    'extinto': dados_historico[26],
+                    'grauInstrucao': dados_historico[17],
+                    'quantidadeVagas': dados_historico[15],
+                    'dedicacaoExclusiva': dados_historico[19],
+                    'tipo': {
                         'id': dados_historico[2]
                     },
-                    'cbo': {
-                        'id': item['id_cbo'] if dados_historico[3] == '0' else dados_historico[3],
-                    },
-                    'tipo': {
-                        'id': dados_historico[4]
-                    },
-                    'camposAdicionais': {
-                        'tipo': 'CARGO',
-                        'campos': [
-                            {
-                                'id': '5fafc50a001f7a0104272606',
-                                'valor': dados_historico[26]
-                            },
-                            {
-                                'id': '5fafc50a001f7a0104272608',
-                                'valor': dados_historico[27]
-                            },
-                            {
-                                'id': '5fafc50a001f7a0104272607',
-                                'valor': dados_historico[28]
-                            }
-                        ]
-                    }
+                    
                 }
-                if dados_historico[6] != '0':
+                if dados_historico[1] != '0':
+                    dict_item_historico.update({
+                        'cbo': {
+                            'id': dados_historico[1]
+                        }
+                    })
+                elif 'cbo' in item and item['cbo'] is not None:
+                    dict_item_historico.update({
+                            'cbo': {
+                                'id': item['cbo']
+                            }
+                        })
+                if dados_historico[0] != '0':
+                    dict_item_historico.update({
+                        'ato': {
+                            'id': dados_historico[0]
+                        }
+                    })
+                if 'camposadicionais' in item and item['camposadicionais'] is not None:
+                    dict_dados['conteudo'].update({
+                        'camposAdicionais': {
+                            'tipo': 'CARGO',
+                            'campos': [
+                                {
+                                    'id': '5fafc50a001f7a0104272606',
+                                    'valor': dados_historico[26]
+                                },
+                                {
+                                    'id': '5fafc50a001f7a0104272608',
+                                    'valor': dados_historico[27]
+                                },
+                                {
+                                    'id': '5fafc50a001f7a0104272607',
+                                    'valor': dados_historico[28]
+                                }
+                            ]
+                        }
+                    })
+                if dados_historico[3] != '0':
                     dict_item_historico.update({
                         'configuracaoFerias': {
-                            'id': dados_historico[6]
+                            'id': dados_historico[3]
                         }
                     })
                 lista_niveis_historico = []
-                if re.search('\:', dados_historico[30]):
-                    for item_niveis in dados_historico[30].split('|'):
+                if re.search(r'\:', dados_historico[27]):
+                    for item_niveis in dados_historico[27].split('|'):
                         nivel = item_niveis.split(':')
-                        if not re.search('\?', nivel[1]):
+                        if not re.search(r'\?', nivel[1]) or nivel[1] != '0':
                             try:
                                 dict_item_niveis = {
                                     'nivelSalarial': {
@@ -237,6 +280,11 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             dict_dados['conteudo'].update({
                 'historicos': lista_historico
             })
+        if params_exec.get('atualizar') is True:
+            if item['idcloud'] is not None:
+                dict_dados['conteudo'].update({
+                    'id': int(item['idcloud'])
+                })
         # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
@@ -246,8 +294,8 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'descricao_tipo_registro': 'Cadastro de Cargos',
             'id_gerado': None,
             'json': json.dumps(dict_dados),
-            'i_chave_dsk1': item['chave_dsk1'],
-            'i_chave_dsk2': item['chave_dsk2']
+            'i_chave_dsk1': item['entidade'],
+            'i_chave_dsk2': item['codigo']
         })
     if True:
         model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)
@@ -258,5 +306,3 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                                                       tamanho_lote=limite_lote)
         model.insere_tabela_controle_lote(req_res)
         print('- Envio de dados finalizado.')
-
-

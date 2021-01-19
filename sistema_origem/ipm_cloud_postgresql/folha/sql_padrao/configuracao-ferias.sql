@@ -1,5 +1,5 @@
-select
-(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', {{clicodigo}}))) as id_entidade, -- ID da entidade no cloud, deve ser inserido manualmente
+select * from (select
+(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))) as entidade, 
 *
 from (
     select
@@ -21,3 +21,5 @@ from (
         null as cancelamentos,
         null as suspensoes
 ) as a
+) as b
+where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'configuracao-ferias',entidade,codigo))) is null

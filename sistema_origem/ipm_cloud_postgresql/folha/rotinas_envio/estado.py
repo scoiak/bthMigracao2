@@ -13,7 +13,8 @@ url = 'https://pessoal.cloud.betha.com.br/service-layer/v1/api/estado'
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
     if True:
-        busca_dados(params_exec)
+        if params_exec.get('buscar') is True:
+            busca_dados(params_exec)
     if True:
         dados_assunto = coletar_dados(params_exec)
         dados_enviar = pre_validar(params_exec, dados_assunto)
@@ -33,7 +34,7 @@ def busca_dados(params_exec):
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Estados',
+            'descricao_tipo_registro': 'Cadastro de Estado',
             'id_gerado': item['id'],
             'i_chave_dsk1': item['nome']
         })
@@ -95,6 +96,11 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                 }
             }
         }
+        if params_exec.get('atualizar') is True:
+            if item['id'] is not None:
+                dict_dados['conteudo'].update({
+                    'id': int(item['id'])
+                })
         contador += 1
         # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)

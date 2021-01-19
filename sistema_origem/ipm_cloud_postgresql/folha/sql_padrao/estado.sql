@@ -1,5 +1,5 @@
-update wun.tbpais set painome = 'Aústria' where painome = 'Áustria';
-update wun.tbestado set estnome = 'Distrito Federal' where estnome = 'Federal';
+--update wun.tbpais set painome = 'Aústria' where painome = 'Áustria';
+--update wun.tbestado set estnome = 'Distrito Federal' where estnome = 'Federal';
 
 select * from (
 select

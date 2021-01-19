@@ -13,14 +13,14 @@ atualizar_ja_enviados = True
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
-    if False:
-        busca_dados(params_exec)
     if True:
-        # dados_assunto = coletar_dados(params_exec)
-        # dados_enviar = pre_validar(params_exec, dados_assunto)
+        if params_exec.get('buscar') is True:
+            busca_dados(params_exec)
+    if True:
+        dados_assunto = coletar_dados(params_exec)
+        dados_enviar = pre_validar(params_exec, dados_assunto)
         if not params_exec.get('somente_pre_validar'):
-            pass
-            # iniciar_envio(params_exec, dados_enviar, 'POST')
+            iniciar_envio(params_exec, dados_enviar, 'POST')
         model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
 
 
@@ -242,25 +242,26 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         if item['naturalizado'] is not None:
             dict_dados['conteudo'].update({
                 'naturalizado': item['naturalizado']
-            })
-        if item['observacoes'] is not None:
+            })        
+        if False:                 
             dict_dados['conteudo'].update({
                 'camposAdicionais': {
                     "tipo": "PESSOA_FISICA",
                     'campos': [
                         {
-                            'id': item['id_ca_observacoes'],
+                            'id': item['campoadicional_observacoes'],
                             'valor': item['observacoes']
                         }
                     ]
                 }
             })
-        if atualizar_ja_enviados and item['id_gerado'] != 0:
-            dict_dados['conteudo'].update({
-                'id': item['id_gerado']
-            })
+        if params_exec.get('atualizar') is True:
+            if item['idcloud'] is not None:
+                dict_dados['conteudo'].update({
+                    'id': int(item['idcloud'])
+                })
         contador += 1
-        print(f'Dados gerados ({contador}): ', json.dumps(dict_dados))
+        # print(f'Dados gerados ({contador}): ', json.dumps(dict_dados))
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,

@@ -12,8 +12,9 @@ limite_lote = 500
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
-    if False:
-        busca_dados_cloud(params_exec)
+    if True:
+        if params_exec.get('buscar') is True:
+            busca_dados_cloud(params_exec)
     if True:
         dados_assunto = coletar_dados(params_exec)
         dados_enviar = pre_validar(params_exec, dados_assunto)
@@ -28,16 +29,16 @@ def busca_dados_cloud(params_exec):
     print(f'- Foram encontrados {len(registros)} registros cadastrados no cloud.')
     registros_formatados = []
     try:
-        id_entidade = interacao_cloud.get_dados_token(params_exec.get('token'))['entityId']
+        # id_entidade = interacao_cloud.get_dados_token(params_exec.get('token'))['entityId']
         for item in registros:
-            hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, id_entidade, item['configuracao']['id'], item['numero'])
+            hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, params_exec.get('entidade'), item['configuracao']['id'], item['numero'])
             registros_formatados.append({
                 'sistema': sistema,
                 'tipo_registro': tipo_registro,
                 'hash_chave_dsk': hash_chaves,
-                'descricao_tipo_registro': 'Cadastro de Organogramas',
+                'descricao_tipo_registro': 'Cadastro de Organograma',
                 'id_gerado': item['id'],
-                'i_chave_dsk1': id_entidade,
+                'i_chave_dsk1': params_exec.get('entidade'),
                 'i_chave_dsk2': item['configuracao']['id'],
                 'i_chave_dsk3': item['numero'],
             })
@@ -90,7 +91,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     token = params_exec['token']
     contador = 0
     for item in dados:
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['id_entidade'], item['configuracao'], item['numero'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['entidade'], item['configuracao'], item['numero'])
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {
@@ -98,7 +99,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                     'id': int(item['configuracao'])
                 },
                 'numero': item['numero'],
-                'nivel': item['nivel'],
+                'nivel': int(item['nivel']),
                 'descricao': item['descricao']
             }
         }
@@ -106,21 +107,27 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             dict_dados['conteudo'].update({
                 'sigla': item['sigla']
             })
+        if params_exec.get('atualizar') is True:
+            if item['idcloud'] is not None:
+                dict_dados['conteudo'].update({
+                    'id': int(item['idcloud'])
+                })
         contador += 1
-        print(f'Dados gerados ({contador}): ', dict_dados)
+        # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Orgranogramas',
+            'descricao_tipo_registro': 'Cadastro de Orgranograma',
             'id_gerado': None,
-            'i_chave_dsk1': item['id_entidade'],
-            'i_chave_dsk2': item['configuracao'],
+            'json': json.dumps(dict_dados),
+            'i_chave_dsk1': item['entidade'],
+            'i_chave_dsk2': item['configuracao'], # identificador
             'i_chave_dsk3': item['numero']
         })
     if True:
-        # model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)
+        model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)
         req_res = interacao_cloud.preparar_requisicao(lista_dados=lista_dados_enviar,
                                                       token=token,
                                                       url=url,

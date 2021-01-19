@@ -1,5 +1,4 @@
-select
-	'5fcc090bc54eee00e3d550ea' as id_ca_observacoes, -- INSERIR AQUI O ID DO CAMPO ADICIONAL 'OBSERVAÇÕES'
+select	
 	*
 from (
 	select
@@ -36,7 +35,7 @@ from (
 	left(uf.unfzonatitulo::varchar,3) as zonaEleitoral,
 	cast(uf.unfsecaotitulo as varchar) as secaoEleitoral,
 	cast(uf.unfnroctps as varchar) as ctps,
-	cast(uf.unfseriectps as varchar) as serieCtps,
+	left(cast(uf.unfseriectps as varchar) ,5)as serieCtps,
 	uf.estcodigoemissaoctps as ufEmissaoCtps,
 	cast((case when uf.unfdataemissaoctps < uf.unfdatanascimento then uf.unfdatanascimento else uf.unfdataemissaoctps end) as varchar) as dataEmissaoCtps,
 	null as dataValidadeCtps,
@@ -57,7 +56,7 @@ from (
 	cast(uf.unfcnhdatavalidade as varchar) as dataVencimentoCnh,
 	null as dataPrimeiraCnh,
 	cast(uf.estcodigoemissaocnh as varchar) as ufEmissaoCnh,
-	uf.unfcnhobs as observacoesCnh,
+	left(uf.unfcnhobs,60) as observacoesCnh,
 	null as papel,
 	(select string_agg('Email' || (case suc.linha when 1 then '' else ' ' || cast(suc.linha as varchar) end) || '%|%' || suc.uncdescricao || '%|%' || (CASE suc.linha when 1 then 'true' else 'false' end),'%||%') from (select row_number() OVER (partition by uc.unicodigo order by uc.unicodigo desc) as linha,* from wun.tbunicocontato as uc where unctipocontato = 5 and length(trim(uc.uncdescricao)) > 0 and uc.unicodigo = u.unicodigo and (case when trim(uc.uncdescricao) !~ '^[A-Za-z0-9._%-]+[A-Za-z]@[A-Za-z0-9.-]+[.][A-Za-z]+$' then false else true end)) as suc  group by suc.unicodigo order by suc.unicodigo desc) as emails,
 	(select string_agg('Telefone' || (case suc.linha when 1 then '' else ' ' || cast(suc.linha as varchar) end) || '%|%' || (CASE suc.unctipocontato when 1 then 'FIXO' when 2 then 'CELULAR' when 3 then 'FIXO' when 4 then 'FAX' end) || '%|%' || coalesce(left(replace(replace(replace(replace(replace(suc.uncdescricao,'-',''),'.',''),')',''),'(',''),' ',''),11),'0') || '%|%' || coalesce(suc.unccomplemento,'S/C') || '%|%' || (CASE suc.linha when 1 then 'true' else 'false' end),'%||%') from (select row_number() OVER (partition by uc.unicodigo order by uc.unicodigo desc) as linha,* from wun.tbunicocontato as uc where uc.unctipocontato in (1,2,3,4) and length(trim(uc.uncdescricao)) > 0 and uc.unicodigo = u.unicodigo) as suc group by suc.unicodigo order by suc.unicodigo desc) as telefones,
@@ -66,7 +65,7 @@ from (
 	(case uf.unftipodeficiencia when 2 then 'FISICA' when 3 then 'AUDITIVA' when 4 then 'MENTAL' when 5 then 'MULTIPLA' when 6 then 'AUTISMO' when 7 then 'REABILITADO' when 8 then 'OUTRA' when 9 then 'VISUAL' when 10 then 'MENTAL' when 11 then 'VISUAL' when 12 then 'MULTIPLA' else null end) as deficiencias,
 	((case when uf.unfnomemae is not null then (trim(uf.unfnomemae) || '%|%' || 'MAE%|%BIOLOGICA' || (case when trim(uf.unfnomepai) is not null then '%||%' else null end)) else null end) || (case when trim(uf.unfnomepai) is not null then (trim(uf.unfnomepai) || '%|%' || 'PAI%|%BIOLOGICA') else null end)) as filiacoes,
 	u.uniobservacoes as observacoes,
-	coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'pessoa-fisica', left(regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g'),11)))), 0) as id_gerado
+	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'pessoa-fisica', left(regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g'),11)))) as idCloud
 from
 	wun.tbunico as u  join wun.tbunicofisica as uf on uf.unicodigo = u.unicodigo
 where
@@ -78,6 +77,7 @@ and length(regexp_replace(u.unicpfcnpj,'[/.-]|[0]|[ ]','','g')) > 0
 --and	uf.unfdatanascimento is not null
 -- and (select suc.unicodigo from wun.tbunico as suc where suc.unitipopessoa = 1 and suc.unisituacao = 1 and suc.unicpfcnpj = u.unicpfcnpj order by suc.unicodigo asc limit 1) = u.unicodigo
 ) as a
+where idCloud is null
 --where id_gerado <> 0
 --where cpf in ('00119278014', '00147423066', '00350794952', '00370717937', '00388604905', '00525351930', '00562991921', '00785263969', '00893016098', '00931924952', '01955544930', '02144393990', '02199910903', '02748980980', '03589981903', '03671906995', '03817231946', '03867163901', '03948766959', '04392014975', '04440238955', '04593018960', '04764270960', '04884502922', '05366361923', '07157907143', '09954543961', '10280415940', '13774325995', '34245979968', '37579703904', '58014497953', '61740756991', '64159094953', '64207269991', '68257880949', '68400110978', '71171827920', '71213708915', '76503747004', '79666230925', '81842554972', '82687218987', '90974689904', '9159077999')
 --where cpf = '04935366982'

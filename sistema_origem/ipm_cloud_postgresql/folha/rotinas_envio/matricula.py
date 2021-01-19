@@ -11,14 +11,14 @@ url = "https://pessoal.cloud.betha.com.br/service-layer/v1/api/matricula"
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
-    if False:
-        busca_dados(params_exec)
+    if True:
+        if params_exec.get('buscar') is True:
+            busca_dados(params_exec)
     if True:
         dados_assunto = coletar_dados(params_exec)
         dados_enviar = pre_validar(params_exec, dados_assunto)
         if not params_exec.get('somente_pre_validar'):
             iniciar_envio(params_exec, dados_enviar, 'POST')
-    if True:
         model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
 
 
@@ -28,7 +28,7 @@ def busca_dados(params_exec):
     print(f'- Foram encontrados {len(registros)} registros cadastrados no cloud.')
     registros_formatados = []
     for item in registros:
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, 56, item['codigoMatricula']['numero'],
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, params_exec.get('entidade'), item['codigoMatricula']['numero'],
                                               item['codigoMatricula']['contrato'])
         registros_formatados.append({
             'sistema': sistema,
@@ -36,7 +36,7 @@ def busca_dados(params_exec):
             'hash_chave_dsk': hash_chaves,
             'descricao_tipo_registro': 'Cadastro de Matricula',
             'id_gerado': item['id'],
-            'i_chave_dsk1': 56,
+            'i_chave_dsk1': params_exec.get('entidade'),
             'i_chave_dsk2': item['codigoMatricula']['numero'],
             'i_chave_dsk3': item['codigoMatricula']['contrato'],
         })
@@ -888,6 +888,11 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                     'historicos': listahistorico
                 })
         contador += 1
+        if params_exec.get('atualizar') is True:
+            if item['idcloud'] is not None:
+                dict_dados['conteudo'].update({
+                    'id': int(item['idcloud'])
+                })
         # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({

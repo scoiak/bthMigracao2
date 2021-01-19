@@ -30,7 +30,7 @@ def coletar_dados(params_exec):
         print(f'- Consulta finalizada. {len(df.index)} registro(s) encontrado(s). '
               f'(Tempo consulta: {tempo_total.total_seconds()} segundos.)')
     except Exception as error:
-        print(f'Erro ao executar função "enviar_assunto". {error}')
+        print(f'Erro ao executar função "coletar_dados". {error}')
     finally:
         return df
 
@@ -41,13 +41,11 @@ def ler_lotes(params_exec, dados_lotes):
     headers = {'authorization': f'bearer {params_exec["token"]}'}
     dados_coletados = []
     dados_validados = []
-
     lista_dados = dados_lotes.to_dict('records')
     for linha in lista_dados:
         registro_valido = True
         if registro_valido:
             dados_validados.append(linha)
-
     for item in dados_validados:
         # print('item', type(item), item)
         contador += 1
@@ -67,22 +65,18 @@ def ler_lotes(params_exec, dados_lotes):
                 dt_envio = retorno_json['createdIn']
                 dt_envio = datetime.strptime(dt_envio, '%Y-%m-%dT%H:%M:%S')
                 hr_envio = datetime.strptime(retorno_json['createdIn'], '%Y-%m-%dT%H:%M:%S').hour
-
             if re.search('r\.', retorno_json['updatedIn']):
                 dt_retorno = retorno_json['updatedIn']
                 dt_retorno = datetime.strptime(dt_retorno, '%Y-%m-%dT%H:%M:%S.%f')
             else:
                 dt_retorno = retorno_json['updatedIn']
                 dt_retorno = datetime.strptime(dt_retorno, '%Y-%m-%dT%H:%M:%S')
-
             duracao = int((dt_retorno - dt_envio).total_seconds())
-
             if duracao > 1:
                 logging.info(f';{item["url_consulta"]};{dia_envio};{dt_envio};{dt_retorno};{duracao}')
                 # print(item['url_consulta'], dia_envio, dt_envio, dt_retorno, hr_envio, duracao)
                 hora = ("0" + str(hr_envio))[-2:] + ":00"
                 dados_coletados.append([hora, duracao])
-
     trabalha_resultado(dados_coletados)
 
 

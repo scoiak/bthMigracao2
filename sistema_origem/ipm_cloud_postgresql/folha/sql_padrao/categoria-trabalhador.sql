@@ -3,14 +3,14 @@ select
 from (
 	select distinct
 	 row_number() over() as id,
-	 (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', '2016'))) as id_entidade,
+	 (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))) as entidade,
 	 left(catdescricao, 100) as descricao,
 	 case catgrupo
 			   when 1 then 'CLT'
 			   when 2 then 'REGIME_PROPRIO'
 			   else 'OUTROS'
 	  end as tipo,
-	 '' as descricaoRegimePrevidenciario,
+	 null as descricaoRegimePrevidenciario,
 	 catcodigo as codigoESocial,
 	 case catcodigo
 	   when 101 then 'FUNCIONARIO'
@@ -37,11 +37,11 @@ from (
 	from wfp.tbcategoriatrabalhador
 	union all 
 	select 41 as id,
-	 (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', '2016'))) as id_entidade,
+	 (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))) as entidade,
 	 'MIGRAÇÃO' as descricao,
 	 'OUTROS' as tipo,
 	 null as descricaoregimeprevidenciario,
 	 '987' as codigoesocial,
 	 'FUNCIONARIO' as grupotrabalhador
 ) tb
-where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'categoria-trabalhador', id_entidade, descricao, codigoESocial))) is null
+where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'categoria-trabalhador', entidade, descricao, codigoESocial))) is null

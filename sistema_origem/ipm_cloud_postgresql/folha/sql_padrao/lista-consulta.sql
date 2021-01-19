@@ -1,3 +1,21 @@
+select * from controle_migracao_registro cmr where tipo_registro = 'cargo'
+
+select * from controle_migracao_registro cmr where tipo_registro = 'ato' and i_chave_dsk1 = '1/2010'
+
+select * from controle_migracao_registro cmr where tipo_registro = 'vinculo-empregaticio'
+
+select * from controle_migracao_registro cmr where tipo_registro = 'conta-bancaria'
+
+select * from controle_migracao_registro cmr where tipo_registro = 'organograma' and i_chave_dsk1 like '%1990%'
+
+select * from controle_migracao_registro cmr where tipo_registro = 'bairro' and i_chave_dsk1 like '%HUMAIT%'
+
+select * from controle_migracao_registro cmr where tipo_registro = 'natureza-texto-juridico' and i_chave_dsk1 like '%HUMAIT%'
+
+select * from controle_migracao_registro cmr where tipo_registro = 'tipo-ato' and i_chave_dsk1 like '%LEI AUTORIZADORA%'
+
+select * from controle_migracao_registro cmr where tipo_registro = 'municipio' and id_gerado = 5271
+
 select tipo_registro as registro,data_hora_env ,data_hora_ret,(data_hora_ret  - data_hora_env) as totalRetorno, id_lote as lote from public.controle_migracao_lotes where length(id_lote) > 1 order by data_hora_env desc;
 
 SELECT * FROM wfp.tbfuncionario t 

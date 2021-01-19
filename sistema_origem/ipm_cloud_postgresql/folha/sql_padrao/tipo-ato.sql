@@ -1,7 +1,7 @@
 select
   *
 from (
-  select
+  select distinct
        tctcodigo as id,
        tctcodigo as codigo,
        case tctcodigo
@@ -71,11 +71,12 @@ from (
         when 64 then 'EDITAL'
         else 'ATO'
         end as classificacao,
-       left(tctdescricao, 40) as descricao       
+        (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))) as entidade,
+       replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(upper(left(tctdescricao, 40)),'é','É'),'á','Á'),'ó','Ó'),'ã','Ã'),'õ','Õ'),'ç','Ç'),'â','Â'),'à','À'),'í','Í'),'ê','Ê') as descricao       
     from wlg.tbcategoriatexto
   order by tctcodigo
 ) tab
 where
   -- public.bth_get_situacao_registro('300' , 'tipo-ato' , tctdescricao, classificacao) not in (5, 4, 3)
-  (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','tipo-ato', descricao, classificacao))) is null
+(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','tipo-ato',entidade, descricao))) is null
   

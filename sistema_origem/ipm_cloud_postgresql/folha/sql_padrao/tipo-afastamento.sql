@@ -3,7 +3,7 @@ from (
 	select
 	af.motcodigo as id,
 	af.motcodigo as codigo,
-	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', '2016'))) as id_entidade,
+	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', '11968'))) as entidade,
 	(case when (select au.motdescricao from wfp.tbmotivoafasta as au where au.motcodigo <> af.motcodigo and au.motdescricao = af.motdescricao limit 1) is not null then substring(af.motdescricao,1,90) || ' ' || cast(af.motcodigo as varchar) else af.motdescricao end) as descricao,
 	(case
 		when af.padcodigo in (5,6,7,8,25,15,9,33,32,31,14) then 'DEMITIDO'
@@ -35,7 +35,7 @@ from (
 	select
 	(select max(motcodigo +1 ) from wfp.tbmotivoafasta) as id,
 	(select max(motcodigo +1 ) from wfp.tbmotivoafasta) as codigo,
-	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', '2016'))) as id_entidade,  -- ESSA INFORMAÇÃO DEVE SER INSERIDA MANUALMENTE
+	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', '11968'))) as entidade,  -- ESSA INFORMAÇÃO DEVE SER INSERIDA MANUALMENTE
 	'DEMITIDO' as descricao,
 	'DEMITIDO' as classificacao,
 	null as tipoMovimentacaoPessoal,
@@ -47,7 +47,7 @@ from (
 	select
 	(select max(motcodigo +2 ) from wfp.tbmotivoafasta) as id,
 	(select max(motcodigo +2 ) from wfp.tbmotivoafasta) as codigo,
-	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', '2016'))) as id_entidade,  -- ESSA INFORMAÇÃO DEVE SER INSERIDA MANUALMENTE
+	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', '11968'))) as entidade,  -- ESSA INFORMAÇÃO DEVE SER INSERIDA MANUALMENTE
 	'FERIAS' as descricao,
 	'FERIAS' as classificacao,
 	null as tipoMovimentacaoPessoal,
@@ -57,4 +57,4 @@ from (
 	false as justificado
 ) as a
 where classificacao is not null
-and (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'tipo-afastamento', id_entidade, codigo))) is null
+and (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'tipo-afastamento', entidade, codigo))) is null

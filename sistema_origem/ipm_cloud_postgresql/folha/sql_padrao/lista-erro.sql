@@ -6,15 +6,12 @@ FROM
 left join 
     public.controle_migracao_registro_ocor as ocor on ocor.hash_chave_dsk = reg.hash_chave_dsk 
 WHERE 
-    reg.id_gerado IS NULL
-OR
-    ocor.mensagem_erro IS NOT NULL
+    reg.id_gerado IS null    
+/*OR ocor.mensagem_erro IS NOT NULL*/
 GROUP BY 
     reg.tipo_registro
 ORDER BY
-    COUNT(*) DESC
-
-
+    COUNT(*) desc;
 SELECT 
     reg.tipo_registro AS tipoRegistro,
     reg.i_chave_dsk1 AS primeiraChave,
@@ -50,7 +47,7 @@ AND
     --reg.tipo_registro = 'calculo-folha-rescisao'
     --reg.tipo_registro = 'calculo-folha-decimo-terceiro'
     --reg.tipo_registro = 'periodo-aquisitivo-ferias'
-    reg.tipo_registro = 'calculo-folha-mensal'
+    reg.tipo_registro = :tipoRegistro
 AND 
     ocor.i_sequencial = 
         (
@@ -65,4 +62,4 @@ ORDER by
 	length(reg.json_enviado) asc,
       reg.i_chave_dsk1  ASC,
       reg.i_chave_dsk2 ASC,
-    reg.id_gerado  ASC
+    reg.id_gerado  asc;

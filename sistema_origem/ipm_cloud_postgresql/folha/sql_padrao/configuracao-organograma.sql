@@ -1,4 +1,4 @@
-select  
+select * from (select  
 		ROW_NUMBER() OVER()::varchar as id,
 		ROW_NUMBER() OVER()::varchar as codigo,
 		'Configuração Geral Organograma' as descricao,
@@ -42,4 +42,5 @@ select
 	                    false as nivelSecretaria 
 	   order by nivel) as suc) as niveis
 	                    ) as a
-	                    
+	                    ) as b
+	                    where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'configuracao-organograma',codigo))) is null

@@ -12,7 +12,9 @@ url = 'https://pessoal.cloud.betha.com.br/service-layer/v1/api/banco'
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
-    busca_dados_cloud(params_exec)
+    if True:
+        if params_exec.get('buscar') is True:
+            busca_dados_cloud(params_exec)
 
 
 def busca_dados_cloud(params_exec):

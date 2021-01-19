@@ -13,7 +13,9 @@ limite_lote = 500
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
-    busca_dados_cloud(params_exec)
+    if True:
+        if params_exec.get('buscar') is True:
+            busca_dados_cloud(params_exec)
 
 
 def busca_dados_cloud(params_exec):
@@ -25,11 +27,10 @@ def busca_dados_cloud(params_exec):
     try:
         for item in registros:
             if 'contasBancarias' in item and item['contasBancarias'] is not None:
-                cpf_pessoa = item['cpf']
                 for item_conta in item['contasBancarias']:
                     hash_chaves = model.gerar_hash_chaves(sistema,
                                                           tipo_registro,
-                                                          cpf_pessoa,
+                                                          item['cpf'],
                                                           item_conta['numero'])
                     novo_registro = {
                         'sistema': sistema,
@@ -37,7 +38,7 @@ def busca_dados_cloud(params_exec):
                         'hash_chave_dsk': hash_chaves,
                         'descricao_tipo_registro': 'Cadastro de Contas Bancarias de Pessoas Físicas',
                         'id_gerado': item_conta['id'],
-                        'i_chave_dsk1': cpf_pessoa,
+                        'i_chave_dsk1': item['cpf'],
                         'i_chave_dsk2': item_conta['numero'],
                     }
                     registros_formatados.append(novo_registro)
