@@ -1,4 +1,4 @@
-		select 
+		select * from (select 
 		row_number() over() as id,
 		row_number() over() as codigo,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))) as entidade,
@@ -447,3 +447,5 @@
             'INSSFER' as sigla,
             'IRRF_FERIAS' as classificacaoBaseCalculo
             ) as a
+            ) as b
+            where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'base', entidade, sigla))) is null

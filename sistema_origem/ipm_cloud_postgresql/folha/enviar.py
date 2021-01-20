@@ -58,7 +58,7 @@ def iniciar():
     # enviar(params_exec, 'configuracao-lotacao-fisica')
     # enviar(params_exec, 'lotacao-fisica')
     # enviar(params_exec, 'formacao')
-    enviar(params_exec, 'pessoa-fisica')
+    # enviar(params_exec, 'pessoa-fisica')
     # enviar(params_exec, 'conta-bancaria')
     # enviar(params_exec, 'pessoa-juridica')
     # enviar(params_exec, 'dependencia')
@@ -76,7 +76,7 @@ def iniciar():
     # enviar(params_exec, 'configuracao-licenca-premio') # Implementar
     # enviar(params_exec, 'cargo')
     # enviar(params_exec, 'concurso')                            
-    # enviar(params_exec, 'matricula')
+    enviar(params_exec, 'matricula')
     # enviar(params_exec, 'servico-autonomo') # Implementar
     # enviar(params_exec, 'area-atuacao') # Implementar
     # enviar(params_exec, 'formacao') # Implementar

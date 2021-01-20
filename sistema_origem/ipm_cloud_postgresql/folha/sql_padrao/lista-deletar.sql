@@ -43,11 +43,11 @@ DO $$ declare
 	--tr text := 'ato';
 	--tr text := 'configuracao-evento';
 	--tr text := 'nivel-salarial';
-	tr text := 'formacao';
+	--tr text := 'formacao';
     --tr text := 'organograma';
     --tr text := 'tipo-ato';
 	--tr text := 'matricula';
-	--tr text := 'cargo';
+	tr text := 'cargo';
     --tr text := 'vinculo-empregaticio';
     --tr text := 'afastamento';
     --tr text := 'dependencia';
@@ -62,6 +62,6 @@ DO $$ declare
     --tr text := 'folha';
 begin
 	--delete from public.controle_migracao_lotes where tipo_registro = tr;	
-	delete from public.controle_migracao_registro where tipo_registro = tr;	
+	--delete from public.controle_migracao_registro where tipo_registro = tr;	
 	delete from public.controle_migracao_registro_ocor where tipo_registro = tr;
 END $$;

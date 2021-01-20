@@ -14,7 +14,8 @@ select
 	/* 1 */coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'cbo', cbocodigo))),0) as cbo,
 	/* 2 */coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'tipo-cargo', entidade, cartipocargo))), 0) as tipoCargo,
 	--/*  */coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'ato', (select concat(tj.txjnumero, '/', tj.txjano) from wlg.tbtextojuridico tj where tj.txjcodigo = nv.txjcodigocri), (select cat.tctdescricao from wlg.tbtextojuridico tj inner join wlg.tbcategoriatexto cat on cat.tctcodigo = tj.tctcodigo where tj.txjcodigo = nv.txjcodigocri limit 1)))),0) as atoCriacao,
-	/* 3 */coalesce((case cartemferias when 1 then (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'configuracao-ferias',entidade,1))) else 0 end), 0) as configuracaoFerias,
+	/* 3 coalesce((case cartemferias when 1 then (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'configuracao-ferias',entidade,1))) else 0 end), 0) as configuracaoFerias,*/
+	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'configuracao-ferias',entidade,1))) as configuracaoFerias,	
 	*
 into temporary table temp_cargos
 from (
@@ -140,14 +141,17 @@ from (
 		*/
 		--coalesce((select c2.cardatacriacao from wfp.tbcargo c2 where c2.carcodigo = c.carcodigo and c2.cardatacriacao is not null order by c2.odomesano limit 1), '2020-01-01') as inicioVigencia,
 		coalesce((select max(nv.cnidatarelaciona) from wfp.tbcargonivel nv where nv.carcodigo = c.carcodigo), '2020-01-01') as inicioVigencia,
-		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'cbo', c.cbocodigo)))::varchar as cbo,
+		coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'cbo', c.cbocodigo))),(select max(id_gerado) from public.controle_migracao_registro where tipo_registro = 'cbo' and id_gerado is not null))::varchar as cbo,
 		coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'tipo-cargo', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', c.clicodigo))) , c.cartipocargo))), 0) as tipoCargo,
 		--(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'ato', (select concat(tj.txjnumero, '/', tj.txjano) from wlg.tbtextojuridico tj where tj.txjcodigo = c.txjcodigocri), (select cat.tctdescricao from wlg.tbtextojuridico tj inner join wlg.tbcategoriatexto cat on cat.tctcodigo = tj.tctcodigo where tj.txjcodigo = c.txjcodigocri limit 1)))) as ato,		
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'ato', (select concat(tj.txjnumero, '/', tj.txjano) from wlg.tbtextojuridico tj where tj.txjcodigo = c.txjcodigocri), (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','tipo-ato', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', c.clicodigo))), replace(replace(replace(replace(replace(replace(replace(replace(replace(replace(upper(left((select cat.tctdescricao from wlg.tbtextojuridico tj inner join wlg.tbcategoriatexto cat on cat.tctcodigo = tj.tctcodigo where tj.txjcodigo = c.txjcodigocri limit 1), 40)),'é','É'),'á','Á'),'ó','Ó'),'ã','Ã'),'õ','Õ'),'ç','Ç'),'â','Â'),'à','À'),'í','Í'),'ê','Ê')))))))::varchar as ato,
 		c.cartemferias,
+		/*
 		(case c.cartemferias
 			when 1 then (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'configuracao-ferias',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))),1)))
 		else null end)::varchar as configuracaoFerias,
+		*/
+		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'configuracao-ferias',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))),1)))::varchar as configuracaoFerias,
 		'MENSALISTA' as unidadePagamento,
 		'NAO_ACUMULAVEL' as acumuloCargos,
 		coalesce(c.carvagas, 0) as quantidadeVagas,

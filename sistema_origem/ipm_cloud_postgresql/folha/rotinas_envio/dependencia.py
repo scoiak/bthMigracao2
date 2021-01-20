@@ -12,15 +12,16 @@ url = "https://pessoal.cloud.betha.com.br/service-layer/v1/api/dependencia"
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
-    if False: # Sem Funcionamento
+    if True:
         if params_exec.get('buscar') is True:
             busca_dados(params_exec)
     if True:
-        dados_assunto = coletar_dados(params_exec)
-        dados_enviar = pre_validar(params_exec, dados_assunto)
-        if not params_exec.get('somente_pre_validar'):
-            iniciar_envio(params_exec, dados_enviar, 'POST')
-        model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
+        if params_exec.get('enviar') is True:
+            dados_assunto = coletar_dados(params_exec)
+            dados_enviar = pre_validar(params_exec, dados_assunto)
+            if not params_exec.get('somente_pre_validar'):
+                iniciar_envio(params_exec, dados_enviar, 'POST')
+    model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
 
 
 def busca_dados(params_exec):
@@ -29,14 +30,16 @@ def busca_dados(params_exec):
     print(f'- Foram encontrados {len(registros)} registros cadastrados no cloud.')
     registros_formatados = []
     for item in registros:
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['cnpj'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['pessoa']["id"],item['pessoaDependente']["id"],item['dataInicio'])
         registros_formatados.append({
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Pessoa Juridica',
+            'descricao_tipo_registro': 'Cadastro de Dependencia',
             'id_gerado': item['id'],
-            'i_chave_dsk1': item['cnpj']
+            'i_chave_dsk1': item['pessoa']["id"],
+            'i_chave_dsk2': item['pessoaDependente']["id"],
+            'i_chave_dsk3': item['dataInicio']
         })
     model.insere_tabela_controle_migracao_registro(params_exec, lista_req=registros_formatados)
     print('- Busca finalizada. Tabelas de controles atualizas com sucesso.')
@@ -81,13 +84,8 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     hoje = datetime.now().strftime("%Y-%m-%d")
     token = params_exec['token']
     contador = 0
-    for item in dados:
-        if item['datainicio'] is not None:
-            data_chave = item['datainicio']
-        else:
-            data_chave = item['datainiciobeneficio']
-
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['cpfdependente'], item['cpfresponsavel'], data_chave)
+    for item in dados:    
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['pessoa'], item['pessoadependente'], item['datainicio'])
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {                
@@ -144,9 +142,9 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'descricao_tipo_registro': 'Cadastro de Dependencia',
             'id_gerado': None,
             'json': json.dumps(dict_dados),
-            'i_chave_dsk1': item['cpfdependente'],
-            'i_chave_dsk2': item['cpfresponsavel'],
-            'i_chave_dsk3': data_chave
+            'i_chave_dsk1': item['pessoa'],
+            'i_chave_dsk2': item['pessoadependente'],
+            'i_chave_dsk3': item['datainicio']
         })
     if True:
         model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)

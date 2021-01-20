@@ -46,4 +46,4 @@ where grau is not null
 and pessoa is not null
 and pessoaDependente is not null
 and pessoa != pessoaDependente
-and  (select id_gerado from public.controle_migracao_registro	where hash_chave_dsk = md5(concat('300','dependencia',cpfDependente, cpfResponsavel, dataInicio))) is null
+and  (select id_gerado from public.controle_migracao_registro	where hash_chave_dsk = md5(concat('300','dependencia',pessoa, pessoaDependente, dataInicio))) is null

@@ -17,6 +17,8 @@ select * from controle_migracao_registro cmr where tipo_registro = 'ato' and i_c
 
 select * from controle_migracao_registro cmr where tipo_registro = 'vinculo-empregaticio'
 
+select * from controle_migracao_registro cmr where tipo_registro = 'motivo-rescisao'
+
 select * from controle_migracao_registro cmr where tipo_registro = 'plano-previdencia' and i_chave_dsk2 = 'Plano de Previdência Federal'
 
 select * from controle_migracao_registro cmr where tipo_registro = 'conta-bancaria'

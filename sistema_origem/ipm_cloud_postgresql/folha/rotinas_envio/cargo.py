@@ -16,11 +16,12 @@ def iniciar_processo_envio(params_exec, *args, **kwargs):
         if params_exec.get('buscar') is True:
             busca_dados(params_exec)
     if True:
-        dados_assunto = coletar_dados(params_exec)
-        dados_enviar = pre_validar(params_exec, dados_assunto)
-        if not params_exec.get('somente_pre_validar'):
-            iniciar_envio(params_exec, dados_enviar, 'POST')
-        model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
+        if params_exec.get('enviar') is True:
+            dados_assunto = coletar_dados(params_exec)
+            dados_enviar = pre_validar(params_exec, dados_assunto)
+            if not params_exec.get('somente_pre_validar'):
+                iniciar_envio(params_exec, dados_enviar, 'POST')
+    model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
 
 
 def busca_dados(params_exec):
@@ -175,8 +176,8 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             lista_niveis = []
             for n in item['nivelsalarial']:
                 dados_niveis = n.split(':')
-                # print('dados_niveis', dados_niveis)
-                if not re.search(r'\?', dados_niveis[1]):
+                # print('dados_niveis', dados_niveis)                
+                if not re.search(r'\?', dados_niveis[1]) and dados_niveis[1] != '0':
                     dict_item_niveis = {
                         'nivelSalarial': {
                             'id': int(dados_niveis[1])
@@ -260,7 +261,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                 if re.search(r'\:', dados_historico[27]):
                     for item_niveis in dados_historico[27].split('|'):
                         nivel = item_niveis.split(':')
-                        if not re.search(r'\?', nivel[1]) or nivel[1] != '0':
+                        if not re.search(r'\?', nivel[1]) and nivel[1] != '0':
                             try:
                                 dict_item_niveis = {
                                     'nivelSalarial': {
