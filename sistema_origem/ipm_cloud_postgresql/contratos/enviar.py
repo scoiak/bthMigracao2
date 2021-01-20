@@ -10,8 +10,6 @@ def iniciar():
         'clicodigo': '13482',
         'ano': 2020,
         'somente_pre_validar': False,
-        # 'token': 'b8ddcd70-e359-4814-bdfb-6aff6f02522d' #ignoreline oficial: Município de Biguaçu
-        'token': '9c3b2e14-a9f2-4c4e-a58b-fda9da0acfcc' #ignoreline oficial: Saúde de Biguaçu
     }
     mensagem_inicio(params_exec)
     interacao_cloud.verifica_token(params_exec['token'])
