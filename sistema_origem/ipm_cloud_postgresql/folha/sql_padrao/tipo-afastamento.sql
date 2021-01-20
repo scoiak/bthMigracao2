@@ -4,13 +4,13 @@ from (
 	af.motcodigo as id,
 	af.motcodigo as codigo,
 	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', '11968'))) as entidade,
-	(case when (select au.motdescricao from wfp.tbmotivoafasta as au where au.motcodigo <> af.motcodigo and au.motdescricao = af.motdescricao limit 1) is not null then substring(af.motdescricao,1,90) || ' ' || cast(af.motcodigo as varchar) else af.motdescricao end) as descricao,
+	(case when (select au.motdescricao from wfp.tbmotivoafasta as au where au.motcodigo <> af.motcodigo and au.motdescricao = af.motdescricao limit 1) is not null then substring(af.motdescricao,1,89) || ' ' || cast(af.motcodigo as varchar) else af.motdescricao end) as descricao,	
 	(case
 		when af.padcodigo in (5,6,7,8,25,15,9,33,32,31,14) then 'DEMITIDO'
 		when af.padcodigo in (13,34,35,36,37,38,39,40,41,42) then 'APOSENTADO'
-		when af.padcodigo in (3,4) then 'FALTA'
+		when af.padcodigo in (3) then 'FALTA'
 		when af.padcodigo in (20,12,11) then 'CEDENCIA'
-		when af.padcodigo in (47,60,17,59,62,30,29,26,22,21) then 'LICENCA_COM_VENCIMENTOS'
+		when af.padcodigo in (47,60,17,59,62,30,29,26,22,21,4) then 'LICENCA_COM_VENCIMENTOS'
 		when af.padcodigo in (18,54,53,50,49,48,46,45,43,44) then 'LICENCA_SEM_VENCIMENTOS'
 		when af.padcodigo in (61) then 'MANDATO_ELEITORAL_SEM_REMUNERACAO'
 		when af.padcodigo in (58,16,10) then 'LICENCA_MATERNIDADE'
@@ -30,7 +30,7 @@ from (
 	(case when af.cpdcodigo is null then false else true end) as consideraVencimento,
 	false as justificado
 	from wfp.tbmotivoafasta as af
-	where odomesano = '202009'
+	where odomesano = 202012
 	union all
 	select
 	(select max(motcodigo +1 ) from wfp.tbmotivoafasta) as id,

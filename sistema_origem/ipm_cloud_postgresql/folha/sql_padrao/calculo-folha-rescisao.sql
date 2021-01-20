@@ -1,9 +1,9 @@
 --SELECT * FROM wfp.tbcalculofolha;
 --select * from wfp.tbrescisaocalculada;
-
+--COMPLEMENTAR NAO ESTA ENVIANDO
 select * from ( select 
 row_number() over() as id,
-(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))) as entidade,
+(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))) as entidade,
 row_number() over(partition by matricula order by matricula asc, dataPagamento asc) as codigo,
 * from (
 select distinct on (matricula,dataPagamento) * from (
@@ -14,12 +14,12 @@ select distinct on (matricula,dataPagamento) * from (
     NULL AS dataAgendamento,
     pagdata::varchar AS dataPagamento,
 	'INDIVIDUAL'  AS tipoVinculacaoMatricula,
-    (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'matricula', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), p.fcncodigo, p.funcontrato))) as matricula,	 
+    (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'matricula', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))), p.fcncodigo, p.funcontrato))) as matricula,	 
     NULL AS saldoFgts,
     false AS fgtsMesAnterior,
     --TRUE AS conversao,
     null AS avisoPrevio,
-	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','motivo-rescisao',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), '9'))) AS motivoRescisao,
+	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','motivo-rescisao',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))), '9'))) AS motivoRescisao,
     pagdata::varchar AS dataRescisao,
     --NULL AS ato,
     false AS consideraAvosPerdidosDecimoTerceiro,
@@ -37,12 +37,12 @@ select distinct on (matricula,dataPagamento) * from (
     NULL AS dataAgendamento,
     resdata::varchar AS dataPagamento,
 	'INDIVIDUAL'  AS tipoVinculacaoMatricula,
-    (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'matricula', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), fcncodigo, funcontrato))) as matricula,	 
+    (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'matricula', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))), fcncodigo, funcontrato))) as matricula,	 
     NULL AS saldoFgts,
     false AS fgtsMesAnterior,
     --TRUE AS conversao,
     resdataaviso::varchar AS avisoPrevio,
-	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','motivo-rescisao',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), motcodigo::varchar))) AS motivoRescisao,
+	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','motivo-rescisao',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))), motcodigo::varchar))) AS motivoRescisao,
     resdatarescisao::varchar AS dataRescisao,
     --NULL AS ato,
     false AS consideraAvosPerdidosDecimoTerceiro,
@@ -56,6 +56,6 @@ select distinct on (matricula,dataPagamento) * from (
 ) as b
 where matricula is not null
 --and matricula = 2614788
-and datapagamento::date >= '2020-01-01'::date	
-and matricula not in (2508376,2553267) --reintegracao
-and (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'calculo-folha-rescisao',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),matricula,tipoProcessamento,subTipoProcessamento,dataPagamento))) is null
+--and datapagamento::date >= '2020-01-01'::date	
+--and matricula not in (2508376,2553267) --reintegracao
+and (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'calculo-folha-rescisao',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))),matricula,tipoProcessamento,subTipoProcessamento,dataPagamento))) is null

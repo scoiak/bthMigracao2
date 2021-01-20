@@ -15,12 +15,13 @@ def iniciar_processo_envio(params_exec, *args, **kwargs):
     if True:
         if params_exec.get('buscar') is True:
             busca_dados_cloud(params_exec)
-    if False:
-        dados_assunto = coletar_dados(params_exec)
-        dados_enviar = pre_validar(params_exec, dados_assunto)
-        if not params_exec.get('somente_pre_validar'):
-            iniciar_envio(params_exec, dados_enviar, 'POST')
-        model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
+    if True:
+        if params_exec.get('enviar') is True:
+            dados_assunto = coletar_dados(params_exec)
+            dados_enviar = pre_validar(params_exec, dados_assunto)
+            if not params_exec.get('somente_pre_validar'):
+                iniciar_envio(params_exec, dados_enviar, 'POST')
+    model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
 
 
 def busca_dados_cloud(params_exec):

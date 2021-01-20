@@ -1,8 +1,23 @@
+Select * From public.controle_migracao_registro;
+Select * From public.controle_migracao_registro_ocor;
+Select * From public.controle_migracao_lotes;
+
+select count(*)
+from
+	wun.tbunico as u left join wun.tbunicofisica as uf on uf.unicodigo = u.unicodigo
+where
+	u.unitipopessoa = 1
+	and	u.unisituacao = 1
+
+select * from controle_migracao_registro cmr where tipo_registro = 'afastamento'
+
 select * from controle_migracao_registro cmr where tipo_registro = 'cargo'
 
 select * from controle_migracao_registro cmr where tipo_registro = 'ato' and i_chave_dsk1 = '1/2010'
 
 select * from controle_migracao_registro cmr where tipo_registro = 'vinculo-empregaticio'
+
+select * from controle_migracao_registro cmr where tipo_registro = 'plano-previdencia' and i_chave_dsk2 = 'Plano de Previdência Federal'
 
 select * from controle_migracao_registro cmr where tipo_registro = 'conta-bancaria'
 

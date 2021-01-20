@@ -16,7 +16,7 @@ def iniciar_processo_envio(params_exec, *args, **kwargs):
     if True:
         if params_exec.get('buscar') is True:
             busca_dados(params_exec)
-    if True:
+    if False:
         dados_assunto = coletar_dados(params_exec)
         dados_enviar = pre_validar(params_exec, dados_assunto)
         if not params_exec.get('somente_pre_validar'):
@@ -281,3 +281,4 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                                                       tamanho_lote=limite_lote)
         model.insere_tabela_controle_lote(req_res)
         print('- Envio de dados finalizado.')
+        

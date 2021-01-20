@@ -2,12 +2,12 @@ create index if not exists idx_fg_pf on wfp.tbferiasgozada  (ferdatainicio, odom
 
 select * from ( select 
 row_number() over() as id,
-(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))) as entidade,
+(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))) as entidade,
 row_number() over(partition by matricula order by matricula asc, dataInicial asc) as codigo,
 * from (
 select 
-	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'configuracao-ferias',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), 1))) as configuracaoFerias,
-	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'matricula', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), fcncodigo, funcontrato))) as matricula,
+	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'configuracao-ferias',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))), 1))) as configuracaoFerias,
+	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'matricula', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))), fcncodigo, funcontrato))) as matricula,
 	(case when ferperdeudireito = 1 then 'CANCELADO' else (case ferpaga when 1 then 'EM_ANDAMENTO' when 2 then 'QUITADO' when 3 then 'CANCELADO' else null end) end) as situacao,
 	pf.ferdatainicio::varchar as dataInicial,
 	pf.ferdatafinal::varchar as dataFinal,
@@ -24,13 +24,13 @@ select
 from 
 	wfp.tbperiodoferia as pf
 where 
-	pf.odomesano = 202010
+	pf.odomesano = 202012
 and ferpaga not in (1)
 --	and fcncodigo = 126
 --	and fcncodigo = 266
---and fcncodigo = 2
---and fcncodigo = 4714
+--	and fcncodigo = 2
+--	and fcncodigo = 4714
 ) as a
 ) as b
 where matricula is not null
-and (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'periodo-aquisitivo-ferias',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),matricula,dataInicial))) is null
+and (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'periodo-aquisitivo-ferias',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))),matricula,dataInicial))) is null

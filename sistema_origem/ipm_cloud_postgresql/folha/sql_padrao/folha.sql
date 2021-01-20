@@ -9,19 +9,19 @@ create index IF NOT exists idx_p_d on wun.tbdependente (unicodigores,depir);
 
 --EXPLAIN (ANALYZE, COSTS, VERBOSE, BUFFERS, FORMAT JSON)
 select *
-,(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'folha',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),matricula,tipoprocessamento,subtipoprocessamento,competencia,dataPagamento))) as idCloud 
+,(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'folha',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))),matricula,tipoprocessamento,subtipoprocessamento,competencia,dataPagamento))) as idCloud 
 from ( select 
 row_number() over() as id,
-(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))) as entidade,
+(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))) as entidade,
 row_number() over(partition by matricula order by matricula asc, dataPagamento asc) as codigo,
 --select * from public.controle_migracao_registro where i_chave_dsk2 = '2614788' and tipo_registro = 'calculo-folha-rescisao'
-(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', tipoCalculo, (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), matricula, tipoProcessamento, subTipoProcessamento, dataPagamento))) as calculo,
+(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', tipoCalculo, (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))), matricula, tipoProcessamento, subTipoProcessamento, dataPagamento))) as calculo,
 * from (
 select distinct
 	(CASE tipcodigo WHEN 1 then 'calculo-folha-mensal' 	 WHEN 2 then 'calculo-folha-ferias' 	 WHEN 3 then 'calculo-folha-rescisao' 	 WHEN 4 then 'calculo-folha-decimo-terceiro' 	 WHEN 5 then 'calculo-folha-decimo-terceiro' 	 WHEN 6 then 'calculo-folha-decimo-terceiro' 	 WHEN 7 then 'calculo-folha-mensal' 	 WHEN 8 then 'calculo-folha-mensal' 	 WHEN 9 then 'calculo-folha-rescisao' 	 WHEN 10 then 'calculo-folha-mensal'  end) as tipoCalculo,	 
 	 (CASE tipcodigo WHEN 1 then 'MENSAL' 	 WHEN 2 then 'FERIAS' 	 WHEN 3 then 'RESCISAO' 	 WHEN 4 then 'DECIMO_TERCEIRO_SALARIO' 	 WHEN 5 then 'DECIMO_TERCEIRO_SALARIO' 	 WHEN 6 then 'DECIMO_TERCEIRO_SALARIO' 	 WHEN 7 then 'MENSAL' 	 WHEN 8 then 'MENSAL' 	 WHEN 9 then 'RESCISAO' 	 WHEN 10 then 'MENSAL'  end) as tipoProcessamento,	 
 	 (CASE tipcodigo WHEN 1 then 'INTEGRAL' 	 WHEN 2 then 'INTEGRAL' 	 WHEN 3 then 'INTEGRAL' 	 WHEN 4 then 'INTEGRAL' 	 WHEN 5 then 'ADIANTAMENTO' 	 WHEN 6 then 'INTEGRAL' 	 WHEN 7 then 'INTEGRAL' 	 WHEN 8 then 'COMPLEMENTAR' 	 WHEN 9 then 'COMPLEMENTAR' 	 WHEN 10 then 'ADIANTAMENTO'  end) as subTipoProcessamento,	 	 
-	 (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'matricula', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), fcncodigo, funcontrato))) as matricula,
+	 (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'matricula', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))), fcncodigo, funcontrato))) as matricula,
 	 substring(odomesano::varchar,1,4) || '-' || substring(odomesano::varchar,5,2) as competencia,
 	 true as folhaPagamento,	 
 	 coalesce((select sum(a.pagvalor) FROM wfp.tbpagamento as a,  wfp.tbprovdesc as b
@@ -61,7 +61,7 @@ select distinct
 	  --true as conversao, 	  
 	  	(select string_agg(suc.configuracao || '%|%' || suc.tipo::varchar || '%|%' || coalesce(suc.referencia,0) || '%|%' || coalesce(suc.valor,0) || '%|%' || coalesce(suc.periodosAquisitivosFerias,'') || '%|%' || coalesce(suc.rateioDependentes,''),'%||%') 
 	  	from ( select sum(suc.valor) as valor,sum(suc.referencia) as referencia,suc.tipo,suc.configuracao,suc.periodosAquisitivosFerias,suc.rateioDependentes from (	 select 	
-	  	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'configuracao-evento', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), 		  	 
+	  	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'configuracao-evento', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))), 		  	 
 	  	(case suc.cpdcodigo 
 	  	when 675 then 44 
 	  	when 525 then 50 
@@ -75,34 +75,38 @@ select distinct
 	  	select string_agg(coalesce(xuc.dependencia::varchar,'') || '%&%' || coalesce(xuc.valor::varchar,''),'%&&%') from ( select (select id_gerado
 	 	from public.controle_migracao_registro
 	 	where hash_chave_dsk = md5(concat('300','dependencia', (select regexp_replace(suc.unicpfcnpj,'[/.-]','','g') from wun.tbunico as suc where suc.unicodigo = pa.unicodigodep),
-	 									 (select regexp_replace(suc.unicpfcnpj,'[/.-]','','g') from wun.tbunico as suc where suc.unicodigo = (select fc.unicodigo from wfp.tbfuncontrato as fc where fc.fcncodigo = p.fcncodigo and fc.funcontrato = p.funcontrato and fc.odomesano = 202010)),
+	 									 (select regexp_replace(suc.unicpfcnpj,'[/.-]','','g') from wun.tbunico as suc where suc.unicodigo = (select fc.unicodigo from wfp.tbfuncontrato as fc where fc.fcncodigo = p.fcncodigo and fc.funcontrato = p.funcontrato and fc.odomesano = 202012)),
 	 									   pa.pnsdatainicio::varchar
 	 									  ))) as dependencia,
 	 									  pa.pnsreferencia as valor
 	 									  from wfp.tbpensaoalimenticia as pa
-	 									  where pa.fcncodigo = p.fcncodigo and pa.funcontrato = p.funcontrato and odomesano = 202010
+	 									  where pa.fcncodigo = p.fcncodigo and pa.funcontrato = p.funcontrato and odomesano = 202012
 	  	/**/
 	  	) as xuc where dependencia is not null) else null end) as rateioDependentes
 	  	FROM wfp.tbpagamento as suc	 where suc.fcncodigo = p.fcncodigo and  suc.funcontrato = p.funcontrato and suc.odomesano = p.odomesano and suc.tipcodigo = p.tipcodigo
 	  	) as suc group by configuracao,tipo,periodosAquisitivosFerias,rateioDependentes
 	  	union all
 	  	select	
-	  	((select count(d.unicodigodep) from wun.tbdependente as d where d.unicodigores = (select fc.unicodigo from wfp.tbfuncontrato as fc where fc.fcncodigo = p.fcncodigo and fc.funcontrato = p.funcontrato and fc.odomesano = 202010) and depir in (1,2)) * (select irrf.irrdeducaodep from wfp.tbirrf as irrf where irrf.odomesano = 202010 and (irrf.irrmesano = p.odomesano or irrf.irrmesano < p.odomesano) order by irrf.irrmesano desc limit 1)) as valor,
-	  	(select count(d.unicodigodep) from wun.tbdependente as d where d.unicodigores = (select fc.unicodigo from wfp.tbfuncontrato as fc where fc.fcncodigo = p.fcncodigo and fc.funcontrato = p.funcontrato and fc.odomesano = 202010) and depir in (1,2)) as referencia,	 
+	  	((select count(d.unicodigodep) from wun.tbdependente as d where d.unicodigores = (select fc.unicodigo from wfp.tbfuncontrato as fc where fc.fcncodigo = p.fcncodigo and fc.funcontrato = p.funcontrato and fc.odomesano = 202012) and depir in (1,2)) * (select irrf.irrdeducaodep from wfp.tbirrf as irrf where irrf.odomesano = 202012 and (irrf.irrmesano = p.odomesano or irrf.irrmesano < p.odomesano) order by irrf.irrmesano desc limit 1)) as valor,
+	  	(select count(d.unicodigodep) from wun.tbdependente as d where d.unicodigores = (select fc.unicodigo from wfp.tbfuncontrato as fc where fc.fcncodigo = p.fcncodigo and fc.funcontrato = p.funcontrato and fc.odomesano = 202012) and depir in (1,2)) as referencia,	 
 	  	'INFORMATIVO_MENOS' as tipo,	 
-	  	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'configuracao-evento', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),138))) as configuracao,
+	  	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'configuracao-evento', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))),138))) as configuracao,
 	  	null as periodosAquisitivosFerias,
 	  	null as rateioDependentes
-	    where (select count(d.unicodigodep) from wun.tbdependente as d where d.unicodigores = (select fc.unicodigo from wfp.tbfuncontrato as fc where fc.fcncodigo = p.fcncodigo and fc.funcontrato = p.funcontrato and fc.odomesano = 202010) and d.depir in (1,2)) > 0
+	    where (select count(d.unicodigodep) from wun.tbdependente as d where d.unicodigores = (select fc.unicodigo from wfp.tbfuncontrato as fc where fc.fcncodigo = p.fcncodigo and fc.funcontrato = p.funcontrato and fc.odomesano = 202012) and d.depir in (1,2)) > 0
 	  	) as suc
 	  	) as eventos,	  		  
-		(select string_agg(suc.configuracao || '%|%' || (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'base', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),suc.base))) || '%|%' || coalesce(suc.valor,0),'%||%') from (		 	select distinct 			 	(CASE pb.cpdcodigo  	WHEN 36 then 'FGTS'	 WHEN 50 then 'INSS'     WHEN 51 then 'INSS13' 	 WHEN 52 then 'PREVEST' 	 WHEN 53 then 'PREVEST13'	 WHEN 56 then 'FUNDOPREV' 	 WHEN 57 then 'FUNDPREV13' 	 WHEN 58 then 'IRRF' 	 WHEN 59 then  'IRRF13'	 WHEN 91 then 'FUPRFEPR'	 WHEN 92 then 'IRRFFER' 	 WHEN 116 then 'IRRFFERRESC' 	 WHEN 126 then 'SALAFAM'  	 WHEN 127  then 'SALAFAM'  /* 'SALAFAMILUA Estatuatario' Não tem similar no padrão betha Cloud ver se será necessário criar ou deixa como 'SALAFAM' WHEN 401 	"ABATIMENTO PREVBIGUAÇU(Cargo comissionado)" Não tem similar no padrão betha Cloud*/	 WHEN 525 then 'INSS' 	 WHEN 526 then 'INSS13'  	 WHEN 660 then  'FUNDOPREV' end) as base,	 (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'configuracao-evento', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), pb.cpdcodigo))) as configuracao,	 pb.pbavalor as valor		  FROM wfp.tbpagamentobase as pb	where pb.fcncodigo = p.fcncodigo and  pb.funcontrato = p.funcontrato and pb.odomesano = p.odomesano) as suc) as composicaoBases		
+		(select string_agg(suc.configuracao || '%|%' || (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'base', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))),suc.base))) || '%|%' || coalesce(suc.valor,0),'%||%') from (		 	select distinct 			 	(CASE pb.cpdcodigo  	WHEN 36 then 'FGTS'	 WHEN 50 then 'INSS'     WHEN 51 then 'INSS13' 	 WHEN 52 then 'PREVEST' 	 WHEN 53 then 'PREVEST13'	 WHEN 56 then 'FUNDOPREV' 	 WHEN 57 then 'FUNDPREV13' 	 WHEN 58 then 'IRRF' 	 WHEN 59 then  'IRRF13'	 WHEN 91 then 'FUPRFEPR'	 WHEN 92 then 'IRRFFER' 	 WHEN 116 then 'IRRFFERRESC' 	 WHEN 126 then 'SALAFAM'  	 WHEN 127  then 'SALAFAM'  /* 'SALAFAMILUA Estatuatario' Não tem similar no padrão betha Cloud ver se será necessário criar ou deixa como 'SALAFAM' WHEN 401 	"ABATIMENTO PREVBIGUAÇU(Cargo comissionado)" Não tem similar no padrão betha Cloud*/	 WHEN 525 then 'INSS' 	 WHEN 526 then 'INSS13'  	 WHEN 660 then  'FUNDOPREV' end) as base,	 (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'configuracao-evento', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))), pb.cpdcodigo))) as configuracao,	 pb.pbavalor as valor		  FROM wfp.tbpagamentobase as pb	where pb.fcncodigo = p.fcncodigo and  pb.funcontrato = p.funcontrato and pb.odomesano = p.odomesano) as suc) as composicaoBases		
 	   FROM wfp.tbpagamento  as p	 
-	 --where odomesano = 202010
-where odomesano >= 202001	 
+--where odomesano = 202010
+--where odomesano >= 202001	 
 --and fcncodigo in (15200)--(4714,2,113,15011,56,10438,11166,15079)
 ) as a
 ) as b
 where matricula is not null
+and calculo is not null
 --and calculo is not null
-and (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'folha',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),matricula,tipoprocessamento,subtipoprocessamento,competencia,dataPagamento))) is null
+--				RESCISAO,PAGAMENTO,RESCISAO,PAGAMENTO,RESCISAO,RESCISAO,PAGAMENTO,RESCISAO,PAGAMENTO,PAGAMENTO
+--and matricula in (2752011,2752015,2752018,2752023,2752028,2752030,2752032,2752039,2752045,2752059)
+--and matricula in(		  2752015,		  2752023,	 	  2752030,2752032,		  2752045,2752059)
+and (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'folha',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))),matricula,tipoprocessamento,subtipoprocessamento,competencia,dataPagamento))) is null

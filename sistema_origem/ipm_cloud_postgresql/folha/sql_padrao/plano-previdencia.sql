@@ -1,6 +1,7 @@
 select * from (select
 				tpvcodigo  as id,
 				tpvcodigo  as codigo,
+				(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', clicodigo))) as entidade,
                  tpvdescricao as descricao,
                  (case tpvdescricao
                            when 'Plano de Assistência Municipal'     then 'ASSISTENCIA'
@@ -28,7 +29,7 @@ select * from (select
                  'CRIADO' as situacao,
                    date('1900-01-01') as dataAlteracao
             from wfp.tbprevidencia
-            where odomesano = '202012') as a
-where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'plano-previdencia', codigo))) is null            
+            where odomesano = 202012) as a
+where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'plano-previdencia', entidade,descricao::varchar))) is null            
 -- where public.bth_get_situacao_registro('300', 'plano-previdencia', cast(a.codigo as varchar)) in (0)
             

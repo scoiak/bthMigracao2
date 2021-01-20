@@ -2,9 +2,9 @@ create index IF NOT exists idx_fc_le on wfp.tbfuncontrato (fcncodigo, funcontrat
 
 select * from ( select 
 row_number() over() as id,
-(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))) as entidade,
-(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'matricula',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), fcncodigo, funcontrato))) as matricula,
-(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'configuracao-evento', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), evento))) as configuracao,
+(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))) as entidade,
+(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'matricula',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))), fcncodigo, funcontrato))) as matricula,
+(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'configuracao-evento', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))), evento))) as configuracao,
 row_number() over(partition by fcncodigo,funcontrato order by fcncodigo asc,funcontrato asc, dataInicial asc) as codigo,
 * from (
 select  
@@ -45,28 +45,18 @@ cpdcodigo as evento,
 to_char((case when (select (case when fc.funtipocontrato in (2) then coalesce(fc.fundataadmissao::date,('2021-01-01')::date) else fc.fundataadmissao  end) from wfp.tbfuncontrato as fc where fc.fcncodigo = p.fcncodigo and fc.funcontrato = p.funcontrato and fc.odomesano = p.odomesano limit 1) < date(concat(parmesanoinicio, '01')) then date(concat(parmesanoinicio, '01')) else (select (case when fc.funtipocontrato in (2) then coalesce(fc.fundataadmissao::date,('2021-01-01')::date) else fc.fundataadmissao  end) from wfp.tbfuncontrato as fc where fc.fcncodigo = p.fcncodigo and fc.funcontrato = p.funcontrato and fc.odomesano = p.odomesano limit 1) end), 'yyyy-MM-dd') as dataInicial,
 --to_date(coalesce((select (case when substring(aux.parmesanoinicio,4,2) - 1) || '01' from wfp.tbparcelamento as aux where p.fcncodigo = aux.fcncodigo and p.funcontrato = aux.funcontrato and aux.cpdcodigo = p.cpdcodigo and p.parmesanofinal > aux.parmesanoinicio and p.parmesanoinicio < aux.parmesanoinicio order by aux.parmesanoinicio asc limit 1),parmesanofinal || '01'),'YYYYMMDD')::varchar as dataFinal,
 --to_date(coalesce((select ((case when substring(aux.parmesanoinicio::varchar,5,2) = '01' then concat(substring(aux.parmesanoinicio::varchar,1,4)::int - 1,'12'/*substring(aux.parmesanoinicio::varchar,5,2)::varchar*/) else (aux.parmesanoinicio - 1)::varchar end)) || '01' from wfp.tbparcelamento as aux where p.fcncodigo = aux.fcncodigo and p.funcontrato = aux.funcontrato and aux.cpdcodigo = p.cpdcodigo and p.parmesanofinal > aux.parmesanoinicio and p.parmesanoinicio < aux.parmesanoinicio order by aux.parmesanoinicio asc limit 1),parmesanofinal || '01'),'YYYYMMDD')::varchar as dataFinal,
-case
-when (
 to_char((case
 when (select fc.fundataadmissao from wfp.tbfuncontrato as fc where fc.fcncodigo = p.fcncodigo and fc.funcontrato = p.funcontrato and fc.odomesano = p.odomesano limit 1) > to_date(coalesce((select ((case when substring(aux.parmesanoinicio::varchar,5,2) = '01' then concat(substring(aux.parmesanoinicio::varchar,1,4)::int - 1,'12'/*substring(aux.parmesanoinicio::varchar,5,2)::varchar*/) else (aux.parmesanoinicio - 1)::varchar end)) || '01' from wfp.tbparcelamento as aux where p.fcncodigo = aux.fcncodigo and p.funcontrato = aux.funcontrato and aux.cpdcodigo = p.cpdcodigo and p.parmesanofinal > aux.parmesanoinicio and p.parmesanoinicio < aux.parmesanoinicio order by aux.parmesanoinicio asc limit 1),parmesanofinal || '01'),'YYYYMMDD')
 then (select fc.fundataadmissao from wfp.tbfuncontrato as fc where fc.fcncodigo = p.fcncodigo and fc.funcontrato = p.funcontrato and fc.odomesano = p.odomesano limit 1)
 when (select (case when fc.funtipocontrato in (2) then coalesce(fc.fundatatermcont::date,('2021-01-01')::date) else ('3000-01-01')::date end)  from wfp.tbfuncontrato as fc where fc.fcncodigo = p.fcncodigo and fc.funcontrato = p.funcontrato and fc.odomesano = p.odomesano limit 1) < to_date(coalesce((select ((case when substring(aux.parmesanoinicio::varchar,5,2) = '01' then concat(substring(aux.parmesanoinicio::varchar,1,4)::int - 1,'12'/*substring(aux.parmesanoinicio::varchar,5,2)::varchar*/) else (aux.parmesanoinicio - 1)::varchar end)) || '01' from wfp.tbparcelamento as aux where p.fcncodigo = aux.fcncodigo and p.funcontrato = aux.funcontrato and aux.cpdcodigo = p.cpdcodigo and p.parmesanofinal > aux.parmesanoinicio and p.parmesanoinicio < aux.parmesanoinicio order by aux.parmesanoinicio asc limit 1),parmesanofinal || '01'),'YYYYMMDD')
 then (select fc.fundatatermcont  from wfp.tbfuncontrato as fc where fc.fcncodigo = p.fcncodigo and fc.funcontrato = p.funcontrato and fc.odomesano = p.odomesano limit 1)
 else to_date(coalesce((select ((case when substring(aux.parmesanoinicio::varchar,5,2) = '01' then concat(substring(aux.parmesanoinicio::varchar,1,4)::int - 1,'12'/*substring(aux.parmesanoinicio::varchar,5,2)::varchar*/) else (aux.parmesanoinicio - 1)::varchar end)) || '01' from wfp.tbparcelamento as aux where p.fcncodigo = aux.fcncodigo and p.funcontrato = aux.funcontrato and aux.cpdcodigo = p.cpdcodigo and p.parmesanofinal > aux.parmesanoinicio and p.parmesanoinicio < aux.parmesanoinicio order by aux.parmesanoinicio asc limit 1),parmesanofinal || '01'),'YYYYMMDD')
-end), 'yyyy-MM-dd')::varchar)::date >= '2020-11-01' then '2020-11-01' else
-to_char((case
-when (select fc.fundataadmissao from wfp.tbfuncontrato as fc where fc.fcncodigo = p.fcncodigo and fc.funcontrato = p.funcontrato and fc.odomesano = p.odomesano limit 1) > to_date(coalesce((select ((case when substring(aux.parmesanoinicio::varchar,5,2) = '01' then concat(substring(aux.parmesanoinicio::varchar,1,4)::int - 1,'12'/*substring(aux.parmesanoinicio::varchar,5,2)::varchar*/) else (aux.parmesanoinicio - 1)::varchar end)) || '01' from wfp.tbparcelamento as aux where p.fcncodigo = aux.fcncodigo and p.funcontrato = aux.funcontrato and aux.cpdcodigo = p.cpdcodigo and p.parmesanofinal > aux.parmesanoinicio and p.parmesanoinicio < aux.parmesanoinicio order by aux.parmesanoinicio asc limit 1),parmesanofinal || '01'),'YYYYMMDD')
-then (select fc.fundataadmissao from wfp.tbfuncontrato as fc where fc.fcncodigo = p.fcncodigo and fc.funcontrato = p.funcontrato and fc.odomesano = p.odomesano limit 1)
-when (select (case when fc.funtipocontrato in (2) then coalesce(fc.fundatatermcont::date,('2021-01-01')::date) else ('3000-01-01')::date end)  from wfp.tbfuncontrato as fc where fc.fcncodigo = p.fcncodigo and fc.funcontrato = p.funcontrato and fc.odomesano = p.odomesano limit 1) < to_date(coalesce((select ((case when substring(aux.parmesanoinicio::varchar,5,2) = '01' then concat(substring(aux.parmesanoinicio::varchar,1,4)::int - 1,'12'/*substring(aux.parmesanoinicio::varchar,5,2)::varchar*/) else (aux.parmesanoinicio - 1)::varchar end)) || '01' from wfp.tbparcelamento as aux where p.fcncodigo = aux.fcncodigo and p.funcontrato = aux.funcontrato and aux.cpdcodigo = p.cpdcodigo and p.parmesanofinal > aux.parmesanoinicio and p.parmesanoinicio < aux.parmesanoinicio order by aux.parmesanoinicio asc limit 1),parmesanofinal || '01'),'YYYYMMDD')
-then (select fc.fundatatermcont  from wfp.tbfuncontrato as fc where fc.fcncodigo = p.fcncodigo and fc.funcontrato = p.funcontrato and fc.odomesano = p.odomesano limit 1)
-else to_date(coalesce((select ((case when substring(aux.parmesanoinicio::varchar,5,2) = '01' then concat(substring(aux.parmesanoinicio::varchar,1,4)::int - 1,'12'/*substring(aux.parmesanoinicio::varchar,5,2)::varchar*/) else (aux.parmesanoinicio - 1)::varchar end)) || '01' from wfp.tbparcelamento as aux where p.fcncodigo = aux.fcncodigo and p.funcontrato = aux.funcontrato and aux.cpdcodigo = p.cpdcodigo and p.parmesanofinal > aux.parmesanoinicio and p.parmesanoinicio < aux.parmesanoinicio order by aux.parmesanoinicio asc limit 1),parmesanofinal || '01'),'YYYYMMDD')
-end), 'yyyy-MM-dd')::varchar end
-as dataFinal,
+end), 'yyyy-MM-dd')::varchar as dataFinal,
 --parvalor::varchar as valor,
 coalesce(to_char(parvalor, 'FM99999990.00'),'0.00') as valor,
 null as observacao
 from wfp.tbparcelamento as p
-where odomesano = 202011
+where odomesano = 202012
 -- and parvalor > 0
 --and fcncodigo in (17586)--7316,9782,70,7961,14369,461,17586,4714
 union ALL 
@@ -93,7 +83,7 @@ end),
 coalesce(to_char(fixvalor, 'FM99999990.00'),'0.00') as valor,
 null as observacao
 from wfp.tbprovdescfixo as pdf --join wfp.tbcalculoprovdesc as cpd on pdf.calcodigo = cpd.calcodigo 
-where odomesano = 202011
+where odomesano = 202012
 -- and fixvalor > 0
 --and fcncodigo in (17586)--7316,9782,70,7961,14369,461,17586,4714
 union ALL 
@@ -121,7 +111,7 @@ null as observacao
 from wfp.tbprovdescfixo as pdf
 join wfp.tbprovdesc as pd on pdf.cpdcodigo = pd.cpdcodigo  and pdf.odomesano = pd.odomesano
 and exists (select 1 from wfp.tbparamprovdesc param where param.cpdcodigo = pdf.cpdcodigo and param.odomesano = pdf.odomesano and param.ppdbase13sdiferenca = 1 limit 1)
-where pdf.odomesano = 202011
+where pdf.odomesano = 202012
 and pd.cpdclasse = 1
 -- and fixvalor > 0
 --and fcncodigo in (17586)--7316,9782,70,7961,14369,461,17586,4714
@@ -129,5 +119,5 @@ and pd.cpdclasse = 1
 ) as b
 where matricula is not null
 --and dataInicial > dataFinal
-and (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'lancamento-evento',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),matricula,configuracao,tipoProcessamento,subTipoProcessamento,dataInicial,dataFinal))) is null
+and (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'lancamento-evento',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))),matricula,configuracao,tipoProcessamento,subTipoProcessamento,dataInicial,dataFinal))) is null
 --limit 100

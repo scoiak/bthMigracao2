@@ -16,11 +16,12 @@ def iniciar_processo_envio(params_exec, *args, **kwargs):
         if params_exec.get('buscar') is True:
             busca_dados_cloud(params_exec)
     if True:
-        dados_assunto = coletar_dados(params_exec)
-        dados_enviar = pre_validar(params_exec, dados_assunto)
-        if not params_exec.get('somente_pre_validar'):
-            iniciar_envio(params_exec, dados_enviar, 'POST')
-        model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
+        if params_exec.get('enviar') is True:
+            dados_assunto = coletar_dados(params_exec)
+            dados_enviar = pre_validar(params_exec, dados_assunto)
+            if not params_exec.get('somente_pre_validar'):
+                iniciar_envio(params_exec, dados_enviar, 'POST')
+    model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
 
 
 def busca_dados_cloud(params_exec):
@@ -30,7 +31,7 @@ def busca_dados_cloud(params_exec):
     registros_formatados = []
     try:
         # id_entidade = interacao_cloud.get_dados_token(params_exec.get('token'))['entityId']
-        for item in registros:
+        for item in registros:            
             hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, params_exec.get('entidade'), item['descricao'])
             registro = {
                 'sistema': sistema,

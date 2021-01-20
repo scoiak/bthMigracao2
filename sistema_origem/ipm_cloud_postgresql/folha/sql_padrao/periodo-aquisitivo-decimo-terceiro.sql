@@ -4,10 +4,10 @@ create index IF NOT exists idx_dc_p on wfp.tbpagamento (fcncodigo, funcontrato, 
 
 select * from ( select 
 row_number() over() as id,
-(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))) as entidade,
+(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))) as entidade,
 row_number() over(partition by matricula order by matricula asc, dataInicial asc) as codigo,
  * from ( select
-(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'matricula', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), fcncodigo, funcontrato))) as matricula,
+(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'matricula', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))), fcncodigo, funcontrato))) as matricula,
 * from (
 select distinct on (fcncodigo,funcontrato,decanopagamento)
   		dc.fcncodigo as fcncodigo,
@@ -25,9 +25,9 @@ select distinct on (fcncodigo,funcontrato,decanopagamento)
        (select string_agg((case suc.tipo when 4 then 'GRATIFICACAO_NATALINA' when 5 then 'ADIANTAMENTO_DECIMO_TERCEIRO' when 6 then 'GRATIFICACAO_NATALINA' end) ||'%|%' || 'true' || '%|%' || substring(suc.competencia::varchar,1,4) || '-' || substring(suc.competencia::varchar,5,2) || '%|%'|| suc.total ,'%||%') from (select sum(suc.pagvalor) as total,suc.tipcodigo as tipo,suc.odomesano as competencia from wfp.tbpagamento as suc where suc.fcncodigo = dc.fcncodigo and suc.funcontrato = dc.funcontrato and (substring(suc.odomesano::varchar,1,4))::int = dc.decanopagamento::int  and suc.tipcodigo in (4,5,6) and suc.cpdcodigo in (select ax.cpdcodigo from wfp.tbprovdesc as ax where ax.cpdclasse = 1) group by tipcodigo,odomesano) as suc) as movimentacoes
        --null as movimentacoes
 from wfp.tbdecimocalculado as dc 
-where odomesano = 202010
-and decanopagamento < 2020
-and  dc.fcncodigo IN (7998,11935)--(7096,7450,8091,8107)--(4714,2,113,15011,56,10438)
+where odomesano = 202012
+and decanopagamento <= 2020
+--and  dc.fcncodigo IN (7998,11935)--(7096,7450,8091,8107)--(4714,2,113,15011,56,10438)
 union all
 select distinct on (fcncodigo,funcontrato,decanopagamento)
   		dc.fcncodigo as fcncodigo,
@@ -46,12 +46,12 @@ select distinct on (fcncodigo,funcontrato,decanopagamento)
         (select string_agg((case suc.tipo when 4 then 'GRATIFICACAO_NATALINA' when 5 then 'ADIANTAMENTO_DECIMO_TERCEIRO' when 6 then 'GRATIFICACAO_NATALINA' end) ||'%|%' || 'true' || '%|%' || substring(suc.competencia::varchar,1,4) || '-' || substring(suc.competencia::varchar,5,2) || '%|%'|| suc.total ,'%||%') from (select sum(suc.pagvalor) as total,suc.tipcodigo as tipo,suc.odomesano as competencia from wfp.tbpagamento as suc where suc.fcncodigo = dc.fcncodigo and suc.funcontrato = dc.funcontrato and (substring(suc.odomesano::varchar,1,4))::int = dc.decanopagamento::int  and suc.tipcodigo in (4,5,6) and suc.cpdcodigo in (select ax.cpdcodigo from wfp.tbprovdesc as ax where ax.cpdclasse = 1) group by tipcodigo,odomesano) as suc) as movimentacoes
        --null as movimentacoes
 from wfp.tbdecimocalculado as dc 
-where odomesano = 202010
-and decanopagamento >= 2020
-and  dc.fcncodigo IN (7998,11935)--(7096,7450,8091,8107)--(4714,2,113,15011,56,10438)
+where odomesano = 202012
+and decanopagamento >= 2021
+--and  dc.fcncodigo IN (7998,11935)--(7096,7450,8091,8107)--(4714,2,113,15011,56,10438)
 ) as a
 ) as b
 ) as c
 where matricula is not null
 --and (select fc.funsituacao from wfp.tbfuncontrato as fc where fc.fcncodigo = fcncodigo and fc.funcontrato = funcontrato and fc.odomesano = odomesano limit 1) = 1
---and (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'periodo-aquisitivo-decimo-terceiro',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),matricula,anoExercicio))) is null
+and (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'periodo-aquisitivo-decimo-terceiro',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))),matricula,anoExercicio))) is null

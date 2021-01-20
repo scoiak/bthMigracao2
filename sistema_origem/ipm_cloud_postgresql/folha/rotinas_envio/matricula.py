@@ -84,8 +84,8 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     token = params_exec['token']
     contador = 0
     for item in dados:
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['clicodigo'], item['fcncodigo'],
-                                              item['funcontrato'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['entidade'], item['codigo'],
+                                              item['contrato'])
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {}
@@ -902,17 +902,17 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'descricao_tipo_registro': 'Cadastro de Matricula',
             'id_gerado': None,
             'json': json.dumps(dict_dados),
-            'i_chave_dsk1': item['clicodigo'],
-            'i_chave_dsk2': item['fcncodigo'],
-            'i_chave_dsk3': item['funcontrato'],
+            'i_chave_dsk1': item['entidade'],
+            'i_chave_dsk2': item['codigo'],
+            'i_chave_dsk3': item['contrato'],
         })
     if True:
         model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)
-    if True:
-        req_res = interacao_cloud.preparar_requisicao(lista_dados=lista_dados_enviar,
-                                                      token=token,
-                                                      url=url,
-                                                      tipo_registro=tipo_registro,
-                                                      tamanho_lote=limite_lote)
-        model.insere_tabela_controle_lote(req_res)
-        print('- Envio de dados finalizado.')
+        if True:
+            req_res = interacao_cloud.preparar_requisicao(lista_dados=lista_dados_enviar,
+                                                        token=token,
+                                                        url=url,
+                                                        tipo_registro=tipo_registro,
+                                                        tamanho_lote=limite_lote)
+            model.insere_tabela_controle_lote(req_res)
+            print('- Envio de dados finalizado.')

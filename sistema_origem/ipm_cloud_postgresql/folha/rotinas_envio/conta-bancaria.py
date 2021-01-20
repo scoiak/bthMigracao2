@@ -36,7 +36,7 @@ def busca_dados_cloud(params_exec):
                         'sistema': sistema,
                         'tipo_registro': tipo_registro,
                         'hash_chave_dsk': hash_chaves,
-                        'descricao_tipo_registro': 'Cadastro de Contas Bancarias de Pessoas Físicas',
+                        'descricao_tipo_registro': 'Cadastro de Conta Bancaria da Pessoa Fisica',
                         'id_gerado': item_conta['id'],
                         'i_chave_dsk1': item['cpf'],
                         'i_chave_dsk2': item_conta['numero'],

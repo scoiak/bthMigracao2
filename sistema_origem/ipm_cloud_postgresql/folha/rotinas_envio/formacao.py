@@ -12,15 +12,16 @@ limite_lote = 1000
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
-    if False: # Sem Funcionamento
+    if True:
         if params_exec.get('buscar') is True:
             busca_dados_cloud(params_exec)
     if True:
-        dados_assunto = coletar_dados(params_exec)
-        dados_enviar = pre_validar(params_exec, dados_assunto)
-        if not params_exec.get('somente_pre_validar'):
-            iniciar_envio(params_exec, dados_enviar, 'POST')
-        model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
+        if params_exec.get('enviar') is True:
+            dados_assunto = coletar_dados(params_exec)
+            dados_enviar = pre_validar(params_exec, dados_assunto)
+            if not params_exec.get('somente_pre_validar'):
+                iniciar_envio(params_exec, dados_enviar, 'POST')
+    model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
 
 
 def busca_dados_cloud(params_exec):
@@ -31,16 +32,15 @@ def busca_dados_cloud(params_exec):
     try:
         # id_entidade = interacao_cloud.get_dados_token(params_exec.get('token'))['entityId']
         for item in registros:
-            hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, params_exec.get('entidade'), item['configuracao']['id'], item['numero'])
+            hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, params_exec.get('entidade'), item['descricao'])
             registros_formatados.append({
                 'sistema': sistema,
                 'tipo_registro': tipo_registro,
                 'hash_chave_dsk': hash_chaves,
-                'descricao_tipo_registro': 'Cadastro de Organograma',
+                'descricao_tipo_registro': 'Cadastro de Formacao',
                 'id_gerado': item['id'],
                 'i_chave_dsk1': params_exec.get('entidade'),
-                'i_chave_dsk2': item['configuracao']['id'],
-                'i_chave_dsk3': item['numero'],
+                'i_chave_dsk2': item['descricao'],
             })
         model.insere_tabela_controle_migracao_registro2(params_exec, lista_req=registros_formatados)
         print(f'- Busca de {tipo_registro} finalizada. Tabelas de controles atualizas com sucesso.')
@@ -96,7 +96,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     for item in dados:
         contador += 1
         # print(f'\r- Gerando JSON: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['entidade'], item['codigo'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['entidade'], item['descricao'])
         dict_dados = {
             'idIntegracao': hash_chaves,
             'conteudo': {
@@ -123,7 +123,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'id_gerado': None,
             'json': json.dumps(dict_dados),
             'i_chave_dsk1': item['entidade'],
-            'i_chave_dsk2': item['codigo']
+            'i_chave_dsk2': item['descricao']
         })
     print(f'- Processo de transformação finalizado. ({(datetime.now() - dh_inicio).total_seconds()} segundos)')
     if True:

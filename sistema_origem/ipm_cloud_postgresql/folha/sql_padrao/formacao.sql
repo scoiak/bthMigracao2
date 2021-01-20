@@ -59,4 +59,4 @@ select
 'ENSINO_FUNDAMENTAL' AS nivel
 ) AS a
 ) AS b
-where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'formacao', entidade, codigo))) is null
+where (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'formacao', entidade, descricao))) is null

@@ -3,8 +3,8 @@ create index if not exists idx_p_pf on wfp.tbperiodoferia  (fcncodigo, funcontra
 
 select * from ( select 
 row_number() over() as id,
-(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))) as entidade,
-(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'periodo-aquisitivo-ferias',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),matricula,datainicial))) as periodos,
+(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))) as entidade,
+(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'periodo-aquisitivo-ferias',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))),matricula,datainicial))) as periodos,
 row_number() over(partition by matricula order by matricula asc, dataPagamento asc) as codigo,
 * from (
 	select distinct
@@ -13,7 +13,7 @@ row_number() over(partition by matricula order by matricula asc, dataPagamento a
 	null as dataAgendamento,
 	pagdata::varchar as dataPagamento,
 	'INDIVIDUAL' tipoVinculacaoMatricula,	 
-	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'matricula', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), fcncodigo, funcontrato))) as matricula,	 
+	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'matricula', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))), fcncodigo, funcontrato))) as matricula,	 
 	true as consideraAvosPerdidos,
 	--true as conversao,
 	null as saldoFgts,
@@ -27,9 +27,9 @@ row_number() over(partition by matricula order by matricula asc, dataPagamento a
 	null as ato,
 	null as anoDecimoTerceiro,
 	true as consideraAvosPerdidosDecimoTerceiro,	
-	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'tipo-afastamento',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),44)))::varchar as tipoAfastamento,
-	(select fg.ferdatainicio from wfp.tbferiasgozada as fg where fg.odomesano = 202011 and fg.fcncodigo = p.fcncodigo and fg.funcontrato = p.funcontrato and substring(pagdata::varchar,1,7) between substring(fg.fgodatainicio::varchar,1,7) and substring(fg.fgodatafinal::varchar,1,7) limit 1)::varchar as dataInicial,	 
-	(select pf.ferdatafinal from wfp.tbperiodoferia as pf where pf.fcncodigo = p.fcncodigo and pf.funcontrato = p.funcontrato and pf.odomesano = p.odomesano and pf.ferdatainicio = (select fg.ferdatainicio from wfp.tbferiasgozada as fg where fg.odomesano = 202010 and fg.fcncodigo = p.fcncodigo and fg.funcontrato = p.funcontrato and substring(pagdata::varchar,1,7) between substring(fg.fgodatainicio::varchar,1,7) and substring(fg.fgodatafinal::varchar,1,7) limit 1))::varchar as dataFinal,
+	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'tipo-afastamento',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))),44)))::varchar as tipoAfastamento,
+	(select fg.ferdatainicio from wfp.tbferiasgozada as fg where fg.odomesano = 202012 and fg.fcncodigo = p.fcncodigo and fg.funcontrato = p.funcontrato and substring(pagdata::varchar,1,7) between substring(fg.fgodatainicio::varchar,1,7) and substring(fg.fgodatafinal::varchar,1,7) limit 1)::varchar as dataInicial,	 
+	(select pf.ferdatafinal from wfp.tbperiodoferia as pf where pf.fcncodigo = p.fcncodigo and pf.funcontrato = p.funcontrato and pf.odomesano = p.odomesano and pf.ferdatainicio = (select fg.ferdatainicio from wfp.tbferiasgozada as fg where fg.odomesano = 202012 and fg.fcncodigo = p.fcncodigo and fg.funcontrato = p.funcontrato and substring(pagdata::varchar,1,7) between substring(fg.fgodatainicio::varchar,1,7) and substring(fg.fgodatafinal::varchar,1,7) limit 1))::varchar as dataFinal,
 	--substring(odomesano::varchar,1,4) || '-' || substring(odomesano::varchar,5,2) as competencia
 	substring(pagdata::varchar,1,7) as competencia
 	FROM wfp.tbpagamento as p
@@ -38,4 +38,5 @@ row_number() over(partition by matricula order by matricula asc, dataPagamento a
 ) as a
 ) as b
 where matricula is not null
-and (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'calculo-folha-ferias',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),matricula,tipoProcessamento,subTipoProcessamento,dataPagamento))) is null
+and periodos is not null
+and (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'calculo-folha-ferias',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))),matricula,tipoProcessamento,subTipoProcessamento,dataPagamento))) is null

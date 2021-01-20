@@ -34,11 +34,17 @@ update public.controle_migracao_registro set	hash_chave_dsk = md5(concat('300', 
 update public.controle_migracao_registro set tipo_registro = 'conta-bancaria',hash_chave_dsk = md5(concat('300', 'conta-bancaria', i_chave_dsk1, i_chave_dsk2)) where tipo_registro = 'pessoa-contas';
 update public.controle_migracao_registro set hash_chave_dsk = md5(concat('300', 'lancamento-evento', i_chave_dsk1, i_chave_dsk2,i_chave_dsk3,i_chave_dsk4,i_chave_dsk5,i_chave_dsk6,i_chave_dsk7)) where tipo_registro = 'lancamento-evento';
 
+delete from public.controle_migracao_lotes;	
+delete from public.controle_migracao_registro;	
+delete from public.controle_migracao_registro_ocor;
+
 DO $$ declare
+	--tr text := 'plano-previdencia';
 	--tr text := 'ato';
 	--tr text := 'configuracao-evento';
 	--tr text := 'nivel-salarial';
-    tr text := 'organograma';
+	tr text := 'formacao';
+    --tr text := 'organograma';
     --tr text := 'tipo-ato';
 	--tr text := 'matricula';
 	--tr text := 'cargo';

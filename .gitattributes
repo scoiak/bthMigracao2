@@ -1,2 +1,4 @@
+* text=auto
+*.py text diff=python
 *.py filter=ignoreline
 *.log export-ignore

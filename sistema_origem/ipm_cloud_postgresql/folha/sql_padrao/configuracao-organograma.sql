@@ -26,13 +26,15 @@ select * from (select
 	                    'PONTO' as separador,
 	                    false as responsavelControleVagas,
 	                    false as nivelSecretaria
-	                union     
+	                /*
+	                    union     
 						select 3 as nivel,
 	                    'Unidade' as descricao,
 	                    3 as quantidadeDigitos,
 	                    'PONTO' as separador,
 	                    false as responsavelControleVagas,
 	                    false as nivelSecretaria
+	                    */
 	             union                 
 						select 2 as nivel,
 	                    'Órgão' as descricao,

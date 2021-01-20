@@ -13,7 +13,8 @@ limite_lote = 1000
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
     if False:
-        busca_dados(params_exec)
+        if params_exec.get('buscar') is True:
+            busca_dados(params_exec)
     if True:
         dados_assunto = coletar_dados(params_exec)
         dados_enviar = pre_validar(params_exec, dados_assunto)
@@ -29,7 +30,7 @@ def busca_dados(params_exec):
     registros_formatados = []
     for item in registros:
         for matricula in item['calculoFolhaMatriculas']:
-            hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, '56', matricula['matricula']['id'],
+            hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, params_exec.get('entidade'), matricula['matricula']['id'],
                                                   item['tipoProcessamento'], item['subTipoProcessamento'],
                                                   item['dataPagamento'])
             registros_formatados.append({
@@ -38,7 +39,7 @@ def busca_dados(params_exec):
                 'hash_chave_dsk': hash_chaves,
                 'descricao_tipo_registro': 'Cadastro do Calculo da Folha de Rescisao',
                 'id_gerado': item['id'],
-                'i_chave_dsk1': '56',
+                'i_chave_dsk1': params_exec.get('entidade'),
                 'i_chave_dsk2': matricula['matricula']['id'],
                 'i_chave_dsk3': item['tipoProcessamento'],
                 'i_chave_dsk4': item['subTipoProcessamento'],
@@ -145,7 +146,12 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                 'ato': {
                     'id': int(item['ato'])
                 }})
-        print(f'Dados gerados ({contador}): ', dict_dados)
+        if params_exec.get('atualizar') is True:
+            if item['idcloud'] is not None:
+                dict_dados['conteudo'].update({
+                    'id': int(item['idcloud'])
+                })
+        # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,

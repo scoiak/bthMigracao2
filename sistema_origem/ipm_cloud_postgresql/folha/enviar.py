@@ -7,15 +7,17 @@ import bth.interacao_cloud as interacao_cloud
 def iniciar():
     print(':: Iniciando migração do sistema Folha')
     params_exec = {
-        'somente_pre_validar': False,
+        'somente_pre_validar': False,                
+        'enviar': True,
+        'buscar': True,        
         'atualizar': False,
-        'buscar': True,
-        # 'token': '72612895-9758-467d-a2ef-36b8b57c3198',  # Homologação 1
-        # 'token': '58924393-e014-43f4-9269-5646a39b127d',  # Homologação 2
-        # 'token': 'c52c4510-0a8f-468f-a501-1f68b32795c8',  # Homologação 3
-        # 'token': 'c420e8c5-bc8a-44c4-8b34-e46df7867a3e',  # Prefeitura
-        # 'token': '144e13ad-29ce-49b7-b9dc-7d95ee29b0f6',  # FAMABI
-        'token': '7a88626f-77a8-4b13-bec6-554191c18c9e',  # Camara
+        # 'token': '72612895-9758-467d-a2ef-36b8b57c3198',  # PM - H - 1
+        # 'token': '58924393-e014-43f4-9269-5646a39b127d',  # PM - H - 2
+        # 'token': 'c52c4510-0a8f-468f-a501-1f68b32795c8',  # PM - H - 3
+        # 'token': 'c420e8c5-bc8a-44c4-8b34-e46df7867a3e',  # PM - O
+        # 'token': '144e13ad-29ce-49b7-b9dc-7d95ee29b0f6',  # FAMABI - O
+        # 'token': '7a88626f-77a8-4b13-bec6-554191c18c9e',  # CM - H - 1
+        'token': '86e6501b-59b7-4793-874c-bee84100e779',  # CM - O
         'ano': 2021,
         'entidade': 34 # idetificador 11968
     }
@@ -41,7 +43,7 @@ def iniciar():
     # enviar(params_exec, 'tipo-movimentacao-pessoal')
     # enviar(params_exec, 'tipo-afastamento')
     # enviar(params_exec, 'motivo-rescisao')
-    # enviar(params_exec, 'funcao-relogico') # Verificar
+    # enviar(params_exec, 'funcao-relogico') # Implementar
     # enviar(params_exec, 'tipo-cargo')
     # enviar(params_exec, 'tipo-ato')
     # enviar(params_exec, 'ato')
@@ -56,7 +58,7 @@ def iniciar():
     # enviar(params_exec, 'configuracao-lotacao-fisica')
     # enviar(params_exec, 'lotacao-fisica')
     # enviar(params_exec, 'formacao')
-    # enviar(params_exec, 'pessoa-fisica')
+    enviar(params_exec, 'pessoa-fisica')
     # enviar(params_exec, 'conta-bancaria')
     # enviar(params_exec, 'pessoa-juridica')
     # enviar(params_exec, 'dependencia')
@@ -74,7 +76,7 @@ def iniciar():
     # enviar(params_exec, 'configuracao-licenca-premio') # Implementar
     # enviar(params_exec, 'cargo')
     # enviar(params_exec, 'concurso')                            
-    enviar(params_exec, 'matricula')
+    # enviar(params_exec, 'matricula')
     # enviar(params_exec, 'servico-autonomo') # Implementar
     # enviar(params_exec, 'area-atuacao') # Implementar
     # enviar(params_exec, 'formacao') # Implementar
@@ -83,10 +85,10 @@ def iniciar():
     # enviar(params_exec, 'motivo-consulta-medica') # Implementar
     # enviar(params_exec, 'atestado') # Implementar
     # enviar(params_exec, 'afastamento')
-    # enviar(params_exec, 'transferencia') # Verificar
+    # enviar(params_exec, 'transferencia') # Implementar
     # enviar(params_exec, 'lancamento-evento')
     # enviar(params_exec, 'rescisao')
-    # enviar(params_exec, 'movimentacao-pessoal')
+    # enviar(params_exec, 'movimentacao-pessoal') # Implementar
     # enviar(params_exec, 'periodo-aquisitivo-ferias')
     # enviar(params_exec, 'periodo-aquisitivo-decimo-terceiro')
     # enviar(params_exec, 'calculo-folha-rescisao')

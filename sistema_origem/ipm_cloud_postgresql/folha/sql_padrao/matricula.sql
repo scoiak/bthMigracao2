@@ -27,16 +27,17 @@ INTO TABLE matricula
 from (select 
 	-- Inicio do Historico
 	(case when fc.funtipocontrato not in (2) then fundataadmissao::varchar else null end) as database, --0		
-	(case when fc.funtipocontrato not in (2) then (coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','vinculo-empregaticio',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),regcodigo::varchar))),(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','vinculo-empregaticio','1'))))) else null end)::varchar as vinculoEmpregaticio,
+	(case when fc.funtipocontrato not in (2) then (coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','vinculo-empregaticio',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))),regcodigo::varchar))),(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','vinculo-empregaticio','1'))))) else null end)::varchar as vinculoEmpregaticio,
 	(case fc.regcodigo when 24 then 'true' when 20 then 'true' else 'false' end) as contratoTemporario, --2
 	(case when fc.funtipocontrato not in (2) then 'NORMAL' else null end) as indicativoAdmissao,
 	(case when fc.funtipocontrato not in (2) then 'URBANO' else null end) as naturezaAtividade,
 	(case when fc.funtipocontrato not in (2) then (case when funtipocontrato in (10,11) then 'TRANSFERENCIA' else 'ADMISSAO' end) else null end) as tipoAdmissao,	--5
 	 (case when fc.funtipocontrato not in (2) then (case funtipoemprego when 1 then 'true' else  'false' end) else null end)as primeiroEmprego, --6
 	 (case regcodigo when 1 then  'true' else	'false'	 end) as optanteFgts,
-	fundataopcaofgts::varchar as dataOpcao,
+	fundataopcaofgts::varchar as dataOpcao,	
 	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'conta-bancaria', (select left(regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g'),11) from wun.tbunico as u where u.unicodigo = fc.unicodigo), (select ucb.ifcnumeroconta from wun.tbunicocontabanco as ucb where ucb.unicodigo = fc.unicodigo and ucb.ifcsequencia = fc.ifcsequenciafgts))))::varchar as contaFgts,
-	unicodigocsi as sindicato,--10
+	--unicodigocsi as sindicato,--10
+	null as sindicato,
 	null as tipoProvimento,
 	null as leiContrato,
 	--txjcodigo as atoContrato,
@@ -46,7 +47,7 @@ from (select
 	null as tempoAposentadoria,	
 	(case when fc.regcodigo in (25) then true else (case when fc.funtipocontrato not in (2) then (case when (select r.cascodigo from wfp.tbregime as r where r.regcodigo = fc.regcodigo and r.odomesano = fc.odomesano limit 1) in (1) then true else (case coalesce((select p.tpvcodigo from wfp.tbfunpreviden as p where p.funcontrato = fc.funcontrato and p.fcncodigo = fc.fcncodigo and p.odomesano = fc.odomesano and p.fprprincipal = 1 limit 1),0) when 1 then true when 0 then true when 6 then true when null then true else false end) end)else null end) end)::varchar as previdenciaFederal,
 	(case when fc.regcodigo not in (25) then (case when fc.funtipocontrato not in (2) then (case (select p.tpvcodigo from wfp.tbfunpreviden as p where p.funcontrato = fc.funcontrato and p.fcncodigo = fc.fcncodigo and p.odomesano = fc.odomesano and p.fprprincipal = 1 limit 1) when 1 then null when 6 then null else ((case (select p.tpvcodigo from wfp.tbfunpreviden as p where p.fcncodigo = fc.fcncodigo and p.funcontrato = fc.funcontrato and p.odomesano = fc.odomesano and p.fprprincipal = 1 limit 1) when 3 then 'ESTADUAL' when 4 then 'FUNDO_ASSISTENCIA' when 5 then 'FUNDO_FINANCEIRO' when 2 then 'FUNDO_PREVIDENCIA' else null end) || '%|%' || (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'plano-previdencia', (select p.tpvcodigo from wfp.tbfunpreviden as p where p.fcncodigo = fc.fcncodigo and p.funcontrato = fc.funcontrato and p.odomesano = fc.odomesano and p.fprprincipal = 1 limit 1))))) end) else null end) else null end)::varchar as previdencias,	
-	(case when fc.funtipocontrato not in (0) then coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'cargo', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),carcodigo))),null) else null end)::varchar as cargo,--19
+	(case when fc.funtipocontrato not in (0) then coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'cargo', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))),carcodigo))),null) else null end)::varchar as cargo,--19
 	null as cargoAlterado,--20
 	--txjcodigo as atoAlteracaoCargo,
 	null as atoAlteracaoCargo,
@@ -56,9 +57,9 @@ from (select
 	(case when fc.funtipocontrato not in (0) then (case funocupavaga when 1 then true else false end) else null end)::varchar as ocupaVaga,--25
 	null as salarioAlterado,
 	null as origemSalario,	
-	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'nivel-salarial',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),nivcodigo)))::varchar as nivelSalarial,
+	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'nivel-salarial',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))),nivcodigo)))::varchar as nivelSalarial,
 	null as classeReferencia,	
-	(case when fc.funtipocontrato not in (0) then coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'cargo', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),(case when (select c.cartipocargo from wfp.tbcargo as c where c.carcodigo = fc.carcodigo and c.odomesano = fc.odomesano limit 1) in (1) then (case when (select fcc.carcodigo from wfp.tbfuncargocom as fcc where fcc.fcncodigo = fc.fcncodigo and fcc.funcontrato = fc.funcontrato and fcc.odomesano = fc.odomesano and to_date(fc.odomesano||'01','YYYYMMDD') BETWEEN fcc.fcodatainicio and fcc.fcodatafinal limit 1) in (select ac.carcodigo from wfp.tbcargo as ac where ac.cartipocargo = 2) then (select fcc.carcodigo from wfp.tbfuncargocom as fcc where fcc.fcncodigo = fc.fcncodigo and fcc.funcontrato = fc.funcontrato and fcc.odomesano = fc.odomesano and to_date(fc.odomesano||'01','YYYYMMDD') BETWEEN fcc.fcodatainicio and fcc.fcodatafinal limit 1) else null end) else null end)))),null) else null end)::varchar as cargoComissionado,--30	
+	(case when fc.funtipocontrato not in (0) then coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'cargo', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))),(case when (select c.cartipocargo from wfp.tbcargo as c where c.carcodigo = fc.carcodigo and c.odomesano = fc.odomesano limit 1) in (1) then (case when (select fcc.carcodigo from wfp.tbfuncargocom as fcc where fcc.fcncodigo = fc.fcncodigo and fcc.funcontrato = fc.funcontrato and fcc.odomesano = fc.odomesano and to_date(fc.odomesano||'01','YYYYMMDD') BETWEEN fcc.fcodatainicio and fcc.fcodatafinal limit 1) in (select ac.carcodigo from wfp.tbcargo as ac where ac.cartipocargo = 2) then (select fcc.carcodigo from wfp.tbfuncargocom as fcc where fcc.fcncodigo = fc.fcncodigo and fcc.funcontrato = fc.funcontrato and fcc.odomesano = fc.odomesano and to_date(fc.odomesano||'01','YYYYMMDD') BETWEEN fcc.fcodatainicio and fcc.fcodatafinal limit 1) else null end) else null end)))),null) else null end)::varchar as cargoComissionado,--30	
 	null as areaAtuacaoComissionado,
 	(case when fc.funtipocontrato not in (2) then false else null end)::varchar as ocupaVagaComissionado,
 	null as salarioComissionado,
@@ -67,7 +68,7 @@ from (select
 	(case when fc.funtipocontrato not in (2) then 'MENSALISTA' else null end)::varchar as unidadePagamento,			
 	(case funformapagamento when 2 then (case when (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'conta-bancaria', (select left(regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g'),11) from wun.tbunico as u where u.unicodigo = fc.unicodigo), (select ucb.ifcnumeroconta from wun.tbunicocontabanco as ucb where ucb.unicodigo = fc.unicodigo and ucb.ifcsequencia = fc.ifcsequenciapaga)))) > 1 then 'CREDITO_EM_CONTA' else null end)  when 3 then 'DINHEIRO' when 4 then 'CHEQUE' else 'DINHEIRO' end) as formaPagamento,	
 	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'conta-bancaria', (select left(regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g'),11) from wun.tbunico as u where u.unicodigo = fc.unicodigo), (select ucb.ifcnumeroconta from wun.tbunicocontabanco as ucb where ucb.unicodigo = fc.unicodigo and ucb.ifcsequencia = fc.ifcsequenciapaga))))::varchar as contaBancariaPagamento,
-	(case when fc.funtipocontrato not in (0) then (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'configuracao-ferias',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), 1))) else null end)::varchar as configuracaoFerias,
+	(case when fc.funtipocontrato not in (0) then (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'configuracao-ferias',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))), 1))) else null end)::varchar as configuracaoFerias,
 	coalesce(regexp_replace(funhorastrabmes, '\:\d{2}$', '', 'gi'),'1')::varchar as quantidadeHorasMes,--40
 	(case when fc.funtipocontrato not in (2) then (coalesce(regexp_replace(funhorastrabmes, '\:\d{2}$', '', 'gi'),'1')::int/5) else null end)::varchar as quantidadeHorasSemana,
 	(case when fc.funtipocontrato not in (2) then false else null end) as jornadaParcial,
@@ -77,7 +78,7 @@ from (select
 	null as motivoContratoTemporario,
 	null as tipoInclusaoContratoTemporario,
 	null as dataProrrogacaoContratoTemporario,
-	(case when fc.funtipocontrato not in (0) then funcartaoponto else null end)::varchar as numeroCartaoPonto,
+	(case when fc.funtipocontrato not in (0) then (case when length(replace(replace(funcartaoponto,'0',''),' ','')) > 0 then funcartaoponto else null end) else null end)::varchar as numeroCartaoPonto,
 	null as parametroPonto,--50
 	null as indicativoProvimento,
 	null as orgaoOrigem,
@@ -92,7 +93,7 @@ from (select
 	null as dataProrrogacao,
 	(case when fc.funtipocontrato in (2) then (select id_gerado from public.controle_migracao_registro cmr where tipo_registro = 'pessoa-juridica' and id_gerado is not null limit 1) else null end)::varchar as instituicaoEnsino,
 	(case when fc.funtipocontrato in (2) then (select id_gerado from public.controle_migracao_registro cmr where tipo_registro = 'pessoa-juridica' and id_gerado is not null limit 1) else null end)::varchar as agenteIntegracao,	
-	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'formacao', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), (case (select uf.gincodigo from wun.tbunicofisica as uf where uf.unicodigo = fc.unicodigo) 	when 2 then 10	when 3 then 1	when 4 then 1	when 12 then 1	when 13 then 1	when 14 then 1	when 5 then 2	when 6 then 2	when 7 then 3	when 8 then 3	when 16 then 3	when 9 then 4	when 10 then 8	when 11 then 9	when 17 then 9	else 10 end)))) as formacao,
+	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'formacao', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))), (case (select uf.gincodigo from wun.tbunicofisica as uf where uf.unicodigo = fc.unicodigo) 	when 2 then 10	when 3 then 1	when 4 then 1	when 12 then 1	when 13 then 1	when 14 then 1	when 5 then 2	when 6 then 2	when 7 then 3	when 8 then 3	when 16 then 3	when 9 then 4	when 10 then 8	when 11 then 9	when 17 then 9	else 10 end)))) as formacao,
 	null as formacaoPeriodo,--65
 	null as formacaoFase,
 	null as estagioObrigatorio,
@@ -100,10 +101,10 @@ from (select
 	(case when fc.funtipocontrato not in (0) then fc.funcontrato else null end)::varchar as numeroContrato,
 	null as possuiSeguroVida,--70
 	null as numeroApoliceSeguroVida,
-	(case when fc.funtipocontrato in (2) then (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'categoria-trabalhador', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),'Estagiário', '901'))) else null end)::varchar as categoriaTrabalhador,
+	(case when fc.funtipocontrato in (2) then (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'categoria-trabalhador', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))),'Bolsista, nos termos da lei 8958/1994', '903'))) else null end)::varchar as categoriaTrabalhador,
 	(case when fc.funtipocontrato in (2) then (select id_gerado from public.controle_migracao_registro cmr where tipo_registro = 'pessoa-fisica' and id_gerado is not null limit 1) || '%|%' || (SELECT to_date(fc.odomesano||'01','YYYYMMDD')::varchar) else null end)::varchar as responsaveis,
 	null as dataCessacaoAposentadoria,
-	(case when fc.funtipocontrato in (0) then (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))) else null end)::varchar as entidadeOrigem,--75
+	(case when fc.funtipocontrato in (0) then (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))) else null end)::varchar as entidadeOrigem,--75
 	null as motivoAposentadoria,
 	null as funcionarioOrigem,
 	null as tipoMovimentacao,
@@ -129,9 +130,9 @@ from (select
 	--(select mtrcodigo from wfp.tbfunhistoricosalarial as fhs where fhs.fcncodigo = fc.fcncodigo and fhs.odomesano = fc.odomesano order by fhsdatahora desc limit 1)  as motivoAlteracaoSalario,
 	null as motivoAlteracaoSalario, 
 	null as validationStatus,			
-	-- (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','organograma', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','configuracao-organograma',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), 1)))::varchar,(select left((c.organo::varchar || regexp_replace(c.cncclassif, '[\.]', '', 'gi') || '000000000000000'),15) from wun.tbcencus as c where c.cnccodigo = fc.cnccodigo limit 1)::varchar))) as organograma,
-	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','organograma', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),772,(select left((c.organo::varchar || regexp_replace(c.cncclassif, '[\.]', '', 'gi') || '000000000000000'),15) from wun.tbcencus as c where c.cnccodigo = fc.cnccodigo limit 1)::varchar))) as organograma, 
-	(select string_agg((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'lotacao-fisica',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), right('000' || cast(suc.cltcodigo as text), 3)))) || '%|%' || (CASE when suc.cltcodigo = fc.cltcodigo and suc.flcdatafinal is null then 'true' else 'false' end) || '%|%' || (case when fundataadmissao > suc.flcdatainicio then fundataadmissao else suc.flcdatainicio end)::varchar || '%|%' || coalesce((case when fc.funtipocontrato in (2) then coalesce(fc.fundatatermcont::varchar,'2021-01-01')::varchar else (case when fundataadmissao > suc.flcdatafinal then fundataadmissao else suc.flcdatafinal end)::varchar end)::varchar,'') || '%|%' || '' || '%|%' || '' || '%|%' || '' || '%|%' || '','%||%') from (select row_number() OVER (partition by fl.fcncodigo order by fl.fcncodigo desc) as linha,* from wfp.tbfunlocais as fl where fl.fcncodigo = fc.fcncodigo and fl.funcontrato = fc.funcontrato and fl.odomesano = fc.odomesano) as suc  group by suc.fcncodigo order by suc.fcncodigo desc) as lotacoesFisicas,--99
+	-- (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','organograma', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))),(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','configuracao-organograma',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), 1)))::varchar,(select left((c.organo::varchar || regexp_replace(c.cncclassif, '[\.]', '', 'gi') || '000000000000000'),15) from wun.tbcencus as c where c.cnccodigo = fc.cnccodigo limit 1)::varchar))) as organograma,
+	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','organograma', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))),(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','configuracao-organograma', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'configuracao-organograma', 11968))), 1))),(select left((c.organo::varchar || regexp_replace(c.cncclassif, '[\.]', '', 'gi') || '000000000000000'),12) from wun.tbcencus as c where c.cnccodigo = fc.cnccodigo limit 1)::varchar))) as organograma, 
+	(select string_agg((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'lotacao-fisica',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))), right('000' || cast(suc.cltcodigo as text), 3)))) || '%|%' || (CASE when suc.cltcodigo = fc.cltcodigo and suc.flcdatafinal is null then 'true' else 'false' end) || '%|%' || (case when fundataadmissao > suc.flcdatainicio then fundataadmissao else suc.flcdatainicio end)::varchar || '%|%' || coalesce((case when fc.funtipocontrato in (2) then coalesce(fc.fundatatermcont::varchar,'2021-01-01')::varchar else (case when fundataadmissao > suc.flcdatafinal then fundataadmissao else suc.flcdatafinal end)::varchar end)::varchar,'') || '%|%' || '' || '%|%' || '' || '%|%' || '' || '%|%' || '','%||%') from (select row_number() OVER (partition by fl.fcncodigo order by fl.fcncodigo desc) as linha,* from wfp.tbfunlocais as fl where fl.fcncodigo = fc.fcncodigo and fl.funcontrato = fc.funcontrato and fl.odomesano = fc.odomesano) as suc  group by suc.fcncodigo order by suc.fcncodigo desc) as lotacoesFisicas,--99
 	-- Fim do Historico
 	null as historicos,--100
 	row_number() over() as id,
@@ -160,16 +161,17 @@ select *
 from (select 	
 	-- Inicio do Historico
 	(case when fc.funtipocontrato not in (2) then fundataadmissao::varchar else null end) as database, --0		
-	(case when fc.funtipocontrato not in (2) then (coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','vinculo-empregaticio',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),regcodigo::varchar))),(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','vinculo-empregaticio','1'))))) else null end)::varchar as vinculoEmpregaticio,
+	(case when fc.funtipocontrato not in (2) then (coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','vinculo-empregaticio',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))),regcodigo::varchar))),(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','vinculo-empregaticio','1'))))) else null end)::varchar as vinculoEmpregaticio,
 	(case fc.regcodigo when 24 then 'true' when 20 then 'true' else 'false' end) as contratoTemporario, --2
 	(case when fc.funtipocontrato not in (2) then 'NORMAL' else null end) as indicativoAdmissao,
 	(case when fc.funtipocontrato not in (2) then 'URBANO' else null end) as naturezaAtividade,
 	(case when fc.funtipocontrato not in (2) then (case when funtipocontrato in (10,11) then 'TRANSFERENCIA' else 'ADMISSAO' end) else null end) as tipoAdmissao,	--5
 	 (case when fc.funtipocontrato not in (2) then (case funtipoemprego when 1 then 'true' else  'false' end) else null end)as primeiroEmprego, --6
 	 (case regcodigo when 1 then  'true' else	'false'	 end) as optanteFgts,
-	fundataopcaofgts::varchar as dataOpcao,
+	fundataopcaofgts::varchar as dataOpcao,	
 	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'conta-bancaria', (select left(regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g'),11) from wun.tbunico as u where u.unicodigo = fc.unicodigo), (select ucb.ifcnumeroconta from wun.tbunicocontabanco as ucb where ucb.unicodigo = fc.unicodigo and ucb.ifcsequencia = fc.ifcsequenciafgts))))::varchar as contaFgts,
-	unicodigocsi as sindicato,--10
+	--unicodigocsi as sindicato,--10
+	null as sindicato,
 	null as tipoProvimento,
 	null as leiContrato,
 	--txjcodigo as atoContrato,
@@ -179,7 +181,7 @@ from (select
 	null as tempoAposentadoria,	
 	(case when fc.regcodigo in (25) then true else (case when fc.funtipocontrato not in (2) then (case when (select r.cascodigo from wfp.tbregime as r where r.regcodigo = fc.regcodigo and r.odomesano = fc.odomesano limit 1) in (1) then true else (case coalesce((select p.tpvcodigo from wfp.tbfunpreviden as p where p.funcontrato = fc.funcontrato and p.fcncodigo = fc.fcncodigo and p.odomesano = fc.odomesano and p.fprprincipal = 1 limit 1),0) when 1 then true when 0 then true when 6 then true when null then true else false end) end)else null end) end)::varchar as previdenciaFederal,
 	(case when fc.regcodigo not in (25) then (case when fc.funtipocontrato not in (2) then (case (select p.tpvcodigo from wfp.tbfunpreviden as p where p.funcontrato = fc.funcontrato and p.fcncodigo = fc.fcncodigo and p.odomesano = fc.odomesano and p.fprprincipal = 1 limit 1) when 1 then null when 6 then null else ((case (select p.tpvcodigo from wfp.tbfunpreviden as p where p.fcncodigo = fc.fcncodigo and p.funcontrato = fc.funcontrato and p.odomesano = fc.odomesano and p.fprprincipal = 1 limit 1) when 3 then 'ESTADUAL' when 4 then 'FUNDO_ASSISTENCIA' when 5 then 'FUNDO_FINANCEIRO' when 2 then 'FUNDO_PREVIDENCIA' else null end) || '%|%' || (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'plano-previdencia', (select p.tpvcodigo from wfp.tbfunpreviden as p where p.fcncodigo = fc.fcncodigo and p.funcontrato = fc.funcontrato and p.odomesano = fc.odomesano and p.fprprincipal = 1 limit 1))))) end) else null end) else null end)::varchar as previdencias,	
-	(case when fc.funtipocontrato not in (0) then coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'cargo', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),carcodigo))),null) else null end)::varchar as cargo,--19
+	(case when fc.funtipocontrato not in (0) then coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'cargo', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))),carcodigo))),null) else null end)::varchar as cargo,--19
 	null as cargoAlterado,--20
 	--txjcodigo as atoAlteracaoCargo,
 	null as atoAlteracaoCargo,
@@ -189,9 +191,9 @@ from (select
 	(case when fc.funtipocontrato not in (0) then (case funocupavaga when 1 then true else false end) else null end)::varchar as ocupaVaga,--25
 	null as salarioAlterado,
 	null as origemSalario,	
-	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'nivel-salarial',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),nivcodigo)))::varchar as nivelSalarial,
+	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'nivel-salarial',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))),nivcodigo)))::varchar as nivelSalarial,
 	null as classeReferencia,	
-	(case when fc.funtipocontrato not in (0) then coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'cargo', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),(case when (select c.cartipocargo from wfp.tbcargo as c where c.carcodigo = fc.carcodigo and c.odomesano = fc.odomesano limit 1) in (1) then (case when (select fcc.carcodigo from wfp.tbfuncargocom as fcc where fcc.fcncodigo = fc.fcncodigo and fcc.funcontrato = fc.funcontrato and fcc.odomesano = fc.odomesano and to_date(fc.odomesano||'01','YYYYMMDD') BETWEEN fcc.fcodatainicio and fcc.fcodatafinal limit 1) in (select ac.carcodigo from wfp.tbcargo as ac where ac.cartipocargo = 2) then (select fcc.carcodigo from wfp.tbfuncargocom as fcc where fcc.fcncodigo = fc.fcncodigo and fcc.funcontrato = fc.funcontrato and fcc.odomesano = fc.odomesano and to_date(fc.odomesano||'01','YYYYMMDD') BETWEEN fcc.fcodatainicio and fcc.fcodatafinal limit 1) else null end) else null end)))),null) else null end)::varchar as cargoComissionado,--30	
+	(case when fc.funtipocontrato not in (0) then coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'cargo', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))),(case when (select c.cartipocargo from wfp.tbcargo as c where c.carcodigo = fc.carcodigo and c.odomesano = fc.odomesano limit 1) in (1) then (case when (select fcc.carcodigo from wfp.tbfuncargocom as fcc where fcc.fcncodigo = fc.fcncodigo and fcc.funcontrato = fc.funcontrato and fcc.odomesano = fc.odomesano and to_date(fc.odomesano||'01','YYYYMMDD') BETWEEN fcc.fcodatainicio and fcc.fcodatafinal limit 1) in (select ac.carcodigo from wfp.tbcargo as ac where ac.cartipocargo = 2) then (select fcc.carcodigo from wfp.tbfuncargocom as fcc where fcc.fcncodigo = fc.fcncodigo and fcc.funcontrato = fc.funcontrato and fcc.odomesano = fc.odomesano and to_date(fc.odomesano||'01','YYYYMMDD') BETWEEN fcc.fcodatainicio and fcc.fcodatafinal limit 1) else null end) else null end)))),null) else null end)::varchar as cargoComissionado,--30	
 	null as areaAtuacaoComissionado,
 	(case when fc.funtipocontrato not in (2) then false else null end)::varchar as ocupaVagaComissionado,
 	null as salarioComissionado,
@@ -200,7 +202,7 @@ from (select
 	(case when fc.funtipocontrato not in (2) then 'MENSALISTA' else null end)::varchar as unidadePagamento,			
 	(case funformapagamento when 2 then (case when (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'conta-bancaria', (select left(regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g'),11) from wun.tbunico as u where u.unicodigo = fc.unicodigo), (select ucb.ifcnumeroconta from wun.tbunicocontabanco as ucb where ucb.unicodigo = fc.unicodigo and ucb.ifcsequencia = fc.ifcsequenciapaga)))) > 1 then 'CREDITO_EM_CONTA' else null end)  when 3 then 'DINHEIRO' when 4 then 'CHEQUE' else 'DINHEIRO' end) as formaPagamento,	
 	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'conta-bancaria', (select left(regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g'),11) from wun.tbunico as u where u.unicodigo = fc.unicodigo), (select ucb.ifcnumeroconta from wun.tbunicocontabanco as ucb where ucb.unicodigo = fc.unicodigo and ucb.ifcsequencia = fc.ifcsequenciapaga))))::varchar as contaBancariaPagamento,
-	(case when fc.funtipocontrato not in (0) then (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'configuracao-ferias',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), 1))) else null end)::varchar as configuracaoFerias,
+	(case when fc.funtipocontrato not in (0) then (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'configuracao-ferias',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))), 1))) else null end)::varchar as configuracaoFerias,
 	coalesce(regexp_replace(funhorastrabmes, '\:\d{2}$', '', 'gi'),'1')::varchar as quantidadeHorasMes,--40
 	(case when fc.funtipocontrato not in (2) then (coalesce(regexp_replace(funhorastrabmes, '\:\d{2}$', '', 'gi'),'1')::int/5) else null end)::varchar as quantidadeHorasSemana,
 	(case when fc.funtipocontrato not in (2) then false else null end) as jornadaParcial,
@@ -210,7 +212,7 @@ from (select
 	null as motivoContratoTemporario,
 	null as tipoInclusaoContratoTemporario,
 	null as dataProrrogacaoContratoTemporario,
-	(case when fc.funtipocontrato not in (0) then funcartaoponto else null end)::varchar as numeroCartaoPonto,
+	(case when fc.funtipocontrato not in (0) then (case when length(replace(replace(funcartaoponto,'0',''),' ','')) > 0 then funcartaoponto else null end) else null end)::varchar as numeroCartaoPonto,
 	null as parametroPonto,--50
 	null as indicativoProvimento,
 	null as orgaoOrigem,
@@ -225,7 +227,7 @@ from (select
 	null as dataProrrogacao,
 	(case when fc.funtipocontrato in (2) then (select id_gerado from public.controle_migracao_registro cmr where tipo_registro = 'pessoa-juridica' and id_gerado is not null limit 1) else null end)::varchar as instituicaoEnsino,
 	(case when fc.funtipocontrato in (2) then (select id_gerado from public.controle_migracao_registro cmr where tipo_registro = 'pessoa-juridica' and id_gerado is not null limit 1) else null end)::varchar as agenteIntegracao,	
-	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'formacao', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), (case (select uf.gincodigo from wun.tbunicofisica as uf where uf.unicodigo = fc.unicodigo) 	when 2 then 10	when 3 then 1	when 4 then 1	when 12 then 1	when 13 then 1	when 14 then 1	when 5 then 2	when 6 then 2	when 7 then 3	when 8 then 3	when 16 then 3	when 9 then 4	when 10 then 8	when 11 then 9	when 17 then 9	else 10 end)))) as formacao,
+	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'formacao', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))), (case (select uf.gincodigo from wun.tbunicofisica as uf where uf.unicodigo = fc.unicodigo) 	when 2 then 10	when 3 then 1	when 4 then 1	when 12 then 1	when 13 then 1	when 14 then 1	when 5 then 2	when 6 then 2	when 7 then 3	when 8 then 3	when 16 then 3	when 9 then 4	when 10 then 8	when 11 then 9	when 17 then 9	else 10 end)))) as formacao,
 	null as formacaoPeriodo,--65
 	null as formacaoFase,
 	null as estagioObrigatorio,
@@ -233,10 +235,10 @@ from (select
 	(case when fc.funtipocontrato not in (0) then fc.funcontrato else null end)::varchar as numeroContrato,
 	null as possuiSeguroVida,--70
 	null as numeroApoliceSeguroVida,
-	(case when fc.funtipocontrato in (2) then (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'categoria-trabalhador', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),'Estagiário', '901'))) else null end)::varchar as categoriaTrabalhador,
+	(case when fc.funtipocontrato in (2) then (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'categoria-trabalhador', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))),'Bolsista, nos termos da lei 8958/1994', '903'))) else null end)::varchar as categoriaTrabalhador,
 	(case when fc.funtipocontrato in (2) then (select id_gerado from public.controle_migracao_registro cmr where tipo_registro = 'pessoa-fisica' and id_gerado is not null limit 1) || '%|%' || (SELECT to_date(fc.odomesano||'01','YYYYMMDD')::varchar) else null end)::varchar as responsaveis,
 	null as dataCessacaoAposentadoria,
-	(case when fc.funtipocontrato in (0) then (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))) else null end)::varchar as entidadeOrigem,--75
+	(case when fc.funtipocontrato in (0) then (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))) else null end)::varchar as entidadeOrigem,--75
 	null as motivoAposentadoria,
 	null as funcionarioOrigem,
 	null as tipoMovimentacao,
@@ -262,9 +264,9 @@ from (select
 	--(select mtrcodigo from wfp.tbfunhistoricosalarial as fhs where fhs.fcncodigo = fc.fcncodigo and fhs.odomesano = fc.odomesano order by fhsdatahora desc limit 1)  as motivoAlteracaoSalario,
 	null as motivoAlteracaoSalario, 
 	null as validationStatus,			
-	-- (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','organograma', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','configuracao-organograma',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), 1)))::varchar,(select left((c.organo::varchar || regexp_replace(c.cncclassif, '[\.]', '', 'gi') || '000000000000000'),15) from wun.tbcencus as c where c.cnccodigo = fc.cnccodigo limit 1)::varchar))) as organograma,
-	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','organograma', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))),772,(select left((c.organo::varchar || regexp_replace(c.cncclassif, '[\.]', '', 'gi') || '000000000000000'),15) from wun.tbcencus as c where c.cnccodigo = fc.cnccodigo limit 1)::varchar))) as organograma, 
-	(select string_agg((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'lotacao-fisica',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), right('000' || cast(suc.cltcodigo as text), 3)))) || '%|%' || (CASE when suc.cltcodigo = fc.cltcodigo and suc.flcdatafinal is null then 'true' else 'false' end) || '%|%' || (case when fundataadmissao > suc.flcdatainicio then fundataadmissao else suc.flcdatainicio end)::varchar || '%|%' || coalesce((case when fc.funtipocontrato in (2) then coalesce(fc.fundatatermcont::varchar,'2021-01-01')::varchar else (case when fundataadmissao > suc.flcdatafinal then fundataadmissao else suc.flcdatafinal end)::varchar end)::varchar,'') || '%|%' || '' || '%|%' || '' || '%|%' || '' || '%|%' || '','%||%') from (select row_number() OVER (partition by fl.fcncodigo order by fl.fcncodigo desc) as linha,* from wfp.tbfunlocais as fl where fl.fcncodigo = fc.fcncodigo and fl.funcontrato = fc.funcontrato and fl.odomesano = fc.odomesano) as suc  group by suc.fcncodigo order by suc.fcncodigo desc) as lotacoesFisicas,--99
+	-- (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','organograma', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))),(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','configuracao-organograma',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))), 1)))::varchar,(select left((c.organo::varchar || regexp_replace(c.cncclassif, '[\.]', '', 'gi') || '000000000000000'),15) from wun.tbcencus as c where c.cnccodigo = fc.cnccodigo limit 1)::varchar))) as organograma,
+	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','organograma', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))),(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300','configuracao-organograma', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'configuracao-organograma', 11968))), 1))),(select left((c.organo::varchar || regexp_replace(c.cncclassif, '[\.]', '', 'gi') || '000000000000000'),12) from wun.tbcencus as c where c.cnccodigo = fc.cnccodigo limit 1)::varchar))) as organograma, 
+	(select string_agg((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'lotacao-fisica',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))), right('000' || cast(suc.cltcodigo as text), 3)))) || '%|%' || (CASE when suc.cltcodigo = fc.cltcodigo and suc.flcdatafinal is null then 'true' else 'false' end) || '%|%' || (case when fundataadmissao > suc.flcdatainicio then fundataadmissao else suc.flcdatainicio end)::varchar || '%|%' || coalesce((case when fc.funtipocontrato in (2) then coalesce(fc.fundatatermcont::varchar,'2021-01-01')::varchar else (case when fundataadmissao > suc.flcdatafinal then fundataadmissao else suc.flcdatafinal end)::varchar end)::varchar,'') || '%|%' || '' || '%|%' || '' || '%|%' || '' || '%|%' || '','%||%') from (select row_number() OVER (partition by fl.fcncodigo order by fl.fcncodigo desc) as linha,* from wfp.tbfunlocais as fl where fl.fcncodigo = fc.fcncodigo and fl.funcontrato = fc.funcontrato and fl.odomesano = fc.odomesano) as suc  group by suc.fcncodigo order by suc.fcncodigo desc) as lotacoesFisicas,--99
 	-- Fim do Historico
 	/**/(select 	
 	string_agg( 
@@ -272,19 +274,18 @@ from (select
 	,'%&&%')
 	from ( select * from (select distinct on (m.vinculoempregaticio,m.contratotemporario,m.indicativoadmissao,m.naturezaatividade,m.tipoadmissao,m.primeiroemprego,m.optantefgts,m.dataopcao,m.contafgts,m.sindicato,m.tipoprovimento,m.leicontrato,m.atocontrato,m.datanomeacao,m.dataposse,m.tempoaposentadoria,m.previdenciafederal,m.previdencias,m.cargo,m.cargoalterado,m.atoalteracaocargo,m.areaatuacao,m.areaatuacaoalterada,m.motivoalteracaoareaatuacao,m.ocupavaga,m.salarioalterado,m.origemsalario,m.nivelsalarial,m.classereferencia,m.cargocomissionado,m.areaatuacaocomissionado,m.ocupavagacomissionado,m.salariocomissionado,m.nivelsalarialcomissionado,m.classereferenciacomissionado,m.unidadepagamento,m.formapagamento,m.contabancariapagamento,m.configuracaoferias,m.quantidadehorasmes,m.quantidadehorassemana,m.jornadaparcial,m.dataagendamentorescisao,m.funcoesgratificadas,m.dataterminocontratotemporario,m.motivocontratotemporario,m.tipoinclusaocontratotemporario,m.dataprorrogacaocontratotemporario,m.numerocartaoponto,m.parametroponto,m.indicativoprovimento,m.orgaoorigem,m.matriculaempresaorigem,m.dataadmissaoorigem,m.ocorrenciasefip,m.controlejornada,m.configuracaolicencapremio,m.configuracaoadicional,m.processaaverbacao,m.datafinal,m.dataprorrogacao,m.instituicaoensino,m.agenteintegracao,m.formacao,m.formacaoperiodo,m.formacaofase,m.estagioobrigatorio,m.objetivo,m.numerocontrato,m.possuisegurovida,m.numeroapolicesegurovida,m.categoriatrabalhador,m.responsaveis,m.datacessacaoaposentadoria,m.entidadeorigem,m.motivoaposentadoria,m.funcionarioorigem,m.tipomovimentacao,m.motivoiniciobeneficio,m.duracaobeneficio,m.datacessacaobeneficio,m.motivocessacaobeneficio,m.matriculaorigem,m.responsavel,m.situacao,m.tipo,m.pessoa,m.codigomatricula,m.esocial,m.grupofuncional,m.jornadatrabalho,m.rendimentomensal,m.atoalteracaosalario,m.motivoalteracaosalario,m.validationstatus,m.organograma,m.lotacoesfisicas,m.historicos) * from matricula as m where m.fcncodigo = fc.fcncodigo and m.funcontrato = fc.funcontrato and m.competencia < fc.odomesano and m.funtipocontrato not in (4)) as sssuc  order by sssuc.competencia asc) as suc) as historicos,
 	/**/row_number() over() as id,	
-	fc.fcncodigo,	
-	fc.funcontrato,
+	fc.fcncodigo as codigo,	
+	fc.funcontrato as contrato,
 	fc.odomesano as competencia,
 	fc.funtipocontrato,
-	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 2016))) as clicodigo
+	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))) as entidade
 	--(case when (select max(afc.odomesano) from wfp.tbfuncontrato as afc where afc.fcncodigo = fc.fcncodigo and afc.funcontrato = fc.funcontrato and afc.funtipocontrato not in (4) limit 1) > fc.odomesano then fc.funcontrato else (fc.funcontrato + 1) end) as funcontrato
-	,(select uninomerazao from wun.tbunico as u where u.unicodigo = fc.unicodigo) as nome,
-	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'matricula', clicodigo, fcncodigo, funcontrato))) as idCloud
+	,(select uninomerazao from wun.tbunico as u where u.unicodigo = fc.unicodigo) as nome	
 from  wfp.tbfuncontrato as fc -- join wfp.tbfuncionario as f on f.fcncodigo = fc.fcncodigo and f.odomesano = fc.odomesano
 where 
 --(fc.odomesano = (select max(afc.odomesano) from wfp.tbfuncontrato as afc where afc.fcncodigo = fc.fcncodigo and afc.funcontrato = fc.funcontrato and afc.funtipocontrato not in (4) limit 1) or fc.odomesano = (select max(afc.odomesano) from wfp.tbfuncontrato as afc where afc.fcncodigo = fc.fcncodigo and afc.funcontrato = fc.funcontrato and afc.funtipocontrato in (4) limit 1))
 --fc.odomesano = (select max(afc.odomesano) from wfp.tbfuncontrato as afc where afc.fcncodigo = fc.fcncodigo and afc.funcontrato = fc.funcontrato and afc.funtipocontrato not in (4) limit 1)
-fc.odomesano = 202011
+fc.odomesano = 202012
 --and fc.fcncodigo in (411)
 -- and fc.funtipocontrato not in (3,4)
 --and fc.fcncodigo in (15605,603,1747,2279,14020,570,12684,1739)
@@ -293,6 +294,6 @@ order by fc.fcncodigo,fc.funcontrato
 --limit 1000 offset 0
 ) as s
 where 
-(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'matricula', clicodigo, fcncodigo, funcontrato))) is null and 
+(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'matricula', entidade, codigo, contrato))) is null and 
 pessoa is not null
 --limit 1 offset 0

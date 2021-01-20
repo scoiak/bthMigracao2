@@ -12,12 +12,41 @@ limite_lote = 1000
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
+    if False: # Sem Funcionalidade
+        if params_exec.get('buscar') is True:
+            busca_dados(params_exec)
     if True:
         dados_assunto = coletar_dados(params_exec)
         dados_enviar = pre_validar(params_exec, dados_assunto)
         if not params_exec.get('somente_pre_validar'):
             iniciar_envio(params_exec, dados_enviar, 'POST')
-    model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
+        model.valida_lotes_enviados(params_exec, tipo_registro=tipo_registro)
+
+
+def busca_dados(params_exec):
+    print('- Iniciando busca de dados no cloud.')
+    registros = interacao_cloud.busca_dados_cloud(params_exec, url=url)
+    print(f'- Foram encontrados {len(registros)} registros cadastrados no cloud.')
+    registros_formatados = []
+    for item in registros:
+        for matricula in item['calculoFolhaMatriculas']:
+            hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, params_exec.get('entidade'), matricula['matricula']['id'],
+                                                  item['tipoProcessamento'], item['subTipoProcessamento'],
+                                                  item['dataPagamento'])
+            registros_formatados.append({
+                'sistema': sistema,
+                'tipo_registro': tipo_registro,
+                'hash_chave_dsk': hash_chaves,
+                'descricao_tipo_registro': 'Cadastro do Calculo da Folha de Decimo Terceiro',
+                'id_gerado': item['id'],
+                'i_chave_dsk1': params_exec.get('entidade'),
+                'i_chave_dsk2': matricula['matricula']['id'],
+                'i_chave_dsk3': item['tipoProcessamento'],
+                'i_chave_dsk4': item['subTipoProcessamento'],
+                'i_chave_dsk5': item['dataPagamento']
+            })
+    model.insere_tabela_controle_migracao_registro(params_exec, lista_req=registros_formatados)
+    print('- Busca finalizada. Tabelas de controles atualizas com sucesso.')
 
 
 def coletar_dados(params_exec):
@@ -97,13 +126,18 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             dict_dados['conteudo'].update({'anoExercicio': item['anoexercicio']})
         if 'consideraavosperdidos' in item and item['consideraavosperdidos'] is not None:
             dict_dados['conteudo'].update({'consideraAvosPerdidos': item['consideraavosperdidos']})
-        print(f'Dados gerados ({contador}): ', dict_dados)
+        if params_exec.get('atualizar') is True:
+            if item['idcloud'] is not None:
+                dict_dados['conteudo'].update({
+                    'id': int(item['idcloud'])
+                })
+        # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Rescisao',
+            'descricao_tipo_registro': 'Cadastro do Calculo da Folha de Decimo Terceiro',
             'id_gerado': None,
             'json': json.dumps(dict_dados),
             'i_chave_dsk1': item['entidade'],

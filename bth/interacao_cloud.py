@@ -138,7 +138,7 @@ def preparar_requisicao(lista_dados, *args, **kwargs):
 
 
 def enviar_lote(lote, *args, **kwargs):
-    json_envio_lote = json.dumps(lote)
+    json_envio_lote = json.dumps(lote, allow_nan=False)
     retorno_requisicao = {
         'sistema': '300',
         'tipo_registro': kwargs.get('tipo_registro'),
@@ -177,7 +177,7 @@ def enviar_lote(lote, *args, **kwargs):
                 print('Retorno não JSON:', retorno_req.status_code, retorno_req.text)
     except Exception as error:
         print(f'Erro durante a execução da função enviar_lote. {error}')
-    finally:
+    finally:        
         return retorno_requisicao
 
 
