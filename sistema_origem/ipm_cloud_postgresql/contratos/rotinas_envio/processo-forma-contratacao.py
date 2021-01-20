@@ -11,7 +11,9 @@ tipo_registro = 'processo-forma-contratacao'
 url = 'https://compras.betha.cloud/compras-services/api/exercicios/{exercicio}/processos-administrativo/{processoAdministrativoId}/forma-contratacao'
 
 # Define responsável padrao caso o SQL nao encontre um registro
-id_responsavel_padrao = 5461912
+# id_responsavel_padrao = 5461912 # Teste
+id_responsavel_padrao = 5483794 # Oficial
+
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
     # E - Realiza a consulta dos dados que serão enviados

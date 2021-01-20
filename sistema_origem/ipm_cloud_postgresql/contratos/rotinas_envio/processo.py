@@ -11,7 +11,7 @@ tipo_registro = 'processo'
 url = 'https://compras.betha.cloud/compras-services/api/exercicios/{exercicio}/processos-administrativo'
 
 # Seta valor padrão para
-id_local_entrega_padrao = 13803
+id_local_entrega_padrao = 14011
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
@@ -140,7 +140,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         if item['id_regime_execucao'] != 0:
             dict_dados.update({'regimeExecucao': {'id': item['id_regime_execucao']}})
 
-        # print(f'Dados gerados ({contador}): ', dict_dados)
+        print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,

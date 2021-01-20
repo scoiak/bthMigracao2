@@ -52,4 +52,3 @@ from (
 where id_gerado is null
 and id_entidade is not null
 and id_exercicio is not null
-limit 10
