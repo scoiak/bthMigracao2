@@ -50,7 +50,7 @@ def get_dados_token(token):
         return r
 
 
-def preparar_requisicao_sem_lote(lista_dados, *args, **kwargs):
+def preparar_requisicao_sem_lote(lista_dados, method='post', *args, **kwargs):
     # print('- Iniciando montagem e envio de lotes.')
     lista_retorno = []
     dh_inicio = datetime.now()
@@ -60,7 +60,6 @@ def preparar_requisicao_sem_lote(lista_dados, *args, **kwargs):
     try:
         for i in lista_dados:
             lotes_enviados += 1
-            # print(f'\r- Dados enviados: {lotes_enviados}/{total_lotes}', '\n' if lotes_enviados == total_lotes else '', end='')
             dict_envio = i
             hash_chaves = None
             if 'idIntegracao' in dict_envio:
@@ -79,11 +78,22 @@ def preparar_requisicao_sem_lote(lista_dados, *args, **kwargs):
             }
             headers = {'authorization': f'bearer {kwargs.get("token")}', 'content-type': 'application/json'}
             # print('json', json_envio)
-            retorno_req = requests.post(url, headers=headers, data=json_envio)
+            if method == 'post':
+                retorno_req = requests.post(url, headers=headers, data=json_envio)
+            elif method == 'patch':
+                retorno_req = requests.patch(url, headers=headers, data=json_envio)
             # print('response', retorno_req.content)
             # print('retorno_req', retorno_req, retorno_req.text)
+            # print('retorno_req.ok', retorno_req.ok)
+            # print('retorno_req.status_code', retorno_req.status_code)
             if retorno_req.ok:
-                retorno_requisicao['id_gerado'] = int(retorno_req.text)
+                if retorno_req.status_code == 204:
+                    if method == 'patch':
+                        retorno_requisicao['id_gerado'] = dict_envio['id']
+                elif retorno_req.status_code == 201:
+                    retorno_requisicao['id_gerado'] = int(retorno_req.json()['id'])
+                else:
+                    retorno_requisicao['id_gerado'] = int(retorno_req.text)
                 # lista_retorno.append(retorno_requisicao)
             else:
                 retorno_json = retorno_req.json()
@@ -95,7 +105,7 @@ def preparar_requisicao_sem_lote(lista_dados, *args, **kwargs):
             lista_retorno.append(retorno_requisicao)
         # print(f'- Envio finalizado. {total_erros} registro(s) retornaram inconsistência.')
     except Exception as error:
-        print(f'Erro durante a execução da função preparar_requisicao. {error}')
+        print(f'Erro durante a execução da função preparar_requisicao_sem_lote. {error}')
     finally:
         return lista_retorno
 

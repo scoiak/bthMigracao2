@@ -7,9 +7,11 @@ import math
 from datetime import datetime
 
 sistema = 305
-tipo_registro = 'processo-sessao-ata'
-url = 'https://compras.betha.cloud/compras-services/api/exercicios/{exercicio}/processos-administrativo/{processoAdministrativoId}/sessao-julgamento/{idSessao}/atas'
+tipo_registro = 'processo-revogacao'
+url = 'https://compras.betha.cloud/compras-services/api/exercicios/{exercicio}/processos-administrativo/{processoAdministrativoId}/atos-finais'
 
+# Define responsável padrao caso o SQL nao encontre um registro
+id_responsavel_padrao = 5461912
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
     # E - Realiza a consulta dos dados que serão enviados
@@ -89,42 +91,37 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         contador += 1
         print(f'\r- Enviando registros: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
         hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['clicodigo'], item['ano_processo'],
-                                              item['nro_processo'], item['separador'], item['sequencial'])
+                                              item['nro_processo'])
         url_parametrizada = url.replace('{exercicio}', str(item['ano_processo']))\
-                               .replace('{processoAdministrativoId}', str(item['id_processo']))\
-                               .replace('{idSessao}', str(item['id_sessao']))
+                               .replace('{processoAdministrativoId}', str(item['id_processo']))
         dict_dados = {
             'idIntegracao': hash_chaves,
             'url': url_parametrizada,
-            'processoAdministrativo': {
+            'processoAdm': {
                 'id': item['id_processo']
             },
-            'sessaoJulgamento': {
-                'id': item['id_sessao']
+            'responsavel': {
+                'id': id_responsavel_padrao if item['id_responsavel'] == 0 else item['id_responsavel']
             },
-            'tipoAta': {
-                'id': item['tipo_ata']
+            'tipo': {
+                'valor': item['tipo']
             },
-            'sequencial': item['sequencial'],
-            'nroAta': item['nro_ata'],
-            'anoAta': item['ano_ata'],
-            'textoAta': item['texto_ata']
+            'data': item['data_ato_afinal'],
+            'observacao': item['observacoes']
         }
 
-        # print(f'Dados gerados ({contador}): ', dict_dados)
+        print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Sessão do Processo',
+            'descricao_tipo_registro': 'Cadastro de Revogação Processo',
             'id_gerado': None,
             'json': json.dumps(dict_dados),
             'i_chave_dsk1': item['clicodigo'],
             'i_chave_dsk2': item['ano_processo'],
-            'i_chave_dsk3': item['nro_processo'],
-            'i_chave_dsk4': item['separador'],
-            'i_chave_dsk5': item['sequencial'],
+            'i_chave_dsk3': item['nro_processo']
         })
 
         if True:

@@ -18,8 +18,8 @@ from (
 		false as previsao_subcontratacao,
 		p.pcsano as parametro_exercicio,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'parametro-exercicio', p.pcsano))) as id_parametro_exercicio,
-		l.loccodigo as local_entrega,
-		coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'local-entrega', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'entidade', p.clicodigo))), l.loccodigo))), 0) as id_local_entrega,
+		p.loccodigo as local_entrega,
+		coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'local-entrega', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'entidade', p.clicodigo))), p.loccodigo))), 0) as id_local_entrega,
 		m.mintipoobjeto as tipo_objeto,
 		(case  -- Regra para garantir que RP seja sempre Compras e Serviços, caso contrário retornará erro na forma de contratação
 			when (m.mintipoconcorrencia = 2 and m.mintipoobjeto not in (1, 2)) then 10 -- 10: Compras e Servicos
@@ -63,13 +63,12 @@ from (
 	from wco.tbminuta m
 	left join wco.tbprocesso p on (p.clicodigo = m.clicodigo and p.pcsano = m.pcsano and p.pcsnro = m.pcsnro)
 	left join wco.tblicitacao lic on (lic.clicodigo = m.clicodigo and lic.minano = m.minano and lic.minnro = m.minnro)
-	left join wco.tblocalentminuta l on (l.clicodigo = m.clicodigo and l.minano = m.minano and l.minnro = m.minnro)
 	left join wco.tbedital e on (e.clicodigo = m.clicodigo and e.minnro = m.minnro and e.minano = m.minano)
 	where m.clicodigo = {{clicodigo}}
 	and m.minano >= {{ano}}
-	and m.minnro = 80
+	and m.minnro not in  (35, 41, 65, 81, 88, 90, 92, 99, 100)
 	order by 1, 2 desc, 3 desc
 ) tab
 where id_gerado is null
 and id_parametro_exercicio is not null
-limit 1
+--limit 1

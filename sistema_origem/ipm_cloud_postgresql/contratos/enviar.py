@@ -8,10 +8,8 @@ def iniciar():
     print(':: Iniciando migração do sistema Compras/Contratos')
     params_exec = {
         'clicodigo': '2016',
-        'ano': 2015,
+        'ano': 2020,
         'somente_pre_validar': False,
-        'token': '55d73a4b-cc32-4da2-9734-854b28f50196' #ignoreline base de teste
-        # 'token': 'b8ddcd70-e359-4814-bdfb-6aff6f02522d' #oficial:Município de Biguaçu
     }
     mensagem_inicio(params_exec)
     interacao_cloud.verifica_token(params_exec['token'])
@@ -55,6 +53,7 @@ def iniciar():
     # enviar(params_exec, 'solicitacao')
     # enviar(params_exec, 'solicitacao-item')
     # enviar(params_exec, 'solicitacao-despesa')
+    # enviar(params_exec, 'solicitacao-atualiza-status')
     # enviar(params_exec, 'tipo-sessao-julgamento')
     # enviar(params_exec, 'natureza-juridica')
     # enviar(params_exec, 'fundamento-legal')
@@ -78,14 +77,25 @@ def iniciar():
     # enviar(params_exec, 'processo-participante')
     # enviar(params_exec, 'processo-participante-documento')
     # enviar(params_exec, 'processo-participante-proposta')
+    # enviar(params_exec, 'processo-proposta-pendente')
     # enviar(params_exec, 'processo-sessao-ata')
+    enviar(params_exec, 'processo-representante')
     # enviar(params_exec, 'processo-interposicao')
-    enviar(params_exec, 'processo-ato-final')
-
-    # enviar(params_exec, 'processo-proposta-pendente') # !!! Usar individualmente no processo
+    # enviar(params_exec, 'processo-ato-final')
+    # enviar(params_exec, 'processo-revogacao')
+    # enviar(params_exec, 'processo-item-configuracao')
+    # enviar(params_exec, 'ata-rp')
+    # enviar(params_exec, 'ata-rp-item')
 
     # Envio Contratos
-
+    # enviar(params_exec, 'tipo-aditivo')
+    # enviar(params_exec, 'tipo-administracao')
+    # enviar(params_exec, 'tipo-sancao')
+    # enviar(params_exec, 'tipo-responsavel-contrato')
+    # enviar(params_exec, 'compra-direta')
+    # enviar(params_exec, 'compra-direta-item')
+    # enviar(params_exec, 'compra-direta-despesa')
+    # enviar(params_exec, 'contratacao')
 
 def enviar(params_exec, tipo_registro, *args, **kwargs):
     print(f'\n:: Iniciando execução do assunto {tipo_registro}')

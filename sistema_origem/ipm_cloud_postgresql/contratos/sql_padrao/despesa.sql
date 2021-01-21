@@ -16,7 +16,8 @@ from (
 		dot.tsfcodigo as subfuncao,
 		dot.pgrcodigo as programa,
 		right('0000' || dot.acocodigo, 4) as acao,
-		left(dot.plncodigo::text, 14) as natureza,
+		left(substring(dot.plncodigo::text, 2, length(dot.plncodigo::text)), 14) as natureza,
+		left(dot.plncodigo::text, 14) as natureza_original,
 		dot.vincodigo::text as recurso_ipm,
 		concat(
 			'0',
@@ -38,7 +39,8 @@ from (
 			/* funcao 		*/ '.', right('00' || dot.tfccodigo, 2),
 			/* subfuncao	*/ '.', right('000' || dot.tsfcodigo, 3),
 			/* programa		*/ '.', right('0000' || dot.pgrcodigo, 4),
-			/* natureza		*/ '.', (left(dot.plncodigo::text, 1) || '.' || substring(dot.plncodigo::text, 2, 1) || '.' || substring(dot.plncodigo::text, 3, 2) || '.00.00'),
+			/* acao			*/ '.', right('0000' || dot.acocodigo, 4),
+			/* natureza		*/ '.', (substring(dot.plncodigo::text, 2, 1) || '.' || substring(dot.plncodigo::text, 3, 2) || '.00.00'),
 			/* recurso		*/ '/', (concat('0', substring(dot.vincodigo::text, 1, 1), substring(dot.vincodigo::text, 2, 2), substring(dot.vincodigo::text, 5, 2),substring(dot.vincodigo::text, 7, 4)))
 		) as mascara,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'despesa', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'entidade', dot.clicodigo))), dot.loaano, dot.dotcodigo))) as id_gerado
@@ -52,4 +54,4 @@ from (
 where id_gerado is null
 and id_entidade is not null
 and id_exercicio is not null
-limit 10
+--limit 2

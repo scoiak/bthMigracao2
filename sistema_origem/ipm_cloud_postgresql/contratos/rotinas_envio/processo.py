@@ -11,7 +11,7 @@ tipo_registro = 'processo'
 url = 'https://compras.betha.cloud/compras-services/api/exercicios/{exercicio}/processos-administrativo'
 
 # Seta valor padrão para
-id_local_entrega_padrao = 13803
+id_local_entrega_padrao = 14011
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):

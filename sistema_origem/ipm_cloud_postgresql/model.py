@@ -217,7 +217,7 @@ def insere_tabela_controle_migracao_registro(params_exec, lista_req):
         try:
             # Converte os dicts de dados em tuples
             for item in lista_req:
-                # print('item', item)
+                # print('item', type(item), item)
                 values = (
                     item.get('sistema'),
                     item.get('tipo_registro'),

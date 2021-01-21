@@ -13,7 +13,8 @@ from (
 	    'INDIVIDUAL' as tipo_participacao,
 	    (case
 	    	when e.edtdatacredenc is not null then concat(e.edtdatacredenc, ' 00:00:00')
-	    	else concat(e.edtdataaberprop, ' ', coalesce(edthoraaberprop, '00:00:00'))
+	    	when e.edtdataaberprop is not null then concat(e.edtdataaberprop, ' ', coalesce(edthoraaberprop, '00:00:00'))
+	    	else concat(pr.pcsdataproc, ' 00:00:00')
 	    end) as dh_credenciamento,
 	    p.prlhabilitacao,
 	    (case p.prlhabilitacao when 1 then 'HABILITADO' when 2 then 'INABILITADO' when 3 then 'INABILITADO' else 'NAO_ANALISADO' end) as situacao_documentacao,
@@ -33,7 +34,8 @@ from (
 	left join wco.tbminuta m on (m.clicodigo = p.clicodigo and m.minano = p.minano and m.minnro = p.minnro)
 	left join wco.tbprocesso pr on (pr.clicodigo = p.clicodigo and pr.pcsano = p.minano and pr.pcsnro = p.minnro)
 	natural join wun.tbunico u
-	where p.clicodigo = 2016--{{clicodigo}}
+	where p.clicodigo = {{clicodigo}}
+    and p.minano = {{ano}}
 	and pr.modcodigo <> 1
 	order by 1, 2 desc, 3 desc
 ) tab

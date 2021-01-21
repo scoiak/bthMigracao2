@@ -4,12 +4,14 @@ select
 	'processo-entidade-item' as tipo_registro,
 	'@' as separador,
 	*,
-	(tab.qtd_distribuida + (case when tab.qtd_diferenca < 0 then 0 else tab.qtd_diferenca end)) as qtd_final
+	(case
+		when (tab.qtd_distribuida + (case when tab.qtd_diferenca < 0 then 0 else tab.qtd_diferenca end)) >  qtd_total_item then qtd_total_item
+		else (tab.qtd_distribuida + (case when tab.qtd_diferenca < 0 then 0 else tab.qtd_diferenca end))
+	end) as qtd_final
 from (
 	select
 		d.*,
-		--(select ip.cmiqtde from wco.tbitemin ip where ip.clicodigo = d.clicodigomin and ip.minano = d.ano_processo and ip.minnro = d.nro_processo and coalesce(ip.lotcodigo, 0) = nro_lote and ip.cmiitem = numero_item_original) as qtd_total_item,
-		--(select sum(ir.ritqtdeutilizada) from wco.tbreqitemin ir where ir.clicodigomin = d.clicodigomin and ir.minano = d.ano_processo and ir.minnro = d.nro_processo and ir.cmiid = d.cmiid) as qtd_tota_requisitada,
+		(select ip.cmiqtde from wco.tbitemin ip where ip.clicodigo = d.clicodigomin and ip.minano = d.ano_processo and ip.minnro = d.nro_processo and coalesce(ip.lotcodigo, 0) = nro_lote and ip.cmiitem = numero_item_original) as qtd_total_item,
 		(case -- O saldo faltante das requisições é adicionado à distribuição da entidade do processo para fechar a quantidade prevista do item
 			when d.clicodigomin <> d.clicodigoreq then 0.0
 			else coalesce((select ip.cmiqtde from wco.tbitemin ip where ip.clicodigo = d.clicodigomin and ip.minano = d.ano_processo and ip.minnro = d.nro_processo and coalesce(ip.lotcodigo, 0) = nro_lote and ip.cmiitem = numero_item_original), 0) - coalesce((select sum(ir.ritqtdeutilizada) from wco.tbreqitemin ir where ir.clicodigomin = d.clicodigomin and ir.minano = d.ano_processo and ir.minnro = d.nro_processo and ir.cmiid = d.cmiid),0)
@@ -33,6 +35,7 @@ from (
 		from wco.tbreqitemin r
 		natural join wco.tbitemin i
 		where r.clicodigomin = {{clicodigo}}
+		and r.minano >= {{ano}}
 		and (select count(distinct clicodigoreq)
 			 from wco.tbreqprocesso ep
 			 where ep.clicodigoprc = r.clicodigomin
