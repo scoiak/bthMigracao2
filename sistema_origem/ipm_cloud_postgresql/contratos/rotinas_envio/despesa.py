@@ -24,7 +24,7 @@ def iniciar_processo_envio(params_exec, *args, **kwargs):
 
     # L - Realiza o envio dos dados validados
     if not params_exec.get('somente_pre_validar'):
-        pass #iniciar_envio(params_exec, dados_enviar, 'POST')
+        pass #  iniciar_envio(params_exec, dados_enviar, 'POST')
 
 
 def busca_dados_cloud(params_exec, dados_base):
@@ -32,17 +32,19 @@ def busca_dados_cloud(params_exec, dados_base):
     url_fonte_dados = 'https://compras.betha.cloud/compras/dados/api/despesas'
     campos = 'entidade(id), parametroExercicio(exercicio), recursoContabil(numero), organograma, funcao, subFuncao, ' \
              'programa, acao, natureza'
-    contador = 1
+    contador = 0
+    registros_inseridos = 0
     lista_dados = dados_base.to_dict('records')
     total_dados = len(lista_dados)
 
     for item in lista_dados:
+        contador += 1
         print(f'\r- Verificando registros: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
         criterio = f'entidade.id = {item["id_entidade"]} and parametroExercicio.exercicio = {item["loaano"]} and ' \
-                   f'organograma = {item["organograma"]} and funcao = {item["funcao"]} and subFuncao = ' \
+                   f'organograma = \'{item["organograma"]}\' and funcao = {item["funcao"]} and subFuncao = ' \
                    f'{item["subfuncao"]} and programa = {item["programa"]} and acao = \'{item["acao"]}\' and ' \
                    f'natureza = \'{item["natureza"]}\' and recursoContabil.numero = \'{item["recurso_bth"]}\''
-
+        # print('criterio', criterio)
         registro_cloud = interacao_cloud.busca_api_fonte_dados(params_exec, url=url_fonte_dados,
                                                                campos=campos, criterio=criterio)
 
@@ -53,14 +55,15 @@ def busca_dados_cloud(params_exec, dados_base):
                 'sistema': sistema,
                 'tipo_registro': tipo_registro,
                 'hash_chave_dsk': hash_chaves,
-                'descricao_tipo_registro': 'Cadastro de Especificação de Material',
+                'descricao_tipo_registro': 'Cadastro de Despesas',
                 'id_gerado': registro_cloud[0]['id'],
                 'i_chave_dsk1': item['id_entidade'],
                 'i_chave_dsk2': item['loaano'],
                 'i_chave_dsk3': item['dotcodigo']
             }
             model.insere_tabela_controle_migracao_registro(params_exec, lista_req=[registro_encontrado])
-        contador += 1
+            registros_inseridos += 1
+    print(f'Foram inseridos {registros_inseridos} registros na tabela de controle.')
 
 
 def coletar_dados(params_exec):

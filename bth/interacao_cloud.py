@@ -66,7 +66,6 @@ def preparar_requisicao_sem_lote(lista_dados, method='post', *args, **kwargs):
     try:
         for i in lista_dados:
             lotes_enviados += 1
-            # print(f'\r- Dados enviados: {lotes_enviados}/{total_lotes}', '\n' if lotes_enviados == total_lotes else '', end='')
             dict_envio = i
             hash_chaves = None
 
@@ -94,12 +93,15 @@ def preparar_requisicao_sem_lote(lista_dados, method='post', *args, **kwargs):
                 retorno_req = requests.patch(url, headers=headers, data=json_envio)
 
             # print('response', retorno_req.content)
-
             # print('retorno_req', retorno_req, retorno_req.text)
+            # print('retorno_req.ok', retorno_req.ok)
+            # print('retorno_req.status_code', retorno_req.status_code)
             if retorno_req.ok:
                 if retorno_req.status_code == 204:
                     if method == 'patch':
                         retorno_requisicao['id_gerado'] = dict_envio['id']
+                elif retorno_req.status_code == 201:
+                    retorno_requisicao['id_gerado'] = int(retorno_req.json()['id'])
                 else:
                     retorno_requisicao['id_gerado'] = int(retorno_req.text)
                 # lista_retorno.append(retorno_requisicao)
@@ -116,7 +118,7 @@ def preparar_requisicao_sem_lote(lista_dados, method='post', *args, **kwargs):
         # print(f'- Envio finalizado. {total_erros} registro(s) retornaram inconsistência.')
 
     except Exception as error:
-        print(f'Erro durante a execução da função preparar_requisicao. {error}')
+        print(f'Erro durante a execução da função preparar_requisicao_sem_lote. {error}')
     finally:
         return lista_retorno
 

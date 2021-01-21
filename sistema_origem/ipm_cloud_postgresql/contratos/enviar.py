@@ -7,7 +7,7 @@ from datetime import datetime
 def iniciar():
     print(':: Iniciando migração do sistema Compras/Contratos')
     params_exec = {
-        'clicodigo': '13482',
+        'clicodigo': '2016',
         'ano': 2020,
         'somente_pre_validar': False,
     }
@@ -79,6 +79,7 @@ def iniciar():
     # enviar(params_exec, 'processo-participante-proposta')
     # enviar(params_exec, 'processo-proposta-pendente')
     # enviar(params_exec, 'processo-sessao-ata')
+    enviar(params_exec, 'processo-representante')
     # enviar(params_exec, 'processo-interposicao')
     # enviar(params_exec, 'processo-ato-final')
     # enviar(params_exec, 'processo-revogacao')

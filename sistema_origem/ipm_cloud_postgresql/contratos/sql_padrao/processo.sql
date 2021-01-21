@@ -66,9 +66,9 @@ from (
 	left join wco.tbedital e on (e.clicodigo = m.clicodigo and e.minnro = m.minnro and e.minano = m.minano)
 	where m.clicodigo = {{clicodigo}}
 	and m.minano >= {{ano}}
-	and m.minnro in (112)
+	and m.minnro not in  (35, 41, 65, 81, 88, 90, 92, 99, 100)
 	order by 1, 2 desc, 3 desc
 ) tab
 where id_gerado is null
 and id_parametro_exercicio is not null
-limit 1
+--limit 1
