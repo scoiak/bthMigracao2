@@ -1,6 +1,7 @@
 from datetime import datetime
 import logging
 
+
 BASE_ORIGEM = 'ipm_cloud_postgresql'
 SISTEMA_ORIGEM = 'folha'
 if False:

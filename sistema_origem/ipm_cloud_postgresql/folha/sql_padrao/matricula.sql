@@ -292,6 +292,9 @@ fc.odomesano = 202012
 order by fc.fcncodigo,fc.funcontrato
 --limit 1000 offset 0
 ) as s
+where pessoa = 934212
+
+
 where 
 (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'matricula', entidade, codigo, contrato))) is null and 
 pessoa is not null

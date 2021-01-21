@@ -7,48 +7,48 @@ from
 	wun.tbunico as u left join wun.tbunicofisica as uf on uf.unicodigo = u.unicodigo
 where
 	u.unitipopessoa = 1
-	and	u.unisituacao = 1
+	and	u.unisituacao = 1;
 
-select * from controle_migracao_registro cmr where tipo_registro = 'afastamento'
+select * from controle_migracao_registro cmr where tipo_registro = 'afastamento';
 
-select * from controle_migracao_registro cmr where tipo_registro = 'cargo'
+select * from controle_migracao_registro cmr where tipo_registro = 'cargo';
 
-select * from controle_migracao_registro cmr where tipo_registro = 'ato' and i_chave_dsk1 = '1/2010'
+select * from controle_migracao_registro cmr where tipo_registro = 'ato' and i_chave_dsk1 = '1/2010';
 
-select * from controle_migracao_registro cmr where tipo_registro = 'vinculo-empregaticio'
+select * from controle_migracao_registro cmr where tipo_registro = 'vinculo-empregaticio';
 
-select * from controle_migracao_registro cmr where tipo_registro = 'motivo-rescisao'
+select * from controle_migracao_registro cmr where tipo_registro = 'motivo-rescisao';
 
-select * from controle_migracao_registro cmr where tipo_registro = 'plano-previdencia' and i_chave_dsk2 = 'Plano de Previdência Federal'
+select * from controle_migracao_registro cmr where tipo_registro = 'plano-previdencia' and i_chave_dsk2 = 'Plano de Previdência Federal';
 
-select * from controle_migracao_registro cmr where tipo_registro = 'conta-bancaria'
+select * from controle_migracao_registro cmr where tipo_registro = 'conta-bancaria' and i_chave_dsk1 = '75794837934';
 
-select * from controle_migracao_registro cmr where tipo_registro = 'organograma' and i_chave_dsk1 like '%1990%'
+select * from controle_migracao_registro cmr where tipo_registro = 'organograma' and i_chave_dsk1 like '%1990%';
 
-select * from controle_migracao_registro cmr where tipo_registro = 'bairro' and i_chave_dsk1 like '%HUMAIT%'
+select * from controle_migracao_registro cmr where tipo_registro = 'bairro' and i_chave_dsk1 like '%HUMAIT%';
 
-select * from controle_migracao_registro cmr where tipo_registro = 'natureza-texto-juridico' and i_chave_dsk1 like '%HUMAIT%'
+select * from controle_migracao_registro cmr where tipo_registro = 'natureza-texto-juridico' and i_chave_dsk1 like '%HUMAIT%';
 
-select * from controle_migracao_registro cmr where tipo_registro = 'tipo-ato' and i_chave_dsk1 like '%LEI AUTORIZADORA%'
+select * from controle_migracao_registro cmr where tipo_registro = 'tipo-ato' and i_chave_dsk1 like '%LEI AUTORIZADORA%';
 
-select * from controle_migracao_registro cmr where tipo_registro = 'municipio' and id_gerado = 5271
+select * from controle_migracao_registro cmr where tipo_registro = 'municipio' and id_gerado = 5271;
 
 select tipo_registro as registro,data_hora_env ,data_hora_ret,(data_hora_ret  - data_hora_env) as totalRetorno, id_lote as lote from public.controle_migracao_lotes where length(id_lote) > 1 order by data_hora_env desc;
 
-SELECT * FROM wfp.tbfuncionario t 
+SELECT * FROM wfp.tbfuncionario t;
 
 select * from controle_migracao_lotes cml  order by data_hora_env desc;
-select * from controle_migracao_registro cmr where hash_chave_dsk = '410277bfd49c9a7a341820fc0cb94082'
-select * from wfp.tbrubricaautonomoplano
-select * from wfp.tbrubricaautonomo
-select * from wfp.tbgpsgcencusautonomo
+select * from controle_migracao_registro cmr where hash_chave_dsk = '410277bfd49c9a7a341820fc0cb94082';
+select * from wfp.tbrubricaautonomoplano;
+select * from wfp.tbrubricaautonomo;
+select * from wfp.tbgpsgcencusautonomo;
 
-select count(*) from controle_migracao_registro 
-select count(*) from controle_migracao_registro_ocor cmro 
+select count(*) from controle_migracao_registro;
+select count(*) from controle_migracao_registro_ocor cmro;
 
-select * from wfp.tbfuntransferencia where odomesano = 202010
+select * from wfp.tbfuntransferencia where odomesano = 202010;
 
-select * from wfp.tbpensaoalimenticia where fcncodigo = 7944 and odomesano = 202010
+select * from wfp.tbpensaoalimenticia where fcncodigo = 7944 and odomesano = 202010;
 
 select substring('202001',1,4) --aux.parmesanoinicio
 

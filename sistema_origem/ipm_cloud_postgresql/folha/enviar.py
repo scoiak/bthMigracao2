@@ -4,6 +4,7 @@ import settings
 import sistema_origem.ipm_cloud_postgresql.model as model
 import bth.interacao_cloud as interacao_cloud
 
+
 def iniciar():
     print(':: Iniciando migração do sistema Folha')
     params_exec = {
