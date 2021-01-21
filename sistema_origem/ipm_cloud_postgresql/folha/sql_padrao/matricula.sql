@@ -198,7 +198,8 @@ from (select
 	null as salarioComissionado,
 	null as nivelSalarialComissionado,
 	null as classeReferenciaComissionado,--35
-	(case when fc.funtipocontrato not in (2) then 'MENSALISTA' else null end)::varchar as unidadePagamento,			
+	(case when fc.funtipocontrato not in (2) then 'MENSALISTA' else null end)::varchar as unidadePagamento,
+	(select ucb.ifcnumeroconta from wun.tbunicocontabanco as ucb where ucb.unicodigo = fc.unicodigo and ucb.ifcsequencia = fc.ifcsequenciapaga) as aConta,
 	(case funformapagamento when 2 then (case when (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'conta-bancaria', (select left(regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g'),11) from wun.tbunico as u where u.unicodigo = fc.unicodigo), (select ucb.ifcnumeroconta from wun.tbunicocontabanco as ucb where ucb.unicodigo = fc.unicodigo and ucb.ifcsequencia = fc.ifcsequenciapaga)))) > 1 then 'CREDITO_EM_CONTA' else null end)  when 3 then 'DINHEIRO' when 4 then 'CHEQUE' else 'DINHEIRO' end) as formaPagamento,	
 	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'conta-bancaria', (select left(regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g'),11) from wun.tbunico as u where u.unicodigo = fc.unicodigo), (select ucb.ifcnumeroconta from wun.tbunicocontabanco as ucb where ucb.unicodigo = fc.unicodigo and ucb.ifcsequencia = fc.ifcsequenciapaga))))::varchar as contaBancariaPagamento,
 	(case when fc.funtipocontrato not in (0) then (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'configuracao-ferias',(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'entidade', 11968))), 1))) else null end)::varchar as configuracaoFerias,
@@ -292,9 +293,7 @@ fc.odomesano = 202012
 order by fc.fcncodigo,fc.funcontrato
 --limit 1000 offset 0
 ) as s
-where pessoa = 934212
-
-
+--where pessoa = 934212
 where 
 (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('300', 'matricula', entidade, codigo, contrato))) is null and 
 pessoa is not null
