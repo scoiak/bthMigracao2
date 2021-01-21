@@ -8,31 +8,26 @@ if False:
     DB_PORT = '7666'
     DB_NAME = 'biguacu'
     DB_USER = 'postgres'
-    DB_PW   = 'bethadba' #ignoreline
 if False:
     DB_HOST = '192.168.60.50'
     DB_PORT = '7666'
     DB_NAME = 'biguacu_nova'
     DB_USER = 'postgres'
-    DB_PW   = 'bethadba' #ignoreline
 if False:
     DB_HOST = 'localhost'
     DB_PORT = '5433'
     DB_NAME = 'ipm_bigua'
     DB_USER = 'postgres'
-    DB_PW   = 'admin' #ignoreline
 if False:
     DB_HOST = 'localhost'
     DB_PORT = '5432'
     DB_NAME = 'biguacu'
     DB_USER = 'postgres'
-    DB_PW   = 'bethadba' #ignoreline
 if True:
     DB_HOST = 'localhost'
     DB_PORT = '5432'
     DB_NAME = 'biguacu_camara'
     DB_USER = 'postgres'
-    DB_PW   = 'bethadba' #ignoreline
 
 def iniciar_migracao():
     start_logging()

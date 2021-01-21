@@ -10,14 +10,7 @@ def iniciar():
         'somente_pre_validar': False,                
         'enviar': True,
         'buscar': True,        
-        'atualizar': False,
-        # 'token': '72612895-9758-467d-a2ef-36b8b57c3198',  # PM - H - 1 #ignoreline
-        # 'token': '58924393-e014-43f4-9269-5646a39b127d',  # PM - H - 2 #ignoreline
-        # 'token': 'c52c4510-0a8f-468f-a501-1f68b32795c8',  # PM - H - 3 #ignoreline
-        # 'token': 'c420e8c5-bc8a-44c4-8b34-e46df7867a3e',  # PM - O #ignoreline
-        # 'token': '144e13ad-29ce-49b7-b9dc-7d95ee29b0f6',  # FAMABI - O #ignoreline
-        # 'token': '7a88626f-77a8-4b13-bec6-554191c18c9e',  # CM - H - 1 #ignoreline
-        'token': '86e6501b-59b7-4793-874c-bee84100e779',  # CM - O #ignoreline
+        'atualizar': False,        
         'ano': 2021,
         'entidade': 34 # idetificador 11968
     }
