@@ -76,7 +76,7 @@ def iniciar():
     # enviar(params_exec, 'configuracao-licenca-premio') # Implementar
     # enviar(params_exec, 'cargo')
     # enviar(params_exec, 'concurso')                            
-    enviar(params_exec, 'matricula')
+    # enviar(params_exec, 'matricula')
     # enviar(params_exec, 'servico-autonomo') # Implementar
     # enviar(params_exec, 'area-atuacao') # Implementar
     # enviar(params_exec, 'formacao') # Implementar
@@ -95,7 +95,7 @@ def iniciar():
     # enviar(params_exec, 'calculo-folha-ferias')
     # enviar(params_exec, 'calculo-folha-decimo-terceiro')
     # enviar(params_exec, 'calculo-folha-mensal')
-    # enviar(params_exec, 'folha')
+    enviar(params_exec, 'folha')
     # enviar(params_exec, 'configuracao-dirf') # Implementar
     # enviar(params_exec, 'mede-lotes')
     # winsound.PlaySound("SystemAsterisk", winsound.SND_ALIAS)
