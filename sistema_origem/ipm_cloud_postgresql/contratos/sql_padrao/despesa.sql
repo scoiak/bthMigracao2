@@ -10,7 +10,7 @@ from (
 		dot.loaano,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'parametro-exercicio', dot.loaano))) as id_exercicio,
 		dot.dotcodigo,
-		acao.acodescricao as descricao_despesa,
+		left(acao.acodescricao, 100)  as descricao_despesa,
 		concat(right('0' || dot.orgcodigo, 2), right('00' || dot.undcodigo , 3)) as organograma,
 		dot.tfccodigo as funcao,
 		dot.tsfcodigo as subfuncao,

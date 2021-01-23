@@ -13,7 +13,7 @@ from (
 		u.uninomerazao as nome_fornecedor,
 		concat((select m.mindata from wco.tbminuta m where m.clicodigo = p.clicodigo and m.minano = p.minano and m.minnro = p.minnro)::varchar, ' 00:00:00') as data_convite,
 		null as data_recebimento,
-		'N' as auto_convocacao,
+		false as auto_convocacao,
 		null as nro_protocolo,
 		null as observacao,
 		pr.modcodigo,
@@ -24,10 +24,11 @@ from (
 	inner join wun.tbunico u on (u.unicodigo = p.unicodigo)
 	left join wco.tbprocesso pr on (pr.clicodigo = p.clicodigo and pr.pcsano = p.minano and pr.pcsnro = p.minnro)
 	where p.clicodigo = {{clicodigo}}
+	and p.minano = {{ano}}
 	and pr.modcodigo = 1
 	order by 1, 2 desc, 3 desc
 ) tab
 where id_gerado is null
 and id_processo is not null
 and id_fornecedor is not null
-limit 10
+--limit 10

@@ -101,7 +101,8 @@ def preparar_requisicao_sem_lote(lista_dados, method='post', *args, **kwargs):
                     if method == 'patch':
                         retorno_requisicao['id_gerado'] = dict_envio['id']
                 elif retorno_req.status_code == 201:
-                    retorno_requisicao['id_gerado'] = int(retorno_req.json()['id'])
+                    retorno_requisicao['id_gerado'] = int(retorno_req.text)
+                    # retorno_requisicao['id_gerado'] = int(retorno_req.json()['id'])
                 else:
                     retorno_requisicao['id_gerado'] = int(retorno_req.text)
                 # lista_retorno.append(retorno_requisicao)

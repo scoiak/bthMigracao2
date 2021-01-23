@@ -17,14 +17,14 @@ def iniciar_processo_envio(params_exec, *args, **kwargs):
     busca_dados_cloud(params_exec, dados_verificar_cloud)
 
     # E - Realiza a consulta dos dados que serão enviados
-    # dados_assunto = coletar_dados(params_exec)
+    dados_assunto = coletar_dados(params_exec)
 
     # T - Realiza a pré-validação dos dados
-    # dados_enviar = pre_validar(params_exec, dados_assunto)
+    dados_enviar = pre_validar(params_exec, dados_assunto)
 
     # L - Realiza o envio dos dados validados
     if not params_exec.get('somente_pre_validar'):
-        pass #  iniciar_envio(params_exec, dados_enviar, 'POST')
+        iniciar_envio(params_exec, dados_enviar, 'POST')
 
 
 def busca_dados_cloud(params_exec, dados_base):
@@ -63,7 +63,7 @@ def busca_dados_cloud(params_exec, dados_base):
             }
             model.insere_tabela_controle_migracao_registro(params_exec, lista_req=[registro_encontrado])
             registros_inseridos += 1
-    print(f'Foram inseridos {registros_inseridos} registros na tabela de controle.')
+    print(f'- Foram inseridos {registros_inseridos} registros na tabela de controle.')
 
 
 def coletar_dados(params_exec):

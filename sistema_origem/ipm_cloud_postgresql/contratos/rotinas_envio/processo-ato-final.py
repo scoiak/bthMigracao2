@@ -11,7 +11,7 @@ tipo_registro = 'processo-ato-final'
 url = 'https://compras.betha.cloud/compras-services/api/exercicios/{exercicio}/processos-administrativo/{processoAdministrativoId}/atos-finais'
 
 # Define responsável padrao caso o SQL nao encontre um registro
-id_responsavel_padrao = 5461912
+id_responsavel_padrao = 5483713
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
     # E - Realiza a consulta dos dados que serão enviados
