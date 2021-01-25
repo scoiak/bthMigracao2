@@ -23,6 +23,7 @@ from (
 	 left join wco.tbprocesso p on (m.clicodigo = p.clicodigo and m.pcsano = p.pcsano and m.pcsnro = p.pcsnro)
 	 left join wco.tbedital   e on (e.clicodigo = p.clicodigo and e.minano = m.minano and e.minnro = m.minnro)
 	 where m.clicodigo = {{clicodigo}}
+	 and m.minano = {{ano}}
 	 order by 1, 2 desc, 3 desc
 ) tab
 where id_gerado is null

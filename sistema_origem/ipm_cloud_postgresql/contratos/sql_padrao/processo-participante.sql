@@ -37,6 +37,18 @@ from (
 	where p.clicodigo = {{clicodigo}}
     and p.minano = {{ano}}
 	and pr.modcodigo <> 1
+	and not exists (
+		select 1 from (
+			select distinct
+				i2.prdcodigo,
+				count(*) as qtd
+			from wco.tbitemin i2
+			where i2.clicodigo = p.clicodigo
+			and i2.minano = p.minano
+			and i2.minnro = p.minnro
+			group by 1
+		) aux where aux.qtd > 1 limit 1
+	)
 	order by 1, 2 desc, 3 desc
 ) tab
 where id_gerado is null

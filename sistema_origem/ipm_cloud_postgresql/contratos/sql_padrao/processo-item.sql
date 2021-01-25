@@ -29,7 +29,20 @@ from (
         (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo-item', i.clicodigo, i.minano, i.minnro, '@', 0, '@', i.cmiitem))) as id_gerado
      from wco.tbitemin i
 	 where i.clicodigo = {{clicodigo}}
+	 and i.minano = {{ano}}
 	 and i.lotcodigo is null
+	 and not exists ( -- Filtro para não enviar itens de processos com itens repetidos
+		select 1 from (
+			select distinct
+				i2.prdcodigo,
+				count(*) as qtd
+			from wco.tbitemin i2
+			where i2.clicodigo = i.clicodigo
+			and i2.minano = i.minano
+			and i2.minnro = i.minnro
+			group by 1
+	 	) aux where aux.qtd > 1 limit 1
+	 )
 	 order by 2, 3 desc, 4 desc, 5 asc, 6 asc)
 	 union all
 	 -- Processos 'por lote'
@@ -56,7 +69,20 @@ from (
         (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo-item', i.clicodigo, i.minano, i.minnro, '@', i.lotcodigo, '@', i.cmiitem))) as id_gerado
      from wco.tbitemin i
 	 where i.clicodigo = {{clicodigo}}
+	 and i.minano = {{ano}}
 	 and i.lotcodigo is not null
+	 and not exists (
+		select 1 from ( -- Filtro para não enviar itens de processos com itens repetidos
+			select distinct
+				i2.prdcodigo,
+				count(*) as qtd
+			from wco.tbitemin i2
+			where i2.clicodigo = i.clicodigo
+			and i2.minano = i.minano
+			and i2.minnro = i.minnro
+			group by 1
+	 	) aux where aux.qtd > 1 limit 1
+	 )
 	 order by 2, 3 desc, 4 desc, 5 asc, 6 asc)
 ) tab
 where id_gerado is null

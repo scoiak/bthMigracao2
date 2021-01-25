@@ -12,6 +12,7 @@ url = 'https://compras.betha.cloud/compras-services/api/exercicios/{exercicio}/p
 
 # Seta valor padrão para
 id_local_entrega_padrao = 14011
+id_prazo_entrega_padrao = 28046
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
@@ -113,7 +114,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                 'id': item['id_forma_julgamento']
             },
             'prazoEntrega': {
-                'id': item['id_prazo_entrega']
+                'id': (id_prazo_entrega_padrao if item['id_prazo_entrega'] == 0 else item['id_prazo_entrega'])
             },
             'formaPagamento': {
                 'id': item['id_forma_pagamento']

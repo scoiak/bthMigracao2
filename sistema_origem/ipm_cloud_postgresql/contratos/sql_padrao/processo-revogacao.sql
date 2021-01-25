@@ -18,6 +18,8 @@ from (
 	from wco.tblicitacao l
 	inner join wco.tbminuta m on (m.clicodigo = l.clicodigo and m.minano = l.clicodigo and m.minnro = l.minnro)
 	where l.licdataanulacao is not null
+	and l.clicodigo = {{clicodigo}}
+	and l.minano = {{ano}}
 	order by 1, 2 desc, 3 desc
 ) tab
 where id_gerado is null
