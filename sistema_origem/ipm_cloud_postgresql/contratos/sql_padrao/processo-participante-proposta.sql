@@ -35,7 +35,7 @@ from (
 	where qcp.clicodigo = {{clicodigo}}
 	and qcp.minano >= {{ano}}
 	--and qcp.minnro = 7
-	and qcp.minnro not in (35, 41, 65, 81, 88, 90, 92, 99, 100)
+	--and qcp.minnro not in (35, 41, 65, 81, 88, 90, 92, 99, 100)
 	order by 1, 2 desc, 3 desc, 4 asc
 ) tab
 where id_gerado is null

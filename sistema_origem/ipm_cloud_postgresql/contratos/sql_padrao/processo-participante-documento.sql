@@ -4,7 +4,7 @@ select
 	'processo-participante-documento' as tipo_registro,
 	*
 from (
-	select
+	select distinct
 		dl.clicodigo,
 		dl.minano as ano_processo,
 		dl.minnro as nro_processo,
@@ -25,6 +25,7 @@ from (
 	left join wco.tbdocfor df on df.unicodigo = dl.unicodigo and df.doccodigo = dl.doccodigo and df.dofsequencia = dl.dofsequencia
 	inner join wun.tbunico u on (u.unicodigo = dl.unicodigo)
 	where dl.clicodigo = {{clicodigo}}
+	and dl.minano = {{ano}}
 	order by 1, 2 desc, 3 desc, 4
 ) tab
 where id_gerado is null

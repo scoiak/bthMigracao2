@@ -22,6 +22,7 @@ from (
 	from wco.tbinterp i
 	inner join wun.tbunico u on (u.unicodigo = i.unicodigo)
 	where i.clicodigo = {{clicodigo}}
+	and i.minano = {{ano}}
 	order by 1, 2 desc, 3 desc, 4
 ) tab
 where id_gerado is null

@@ -82,7 +82,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         print(f'\r- Enviando registros: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
         hash_chaves = model.gerar_hash_chaves(sistema,  tipo_registro, item['clicodigo'], item['ano_ata'],
                                               item['nro_ata'], item['unicodigo'], item['cmiid'])
-        url_parametrizada = url.replace('{exercicio}', str(item['ano_processo'])) \
+        url_parametrizada = url.replace('{exercicio}', str(item['ano_ata'])) \
                                .replace('{processoAdministrativoId}', str(item['id_processo'])) \
                                .replace('{ataRegistroPrecoId}', str(item['id_ata']))
 

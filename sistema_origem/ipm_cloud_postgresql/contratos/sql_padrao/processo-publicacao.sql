@@ -22,6 +22,7 @@ from (
 	from wco.tbpublico p
 	inner join wun.tbveiculopublic v on (v.vpucodigo = p.vpucodigo)
 	where p.clicodigo = {{clicodigo}}
+	and p.minano = {{ano}}
 	order by 1, 2 desc, 3 desc, 4
 ) tab
 where id_gerado is null
