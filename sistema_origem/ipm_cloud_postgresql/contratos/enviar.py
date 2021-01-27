@@ -7,8 +7,8 @@ from datetime import datetime
 def iniciar():
     print(':: Iniciando migração do sistema Compras/Contratos')
     params_exec = {
-        'clicodigo': '2016',
-        'ano': 2019,
+        'clicodigo': '13482',
+        'ano': 2020,
         'somente_pre_validar': False,
     }
     mensagem_inicio(params_exec)
@@ -67,7 +67,7 @@ def iniciar():
     # enviar(params_exec, 'processo-entidade')
     # enviar(params_exec, 'processo-despesa')
     # enviar(params_exec, 'processo-item')
-    # enviar(params_exec, 'processo-lote')
+    # enviar(params_exec, 'processo-lote') ## É necessário realizar o reenvio dos processos 8/2020, 68/2020 e 79/2020
     # enviar(params_exec, 'processo-lote-item')
     # # enviar(params_exec, 'processo-entidade-item')
     # enviar(params_exec, 'processo-convidado')
@@ -78,13 +78,13 @@ def iniciar():
     # enviar(params_exec, 'processo-participante-documento')
     # enviar(params_exec, 'processo-participante-proposta')
     # enviar(params_exec, 'processo-proposta-pendente')
-    # enviar(params_exec, 'processo-sessao-ata')
+    enviar(params_exec, 'processo-sessao-ata')
     # enviar(params_exec, 'processo-representante')
-    # enviar(params_exec, 'processo-interposicao')
-    # enviar(params_exec, 'processo-ato-final')
-    # enviar(params_exec, 'processo-revogacao')
+    enviar(params_exec, 'processo-interposicao')
+    enviar(params_exec, 'processo-ato-final')
+    enviar(params_exec, 'processo-revogacao')
     # enviar(params_exec, 'processo-item-configuracao')
-    enviar(params_exec, 'ata-rp')
+    # enviar(params_exec, 'ata-rp')
     # enviar(params_exec, 'ata-rp-item')
 
     # Envio Contratos
