@@ -90,3 +90,4 @@ and id_processo is not null
 and id_material is not null
 and id_material_especificacao is not null
 order by clicodigo, ano_processo desc, nro_processo desc, numero_item asc
+--limit 1

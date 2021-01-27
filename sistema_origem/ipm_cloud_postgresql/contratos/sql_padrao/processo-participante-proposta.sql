@@ -16,7 +16,7 @@ from (
 		left(mc.mardescricao, 20) as marca,
 		qcp.qcpvencedor,
 		p.modcodigo,
-		(case when (p.modcodigo = 7 and qcp.qcpposicao = 1) then 'VENCEU' when qcp.qcpvencedor = 1 then 'VENCEU' else 'PERDEU' end) as situacao,
+		(case when (p.modcodigo = 7 and qcp.qcpposicao = 1) then 'VENCEU' when qcp.qcpposicao = 1 then 'VENCEU' else 'PERDEU' end) as situacao,
 		(case
 			when (p.modcodigo = 6 and qcp.qcpvencedor = 0 and qcp.qcpposicao = 1) then 2
 			when qcp.qcpvencedor = 1 then 1

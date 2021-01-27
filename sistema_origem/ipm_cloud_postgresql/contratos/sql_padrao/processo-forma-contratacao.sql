@@ -44,8 +44,8 @@ from (
 		(case when m.mintipoconcorrencia = 2 then true else false end) as registro_preco,
 		(case when m.mintipoconcorrencia = 2 then true else false end) as possui_rp,
 		null as data_autorizacao_rp,
-        (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo', p.clicodigo, p.pcsano, p.pcsnro))) as id_processo,
-		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo-forma-contratacao', p.clicodigo, p.pcsano, p.pcsnro))) as id_gerado
+        (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo', p.clicodigo, m.minano, m.minnro))) as id_processo,
+		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo-forma-contratacao', p.clicodigo, m.minano, m.minnro))) as id_gerado
 	from wco.tbminuta m
 	left join wco.tbprocesso p          on (p.clicodigo = m.clicodigo and p.pcsano = m.pcsano and p.pcsnro = m.pcsnro)
 	left join wco.tblicitacao lic       on (lic.clicodigo = m.clicodigo and lic.minano = m.minano and lic.minnro = m.minnro)
@@ -57,4 +57,4 @@ from (
 where id_gerado is null
 and id_processo is not null
 --and id_responsavel is not null
---limit 10
+--limit 1

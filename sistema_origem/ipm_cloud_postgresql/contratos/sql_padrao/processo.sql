@@ -59,7 +59,7 @@ from (
         false as beneficia_mpe_locais,
         false as indica_percent_cota_reservada,
         25 as percent_cota_reservada,
-		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo', p.clicodigo, p.pcsano, p.pcsnro))) as id_gerado
+		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo', m.clicodigo, m.minano, m.minnro))) as id_gerado
 	from wco.tbminuta m
 	left join wco.tbprocesso p on (p.clicodigo = m.clicodigo and p.pcsano = m.pcsano and p.pcsnro = m.pcsnro)
 	left join wco.tblicitacao lic on (lic.clicodigo = m.clicodigo and lic.minano = m.minano and lic.minnro = m.minnro)
