@@ -93,7 +93,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         contador += 1
         print(f'\r- Enviando registros: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
         hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['clicodigo'],
-                                              item['ano_processo'], item['nro_processo'])
+                                              item['ano_minuta'], item['nro_minuta'])
         url_parametrizada = url.replace('{exercicio}', str(item['ano_processo']))\
                                .replace('{processoAdministrativoId}', str(item['id_processo']))
         dict_dados = {
@@ -157,8 +157,8 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'id_gerado': None,
             'json': json.dumps(dict_dados),
             'i_chave_dsk1': item['clicodigo'],
-            'i_chave_dsk2': item['ano_processo'],
-            'i_chave_dsk3': item['nro_processo']
+            'i_chave_dsk2': item['ano_minuta'],
+            'i_chave_dsk3': item['nro_minuta']
         })
 
         if True:

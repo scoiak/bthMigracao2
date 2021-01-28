@@ -2,17 +2,21 @@ select
 	row_number() over() as id,
 	'305' as sistema,
 	'processos-forma-contratacao' as tipo_registro,
+	concat(nro_minuta, '/', ano_minuta) as minuta_formatado,
 	concat(nro_processo, '/', ano_processo) as proc_formatado,
+	concat(nro_sequencial, '/', ano_sequencial) as lic_formatado,
 	*
 from (
 	select
 		p.clicodigo,
-		m.minano as ano_processo,
-		m.minnro as nro_processo,
-		p.pcsano as parametro_exercicio,
-		m.minano as ano_sequencial,
-		m.minnro as nro_sequencial,
+		m.minano as ano_minuta,
+		m.minnro as nro_minuta,
+		m.pcsano as ano_processo,
+		m.pcsnro as nro_processo,
+		coalesce(lic.licano, m.minano) as ano_sequencial,
+		coalesce(lic.licnro, m.minnro) as nro_sequencial,
 		p.modcodigo,
+		p.pcsano as parametro_exercicio,
 		(case when p.modcodigo in (7, 8) then 'CONTRATACAO_DIRETA' else 'LICITACAO' end) as forma_contratacao,
 		'CLASSIFICA' as desc_prop_invalida,
 		'CLASSIFICA' as desc_prop_invalida_lote,
@@ -56,5 +60,5 @@ from (
 ) tab
 where id_gerado is null
 and id_processo is not null
---and id_responsavel is not null
+and id_responsavel is not null
 --limit 1
