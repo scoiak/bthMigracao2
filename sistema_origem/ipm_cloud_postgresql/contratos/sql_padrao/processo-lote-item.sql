@@ -16,7 +16,8 @@ from (
 	    (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo-item', i.clicodigo, i.minano, i.minnro, '@', i.lotcodigo, '@', i.cmiitem))) as id_item,
 	    (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo-lote-item', i.clicodigo, i.minano, i.minnro, '@', i.lotcodigo, '@', i.cmiitem))) as id_gerado
 	 from wco.tbitemin i
-	 where i.clicodigo = 2016
+	 where i.clicodigo = {{clicodigo}}
+	 and i.minano = {{ano}}
 	 and i.lotcodigo is not null
 	 order by 1, 2 desc, 3 desc, 4 asc, 5 asc
 ) tab

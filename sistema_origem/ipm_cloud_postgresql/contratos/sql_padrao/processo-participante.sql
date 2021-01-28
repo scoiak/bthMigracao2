@@ -32,11 +32,11 @@ from (
 	from wco.tbparlic p
 	left join wco.tbedital e on (e.clicodigo = p.clicodigo and e.minano = p.minano and e.minnro = p.minnro)
 	left join wco.tbminuta m on (m.clicodigo = p.clicodigo and m.minano = p.minano and m.minnro = p.minnro)
-	left join wco.tbprocesso pr on (pr.clicodigo = p.clicodigo and pr.pcsano = p.minano and pr.pcsnro = p.minnro)
+	left join wco.tbprocesso pr on (pr.clicodigo = p.clicodigo and pr.pcsano = m.pcsano and pr.pcsnro = m.pcsnro)
 	natural join wun.tbunico u
 	where p.clicodigo = {{clicodigo}}
     and p.minano = {{ano}}
-	and pr.modcodigo <> 1
+	--and pr.modcodigo <> 1
 	and not exists (
 		select 1 from (
 			select distinct

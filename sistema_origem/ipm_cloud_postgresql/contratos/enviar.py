@@ -8,7 +8,7 @@ def iniciar():
     print(':: Iniciando migração do sistema Compras/Contratos')
     params_exec = {
         'clicodigo': '11968',
-        'ano': 2020,
+        'ano': 2018,
         'somente_pre_validar': False,
     }
     mensagem_inicio(params_exec)
@@ -23,10 +23,10 @@ def iniciar():
     # enviar(params_exec, 'parametro-exercicio')
     # enviar(params_exec, 'parametro-exercicio-compras')
     # enviar(params_exec, 'forma-julgamento')
+    # enviar(params_exec, 'unidade-medida')
     # enviar(params_exec, 'grupo')
     # enviar(params_exec, 'classe')
-    # enviar(params_exec, 'unidade-medida')
-    enviar(params_exec, 'material')
+    # enviar(params_exec, 'material')
     # enviar(params_exec, 'material-especificacao')
     # enviar(params_exec, 'tipo-objeto')
     # enviar(params_exec, 'regime-execucao')
@@ -81,7 +81,7 @@ def iniciar():
     # enviar(params_exec, 'processo-sessao-ata')
     # enviar(params_exec, 'processo-representante')
     # enviar(params_exec, 'processo-interposicao')
-    # nviar(params_exec, 'processo-ato-final')
+    # enviar(params_exec, 'processo-ato-final')
     # enviar(params_exec, 'processo-revogacao')
     # enviar(params_exec, 'processo-item-configuracao')
     # enviar(params_exec, 'ata-rp')
