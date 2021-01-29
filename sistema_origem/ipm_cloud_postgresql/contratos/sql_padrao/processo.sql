@@ -2,14 +2,16 @@ select
 	row_number() over() as id,
 	'305' as sistema,
 	'processo' as tipo_registro,
-	concat(nr_processo, '/', ano_processo) as proc_formatado,
+	concat(nro_processo, '/', ano_processo) as proc_formatado,
 	concat(numero_protocolo, '/', ano_protocolo) as lic_formatado,
 	*
 from (
 	select
 		p.clicodigo,
-		m.minano as ano_processo,
-		m.minnro as nr_processo,
+		m.minano as ano_minuta,
+		m.minnro as nro_minuta,
+		m.pcsano as ano_processo,
+		m.pcsnro as nro_processo,
 		null as numero_protocolo,
 		null as ano_protocolo,
 		p.pcsdataproc::varchar as data_processo,
@@ -71,4 +73,4 @@ from (
 ) tab
 where id_gerado is null
 and id_parametro_exercicio is not null
---limit 1
+limit 4

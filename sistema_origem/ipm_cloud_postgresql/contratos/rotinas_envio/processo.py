@@ -95,8 +95,8 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         hash_chaves = model.gerar_hash_chaves(sistema,
                                               tipo_registro,
                                               item['clicodigo'],
-                                              item['ano_processo'],
-                                              item['nr_processo'])
+                                              item['ano_minuta'],
+                                              item['nro_minuta'])
         url_parametrizada = url.replace('{exercicio}', str(item['ano_processo']))
         dict_dados = {
             'idIntegracao': hash_chaves,
@@ -120,7 +120,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                 'id': item['id_forma_pagamento']
             },
             'dataProcesso': item['data_processo'],
-            'numeroProcesso': item['nr_processo'],
+            'numeroProcesso': item['nro_processo'],
             'numeroProtocolo': item['numero_protocolo'],
             'anoProtocolo': item['ano_protocolo'],
             'controleSaldo': {
@@ -151,8 +151,8 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'id_gerado': None,
             'json': json.dumps(dict_dados),
             'i_chave_dsk1': item['clicodigo'],
-            'i_chave_dsk2': item['ano_processo'],
-            'i_chave_dsk3': item['nr_processo']
+            'i_chave_dsk2': item['ano_minuta'],
+            'i_chave_dsk3': item['nro_minuta']
         })
 
         if True:

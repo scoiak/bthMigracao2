@@ -129,8 +129,8 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             dict_dados.update({'fundamentacaoLegal': {'id': item['id_fundamento_legal']}})
 
         if item['id_membro_comissao'] is not None and item['id_membro_comissao'] != 0:
-            dict_dados.update({'membroComissao': {'id': item['id_membro_comissao']}})
-            # dict_dados.update({'membroComissao': {'id': 53788}})
+            # dict_dados.update({'membroComissao': {'id': item['id_membro_comissao']}})
+            dict_dados.update({'membroComissao': {'id': 53788}})
 
         if item['registro_preco'] is not None:
             dict_dados.update({'registroPreco':  item['registro_preco']})
