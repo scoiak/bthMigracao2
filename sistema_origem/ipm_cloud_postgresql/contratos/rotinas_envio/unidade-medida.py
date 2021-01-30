@@ -12,15 +12,49 @@ url = 'https://compras.betha.cloud/compras-services/api/unidades-medida'
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
+    # DE-PARA dados cadastrados cloud
+    dados_verificar_cloud = coletar_dados(params_exec)
+    busca_dados_cloud(params_exec, dados_verificar_cloud)
+
     # E - Realiza a consulta dos dados que serão enviados
-    dados_assunto = coletar_dados(params_exec)
+    # dados_assunto = coletar_dados(params_exec)
 
     # T - Realiza a pré-validação dos dados
-    dados_enviar = pre_validar(params_exec, dados_assunto)
+    # dados_enviar = pre_validar(params_exec, dados_assunto)
 
     # L - Realiza o envio dos dados validados
     if not params_exec.get('somente_pre_validar'):
-        iniciar_envio(params_exec, dados_enviar, 'POST')
+        pass # iniciar_envio(params_exec, dados_enviar, 'POST')
+
+
+def busca_dados_cloud(params_exec, dados_base):
+    print('- Iniciando busca de dados no cloud.')
+    url_fonte_dados = 'https://compras.betha.cloud/compras/dados/api/unidadesmedida'
+    campos = 'id, nome, simbolo'
+    contador = 0
+    registros_inseridos = 0
+    lista_dados = dados_base.to_dict('records')
+    total_dados = len(lista_dados)
+
+    for item in lista_dados:
+        contador += 1
+        print(f'\r- Verificando registros: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
+        criterio = f'nome = \'{item["descricao"]}\' or simbolo = \'{item["simbolo"]}\''
+        registro_cloud = interacao_cloud.busca_api_fonte_dados(params_exec, url=url_fonte_dados, campos=campos, criterio=criterio)
+
+        if registro_cloud is not None and len(registro_cloud) > 0:
+            hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item["cnicodigo"])
+            registro_encontrado = {
+                'sistema': sistema,
+                'tipo_registro': tipo_registro,
+                'hash_chave_dsk': hash_chaves,
+                'descricao_tipo_registro': 'Cadastro de Unidades de Medida',
+                'id_gerado': registro_cloud[0]['id'],
+                'i_chave_dsk1': item["cnicodigo"]
+            }
+            model.insere_tabela_controle_migracao_registro(params_exec, lista_req=[registro_encontrado])
+            registros_inseridos += 1
+    print(f'- Foram inseridos {registros_inseridos} registros na tabela de controle.')
 
 
 def coletar_dados(params_exec):
@@ -86,7 +120,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     for item in dados:
         contador += 1
         print(f'\r- Gerando JSON: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['chave_dsk1'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item["cnicodigo"])
         dict_dados = {
             'idIntegracao': hash_chaves,
             'simbolo': item['simbolo'],
@@ -108,7 +142,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'descricao_tipo_registro': 'Cadastro de Unidades de Medida',
             'id_gerado': None,
             'json': json.dumps(dict_dados),
-            'i_chave_dsk1': item['chave_dsk1']
+            'i_chave_dsk1': item["cnicodigo"]
         })
 
     if True:
