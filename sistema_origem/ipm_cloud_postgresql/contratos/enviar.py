@@ -7,8 +7,8 @@ from datetime import datetime
 def iniciar():
     print(':: Iniciando migração do sistema Compras/Contratos')
     params_exec = {
-        'clicodigo': '11968',
-        'ano': 2017,
+        'clicodigo': '13482',
+        'ano': 2020,
         'somente_pre_validar': False,
     }
     mensagem_inicio(params_exec)
@@ -61,31 +61,31 @@ def iniciar():
     # enviar(params_exec, 'fornecedor')
     # enviar(params_exec, 'comissao')
     # enviar(params_exec, 'comissao-membros')
-    enviar(params_exec, 'processo')
-    enviar(params_exec, 'processo-forma-contratacao')
-    enviar(params_exec, 'processo-documento')
-    enviar(params_exec, 'processo-entidade')
-    enviar(params_exec, 'processo-despesa')
-    enviar(params_exec, 'processo-item')
-    enviar(params_exec, 'processo-lote')
-    enviar(params_exec, 'processo-lote-item')
+    # enviar(params_exec, 'processo')
+    # enviar(params_exec, 'processo-forma-contratacao')
+    # enviar(params_exec, 'processo-documento')
+    # enviar(params_exec, 'processo-entidade')
+    # enviar(params_exec, 'processo-despesa')
+    # enviar(params_exec, 'processo-item')
+    # enviar(params_exec, 'processo-lote')
+    # enviar(params_exec, 'processo-lote-item')
     # # # enviar(params_exec, 'processo-entidade-item')k
-    enviar(params_exec, 'processo-convidado')
-    enviar(params_exec, 'processo-publicacao')
-    enviar(params_exec, 'processo-impugnacao')
-    enviar(params_exec, 'processo-sessao')
-    enviar(params_exec, 'processo-participante')
-    enviar(params_exec, 'processo-participante-documento')
-    enviar(params_exec, 'processo-participante-proposta')
-    enviar(params_exec, 'processo-proposta-pendente')
-    enviar(params_exec, 'processo-sessao-ata')
-    enviar(params_exec, 'processo-representante')
-    enviar(params_exec, 'processo-interposicao')
-    enviar(params_exec, 'processo-ato-final')
-    enviar(params_exec, 'processo-revogacao')
-    enviar(params_exec, 'processo-item-configuracao')
-    enviar(params_exec, 'ata-rp')
-    enviar(params_exec, 'ata-rp-item')
+    # enviar(params_exec, 'processo-convidado')
+    # enviar(params_exec, 'processo-publicacao')
+    # enviar(params_exec, 'processo-impugnacao')
+    # enviar(params_exec, 'processo-sessao')
+    # enviar(params_exec, 'processo-participante')
+    # enviar(params_exec, 'processo-participante-documento')
+    # enviar(params_exec, 'processo-participante-proposta')
+    # enviar(params_exec, 'processo-proposta-pendente')
+    # enviar(params_exec, 'processo-sessao-ata')
+    # enviar(params_exec, 'processo-representante')
+    # enviar(params_exec, 'processo-interposicao')
+    # enviar(params_exec, 'processo-ato-final')
+    # enviar(params_exec, 'processo-revogacao')
+    # enviar(params_exec, 'processo-item-configuracao')
+    # enviar(params_exec, 'ata-rp')
+    # enviar(params_exec, 'ata-rp-item')
 
     # Envio Contratos
     # enviar(params_exec, 'tipo-aditivo')
@@ -95,7 +95,8 @@ def iniciar():
     # enviar(params_exec, 'compra-direta')
     # enviar(params_exec, 'compra-direta-item')
     # enviar(params_exec, 'compra-direta-despesa')
-    # enviar(params_exec, 'contratacao')
+    enviar(params_exec, 'contratacao')
+    # enviar(params_exec, 'contratacao-aditivo')
 
 
 def enviar(params_exec, tipo_registro, *args, **kwargs):

@@ -20,11 +20,14 @@ from (
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'compra-direta-item', ic.clicodigo, ic.copano, ic.copnro, ic.itcitem))) as id_gerado
 	from wco.tbitemcompra ic
 	where ic.clicodigo = {{clicodigo}}
-	and ic.copano >= {{ano}}
+	and ic.copano = {{ano}}
+	--and ic.copnro = 1502
+	and ic.minano is null
+	and ic.minnro is null
 	order by 1, 2 desc, 3 desc
 ) tab
 where id_gerado is null
 and id_contratacao is not null
 and id_material is not null
 and id_especificacao is not null
---limit 1
+--limit 10

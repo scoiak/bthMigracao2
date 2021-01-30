@@ -22,7 +22,7 @@ from (
 		   when 13 then 'Apostila'
 		   when 14 then 'Prorrogação'
 		   else 'Cessão' end) as descricao,
-	    (case ctrtipoaditivo
+	   (case ctrtipoaditivo
 	      when 1 then 'OUTRAS_CLAUSULAS'
 		   when 2 then 'OUTRAS_CLAUSULAS'
 		   when 3 then 'PRAZO'

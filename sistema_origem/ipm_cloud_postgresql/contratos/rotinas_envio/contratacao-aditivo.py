@@ -7,8 +7,8 @@ import math
 from datetime import datetime
 
 sistema = 305
-tipo_registro = 'contratacao'
-url = 'https://contratos.betha.cloud/contratacao-services/api/exercicios/{exercicio}/contratacoes'
+tipo_registro = 'contratacao-aditivo'
+url = 'https://contratos.betha.cloud/contratacao-services/api/exercicios/{exercicio}/contratacoes/{contratacaoId}/contratacoes-aditivos'
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
@@ -88,73 +88,41 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         lista_controle_migracao = []
         contador += 1
         print(f'\r- Enviando registros: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['clicodigo'], item['ano_contrato'], item['nro_contrato'])
-        url_parametrizada = url.replace('{exercicio}', str(item['ano_termo']))
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['clicodigo'], item['ano_aditivo'], item['nro_aditivo'])
+        url_parametrizada = url.replace('{exercicio}', str(item['ano_termo'])).replace('{contratacaoId}', str(item['id_contrato']))
         dict_dados = {
             'idIntegracao': hash_chaves,
             'url': url_parametrizada,
             'sequencial': item['nro_contrato'],
-            'entidade': {
-                'id': item['id_entidade']
+            'contratacao': {
+                'id': item['id_contrato']
             },
-            'tipoInstrumento': {
-                'id': item['id_tipo_instrumento']
+            'tipoAditivo': {
+                'id': item['id_tipo_aditivo']
             },
-            'tipoObjeto': {
-                'id': item['id_tipo_objeto']
-            },
-            'processoAdministrativo': {
-              'entidade': {
-                  'id': item['id_entidade']
-              },
-              'numero': item['nro_processo'],
-              'ano': item['ano_processo']
-            },
-            'numeroTermo': item['nro_contrato'],
-            'ano': item['ano_contrato'],
-            'objetoContratacao': item['objeto'],
-            'tipoControleSaldo': {
-                'valor': item['tipo_controle_saldo']
-            },
-            'fornecedor': {
-                'id': item['id_fornecedor']
-            },
-            'dataAssinatura': item['dt_assinatura'],
-            'dataInicioVigencia': item['dt_inicio_vigencia'],
-            'dataFimVigencia': item['dt_fim_vigencia'],
-            'origem': {
-                'valor': item['origem']
-            },
-            'observacao': item['observacao'],
-            "situacao": {
-                "valor": item['situacao']
-            }
+            'objeto': item['objeto'],
+            'dataAditivo': item['data_aditivo'],
+            'dataFinalNova': item['data_final_nova'],
+            'continua': item['continua'],
+            'reforma': item['reforma'],
+            'valorAditivo': item['valor_aditivo'],
         }
-
-        if item['valor_original'] != 0.0:
-            dict_dados.update({'valorOriginal': item['valor_original']})
-
-        if item['id_ata'] != 0:
-            dict_dados.update({'ataRegistroPrecoContrato': {'id': int(item['id_ata'])}})
-
-        if item['id_fundamentacao_legal'] != 0:
-            dict_dados.update({'fundamentacaoLegal': {'id': int(item['id_fundamentacao_legal'])}})
-
+        print('Envio desativado. Falta  homologar!!!')
         print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Compras Diretas',
+            'descricao_tipo_registro': 'Cadastro de Aditivos de Contratos',
             'id_gerado': None,
             'json': json.dumps(dict_dados),
             'i_chave_dsk1': item['clicodigo'],
-            'i_chave_dsk2': item['ano_contrato'],
-            'i_chave_dsk3': item['nro_contrato']
+            'i_chave_dsk2': item['ano_aditivo'],
+            'i_chave_dsk3': item['nro_aditivo']
         })
 
-        if True:
+        if False:
             model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)
             req_res = interacao_cloud\
                 .preparar_requisicao_sem_lote(
