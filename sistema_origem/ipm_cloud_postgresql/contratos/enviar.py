@@ -99,7 +99,8 @@ def iniciar():
     # enviar(params_exec, 'contratacao')
     # enviar(params_exec, 'contratacao-item')
     # enviar(params_exec, 'contratacao-aditivo')
-    enviar(params_exec, 'contratacao-arp')
+    # enviar(params_exec, 'contratacao-arp')
+    enviar(params_exec, 'contratacao-arp-item')
 
 
 def enviar(params_exec, tipo_registro, *args, **kwargs):
