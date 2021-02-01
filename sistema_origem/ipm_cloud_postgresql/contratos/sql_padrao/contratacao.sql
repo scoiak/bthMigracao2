@@ -25,7 +25,10 @@ from (
 		c.ctrdataassinatura::varchar as dt_assinatura,
 		c.ctrdatainivig::varchar as dt_inicio_vigencia,
 		c.ctrdatavencto::varchar as dt_fim_vigencia,
-		c.ctrvalor as valor_original,
+		(case
+			when c.ctrvalor <> 0 then c.ctrvalor
+			else (select sum(v.qcpvlrtotal) from wco.vw_qcp_vencedor v where v.clicodigo = c.clicodigo and v.minano = c.minano and v.minnro = c.minnro and v.unicodigo = c.unicodigo)
+		end) as valor_original,
 		coalesce((select true from wco.tbcontratocoronavirus cv where cv.clicodigo = c.clicodigo and cv.ctrano = c.ctrano and cv.ctridentificador = c.ctridentificador limit 1), false) as coronavirus,
 		'PROCESSO_ADMINISTRATIVO' as origem,
 		concat('Contratação ', c.ctridentificador, '/', c.ctrano, ' (', c.ctrnro, ')') as observacao,

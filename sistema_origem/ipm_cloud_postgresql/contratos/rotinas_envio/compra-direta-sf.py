@@ -7,8 +7,12 @@ import math
 from datetime import datetime
 
 sistema = 305
-tipo_registro = 'contratacao-arp-item'
-url = 'https://contratos.betha.cloud/contratacao-services/api/exercicios/{exercicio}/contratacoes/{contratacaoId}/itens'
+tipo_registro = 'compra-direta-sf'
+url = 'https://contratos.betha.cloud/contratacao-services/api/exercicios/{exercicio}/contratacoes/{contratacaoId}/solicitacoes'
+
+# Seta valor padrão para
+id_local_entrega_padrao = 14011
+id_prazo_entrega_padrao = 28046
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
@@ -88,9 +92,8 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         lista_controle_migracao = []
         contador += 1
         print(f'\r- Enviando registros: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['clicodigo'], item['arpano'],
-                                              item['separador'], item['arpsequencia'], item['separador'], item['cmiid'])
-        url_parametrizada = url.replace('{exercicio}', str(item['minano']))\
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['clicodigo'], item['ano_sf'], item['nro_sf'])
+        url_parametrizada = url.replace('{exercicio}', str(item['ano_sf']))\
                                .replace('{contratacaoId}', str(item['id_contratacao']))
         dict_dados = {
             'idIntegracao': hash_chaves,
@@ -98,20 +101,22 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'contratacao': {
                 'id': item['id_contratacao']
             },
-            'material': {
-                'id': item['id_material']
+            'organograma': {
+                'id': item['id_organograma']
             },
-            'especificacao': {
-                'id': item['id_especificacao']
+            'prazoEntrega': {
+                'id': id_prazo_entrega_padrao if item['id_prazo_entrega'] == 0 else item['id_prazo_entrega']
             },
-            'itemPropostaParticipante': {
-                'id': item['id_proposta']
+            'localEntrega': {
+                'id': id_local_entrega_padrao if item['id_local_entrega'] == 0 else item['id_local_entrega']
             },
-            'itemAtaRegistroPreco': {
-                'id': item['id_item_ata']
+            'fornecedor': {
+                'id': item['id_fornecedor']
             },
-            'quantidade': item['quantidade'],
-            'valorUnitarioPercentual': item['valor_unitario']
+            'numero': item['nro_sf'],
+            'nomeSolicitante': item['solicitante'],
+            'data': item['data_sf'],
+            'observacao': item['observacao']
         }
 
         print(f'Dados gerados ({contador}): ', dict_dados)
@@ -120,16 +125,12 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Itens de Contratações ARP',
+            'descricao_tipo_registro': 'Cadastro de SF de Compras Diretas',
             'id_gerado': None,
             'json': json.dumps(dict_dados),
             'i_chave_dsk1': item['clicodigo'],
-            'i_chave_dsk2': item['arpano'],
-            'i_chave_dsk3': item['arpnro'],
-            'i_chave_dsk4': item['separador'],
-            'i_chave_dsk5': item['arpsequencia'],
-            'i_chave_dsk6': item['separador'],
-            'i_chave_dsk7': item['cmiid'],
+            'i_chave_dsk2': item['ano_sf'],
+            'i_chave_dsk3': item['nro_sf'],
         })
 
         if True:
