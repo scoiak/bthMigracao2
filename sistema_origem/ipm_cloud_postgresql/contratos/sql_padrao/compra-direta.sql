@@ -12,7 +12,7 @@ from (
 		c.copnro as nro_termo,
 		c.copnro as sequencial,
 		c.copdataemissao::varchar as data_assinatura,
-		left(c.cophistorico, 500) as objeto,
+		left(coalesce(c.cophistorico, c.copfinalidade), 500) as objeto,
 		(select sum(icd.itcvlrtotal) from  wco.tbitemcompra icd where icd.clicodigo = c.clicodigo and icd.copano = c.copano and icd.copnro = c.copnro) as valor_original,
 		'SEM_PROCESSO' as origem,
 		true as fornecimento_imediato,
@@ -27,8 +27,9 @@ from (
 		u.unicpfcnpj,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'fornecedor', (regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g'))))) as id_fornecedor,
 		c.copcondpgto,
-		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'forma-pagamento', coalesce(upper(unaccent(trim(c.copcondpgto))), 'Conforme Edital'))))  as id_forma_pagamento,
-		--3222 as id_forma_pagamento, -- 30 DIAS APOS A LIQ DA NOTA FISCAL
+		coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'forma-pagamento', upper(unaccent(trim(c.copcondpgto)))))),
+				 (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'forma-pagamento', 'Conforme Edital')))
+		) as id_forma_pagamento,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'compra-direta', c.clicodigo, c.copano, c.copnro))) as id_gerado
 	from wco.tbcompra c
 	inner join wun.tbunico u on (u.unicodigo = c.unicodigo)
@@ -43,4 +44,4 @@ and id_exercicio is not null
 and id_entidade is not null
 and id_fornecedor is not null
 and id_forma_pagamento is not null
---limit 1
+--limit 5

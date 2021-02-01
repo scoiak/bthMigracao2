@@ -48,10 +48,12 @@ from (
 	and c.ctrtipoaditivo is null
 	and c.minano is not null
 	and c.minnro is not null
-	and c.ctridentificador in (231, 208)
+	--and c.ctridentificador in (231, 208)
 	order by 1, 2 desc, 3 desc
 ) tab
 where id_gerado is null
 and id_entidade is not null
 and id_processo is not null
 and id_fornecedor is not null
+and instrumento = 'PROCESSO'
+--limit 5

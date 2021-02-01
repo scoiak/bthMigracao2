@@ -9,7 +9,7 @@ from (
 		c.copano as ano_cd,
 		c.copnro as nro_cd,
 		c.dotcodigo,
-		trunc((select sum(icd.itcvlrtotal) from  wco.tbitemcompra icd where icd.clicodigo = c.clicodigo and icd.copano = c.copano and icd.copnro = c.copnro), 2) as valor_estimado,
+		coalesce(trunc((select sum(icd.itcvlrtotal) from  wco.tbitemcompra icd where icd.clicodigo = c.clicodigo and icd.copano = c.copano and icd.copnro = c.copnro), 2), 0.01) as valor_estimado,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'parametro-exercicio', c.copano))) as id_exercicio,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'despesa', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'entidade', c.clicodigo))), c.copano, c.dotcodigo))) as id_despesa,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'compra-direta', c.clicodigo, c.copano, c.copnro))) as id_contratacao,

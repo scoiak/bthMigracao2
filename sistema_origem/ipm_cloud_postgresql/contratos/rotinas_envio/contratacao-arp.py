@@ -7,7 +7,7 @@ import math
 from datetime import datetime
 
 sistema = 305
-tipo_registro = 'contratacao'
+tipo_registro = 'contratacao-arp'
 url = 'https://contratos.betha.cloud/contratacao-services/api/exercicios/{exercicio}/contratacoes'
 
 
@@ -88,12 +88,14 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         lista_controle_migracao = []
         contador += 1
         print(f'\r- Enviando registros: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['clicodigo'], item['ano_contrato'], item['nro_contrato'])
-        url_parametrizada = url.replace('{exercicio}', str(item['ano_termo']))
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro,
+                                              item['clicodigo'], item['ano_ata'],
+                                              item['nro_ata'], item['separador'], item['arpsequencia'])
+        url_parametrizada = url.replace('{exercicio}', str(item['ano_ata']))
         dict_dados = {
             'idIntegracao': hash_chaves,
             'url': url_parametrizada,
-            'sequencial': item['nro_contrato'],
+            'sequencial': item['sequencial'],
             'entidade': {
                 'id': item['id_entidade']
             },
@@ -110,8 +112,14 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
               'numero': item['nro_processo'],
               'ano': item['ano_processo']
             },
-            'numeroTermo': item['nro_contrato'],
-            'ano': item['ano_contrato'],
+            'fundamentacaoLegal': {
+                'id': item['id_fundamentacao_legal']
+            },
+            'ataRegistroPrecoContrato': {
+                'id': item['id_ata']
+            },
+            'numeroTermo': item['nro_ata'],
+            'ano': item['ano_ata'],
             'objetoContratacao': item['objeto'],
             'tipoControleSaldo': {
                 'valor': item['tipo_controle_saldo']
@@ -134,24 +142,20 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         if item['valor_original'] != 0.0:
             dict_dados.update({'valorOriginal': item['valor_original']})
 
-        if item['id_ata'] != 0:
-            dict_dados.update({'ataRegistroPrecoContrato': {'id': int(item['id_ata'])}})
-
-        if item['id_fundamentacao_legal'] != 0:
-            dict_dados.update({'fundamentacaoLegal': {'id': int(item['id_fundamentacao_legal'])}})
-
-        # print(f'Dados gerados ({contador}): ', dict_dados)
+        print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Contratações',
+            'descricao_tipo_registro': 'Cadastro de Contratações ARP',
             'id_gerado': None,
             'json': json.dumps(dict_dados),
             'i_chave_dsk1': item['clicodigo'],
-            'i_chave_dsk2': item['ano_contrato'],
-            'i_chave_dsk3': item['nro_contrato']
+            'i_chave_dsk2': item['ano_ata'],
+            'i_chave_dsk3': item['nro_ata'],
+            'i_chave_dsk4': item['separador'],
+            'i_chave_dsk5': item['arpsequencia']
         })
 
         if True:
