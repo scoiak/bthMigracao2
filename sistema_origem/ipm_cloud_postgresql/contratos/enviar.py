@@ -117,7 +117,8 @@ def iniciar():
     # Contratações - Atas de Registro de Preço
     # enviar(params_exec, 'contratacao-arp')
     # enviar(params_exec, 'contratacao-arp-item')
-    enviar(params_exec, 'contratacao-arp-sf')
+    # enviar(params_exec, 'contratacao-arp-sf')
+    enviar(params_exec, 'contratacao-arp-sf-item')
 
 
 def enviar(params_exec, tipo_registro, *args, **kwargs):

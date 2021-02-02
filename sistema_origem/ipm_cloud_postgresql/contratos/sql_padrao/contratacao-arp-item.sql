@@ -33,7 +33,8 @@ from (
 			sum(i.itcvlrunit) as valor_unitario,
 			sum(i.itcvlrtotal) as valor_total
 		from wco.tbitemcompra i
-		inner join wco.tbataregpreco a on (a.clicodigo = i.clicodigo and a.minano = i.minano and a.minnro = i.minnro)
+		inner join wco.tbcompra c on (c.clicodigo = i.clicodigo and c.minano = i.minano and c.minnro = i.minnro and c.copano = i.copano and c.copnro = i.copnro)
+		inner join wco.tbataregpreco a on (a.clicodigo = i.clicodigo and a.minano = i.minano and a.minnro = i.minnro and a.unicodigo = c.unicodigo)
 		where i.clicodigo = {{clicodigo}}
 		and i.minano = {{ano}}
 		and i.minnro = 98
