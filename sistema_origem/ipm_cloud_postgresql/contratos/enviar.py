@@ -16,7 +16,7 @@ def iniciar():
     interacao_cloud.verifica_token(params_exec['token'])
     verifica_tabelas_controle()
 
-    # Envio Compras
+    """ Envio Compras """
     # enviar(params_exec, 'configuracoes-organogramas')
     # enviar(params_exec, 'orgao')
     # enviar(params_exec, 'unidade')
@@ -51,6 +51,8 @@ def iniciar():
     # enviar(params_exec, 'ato')
     # enviar(params_exec, 'tipo-revogacao-anulacao')
     # enviar(params_exec, 'despesa')
+
+    # Solicitações de Compra
     # enviar(params_exec, 'solicitacao')
     # enviar(params_exec, 'solicitacao-item')
     # enviar(params_exec, 'solicitacao-despesa')
@@ -62,6 +64,8 @@ def iniciar():
     # enviar(params_exec, 'fornecedor')
     # enviar(params_exec, 'comissao')
     # enviar(params_exec, 'comissao-membros')
+
+    # Processos Administrativos
     # enviar(params_exec, 'processo')
     # enviar(params_exec, 'processo-forma-contratacao')
     # enviar(params_exec, 'processo-documento')
@@ -85,24 +89,35 @@ def iniciar():
     # enviar(params_exec, 'processo-ato-final')
     # enviar(params_exec, 'processo-revogacao')
     # enviar(params_exec, 'processo-item-configuracao')
+
+    # Atas de Registro de Preço
     # enviar(params_exec, 'ata-rp')
     # enviar(params_exec, 'ata-rp-item')
 
-    # Envio Contratos
+    """ Envio Contratos """
     # enviar(params_exec, 'tipo-aditivo')
     # enviar(params_exec, 'tipo-administracao')
     # enviar(params_exec, 'tipo-sancao')
     # enviar(params_exec, 'tipo-responsavel-contrato')
+
+    # Contratações - Compras Diretas
     # enviar(params_exec, 'compra-direta')
     # enviar(params_exec, 'compra-direta-item')
     # enviar(params_exec, 'compra-direta-despesa')
     # enviar(params_exec, 'compra-direta-sf')
-    enviar(params_exec, 'compra-direta-sf-item')
+    # enviar(params_exec, 'compra-direta-sf-item')
+
+    # Contratações - Processos Administrativos
     # enviar(params_exec, 'contratacao')
     # enviar(params_exec, 'contratacao-item')
-    # enviar(params_exec, 'contratacao-aditivo')
+    # enviar(params_exec, 'contratacao-aditivo') ## FINALIZAR
+    # enviar(params_exec, 'contratacao-sf')
+    # enviar(params_exec, 'contratacao-sf-item')
+
+    # Contratações - Atas de Registro de Preço
     # enviar(params_exec, 'contratacao-arp')
     # enviar(params_exec, 'contratacao-arp-item')
+    enviar(params_exec, 'contratacao-arp-sf')
 
 
 def enviar(params_exec, tipo_registro, *args, **kwargs):
