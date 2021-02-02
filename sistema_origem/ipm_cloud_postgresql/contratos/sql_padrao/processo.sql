@@ -73,4 +73,4 @@ from (
 ) tab
 where id_gerado is null
 and id_parametro_exercicio is not null
---limit 4
+--limit 1

@@ -29,7 +29,8 @@ from (
 	 from wco.tbataregpreco rp
 	 inner join wun.tbunico u on u.unicodigo = rp.unicodigo
 	 where rp.clicodigo = {{clicodigo}}
-	 and rp.arpano = {{ano}}
+	 and rp.minano = {{ano}}
+	 and rp.minnro = 160
 	 order by 1, 2 desc, 3 desc
 ) tab
 where id_gerado is null

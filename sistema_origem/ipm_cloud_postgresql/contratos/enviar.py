@@ -8,8 +8,9 @@ def iniciar():
     print(':: Iniciando migração do sistema Compras/Contratos')
     params_exec = {
         # 'clicodigo': '2016', # PM
-        'clicodigo': '13482', # SAUDE
-        'ano': 2020,
+        # 'clicodigo': '13482', # SAUDE
+        'clicodigo': '11968',  # CAMARA
+        'ano': 2016,
         'somente_pre_validar': False,
     }
     mensagem_inicio(params_exec)
@@ -88,9 +89,9 @@ def iniciar():
     # enviar(params_exec, 'processo-interposicao')
     # enviar(params_exec, 'processo-ato-final')
     # enviar(params_exec, 'processo-revogacao')
-    # enviar(params_exec, 'processo-item-configuracao')
 
     # Atas de Registro de Preço
+    # enviar(params_exec, 'processo-item-configuracao')
     # enviar(params_exec, 'ata-rp')
     # enviar(params_exec, 'ata-rp-item')
 

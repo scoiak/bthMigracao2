@@ -16,6 +16,7 @@ from (
 		coalesce(lic.licano, m.minano) as ano_sequencial,
 		coalesce(lic.licnro, m.minnro) as nro_sequencial,
 		p.modcodigo,
+		(select mo.moddescricao from wco.tbmodalidade mo where mo.modcodigo = p.modcodigo) as desc_modalidade,
 		p.pcsano as parametro_exercicio,
 		(case when p.modcodigo in (7, 8) then 'CONTRATACAO_DIRETA' else 'LICITACAO' end) as forma_contratacao,
 		'CLASSIFICA' as desc_prop_invalida,

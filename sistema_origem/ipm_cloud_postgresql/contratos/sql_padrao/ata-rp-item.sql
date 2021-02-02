@@ -29,14 +29,14 @@ from (
 	 	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'ata-rp-item', rp.clicodigo, rp.arpano, rp.arpnro, rp.unicodigo, qcp.cmiid))) as id_gerado
 	 from wco.tbataregpreco rp
 	 inner join wun.tbunico u on u.unicodigo = rp.unicodigo
-	 left join wco.tbcadqcp qcp on (qcp.clicodigo = rp.clicodigo
+	 left join wco.vw_qcp_vencedor qcp on (qcp.clicodigo = rp.clicodigo
 	 								and qcp.minano = rp.minano
 	 								and qcp.minnro = rp.minnro
-	 								and qcp.unicodigo = rp.unicodigo
-	 								and (qcp.qcpvencedor = 1 or qcp.qcpposicao = 1))
+	 								and qcp.unicodigo = rp.unicodigo)
 	 left join wco.tbitemin i on (i.clicodigo = rp.clicodigo and i.minano = rp.minano and i.minnro = rp.minnro and i.cmiid = qcp.cmiid)
 	 where rp.clicodigo = {{clicodigo}}
-	 and rp.arpano >= {{ano}}
+	 and rp.minano = {{ano}}
+	 and rp.minnro = 160
 	 order by 1, 2 desc, 3 desc
 ) tab
 where id_gerado is null
