@@ -89,11 +89,11 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         contador += 1
         print(f'\r- Enviando registros: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
         hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['clicodigo'], item['ano_aditivo'], item['nro_aditivo'])
-        url_parametrizada = url.replace('{exercicio}', str(item['ano_termo'])).replace('{contratacaoId}', str(item['id_contrato']))
+        url_parametrizada = url.replace('{exercicio}', str(item['ano_contrato']))\
+                               .replace('{contratacaoId}', str(item['id_contrato']))
         dict_dados = {
             'idIntegracao': hash_chaves,
             'url': url_parametrizada,
-            'sequencial': item['nro_contrato'],
             'contratacao': {
                 'id': item['id_contrato']
             },
@@ -101,13 +101,17 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                 'id': item['id_tipo_aditivo']
             },
             'objeto': item['objeto'],
-            'dataAditivo': item['data_aditivo'],
-            'dataFinalNova': item['data_final_nova'],
+            'dataAditivo': item['data_assinatura'],
             'continua': item['continua'],
             'reforma': item['reforma'],
-            'valorAditivo': item['valor_aditivo'],
         }
-        print('Envio desativado. Falta  homologar!!!')
+
+        if item['valor_aditivo'] != 0.0:
+            dict_dados.update({'valorAditivo': item['valor_aditivo']})
+
+        if item['data_final_nova'] is not None:
+            dict_dados.update({'dataFinalNova': item['data_final_nova']})
+
         print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
@@ -122,7 +126,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'i_chave_dsk3': item['nro_aditivo']
         })
 
-        if False:
+        if True:
             model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)
             req_res = interacao_cloud\
                 .preparar_requisicao_sem_lote(
