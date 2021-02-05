@@ -38,4 +38,4 @@ where id_gerado is null
 and id_contratacao is not null
 and id_organograma is not null
 and id_fornecedor is not null
-limit 1
+--limit 5

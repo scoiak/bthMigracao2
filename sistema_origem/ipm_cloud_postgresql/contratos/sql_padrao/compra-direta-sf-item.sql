@@ -13,7 +13,7 @@ from (
 		c.minnro as nro_minuta,
 		c.copano as ano_sf,
 		c.copnro as nro_sf,
-		c.cmiid,
+		c.itcitem,
 		c.itcqtde as quantidade,
 		c.itcvlrunit as valor_unitario,
 		c.itcvlrtotal as valor_total,
@@ -22,11 +22,11 @@ from (
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'compra-direta-item', c.clicodigo, c.copano, c.copnro, c.itcitem))) as id_contratacao_item,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'material', c.prdcodigo))) as id_material,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'material-especificacao', c.prdcodigo))) as id_especificacao,
-		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'compra-direta-sf-item', c.clicodigo, c.copano, c.copnro, '@', c.cmiid))) as id_gerado
+		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'compra-direta-sf-item', c.clicodigo, c.copano, c.copnro, '@', c.itcitem))) as id_gerado
 	from wco.tbitemcompra c
 	where c.clicodigo = {{clicodigo}}
 	and c.copano = {{ano}}
-	and c.copnro = 1502
+	--and c.copnro = 1402
 	and c.minano is null
 	and c.minnro is null
 ) tab
@@ -35,4 +35,4 @@ and id_solicitacao is not null
 and id_contratacao_item is not null
 and id_material is not null
 and id_especificacao is not null
-limit 1
+--limit 1
