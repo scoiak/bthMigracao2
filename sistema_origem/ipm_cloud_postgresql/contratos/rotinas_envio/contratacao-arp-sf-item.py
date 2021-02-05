@@ -139,7 +139,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'i_chave_dsk8': item['cmiid'],
         })
 
-        if False:
+        if True:
             model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)
             req_res = interacao_cloud\
                 .preparar_requisicao_sem_lote(

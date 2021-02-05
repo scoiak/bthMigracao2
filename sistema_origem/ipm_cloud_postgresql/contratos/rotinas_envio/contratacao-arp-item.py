@@ -3,6 +3,7 @@ import bth.interacao_cloud as interacao_cloud
 import json
 import logging
 import re
+import requests
 import math
 from datetime import datetime
 
@@ -74,6 +75,12 @@ def pre_validar(params_exec, dados):
         return dados_validados
 
 
+def atualiza_quantidade(params_exec, url_att, quantidade):
+    retorno_req = requests.patch(url_att,
+                                 headers={'authorization': f'bearer {params_exec["token"]}'},
+                                 data=json.dumps({'quantidade': quantidade}))
+
+
 def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     print('- Iniciando envio dos dados.')
     lista_controle_migracao = []
@@ -88,7 +95,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         lista_controle_migracao = []
         contador += 1
         print(f'\r- Enviando registros: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['clicodigo'], item['arpano'],
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['clicodigo'], item['arpano'], item['arpnro'],
                                               item['separador'], item['arpsequencia'], item['separador'], item['cmiid'])
         url_parametrizada = url.replace('{exercicio}', str(item['minano']))\
                                .replace('{contratacaoId}', str(item['id_contratacao']))
@@ -143,9 +150,9 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             model.atualiza_tabelas_controle_envio_sem_lote(params_exec, req_res, tipo_registro=tipo_registro)
             if req_res[0]['mensagem'] is not None:
                 total_erros += 1
+            else:
+                atualiza_quantidade(params_exec, f'{url_parametrizada}/{req_res[0]["id_gerado"]}', item['quantidade'])
     if total_erros > 0:
         print(f'- Envio finalizado. Foram encontrados um total de {total_erros} inconsistência(s) de envio.')
     else:
         print('- Envio de dados finalizado sem inconsistências.')
-
-

@@ -17,7 +17,7 @@ from (
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'ata-rp', aux.clicodigo, aux.arpano, aux.arpnro, aux.unicodigo))) as id_ata,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'ata-rp-item', aux.clicodigo, aux.arpano, aux.arpnro, aux.unicodigo, aux.cmiid))) as id_item_ata,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo-participante-proposta', aux.clicodigo, aux.minano, aux.minnro, (regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g')), aux.cmiid))) as id_proposta,
-		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'ata-rp', aux.clicodigo, aux.arpano, aux.arpnro, '@', aux.arpsequencia, '@', aux.cmiid))) as id_gerado
+		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'contratacao-arp-item', aux.clicodigo, aux.arpano, aux.arpnro, '@', aux.arpsequencia, '@', aux.cmiid))) as id_gerado
 	from (
 		select
 			i.clicodigo,
@@ -37,7 +37,9 @@ from (
 		inner join wco.tbataregpreco a on (a.clicodigo = i.clicodigo and a.minano = i.minano and a.minnro = i.minnro and a.unicodigo = c.unicodigo)
 		where i.clicodigo = {{clicodigo}}
 		and i.minano = {{ano}}
-		and i.minnro = 98
+		--and i.minnro = 98
+		and i.minnro = 93
+		and a.arpnro = 69
 		group by 1, 2, 3, 4, 5, 6, 7, 8
 		order by 1, 2 desc, 3 desc, 5, 7
 	) aux

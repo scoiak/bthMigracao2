@@ -36,6 +36,7 @@ from (
 	where c.clicodigo = {{clicodigo}}
 	and c.minano = {{ano}}
 	and c.minnro = 93
+	and a.arpnro = 69
 	and c.minano is not null
 	and c.minnro is not null
 	order by 1, 2 desc, 3 desc, 4 desc, 5 desc, 6 desc, 7 desc
@@ -44,4 +45,4 @@ where id_gerado is null
 and id_contratacao is not null
 and id_organograma is not null
 and id_fornecedor is not null
-limit 3
+--limit 1
