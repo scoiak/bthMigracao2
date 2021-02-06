@@ -7,12 +7,8 @@ import math
 from datetime import datetime
 
 sistema = 305
-tipo_registro = 'contratacao-sf'
-url = 'https://contratos.betha.cloud/contratacao-services/api/exercicios/{exercicio}/contratacoes/{contratacaoId}/solicitacoes'
-
-# Seta valor padrão para
-id_local_entrega_padrao = 14011
-id_prazo_entrega_padrao = 28046
+tipo_registro = 'contratacao-aditivo-item'
+url = 'https://contratos.betha.cloud/contratacao-services/api/exercicios/{exercicio}/contratacoes/{contratacaoId}/contratacoes-aditivos/{aditivoId}/aditivos-itens'
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
@@ -87,60 +83,44 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     contador = 0
     total_erros = 0
 
-    if params_exec['clicodigo'] == '2016':
-        id_organograma_padrao = 0
-    elif params_exec['clicodigo'] == '13482':
-        id_organograma_padrao = 376332
-
     for item in dados:
         lista_dados_enviar = []
         lista_controle_migracao = []
         contador += 1
         print(f'\r- Enviando registros: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
         hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['clicodigo'], item['ano_contrato'],
-                                              item['identificador_contrato'], item['separador'],
-                                              item['ano_sf'], item['nro_sf'])
-        url_parametrizada = url.replace('{exercicio}', str(item['ano_sf']))\
-                               .replace('{contratacaoId}', str(item['id_contratacao']))
+                                              item['nro_contrato'], item['separador'], item['cmiid'])
+        url_parametrizada = url.replace('{exercicio}', str(item['ano_contrato']))\
+                               .replace('{contratacaoId}', str(item['id_contratacao']))\
+                               .replace('{aditivoId}', str(item['id_aditivo']))
+
         dict_dados = {
             'idIntegracao': hash_chaves,
             'url': url_parametrizada,
-            'contratacao': {
-                'id': item['id_contratacao']
+            'aditivo': {
+                'id': item['id_aditivo']
             },
-            'organograma': {
-                'id': id_organograma_padrao if item['id_organograma'] == 0 else item['id_organograma']
+            'itemContrato': {
+                'id': item['id_contratacao_item']
             },
-            'prazoEntrega': {
-                'id': id_prazo_entrega_padrao if item['id_prazo_entrega'] == 0 else item['id_prazo_entrega']
-            },
-            'localEntrega': {
-                'id': id_local_entrega_padrao if item['id_local_entrega'] == 0 else item['id_local_entrega']
-            },
-            'fornecedor': {
-                'id': item['id_fornecedor']
-            },
-            'numero': item['nro_sf'],
-            'nomeSolicitante': item['solicitante'],
-            'data': item['data_sf'],
-            'observacao': item['observacao']
+            'quantidade': item['quantidade'],
+            'valorUnitario': item['valor_unitario']
         }
 
-        print(f'Dados gerados ({contador}): ', dict_dados)
+        # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de SF de Conratações',
+            'descricao_tipo_registro': 'Cadastro de Itens Aditivos de Contratos',
             'id_gerado': None,
             'json': json.dumps(dict_dados),
             'i_chave_dsk1': item['clicodigo'],
             'i_chave_dsk2': item['ano_contrato'],
-            'i_chave_dsk3': item['identificador_contrato'],
+            'i_chave_dsk3': item['nro_contrato'],
             'i_chave_dsk4': item['separador'],
-            'i_chave_dsk5': item['ano_sf'],
-            'i_chave_dsk6': item['nro_sf'],
+            'i_chave_dsk5': item['cmiid']
         })
 
         if True:

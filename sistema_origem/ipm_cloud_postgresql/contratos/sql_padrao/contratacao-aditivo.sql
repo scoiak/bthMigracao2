@@ -15,11 +15,7 @@ from (
 		(case when c.ctrtipoaditivo in (5, 7, 8, 14) then c.ctrdatafimvig::varchar else null end) data_final_nova,
 		c.ctrdataassinatura::varchar as data_assinatura,
 		c.adjsequencia,
-		(case
-			when c.ctrtipoaditivo not in (4, 5, 6, 7, 8) then c.ctrvalor
-			when c.ctrtipoaditivo in (4, 5, 6, 7, 8) and c.ctrvalor = 0 then (select sum(itcvlrtotal) from wco.tbitemcompra ic where ic.clicodigo = c.clicodigo and ic.minano = c.minano and ic.minnro = c.minnro and ic.adjsequencia = c.adjsequencia)
-			else c.ctrvalor
-		end) as valor_aditivo,
+		coalesce((select sum(auxci.itcvlrtotal) from wco.tbitemcompra auxci where md5(concat(auxci.clicodigo , '@', auxci.copano, '@', auxci.copnro)) in (select md5(concat(auxc.clicodigo , '@', copano, '@', copnro)) as hash from wco.tbcompra auxc where auxc.clicodigoctr = c.clicodigo and auxc.ctrano = c.ctrano and auxc.ctridentificador = c.ctridentificador)), 0) as valor_aditivo,
 		c.ctrano as ano_aditivo,
 		c.ctrnro as nro_aditivo,
 		c.ctridentificador as identificador_aditivo,
@@ -34,14 +30,13 @@ from (
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305,'tipo-aditivo', c.ctrtipoaditivo))) as id_tipo_aditivo,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'contratacao-aditivo', c.clicodigo, c.ctrano, c.ctrnro))) as id_gerado
 	from wco.tbcontrato c
-	where c.clicodigo = {{clicodigo}}
+	where c.clicodigoctl = {{clicodigo}}
 	and c.ctranosup = {{ano}}
 	and c.ctrtipoaditivo is not null
 	and c.ctrtipoaditivo <> 12
-	and c.ctridentsup = 51
+	and c.minnro = 1
 	order by 1, 2 desc, 3 desc, 4 asc
 ) tab
 where id_gerado is null
-and id_tipo_aditivo is not null
 and id_contrato is not null
---limit 1
+and id_tipo_aditivo is not null

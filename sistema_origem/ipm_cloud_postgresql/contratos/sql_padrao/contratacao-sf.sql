@@ -8,43 +8,82 @@ select
 	'@' as separador,
 	*
 from (
-	select
+	(select distinct
 		c.clicodigo,
 		c.minano as ano_minuta,
 		c.minnro as nro_minuta,
+		c.copdataemissao::varchar as data_sf,
+		'PRINCIPAL' as origem,
 		ct.ctrano as ano_contrato,
 		ct.ctrnro as nro_contrato,
 		ct.ctridentificador as identificador_contrato,
 		c.copano as ano_sf,
 		c.copnro as nro_sf,
-		c.copdataemissao::varchar as data_sf,
 		c.unicodigo,
-		concat(c.copfinalidade, c.cophistorico, ' (Migração: ', c.copnro, '/', c.copano, ').') as observacao,
+		concat(c.copfinalidade, c.cophistorico, ' (Migração: Compra ', c.copnro, '/', c.copano, ', Contrato ', ct.ctrnro, '/', ct.ctrano, ', Identificador ',  ct.ctridentificador, ', Minuta ', c.minnro, '/', c.minano, ').') as observacao,
+		(select sum(itcqtde) from wco.tbitemcompra ic where ic.clicodigo = c.clicodigo and ic.copano = c.copano and ic.copnro = c.copnro) as qtd_comprada,
+		coalesce((select sum(iec.iesqtde) from wco.tbitemcompraest iec where iec.clicodigo = c.clicodigo and iec.copano = c.copano and iec.copnro = c.copnro), 0) as qtd_estornada,
 		c.coplocalentrega,
 		c.cnccodigo,
 		cc.cncclassif as nro_ogranograma,
 		(select u.uninomerazao from wun.tbunico u where u.unicodigo = (select usr.unicodigo from webbased.tbusuario usr where usr.usucodigo = c.usucodigo)) as solicitante,
-		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'contratacao', c.clicodigo, ct.ctrano, ct.ctridentificador))) as id_contratacao,
-		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'centro-custo',c.copano, replace(cc.cncclassif,'.','')))) as id_organograma,
+		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'contratacao', ct.clicodigo, ct.ctrano, ct.ctridentificador))) as id_contratacao,
+		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'centro-custo', c.copano, replace(cc.cncclassif,'.','')))) as id_organograma,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'fornecedor', (regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g'))))) as id_fornecedor,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'entidade', c.clicodigo))), upper(unaccent(left(coalesce(trim(c.coppreventrega),'Imediata'), 50)))))) as id_prazo_entrega,
 		14011 as id_local_entrega,
-		md5(concat(305, 'contratacao-sf', c.clicodigo, ct.ctrano, ct.ctridentificador, '@', c.copano, c.copnro)) as hash,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'contratacao-sf', c.clicodigo, ct.ctrano, ct.ctridentificador, '@', c.copano, c.copnro))) as id_gerado
 	from wco.tbcompra c
-	inner join wco.tbcontrato ct on (ct.clicodigo = c.clicodigo and ct.minano = c.minano and ct.minnro = c.minnro and ct.unicodigo = c.unicodigo)
+	inner join wco.tbcontrato ct on (ct.clicodigo = c.clicodigoctr and ct.ctrano = c.ctrano and ct.ctridentificador = c.ctridentificador and ct.ctrtipoaditivo is null)
 	left join wun.tbcencus cc on (cc.organo = c.copano and cc.cnccodigo = c.cnccodigo)
 	left join wun.tbunico u on (u.unicodigo = c.unicodigo)
-	where c.clicodigo = {{clicodigo}}
+	where c.clicodigomin = {{clicodigo}}
 	and c.minano = {{ano}}
-	and c.minnro = 62
+	and c.minnro = 37
 	and c.minano is not null
 	and c.minnro is not null
-	and ct.ctrtipoaditivo is null -- Esse filtro faz com que não sejam enviadas solicitação vinculadas a aditivos
-	order by 1, 2 desc, 3 desc, 4 desc, 5 desc, 6 desc, 7 desc
+	--and c.copnro not in (select aux.copnro from wco.tbcompra aux where aux.clicodigoctr = c.clicodigomin and aux.minano = c.minano and aux.minnro = c.minnro)
+	order by 1, 2 desc, 3 desc, 4 asc, 5 desc, 6 desc, 7 desc)
+union all
+	(select distinct
+		c.clicodigo,
+		c.minano as ano_minuta,
+		c.minnro as nro_minuta,
+		c.copdataemissao::varchar as data_sf,
+		'ADITIVO' as origem,
+		ct.ctrano as ano_contrato,
+		ct.ctrnro as nro_contrato,
+		ct.ctridentificador as identificador_contrato,
+		c.copano as ano_sf,
+		c.copnro as nro_sf,
+		c.unicodigo,
+		concat(c.copfinalidade, c.cophistorico, ' (Migração: Compra ', c.copnro, '/', c.copano, ', Contrato ', ct.ctrnro, '/', ct.ctrano, ', Identificador ',  ct.ctridentificador, ', Minuta ', c.minnro, '/', c.minano, ').') as observacao,
+		(select sum(itcqtde) from wco.tbitemcompra ic where ic.clicodigo = c.clicodigo and ic.copano = c.copano and ic.copnro = c.copnro) as qtd_comprada,
+		coalesce((select sum(iec.iesqtde) from wco.tbitemcompraest iec where iec.clicodigo = c.clicodigo and iec.copano = c.copano and iec.copnro = c.copnro), 0) as qtd_estornada,
+		c.coplocalentrega,
+		c.cnccodigo,
+		cc.cncclassif as nro_ogranograma,
+		(select u.uninomerazao from wun.tbunico u where u.unicodigo = (select usr.unicodigo from webbased.tbusuario usr where usr.usucodigo = c.usucodigo)) as solicitante,
+		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'contratacao', coalesce(ct.clicodigosup, ct.clicodigo), coalesce(ct.ctranosup, ct.ctrano), coalesce(ct.ctridentsup, ct.ctridentificador)))) as id_contratacao,
+		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'centro-custo', c.copano, replace(cc.cncclassif,'.','')))) as id_organograma,
+		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'fornecedor', (regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g'))))) as id_fornecedor,
+		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'entidade', c.clicodigo))), upper(unaccent(left(coalesce(trim(c.coppreventrega),'Imediata'), 50)))))) as id_prazo_entrega,
+		14011 as id_local_entrega,
+		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'contratacao-sf', c.clicodigo, ct.ctrano, ct.ctridentificador, '@', c.copano, c.copnro))) as id_gerado
+	from wco.tbcompra c
+	inner join wco.tbcontrato ct on (ct.clicodigo = c.clicodigoctr and ct.ctrano = c.ctrano and ct.ctridentificador = c.ctridentificador and ct.ctrtipoaditivo is not null)
+	left join wun.tbcencus cc on (cc.organo = c.copano and cc.cnccodigo = c.cnccodigo)
+	left join wun.tbunico u on (u.unicodigo = c.unicodigo)
+	where c.clicodigomin = {{clicodigo}}
+	and c.minano = {{ano}}
+	and c.minnro = 37
+	and c.minano is not null
+	and c.minnro is not null
+	--and c.copnro not in (select aux.copnro from wco.tbcompra aux where aux.clicodigoctr = c.clicodigomin and aux.minano = c.minano and aux.minnro = c.minnro)
+	order by 1, 2 desc, 3 desc, 4 asc, 5 desc, 6 desc, 7 desc)
 ) tab
 where id_gerado is null
 and id_contratacao is not null
-and id_organograma is not null
 and id_fornecedor is not null
-limit 1
+--and origem = 'PRINCIPAL'
+--limit 1

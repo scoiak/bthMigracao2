@@ -2,7 +2,7 @@ select
 	row_number() over() as id,
 	'305' as sistema,
 	'contratacao' as tipo_registro,
-	concat(nro_contrato, '/', ano_contrato) as contrato,
+	concat(nro_contrato, '/', ano_contrato, ' (', identificador_contrato, ')') as contrato,
 	concat(nro_processo, '/', ano_processo) as processo,
 	concat(nro_ata, '/', ano_ata) as ata,
 	*
@@ -10,7 +10,8 @@ from (
 	select
 		c.clicodigo,
 		c.ctrano as ano_contrato,
-		c.ctridentificador as nro_contrato,
+		c.ctrnro as nro_contrato,
+		c.ctridentificador as identificador_contrato,
 		c.ctrano as ano_termo,
 		c.ctridentificador as nro_termo,
 		c.ctrnro,

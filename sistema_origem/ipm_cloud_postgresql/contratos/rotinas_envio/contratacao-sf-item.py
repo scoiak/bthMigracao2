@@ -115,9 +115,9 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'especificacao': {
                 'id': item['id_especificacao']
             },
-            'quantidade': item['quantidade'],
+            'quantidade': item['qtd_liquida'],
             'valorUnitario': item['valor_unitario'],
-            'valorTotal': item['valor_total'],
+            'valorTotal': item['valor_liquido'],
         }
 
         print(f'Dados gerados ({contador}): ', dict_dados)
