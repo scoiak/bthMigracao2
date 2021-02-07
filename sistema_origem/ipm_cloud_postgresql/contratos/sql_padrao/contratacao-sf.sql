@@ -39,7 +39,7 @@ from (
 	left join wun.tbunico u on (u.unicodigo = c.unicodigo)
 	where c.clicodigomin = {{clicodigo}}
 	and c.minano = {{ano}}
-	and c.minnro = 37
+	--and c.minnro = 37
 	and c.minano is not null
 	and c.minnro is not null
 	--and c.copnro not in (select aux.copnro from wco.tbcompra aux where aux.clicodigoctr = c.clicodigomin and aux.minano = c.minano and aux.minnro = c.minnro)
@@ -76,7 +76,7 @@ union all
 	left join wun.tbunico u on (u.unicodigo = c.unicodigo)
 	where c.clicodigomin = {{clicodigo}}
 	and c.minano = {{ano}}
-	and c.minnro = 37
+	--and c.minnro = 37
 	and c.minano is not null
 	and c.minnro is not null
 	--and c.copnro not in (select aux.copnro from wco.tbcompra aux where aux.clicodigoctr = c.clicodigomin and aux.minano = c.minano and aux.minnro = c.minnro)
@@ -85,5 +85,5 @@ union all
 where id_gerado is null
 and id_contratacao is not null
 and id_fornecedor is not null
---and origem = 'PRINCIPAL'
+and origem = 'PRINCIPAL'
 --limit 1

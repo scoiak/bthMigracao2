@@ -35,8 +35,8 @@ from (
 	left join wun.tbunico u on (u.unicodigo = c.unicodigo)
 	where c.clicodigo = {{clicodigo}}
 	and c.minano = {{ano}}
-	and c.minnro = 93
-	and a.arpnro = 69
+	--and c.minnro = 93
+	--and a.arpnro = 69
 	and c.minano is not null
 	and c.minnro is not null
 	order by 1, 2 desc, 3 desc, 4 desc, 5 desc, 6 desc, 7 desc

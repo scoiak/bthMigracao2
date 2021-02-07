@@ -38,8 +38,8 @@ from (
 		where i.clicodigo = {{clicodigo}}
 		and i.minano = {{ano}}
 		--and i.minnro = 98
-		and i.minnro = 93
-		and a.arpnro = 69
+		--and i.minnro = 93
+		--and a.arpnro = 69
 		group by 1, 2, 3, 4, 5, 6, 7, 8
 		order by 1, 2 desc, 3 desc, 5, 7
 	) aux
@@ -52,4 +52,4 @@ and id_material is not null
 and id_especificacao is not null
 and id_ata is not null
 and id_proposta is not null
---limit 1
+--limit 2

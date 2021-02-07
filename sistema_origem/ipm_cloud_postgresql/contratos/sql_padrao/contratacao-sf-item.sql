@@ -38,7 +38,7 @@ from (
 	left join wun.tbunico u on (u.unicodigo = c.unicodigo)
 	where c.clicodigomin = {{clicodigo}}
 	and c.minano = {{ano}}
-	and c.minnro = 37
+	--and c.minnro = 37
 	and c.minano is not null
 	and c.minnro is not null
 	order by 1, 2 desc, 3 desc, 4 desc, 8 desc, 9 desc, 10 asc)
@@ -84,4 +84,5 @@ and id_contratacao_item is not null
 and id_material is not null
 and id_especificacao is not null
 and qtd_liquida > 0 -- Impede o envio de itens totalmente estornados/anulados
+and origem = 'ITEM-PRINCIPAL'
 --limit 1

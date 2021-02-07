@@ -31,8 +31,8 @@ from (
 	inner join wco.tbataregpreco a on (a.clicodigo = c.clicodigo and a.minano = c.minano and a.minnro = c.minnro and a.unicodigo = cp.unicodigo)
 	where c.clicodigo = {{clicodigo}}
 	and c.minano = {{ano}}
-	and c.minnro = 93
-	and a.arpnro = 69
+	--and c.minnro = 93
+	--and a.arpnro = 69
 	and c.minano is not null
 	and c.minnro is not null
 ) tab
@@ -41,4 +41,4 @@ and id_solicitacao is not null
 and id_contratacao_item is not null
 and id_material is not null
 and id_especificacao is not null
-limit 1
+--limit 1

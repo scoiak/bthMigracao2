@@ -46,4 +46,4 @@ where id_gerado is null
 and id_ata is not null
 and id_processo is not null
 and id_fornecedor is not null
-limit 3
+--limit 1
