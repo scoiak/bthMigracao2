@@ -4,7 +4,7 @@ select
 	'contratacao-item' as tipo_registro,
 	(case when ano_contrato is not null then 'PROCESSO' else 'ATA_RP' end) as tipo_contrato,
 	concat(nro_minuta, '/', ano_minuta) as minuta,
-	concat(identificador_contrato, '/', ano_contrato, ' (', nro_contrato, ')') as contrato,
+	concat(nro_contrato, '/', ano_contrato, ' (', identificador_contrato, ')') as contrato,
 	'@' as separador,
 	*
 from (
@@ -35,8 +35,8 @@ from (
 	and q.minano = {{ano}}
 	and c.ctrtipoaditivo is null
 	and c.ctrano is not null
-	--and q.minnro = 16
-	--and c.ctridentificador = 106
+	--and q.minnro = 22
+	--and c.ctridentificador = 99
 	order by 1, 2 desc, 3 desc, q.cmiid
 ) tab
 where id_gerado is null

@@ -32,7 +32,7 @@ from (
 		end) as valor_original,
 		coalesce((select true from wco.tbcontratocoronavirus cv where cv.clicodigo = c.clicodigo and cv.ctrano = c.ctrano and cv.ctridentificador = c.ctridentificador limit 1), false) as coronavirus,
 		'PROCESSO_ADMINISTRATIVO' as origem,
-		concat('Contratação ', c.ctridentificador, '/', c.ctrano, ' (', c.ctrnro, ')') as observacao,
+		concat('Contratação ', c.ctrnro, '/', c.ctrano, ' (Identificador: ', c.ctridentificador, ')') as observacao,
 		(case when c.ctrdataassinatura is null then 'AGUARDANDO_ASSINATURA' else 'EXECUCAO' end) as situacao,
 		(case t.mintipoconcorrencia when 2 then 'REGISTRO_PRECO' else 'PROCESSO' end) as instrumento,
 		(case t.mintipoconcorrencia when 2 then 20 else 22 end) as id_tipo_instrumento, -- 22=TermoContrato, 20=RegistroPreço
@@ -52,6 +52,7 @@ from (
 	and c.ctrtipoaditivo is null
 	and c.minano is not null
 	and c.minnro is not null
+	and not exists (select 1 from wco.tbataregpreco a where a.clicodigo  = c.clicodigo and a.minano = c.minano and a.minnro = c.minnro)
 	--and c.ctridentificador in (231, 208)
 	order by 1, 2 desc, 3 desc
 ) tab

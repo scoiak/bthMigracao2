@@ -22,10 +22,10 @@ from (
 		ic.itcqtde as quantidade,
 		ic.itcvlrunit as valor_unitario,
 		ic.itcvlrtotal as valor_total,
-		coalesce((select e.iesqtde from wco.tbitemcompraest e where e.clicodigo = ic.clicodigo and e.copano = ic.copano and e.copnro = ic.copnro and e.itcitem = ic.itcitem), 0) as qtd_estorno,
-		coalesce((select e.iesvlrtotal from wco.tbitemcompraest e where e.clicodigo = ic.clicodigo and e.copano = ic.copano and e.copnro = ic.copnro and e.itcitem = ic.itcitem), 0) as valor_estorno,
-		(ic.itcqtde - coalesce((select e.iesqtde from wco.tbitemcompraest e where e.clicodigo = ic.clicodigo and e.copano = ic.copano and e.copnro = ic.copnro and e.itcitem = ic.itcitem), 0)) as qtd_liquida,
-		(ic.itcvlrtotal - coalesce((select e.iesvlrtotal from wco.tbitemcompraest e where e.clicodigo = ic.clicodigo and e.copano = ic.copano and e.copnro = ic.copnro and e.itcitem = ic.itcitem), 0)) as valor_liquido,
+		coalesce((select sum(e.iesqtde) from wco.tbitemcompraest e where e.clicodigo = ic.clicodigo and e.copano = ic.copano and e.copnro = ic.copnro and e.itcitem = ic.itcitem), 0) as qtd_estorno,
+		coalesce((select sum(e.iesvlrtotal) from wco.tbitemcompraest e where e.clicodigo = ic.clicodigo and e.copano = ic.copano and e.copnro = ic.copnro and e.itcitem = ic.itcitem), 0) as valor_estorno,
+		(ic.itcqtde - coalesce((select sum(e.iesqtde) from wco.tbitemcompraest e where e.clicodigo = ic.clicodigo and e.copano = ic.copano and e.copnro = ic.copnro and e.itcitem = ic.itcitem), 0)) as qtd_liquida,
+		(ic.itcvlrtotal - coalesce((select sum(e.iesvlrtotal) from wco.tbitemcompraest e where e.clicodigo = ic.clicodigo and e.copano = ic.copano and e.copnro = ic.copnro and e.itcitem = ic.itcitem), 0)) as valor_liquido,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'contratacao', c.clicodigo, ct.ctrano, ct.ctridentificador))) as id_contratacao,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'contratacao-sf', c.clicodigo, ct.ctrano, ct.ctridentificador, '@', c.copano, c.copnro))) as id_solicitacao,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'contratacao-item', c.clicodigo, ct.ctrano, ct.ctridentificador, '@', ic.cmiid))) as id_contratacao_item,
@@ -38,7 +38,7 @@ from (
 	left join wun.tbunico u on (u.unicodigo = c.unicodigo)
 	where c.clicodigomin = {{clicodigo}}
 	and c.minano = {{ano}}
-	--and c.minnro = 37
+	--and c.minnro = 182
 	and c.minano is not null
 	and c.minnro is not null
 	order by 1, 2 desc, 3 desc, 4 desc, 8 desc, 9 desc, 10 asc)
@@ -57,10 +57,10 @@ union all
 		ic.itcqtde as quantidade,
 		ic.itcvlrunit as valor_unitario,
 		ic.itcvlrtotal as valor_total,
-		coalesce((select e.iesqtde from wco.tbitemcompraest e where e.clicodigo = ic.clicodigo and e.copano = ic.copano and e.copnro = ic.copnro and e.itcitem = ic.itcitem), 0) as qtd_estorno,
-		coalesce((select e.iesvlrtotal from wco.tbitemcompraest e where e.clicodigo = ic.clicodigo and e.copano = ic.copano and e.copnro = ic.copnro and e.itcitem = ic.itcitem), 0) as valor_estorno,
-		(ic.itcqtde - coalesce((select e.iesqtde from wco.tbitemcompraest e where e.clicodigo = ic.clicodigo and e.copano = ic.copano and e.copnro = ic.copnro and e.itcitem = ic.itcitem), 0)) as qtd_liquida,
-		(ic.itcvlrtotal - coalesce((select e.iesvlrtotal from wco.tbitemcompraest e where e.clicodigo = ic.clicodigo and e.copano = ic.copano and e.copnro = ic.copnro and e.itcitem = ic.itcitem), 0)) as valor_liquido,
+		coalesce((select sum(e.iesqtde) from wco.tbitemcompraest e where e.clicodigo = ic.clicodigo and e.copano = ic.copano and e.copnro = ic.copnro and e.itcitem = ic.itcitem), 0) as qtd_estorno,
+		coalesce((select sum(e.iesvlrtotal) from wco.tbitemcompraest e where e.clicodigo = ic.clicodigo and e.copano = ic.copano and e.copnro = ic.copnro and e.itcitem = ic.itcitem), 0) as valor_estorno,
+		(ic.itcqtde - coalesce((select sum(e.iesqtde) from wco.tbitemcompraest e where e.clicodigo = ic.clicodigo and e.copano = ic.copano and e.copnro = ic.copnro and e.itcitem = ic.itcitem), 0)) as qtd_liquida,
+		(ic.itcvlrtotal - coalesce((select sum(e.iesvlrtotal) from wco.tbitemcompraest e where e.clicodigo = ic.clicodigo and e.copano = ic.copano and e.copnro = ic.copnro and e.itcitem = ic.itcitem), 0)) as valor_liquido,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'contratacao', c.clicodigo, ct.ctranosup, ct.ctridentsup))) as id_contratacao,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'contratacao-sf', c.clicodigo, c.ctrano, c.ctridentificador, '@', c.copano, c.copnro))) as id_solicitacao,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'contratacao-item', c.clicodigo, ct.ctranosup , ct.ctridentsup, '@', ic.cmiid))) as id_contratacao_item,
@@ -73,7 +73,7 @@ union all
 	left join wun.tbunico u on (u.unicodigo = c.unicodigo)
 	where c.clicodigo = {{clicodigo}}
 	and c.minano = {{ano}}
-	and c.minnro = 37
+	--and c.minnro = 37
 	and c.minano is not null
 	and c.minnro is not null
 	order by 1, 2 desc, 3 desc, 7 asc, 8 desc, 10 asc)

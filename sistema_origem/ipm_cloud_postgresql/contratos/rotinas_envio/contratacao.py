@@ -88,7 +88,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         lista_controle_migracao = []
         contador += 1
         print(f'\r- Enviando registros: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['clicodigo'], item['ano_contrato'], item['nro_contrato'])
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['clicodigo'], item['ano_contrato'], item['identificador_contrato'])
         url_parametrizada = url.replace('{exercicio}', str(item['ano_termo']))
         dict_dados = {
             'idIntegracao': hash_chaves,
@@ -151,7 +151,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'json': json.dumps(dict_dados),
             'i_chave_dsk1': item['clicodigo'],
             'i_chave_dsk2': item['ano_contrato'],
-            'i_chave_dsk3': item['nro_contrato']
+            'i_chave_dsk3': item['identificador_contrato']
         })
 
         if True:

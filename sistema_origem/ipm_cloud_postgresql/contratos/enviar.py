@@ -7,8 +7,8 @@ from datetime import datetime
 def iniciar():
     print(':: Iniciando migração do sistema Compras/Contratos')
     params_exec = {
-        # 'clicodigo': '2016', # PM
-        'clicodigo': '13482', # SAUDE
+        'clicodigo': '2016', # PM
+        # 'clicodigo': '13482', # SAUDE
         # 'clicodigo': '11968',  # CAMARA
         'ano': 2020,
         'somente_pre_validar': False,
@@ -114,13 +114,13 @@ def iniciar():
     # enviar(params_exec, 'contratacao-aditivo')
     # enviar(params_exec, 'contratacao-aditivo-item')
     # enviar(params_exec, 'contratacao-sf')
-    # enviar(params_exec, 'contratacao-sf-item')
+    enviar(params_exec, 'contratacao-sf-item')
 
     # Contratações - Atas de Registro de Preço
     # enviar(params_exec, 'contratacao-arp')
     # enviar(params_exec, 'contratacao-arp-item')
     # enviar(params_exec, 'contratacao-arp-sf')
-    enviar(params_exec, 'contratacao-arp-sf-item')
+    # enviar(params_exec, 'contratacao-arp-sf-item')
 
 
 def enviar(params_exec, tipo_registro, *args, **kwargs):
