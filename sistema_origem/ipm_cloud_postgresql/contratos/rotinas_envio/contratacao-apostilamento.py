@@ -7,8 +7,8 @@ import math
 from datetime import datetime
 
 sistema = 305
-tipo_registro = 'contratacao-aditivo'
-url = 'https://contratos.betha.cloud/contratacao-services/api/exercicios/{exercicio}/contratacoes/{contratacaoId}/contratacoes-aditivos'
+tipo_registro = 'contratacao-apostilamento'
+url = 'https://contratos.betha.cloud/contratacao-services/api/exercicios/{exercicio}/contratacoes/{contratacaoId}/contratacoes-apostilamentos'
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
@@ -97,22 +97,19 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'contratacao': {
                 'id': item['id_contrato']
             },
-            'tipoAditivo': {
-                'id': item['id_tipo_aditivo']
+            'tipo': {
+                'id': item['id_tipo_apostilamento']
             },
-            'objeto': item['objeto'],
-            'dataAditivo': item['data_assinatura'],
-            'continua': item['continua'],
-            'reforma': item['reforma'],
+            'sequencial': item['sequencial'],
+            'tipoAlteracaoApostilamento': {
+                'valor': item['tipo_alteracao']
+            },
+            'descricao': item['descricao'],
+            'data': item['data_assinatura'],
+            'novaDataFinal': item['data_final_nova']
         }
 
-        if item['valor_aditivo'] != 0.0 and item['id_tipo_aditivo'] not in [72]:
-            dict_dados.update({'valorAditivo': item['valor_aditivo']})
-
-        if item['data_final_nova'] is not None:
-            dict_dados.update({'dataFinalNova': item['data_final_nova']})
-
-        print(f'Dados gerados ({contador}): ', dict_dados)
+        # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,

@@ -28,7 +28,7 @@ from (
 		cc.cncclassif as nro_ogranograma,
 		(select u.uninomerazao from wun.tbunico u where u.unicodigo = (select usr.unicodigo from webbased.tbusuario usr where usr.usucodigo = c.usucodigo)) as solicitante,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'contratacao', ct.clicodigo, ct.ctrano, ct.ctridentificador))) as id_contratacao,
-		coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'centro-custo', c.copano, replace(cc.cncclassif,'.','')))), 0) as id_organograma,
+		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'centro-custo', c.copano, replace(cc.cncclassif,'.','')))) as id_organograma,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'fornecedor', (regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g'))))) as id_fornecedor,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'entidade', c.clicodigo))), upper(unaccent(left(coalesce(trim(c.coppreventrega),'Imediata'), 50)))))) as id_prazo_entrega,
 		14011 as id_local_entrega,
@@ -37,11 +37,13 @@ from (
 	inner join wco.tbcontrato ct on (ct.clicodigo = c.clicodigoctr and ct.ctrano = c.ctrano and ct.ctridentificador = c.ctridentificador and ct.ctrtipoaditivo is null)
 	left join wun.tbcencus cc on (cc.organo = c.copano and cc.cnccodigo = c.cnccodigo)
 	left join wun.tbunico u on (u.unicodigo = c.unicodigo)
-	where c.clicodigomin = {{clicodigo}}
+	where c.clicodigo = {{clicodigo}}
+	and c.clicodigomin = c.clicodigo
 	and c.minano = {{ano}}
-	--and c.minnro = 37
+	and c.minnro = 168
 	and c.minano is not null
 	and c.minnro is not null
+	and not exists (select 1 from wco.tbataregpreco a where a.clicodigo  = c.clicodigo and a.minano = c.minano and a.minnro = c.minnro)
 	--and c.copnro not in (select aux.copnro from wco.tbcompra aux where aux.clicodigoctr = c.clicodigomin and aux.minano = c.minano and aux.minnro = c.minnro)
 	order by 1, 2 desc, 3 desc, 4 asc, 5 desc, 6 desc, 7 desc)
 union all
@@ -65,7 +67,7 @@ union all
 		cc.cncclassif as nro_ogranograma,
 		(select u.uninomerazao from wun.tbunico u where u.unicodigo = (select usr.unicodigo from webbased.tbusuario usr where usr.usucodigo = c.usucodigo)) as solicitante,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'contratacao', coalesce(ct.clicodigosup, ct.clicodigo), coalesce(ct.ctranosup, ct.ctrano), coalesce(ct.ctridentsup, ct.ctridentificador)))) as id_contratacao,
-		coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'centro-custo', c.copano, replace(cc.cncclassif,'.','')))), 0) as id_organograma,
+		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'centro-custo', c.copano, replace(cc.cncclassif,'.','')))) as id_organograma,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'fornecedor', (regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g'))))) as id_fornecedor,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'entidade', c.clicodigo))), upper(unaccent(left(coalesce(trim(c.coppreventrega),'Imediata'), 50)))))) as id_prazo_entrega,
 		14011 as id_local_entrega,
@@ -74,11 +76,13 @@ union all
 	inner join wco.tbcontrato ct on (ct.clicodigo = c.clicodigoctr and ct.ctrano = c.ctrano and ct.ctridentificador = c.ctridentificador and ct.ctrtipoaditivo is not null)
 	left join wun.tbcencus cc on (cc.organo = c.copano and cc.cnccodigo = c.cnccodigo)
 	left join wun.tbunico u on (u.unicodigo = c.unicodigo)
-	where c.clicodigomin = {{clicodigo}}
+	where c.clicodigo = {{clicodigo}}
+	and c.clicodigomin = c.clicodigo
 	and c.minano = {{ano}}
-	--and c.minnro = 37
+	and c.minnro = 168
 	and c.minano is not null
 	and c.minnro is not null
+	and not exists (select 1 from wco.tbataregpreco a where a.clicodigo  = c.clicodigo and a.minano = c.minano and a.minnro = c.minnro)
 	--and c.copnro not in (select aux.copnro from wco.tbcompra aux where aux.clicodigoctr = c.clicodigomin and aux.minano = c.minano and aux.minnro = c.minnro)
 	order by 1, 2 desc, 3 desc, 4 asc, 5 desc, 6 desc, 7 desc)
 ) tab

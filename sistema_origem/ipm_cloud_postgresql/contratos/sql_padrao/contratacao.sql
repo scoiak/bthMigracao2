@@ -49,6 +49,7 @@ from (
 	left join wco.tbataregpreco rp on (rp.clicodigo = c.clicodigo and rp.minano = c.minano and rp.minnro = c.minnro and rp.unicodigo = c.unicodigo)
 	where c.clicodigo = {{clicodigo}}
 	and c.ctrano = {{ano}}
+	and c.minnro = 168
 	and c.ctrtipoaditivo is null
 	and c.minano is not null
 	and c.minnro is not null

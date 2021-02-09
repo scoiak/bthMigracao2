@@ -15,7 +15,7 @@ from (
 		(case when c.ctrtipoaditivo in (5, 7, 8, 14) then c.ctrdatafimvig::varchar else null end) data_final_nova,
 		c.ctrdataassinatura::varchar as data_assinatura,
 		c.adjsequencia,
-		coalesce((select sum(auxci.itcvlrtotal) from wco.tbitemcompra auxci where md5(concat(auxci.clicodigo , '@', auxci.copano, '@', auxci.copnro)) in (select md5(concat(auxc.clicodigo , '@', copano, '@', copnro)) as hash from wco.tbcompra auxc where auxc.clicodigoctr = c.clicodigo and auxc.ctrano = c.ctrano and auxc.ctridentificador = c.ctridentificador)), 0) as valor_aditivo,
+		coalesce((select trunc(sum(auxci.itcvlrtotal), 2) from wco.tbitemcompra auxci where md5(concat(auxci.clicodigo , '@', auxci.copano, '@', auxci.copnro)) in (select md5(concat(auxc.clicodigo , '@', copano, '@', copnro)) as hash from wco.tbcompra auxc where auxc.clicodigo = c.clicodigo and auxc.clicodigo = auxc.clicodigoctr and auxc.ctrano = c.ctrano and auxc.ctridentificador = c.ctridentificador)), 0) as valor_aditivo,
 		c.ctrano as ano_aditivo,
 		c.ctrnro as nro_aditivo,
 		c.ctridentificador as identificador_aditivo,
@@ -32,11 +32,13 @@ from (
 	from wco.tbcontrato c
 	where c.clicodigoctl = {{clicodigo}}
 	and c.ctranosup = {{ano}}
+	and c.minnro = 168
 	and c.ctrtipoaditivo is not null
 	and c.ctrtipoaditivo <> 12
-	and c.minnro = 1
+	--and c.minnro = 2
 	order by 1, 2 desc, 3 desc, 4 asc
 ) tab
 where id_gerado is null
 and id_contrato is not null
 and id_tipo_aditivo is not null
+limit 1
