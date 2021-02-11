@@ -40,7 +40,7 @@ from (
 	where c.clicodigo = {{clicodigo}}
 	and c.clicodigomin = c.clicodigo
 	and c.minano = {{ano}}
-	and c.minnro = 168
+	and c.minnro = 258
 	and c.minano is not null
 	and c.minnro is not null
 	and not exists (select 1 from wco.tbataregpreco a where a.clicodigo  = c.clicodigo and a.minano = c.minano and a.minnro = c.minnro)
@@ -79,7 +79,7 @@ union all
 	where c.clicodigo = {{clicodigo}}
 	and c.clicodigomin = c.clicodigo
 	and c.minano = {{ano}}
-	and c.minnro = 168
+	and c.minnro = 258
 	and c.minano is not null
 	and c.minnro is not null
 	and not exists (select 1 from wco.tbataregpreco a where a.clicodigo  = c.clicodigo and a.minano = c.minano and a.minnro = c.minnro)
@@ -89,5 +89,5 @@ union all
 where id_gerado is null
 and id_contratacao is not null
 and id_fornecedor is not null
-and origem = 'PRINCIPAL'
+--and origem = 'PRINCIPAL'
 --limit 1

@@ -35,14 +35,14 @@ from (
 	and q.minano = {{ano}}
 	and c.ctrtipoaditivo is null
 	and c.ctrano is not null
-	and q.minnro = 80
+	and q.minnro = 258
 	--and c.ctridentificador = 99
 	order by 1, 2 desc, 3 desc, q.cmiid
 ) tab
 where id_gerado is null
 and id_contratacao is not null
-and id_proposta is not null
+--and id_proposta is not null
 and id_material is not null
 and id_especificacao is not null
-and id_ato_final is not null
+--and id_ato_final is not null
 --limit 5

@@ -93,7 +93,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         dict_dados = {
             'idIntegracao': hash_chaves,
             'url': url_parametrizada,
-            'sequencial': item['nro_contrato'],
+            'sequencial': item['nro_formatado'],
             'entidade': {
                 'id': item['id_entidade']
             },
@@ -110,7 +110,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
               'numero': item['nro_processo'],
               'ano': item['ano_processo']
             },
-            'numeroTermo': item['nro_contrato'],
+            'numeroTermo': item['nro_formatado'],
             'ano': item['ano_contrato'],
             'objetoContratacao': item['objeto'],
             'tipoControleSaldo': {

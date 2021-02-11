@@ -31,8 +31,9 @@ from (
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'contratacao-aditivo', c.clicodigo, c.ctrano, c.ctrnro))) as id_gerado
 	from wco.tbcontrato c
 	where c.clicodigoctl = {{clicodigo}}
-	and c.ctranosup = {{ano}}
-	and c.minnro = 168
+	--and c.ctranosup = {{ano}}
+	and c.minano = {{ano}}
+	and c.minnro = 258
 	and c.ctrtipoaditivo is not null
 	and c.ctrtipoaditivo <> 12
 	--and c.minnro = 2
@@ -41,4 +42,4 @@ from (
 where id_gerado is null
 and id_contrato is not null
 and id_tipo_aditivo is not null
-limit 1
+--limit 1

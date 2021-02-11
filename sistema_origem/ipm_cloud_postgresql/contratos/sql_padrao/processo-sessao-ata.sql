@@ -18,6 +18,9 @@ from (
   	386 as tipo_ata,
   	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo-sessao-ata', a.clicodigo, a.minano, a.minnro, '@', a.aprsequencia))) as id_gerado
   from wco.tbatalicitacao a
+  where a.clicodigo = {{clicodigo}}
+  and a.minano = {{ano}}
+  --and a.minnro = 258
   order by 1, 2 desc, 3 desc
 ) tab
 where id_gerado is null

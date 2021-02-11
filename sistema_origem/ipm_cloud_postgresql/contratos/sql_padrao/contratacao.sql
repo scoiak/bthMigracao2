@@ -11,6 +11,7 @@ from (
 		c.clicodigo,
 		c.ctrano as ano_contrato,
 		c.ctrnro as nro_contrato,
+		(regexp_replace(c.ctrnro,'\/\d+','','g')) as nro_formatado,
 		c.ctridentificador as identificador_contrato,
 		c.ctrano as ano_termo,
 		c.ctridentificador as nro_termo,
@@ -48,8 +49,8 @@ from (
 	left join wco.tbminuta t on (t.clicodigo = c.clicodigo and t.minano = c.minano and t.minnro = c.minnro)
 	left join wco.tbataregpreco rp on (rp.clicodigo = c.clicodigo and rp.minano = c.minano and rp.minnro = c.minnro and rp.unicodigo = c.unicodigo)
 	where c.clicodigo = {{clicodigo}}
-	and c.ctrano = {{ano}}
-	and c.minnro = 168
+	and c.minano = {{ano}}
+	and c.minnro = 258
 	and c.ctrtipoaditivo is null
 	and c.minano is not null
 	and c.minnro is not null

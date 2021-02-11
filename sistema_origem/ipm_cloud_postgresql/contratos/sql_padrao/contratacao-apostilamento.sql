@@ -3,14 +3,15 @@ select
 	'305' as sistema,
 	'contratacao-apostilamento' as tipo_registro,
 	concat(nro_minuta, '/', ano_minuta) as minuta,
-	concat(nro_superior, '/', ano_contrato) as contratacao,
+	concat(nro_superior, '/', ano_contrato, ' (', identificador_superior, ')') as contratacao,
 	concat(nro_aditivo, '/', ano_aditivo, ' (', identificador_aditivo, ')') as aditivo,
 	*
 from (
 	select
 		c.clicodigo,
 		c.ctranosup as ano_contrato,
-		c.ctridentsup as nro_superior,
+		(select auxc.ctrnro from wco.tbcontrato auxc where auxc.clicodigo = c.clicodigo and auxc.ctrano = c.ctranosup and auxc.ctridentificador = c.ctridentsup) as nro_superior,
+		c.ctridentsup as identificador_superior,
 		c.ctrdatainivig::varchar as data_aditivo,
 		c.ctrdataassinatura::varchar as data_assinatura,
 		--'2018-07-10' as data_assinatura,
@@ -30,13 +31,14 @@ from (
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'contratacao-apostilamento', c.clicodigo, c.ctrano, c.ctrnro))) as id_gerado
 	from wco.tbcontrato c
 	where c.clicodigoctl = {{clicodigo}}
-	and c.ctranosup = {{ano}}
-	and c.minnro = 168
+	--and c.ctranosup = {{ano}}
+	and c.minano = {{ano}}
+	and c.minnro = 258
 	and c.ctrtipoaditivo is not null
 	and c.ctrtipoaditivo = 12
 	--and c.minnro = 2
 	--and c.ctrnro = 'Apostila 5'
-	order by 1, 2 desc, 3 desc, 4 asc
+	order by 1, 2 desc, 3 desc, 6 asc
 ) tab
 where id_gerado is null
 and id_contrato is not null
