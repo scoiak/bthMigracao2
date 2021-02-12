@@ -111,11 +111,11 @@ def iniciar():
     # Contratações - Processos Administrativos
     # enviar(params_exec, 'contratacao')
     # enviar(params_exec, 'contratacao-item')
-    enviar(params_exec, 'contratacao-aditivo')
+    # enviar(params_exec, 'contratacao-aditivo')
     # # enviar(params_exec, 'contratacao-aditivo-item') # Não utilizar
     # enviar(params_exec, 'contratacao-apostilamento')
     # enviar(params_exec, 'contratacao-sf')
-    # enviar(params_exec, 'contratacao-sf-item')
+    enviar(params_exec, 'contratacao-sf-item')
 
     # Contratações - Atas de Registro de Preço
     # enviar(params_exec, 'contratacao-arp')

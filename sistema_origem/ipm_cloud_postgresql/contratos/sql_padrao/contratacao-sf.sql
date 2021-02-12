@@ -37,10 +37,14 @@ from (
 	inner join wco.tbcontrato ct on (ct.clicodigo = c.clicodigoctr and ct.ctrano = c.ctrano and ct.ctridentificador = c.ctridentificador and ct.ctrtipoaditivo is null)
 	left join wun.tbcencus cc on (cc.organo = c.copano and cc.cnccodigo = c.cnccodigo)
 	left join wun.tbunico u on (u.unicodigo = c.unicodigo)
-	where c.clicodigo = {{clicodigo}}
-	and c.clicodigomin = c.clicodigo
+	where true
+	--and c.clicodigo = {{clicodigo}}
+	and c.clicodigo = 13482
+	and c.clicodigomin = 2016
+	--and c.clicodigomin = c.clicodigo
+	--and c.clicodigomin = c.clicodigo
 	and c.minano = {{ano}}
-	and c.minnro = 50
+	and c.minnro in (15)
 	and c.minano is not null
 	and c.minnro is not null
 	and not exists (select 1 from wco.tbataregpreco a where a.clicodigo  = c.clicodigo and a.minano = c.minano and a.minnro = c.minnro)
@@ -67,6 +71,7 @@ union all
 		cc.cncclassif as nro_ogranograma,
 		coalesce((select u.uninomerazao from wun.tbunico u where u.unicodigo = (select usr.unicodigo from webbased.tbusuario usr where usr.usucodigo = c.usucodigo)), 'Migração') as solicitante,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'contratacao', coalesce(ct.clicodigosup, ct.clicodigo), coalesce(ct.ctranosup, ct.ctrano), coalesce(ct.ctridentsup, ct.ctridentificador)))) as id_contratacao,
+		--882285 as id_contratacao,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'centro-custo', c.copano, replace(cc.cncclassif,'.','')))) as id_organograma,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'fornecedor', (regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g'))))) as id_fornecedor,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'entidade', c.clicodigo))), upper(unaccent(left(coalesce(trim(c.coppreventrega),'Imediata'), 50)))))) as id_prazo_entrega,
@@ -76,10 +81,13 @@ union all
 	inner join wco.tbcontrato ct on (ct.clicodigo = c.clicodigoctr and ct.ctrano = c.ctrano and ct.ctridentificador = c.ctridentificador and ct.ctrtipoaditivo is not null)
 	left join wun.tbcencus cc on (cc.organo = c.copano and cc.cnccodigo = c.cnccodigo)
 	left join wun.tbunico u on (u.unicodigo = c.unicodigo)
-	where c.clicodigo = {{clicodigo}}
-	and c.clicodigomin = c.clicodigo
+	where true
+	--and c.clicodigo = {{clicodigo}}
+	--and c.clicodigomin = c.clicodigo
+	and c.clicodigo = 13482
+	and c.clicodigomin = 2016
 	and c.minano = {{ano}}
-	and c.minnro = 85
+	and c.minnro in (15)
 	and c.minano is not null
 	and c.minnro is not null
 	and not exists (select 1 from wco.tbataregpreco a where a.clicodigo  = c.clicodigo and a.minano = c.minano and a.minnro = c.minnro)

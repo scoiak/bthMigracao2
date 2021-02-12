@@ -40,6 +40,7 @@ from (
 	left join wco.tbminuta t on (t.clicodigo = a.clicodigo and t.minano = a.minano and t.minnro = a.minnro)
 	where a.clicodigo = {{clicodigo}}
 	and a.minano = {{ano}}
+	--and a.minnro = 61
 	order by 1, 2 desc, 3 desc, 4
 ) tab
 where id_gerado is null
