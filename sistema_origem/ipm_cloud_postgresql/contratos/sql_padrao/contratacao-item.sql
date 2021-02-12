@@ -24,8 +24,8 @@ from (
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'contratacao', c.clicodigo, c.ctrano, c.ctridentificador))) as id_contratacao,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'material', i.prdcodigo))) as id_material,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'material-especificacao', i.prdcodigo))) as id_especificacao,
-		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo-ato-final', c.clicodigo, c.minano, c.minnro))) as id_ato_final,
-		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo-participante-proposta', q.clicodigo, q.minano, q.minnro, (regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g')), q.cmiid))) as id_proposta,
+		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo-ato-final', c.clicodigomin, c.minano, c.minnro))) as id_ato_final,
+		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo-participante-proposta', c.clicodigomin, q.minano, q.minnro, (regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g')), q.cmiid))) as id_proposta,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'contratacao-item', c.clicodigo, c.ctrano, c.ctridentificador, '@', q.cmiid))) as id_gerado
 	from wco.vw_qcp_vencedor q
 	left join wco.tbcontrato c on (c.clicodigo = q.clicodigo and c.minano = q.minano and c.minnro = q.minnro and c.unicodigo = q.unicodigo)
@@ -35,7 +35,7 @@ from (
 	and q.minano = {{ano}}
 	and c.ctrtipoaditivo is null
 	and c.ctrano is not null
-	and q.minnro = 258
+	and q.minnro = 80
 	--and c.ctridentificador = 99
 	order by 1, 2 desc, 3 desc, q.cmiid
 ) tab

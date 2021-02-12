@@ -11,9 +11,9 @@ from (
 		c.clicodigo,
 		c.ctranosup as ano_contrato,
 		c.ctridentsup as nro_superior,
-		c.ctrdatainivig::varchar as data_aditivo,
-		(case when c.ctrtipoaditivo in (5, 7, 8, 14) then c.ctrdatafimvig::varchar else null end) data_final_nova,
 		c.ctrdataassinatura::varchar as data_assinatura,
+		c.ctrdatainivig::varchar as data_aditivo,
+		(case when c.ctrtipoaditivo in (3, 5, 7, 8, 14) then c.ctrdatafimvig::varchar else null end) data_final_nova,
 		c.adjsequencia,
 		coalesce((select trunc(sum(auxci.itcvlrtotal), 2) from wco.tbitemcompra auxci where md5(concat(auxci.clicodigo , '@', auxci.copano, '@', auxci.copnro)) in (select md5(concat(auxc.clicodigo , '@', copano, '@', copnro)) as hash from wco.tbcompra auxc where auxc.clicodigo = c.clicodigo and auxc.clicodigo = auxc.clicodigoctr and auxc.ctrano = c.ctrano and auxc.ctridentificador = c.ctridentificador)), 0) as valor_aditivo,
 		c.ctrano as ano_aditivo,
@@ -30,10 +30,10 @@ from (
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305,'tipo-aditivo', c.ctrtipoaditivo))) as id_tipo_aditivo,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'contratacao-aditivo', c.clicodigo, c.ctrano, c.ctrnro))) as id_gerado
 	from wco.tbcontrato c
-	where c.clicodigoctl = {{clicodigo}}
+	where c.clicodigo = {{clicodigo}}
 	--and c.ctranosup = {{ano}}
 	and c.minano = {{ano}}
-	and c.minnro = 258
+	and c.minnro = 123
 	and c.ctrtipoaditivo is not null
 	and c.ctrtipoaditivo <> 12
 	--and c.minnro = 2

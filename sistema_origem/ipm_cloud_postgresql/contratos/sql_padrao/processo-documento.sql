@@ -14,7 +14,7 @@ from (
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo-documento', d.clicodigo, d.minano, d.minnro, d.doccodigo))) as id_gerado
 	from wco.tbdocexigido d
 	where d.clicodigo = {{clicodigo}}
-	and d.minano >= {{ano}}
+	and d.minano = {{ano}}
 	order by 1, 2 desc, 3 desc, 4 asc
 ) tab
 where id_gerado is null

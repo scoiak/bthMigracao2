@@ -38,7 +38,7 @@ from (
 		(case t.mintipoconcorrencia when 2 then 'REGISTRO_PRECO' else 'PROCESSO' end) as instrumento,
 		(case t.mintipoconcorrencia when 2 then 20 else 22 end) as id_tipo_instrumento, -- 22=TermoContrato, 20=RegistroPreço
 		(case t.mintipoconcorrencia when 2 then 160 else 0 end) as id_fundamentacao_legal,
-		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo', c.clicodigo, c.minano, c.minnro))) as id_processo,
+		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo', c.clicodigomin, c.minano, c.minnro))) as id_processo,
 		coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305,'tipo-objeto', (case t.mintipoobjeto when 1 then 'Compras e Outros Serviços' when 2 then 'Obras e Serviços de Engenharia' when 3 then 'Concessoes e Permissões de Serviços Públicos' when 4 then 'Alienação de bens' when 5 then 'Concessão e Permissão de Uso de Bem Público' when 6 then 'Aquisição de bens' when 7 then 'Contratação de Serviços'  else 'Compras Outros Serviços' end)))), 10) as id_tipo_objeto,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'fornecedor', (regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g'))))) as id_fornecedor,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'entidade', c.clicodigo))) as id_entidade,
@@ -50,7 +50,7 @@ from (
 	left join wco.tbataregpreco rp on (rp.clicodigo = c.clicodigo and rp.minano = c.minano and rp.minnro = c.minnro and rp.unicodigo = c.unicodigo)
 	where c.clicodigo = {{clicodigo}}
 	and c.minano = {{ano}}
-	and c.minnro = 258
+	and c.minnro = 85
 	and c.ctrtipoaditivo is null
 	and c.minano is not null
 	and c.minnro is not null

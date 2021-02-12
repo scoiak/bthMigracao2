@@ -26,7 +26,7 @@ from (
 		c.coplocalentrega,
 		c.cnccodigo,
 		cc.cncclassif as nro_ogranograma,
-		(select u.uninomerazao from wun.tbunico u where u.unicodigo = (select usr.unicodigo from webbased.tbusuario usr where usr.usucodigo = c.usucodigo)) as solicitante,
+		coalesce((select u.uninomerazao from wun.tbunico u where u.unicodigo = (select usr.unicodigo from webbased.tbusuario usr where usr.usucodigo = c.usucodigo)), 'Migração') as solicitante,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'contratacao', ct.clicodigo, ct.ctrano, ct.ctridentificador))) as id_contratacao,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'centro-custo', c.copano, replace(cc.cncclassif,'.','')))) as id_organograma,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'fornecedor', (regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g'))))) as id_fornecedor,
@@ -40,7 +40,7 @@ from (
 	where c.clicodigo = {{clicodigo}}
 	and c.clicodigomin = c.clicodigo
 	and c.minano = {{ano}}
-	and c.minnro = 258
+	and c.minnro = 50
 	and c.minano is not null
 	and c.minnro is not null
 	and not exists (select 1 from wco.tbataregpreco a where a.clicodigo  = c.clicodigo and a.minano = c.minano and a.minnro = c.minnro)
@@ -65,7 +65,7 @@ union all
 		c.coplocalentrega,
 		c.cnccodigo,
 		cc.cncclassif as nro_ogranograma,
-		(select u.uninomerazao from wun.tbunico u where u.unicodigo = (select usr.unicodigo from webbased.tbusuario usr where usr.usucodigo = c.usucodigo)) as solicitante,
+		coalesce((select u.uninomerazao from wun.tbunico u where u.unicodigo = (select usr.unicodigo from webbased.tbusuario usr where usr.usucodigo = c.usucodigo)), 'Migração') as solicitante,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'contratacao', coalesce(ct.clicodigosup, ct.clicodigo), coalesce(ct.ctranosup, ct.ctrano), coalesce(ct.ctridentsup, ct.ctridentificador)))) as id_contratacao,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'centro-custo', c.copano, replace(cc.cncclassif,'.','')))) as id_organograma,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'fornecedor', (regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g'))))) as id_fornecedor,
@@ -79,7 +79,7 @@ union all
 	where c.clicodigo = {{clicodigo}}
 	and c.clicodigomin = c.clicodigo
 	and c.minano = {{ano}}
-	and c.minnro = 258
+	and c.minnro = 85
 	and c.minano is not null
 	and c.minnro is not null
 	and not exists (select 1 from wco.tbataregpreco a where a.clicodigo  = c.clicodigo and a.minano = c.minano and a.minnro = c.minnro)

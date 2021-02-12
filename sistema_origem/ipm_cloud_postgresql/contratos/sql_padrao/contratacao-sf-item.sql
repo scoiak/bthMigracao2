@@ -40,7 +40,7 @@ from (
 	where c.clicodigomin = {{clicodigo}}
 	and c.clicodigo = c.clicodigomin
 	and c.minano = {{ano}}
-	and c.minnro = 50
+	and c.minnro = 85
 	and c.minano is not null
 	and c.minnro is not null
 	order by 1, 2 desc, 3 desc, 4 desc, 8 desc, 9 desc, 10 asc)
@@ -77,7 +77,7 @@ union all
 	where c.clicodigomin = {{clicodigo}}
 	and c.clicodigo = c.clicodigomin
 	and c.minano = {{ano}}
-	and c.minnro = 50
+	and c.minnro = 85
 	--and c.copnro = 1687
 	and c.minano is not null
 	and c.minnro is not null

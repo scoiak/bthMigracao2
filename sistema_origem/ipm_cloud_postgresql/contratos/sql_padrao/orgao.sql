@@ -15,6 +15,6 @@ from (
 ) tab
 where id_gerado is null
 and id_configuracao_organograma is not null
-and chave_dsk1 >= 2010
+and chave_dsk1 in (2005, 2006, 2007)
 order by chave_dsk1, chave_dsk2
 --limit 5

@@ -1,4 +1,4 @@
-with anos as (select * from generate_series(2010, 2020) as ano)
+with anos as (select * from generate_series(2005, 2006, 2007) as ano)
 select 
 	row_number() over() as id,
 	ano,

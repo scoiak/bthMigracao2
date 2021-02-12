@@ -57,7 +57,7 @@ from (
     left join wco.tbedital e            on (e.clicodigo = m.clicodigo and e.minnro = m.minnro and e.minano = m.minano)
     where m.clicodigo = {{clicodigo}}
     and p.pcsano = {{ano}}
-    and p.pcsnro = 258
+    --and p.pcsnro = 258
     order by 1, 2 desc, 3 desc
 ) tab
 where id_gerado is null
