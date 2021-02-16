@@ -47,9 +47,9 @@ from (
 			sum(coalesce(cast(ircvlrmaxtotal as numeric(16, 2)), 0)) as valor_total
 		from wco.tbreqcomp sol
 		natural join wco.tbitemreqcomp item
-		where rqcano >= {{ano}}
+		where rqcano = {{ano}}
 		and clicodigopln = {{clicodigo}}
-		--and rqcnro in (10)
+		--and rqcnro in (2951)
 		group by 1, 2, 3, 4, 5, 6, 7
 		order by 1, 2, 3, 4, 5
 	) as itens

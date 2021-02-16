@@ -20,7 +20,7 @@ from (
 	   (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'solicitacao-atualiza-status', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'entidade', clicodigo))), rqcano, rqcnro)))  as id_gerado
 	from wco.tbreqcomp
 	where clicodigo = {{clicodigo}}
-	and rqcano >= {{ano}}
+	and rqcano = {{ano}}
 	and date_part('year', rqcdata) = rqcano
 	and not exists ( -- Evita finalizar solicitação com itens pendentes de migração
 		select 1

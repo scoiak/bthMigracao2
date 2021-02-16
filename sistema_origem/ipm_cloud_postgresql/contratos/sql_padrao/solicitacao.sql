@@ -31,7 +31,7 @@ from (
 	   (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'solicitacao', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'entidade', clicodigo))), rqcano, rqcnro))) as id_gerado
 	from wco.tbreqcomp
 	where clicodigo = {{clicodigo}}
-	and rqcano >= {{ano}}
+	and rqcano = {{ano}}
 	and date_part('year', rqcdata) = rqcano
 	order by 2 desc, 3 desc
 ) tab
@@ -40,4 +40,4 @@ and id_organograma is not null
 and id_local_entrega is not null
 and id_entidade_gestora is not null
 and id_parametro_exercicio is not null
---limit 10
+--limit 1

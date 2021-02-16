@@ -117,8 +117,8 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                 'valor': item['tipo_necessidade']
             },
             'objeto': item['objeto'],
-            'justificativa': item['justificativa'],
-            'observacao': item['observacao'],
+            'justificativa': model.cleanhtml(item['justificativa']),
+            'observacao': model.cleanhtml(item['observacao']),
             'status': {
                 'valor': item['status_solicitacao']
             },
@@ -127,7 +127,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             },
         }
 
-        # print(f'Dados gerados ({contador}): ', dict_dados)
+        print(f'Dados gerados ({contador}): ', json.dumps(dict_dados))
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,

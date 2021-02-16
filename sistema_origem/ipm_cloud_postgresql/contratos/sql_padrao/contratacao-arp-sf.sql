@@ -35,7 +35,7 @@ from (
 	left join wun.tbunico u on (u.unicodigo = c.unicodigo)
 	where c.clicodigo = {{clicodigo}}
 	and c.minano = {{ano}}
-	and c.minnro = 61
+	and c.minnro = 103
 	--and a.arpnro = 69
 	and c.minano is not null
 	and c.minnro is not null

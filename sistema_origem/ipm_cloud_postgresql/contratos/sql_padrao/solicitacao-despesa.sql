@@ -26,7 +26,7 @@ from (
         																						   /* nroSolic.		*/ rqcnro,
         																						   /* cod. dot. 	*/ dotcodigo))) as id_gerado
 	from  wco.tbdotreq
-	where rqcano >= {{ano}}
+	where rqcano = {{ano}}
 	and clicodigo = {{clicodigo}}
 	order by clicodigo, rqcano desc, rqcnro desc, dotcodigo asc
 ) as tab

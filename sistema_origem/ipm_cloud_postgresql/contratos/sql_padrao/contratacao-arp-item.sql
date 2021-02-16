@@ -37,7 +37,7 @@ from (
 		inner join wco.tbataregpreco a on (a.clicodigo = i.clicodigo and a.minano = i.minano and a.minnro = i.minnro and a.unicodigo = c.unicodigo)
 		where i.clicodigo = {{clicodigo}}
 		and i.minano = {{ano}}
-		--and i.minnro = 61
+		and i.minnro = 103
 		--and a.arpnro = 69
 		group by 1, 2, 3, 4, 5, 6, 7, 8
 		order by 1, 2 desc, 3 desc, 5, 7
