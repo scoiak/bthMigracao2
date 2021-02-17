@@ -7,10 +7,11 @@ from datetime import datetime
 def iniciar():
     print(':: Iniciando migração do sistema Compras/Contratos')
     params_exec = {
-        # 'clicodigo': '2016', # PM
-        'clicodigo': '13482', # SAUDE
+        'clicodigo': '2016', # PM
+        # 'clicodigo': '13482', # SAUDE
+        # 'clicodigo': '16975',  # FAMABI
         # 'clicodigo': '11968',  # CAMARA
-        'ano': 2019,
+        'ano': 2017,
         'somente_pre_validar': False,
     }
     mensagem_inicio(params_exec)
@@ -54,10 +55,10 @@ def iniciar():
     # enviar(params_exec, 'despesa')
 
     # Solicitações de Compra
-    enviar(params_exec, 'solicitacao')
-    enviar(params_exec, 'solicitacao-item')
-    enviar(params_exec, 'solicitacao-despesa')
-    enviar(params_exec, 'solicitacao-atualiza-status')
+    # enviar(params_exec, 'solicitacao')
+    # enviar(params_exec, 'solicitacao-item')
+    # enviar(params_exec, 'solicitacao-despesa')
+    # enviar(params_exec, 'solicitacao-atualiza-status')
     # enviar(params_exec, 'tipo-sessao-julgamento')
     # enviar(params_exec, 'natureza-juridica')
     # enviar(params_exec, 'fundamento-legal')
@@ -115,7 +116,9 @@ def iniciar():
     # # enviar(params_exec, 'contratacao-aditivo-item') # Não utilizar
     # enviar(params_exec, 'contratacao-apostilamento')
     # enviar(params_exec, 'contratacao-sf')
-    # enviar(params_exec, 'contratacao-sf-item')
+    enviar(params_exec, 'contratacao-sf-item')
+
+    # enviar(params_exec, 'contratacao-aditivo-item_v2')
 
     # Contratações - Atas de Registro de Preço
     # enviar(params_exec, 'contratacao-arp')

@@ -38,13 +38,10 @@ from (
 	left join wun.tbcencus cc on (cc.organo = c.copano and cc.cnccodigo = c.cnccodigo)
 	left join wun.tbunico u on (u.unicodigo = c.unicodigo)
 	where true
-	--and c.clicodigo = {{clicodigo}}
-	and c.clicodigo = 13482
-	and c.clicodigomin = 2016
-	--and c.clicodigomin = c.clicodigo
-	--and c.clicodigomin = c.clicodigo
+	and c.clicodigo = {{clicodigo}}
+	and c.clicodigomin = c.clicodigo
 	and c.minano = {{ano}}
-	and c.minnro in (15)
+	and c.minnro in (115)
 	and c.minano is not null
 	and c.minnro is not null
 	and not exists (select 1 from wco.tbataregpreco a where a.clicodigo  = c.clicodigo and a.minano = c.minano and a.minnro = c.minnro)
@@ -82,12 +79,10 @@ union all
 	left join wun.tbcencus cc on (cc.organo = c.copano and cc.cnccodigo = c.cnccodigo)
 	left join wun.tbunico u on (u.unicodigo = c.unicodigo)
 	where true
-	--and c.clicodigo = {{clicodigo}}
-	--and c.clicodigomin = c.clicodigo
-	and c.clicodigo = 13482
-	and c.clicodigomin = 2016
+	and c.clicodigo = {{clicodigo}}
+	and c.clicodigomin = c.clicodigo
 	and c.minano = {{ano}}
-	and c.minnro in (15)
+	and c.minnro in (115)
 	and c.minano is not null
 	and c.minnro is not null
 	and not exists (select 1 from wco.tbataregpreco a where a.clicodigo  = c.clicodigo and a.minano = c.minano and a.minnro = c.minnro)

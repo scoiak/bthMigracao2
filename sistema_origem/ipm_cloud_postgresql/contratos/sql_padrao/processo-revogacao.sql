@@ -17,13 +17,12 @@ from (
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo-ato-final', l.clicodigo, l.minano, l.minnro))) as id_ato_final,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo-ato-final', l.clicodigo, l.minano, l.minnro))) as id_gerado
 	from wco.tblicitacao l
-	inner join wco.tbminuta m on (m.clicodigo = l.clicodigo and m.minano = l.clicodigo and m.minnro = l.minnro)
-	where l.licdataanulacao is not null
+	left join wco.tbminuta m on (m.clicodigo = l.clicodigo and m.minano = l.clicodigo and m.minnro = l.minnro)
+	where l.licsituacao = 6
 	and l.clicodigo = {{clicodigo}}
 	and l.minano = {{ano}}
 	order by 1, 2 desc, 3 desc
 ) tab
 where id_gerado is null
 and id_processo is not null
-and id_ato_final is not null
 --limit 1

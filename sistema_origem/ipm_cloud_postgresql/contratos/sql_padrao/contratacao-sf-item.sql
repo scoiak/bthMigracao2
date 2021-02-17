@@ -40,7 +40,7 @@ from (
 	where c.clicodigomin = {{clicodigo}}
 	and c.clicodigo = c.clicodigomin
 	and c.minano = {{ano}}
-	and c.minnro in (57, 60, 61, 62, 64, 65)
+	and c.minnro in (115)
 	and c.minano is not null
 	and c.minnro is not null
 	order by 1, 2 desc, 3 desc, 4 desc, 8 desc, 9 desc, 10 asc)
@@ -75,13 +75,10 @@ union all
 	inner join wco.tbitemcompra ic on (ic.clicodigo = c.clicodigo and ic.copano = c.copano and ic.copnro = c.copnro)
 	left join wun.tbunico u on (u.unicodigo = c.unicodigo)
 	where true
-	--and c.clicodigomin = {{clicodigo}}
-	--and c.clicodigo = c.clicodigomin
+	and c.clicodigomin = {{clicodigo}}
+	and c.clicodigo = c.clicodigomin
 	and c.minano = {{ano}}
-	and c.clicodigo = 13482
-	and c.clicodigomin = 2016
-	and c.minano = 2018
-	and c.minnro = 15
+	and c.minnro = 222
 	--and c.copnro = 1687
 	and c.minano is not null
 	and c.minnro is not null
@@ -93,5 +90,6 @@ and id_contratacao_item is not null
 and id_material is not null
 and id_especificacao is not null
 and qtd_liquida > 0 -- Impede o envio de itens totalmente estornados/anulados
+offset 477
 --and origem = 'ITEM-PRINCIPAL'
 --limit 1

@@ -30,11 +30,11 @@ from (
 	 inner join wun.tbunico u on u.unicodigo = rp.unicodigo
 	 where rp.clicodigo = {{clicodigo}}
 	 and rp.minano = {{ano}}
-	 --and rp.minnro = 160
+	 and rp.minnro = 35
 	 order by 1, 2 desc, 3 desc
 ) tab
 where id_gerado is null
 and id_processo is not null
 and id_fornecedor is not null
-and id_ato_final is not null
+--and id_ato_final is not null
 --limit 1

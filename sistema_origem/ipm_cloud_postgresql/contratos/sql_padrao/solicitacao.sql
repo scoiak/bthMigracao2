@@ -11,7 +11,7 @@ from (
        (select cncclassif from wun.tbcencus where wun.tbcencus.cnccodigo = wco.tbreqcomp.cnccodigo) as mask,
        wco.tbreqcomp.cnccodigo as codigo_organograma,
        (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'centro-custo', rqcano, replace((select cncclassif from wun.tbcencus where wun.tbcencus.cnccodigo = wco.tbreqcomp.cnccodigo),'.','')))) as id_organograma,                    
-       (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'local-entrega', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'entidade', clicodigo))), loccodigo))) as id_local_entrega,
+       coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'local-entrega', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'entidade', 2016))), loccodigo))), 14054) as id_local_entrega,
        (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'entidade', clicodigo))) as id_entidade_gestora,      
        (select id_gerado from public.controle_migracao_registro	where hash_chave_dsk = md5(concat(305, 'parametro-exercicio', rqcano))) as id_parametro_exercicio,     
        rqcnro as codigo,

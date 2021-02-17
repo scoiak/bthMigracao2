@@ -7,8 +7,8 @@ import math
 from datetime import datetime
 
 sistema = 305
-tipo_registro = 'solicitacao'
-url = 'https://compras.betha.cloud/compras-services/api/exercicios/{exercicio}/solicitacoes'
+tipo_registro = 'contratacao-aditivo-item_v2'
+url = 'https://contratos.betha.cloud/contratacao-services/api/exercicios/{exercicio}/contratacoes/{contratacaoId}/contratacoes-aditivos/{aditivoId}/aditivos-itens'
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
@@ -88,57 +88,39 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         lista_controle_migracao = []
         contador += 1
         print(f'\r- Enviando registros: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
-        hash_chaves = model.gerar_hash_chaves(sistema,
-                                              tipo_registro,
-                                              item['chave_dsk1'],
-                                              item['chave_dsk2'],
-                                              item['chave_dsk3'])
-        url_parametrizada = url.replace('{exercicio}', str(item['chave_dsk2']))
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['clicodigo'], item['ano_contrato'],
+                                              item['nro_contrato'], item['separador'], item['cmiid'])
+        url_parametrizada = url.replace('{exercicio}', str(item['ano_contrato']))\
+                               .replace('{contratacaoId}', str(item['id_contratacao']))\
+                               .replace('{aditivoId}', str(item['id_aditivo']))
+
         dict_dados = {
             'idIntegracao': hash_chaves,
             'url': url_parametrizada,
-            'entidadeGestora': {
-                'id': item['id_entidade_gestora']
+            'aditivo': {
+                'id': item['id_aditivo']
             },
-            'organograma': {
-                'id': item['id_organograma']
+            'itemContrato': {
+                'id': item['id_contratacao_item']
             },
-            'localEntrega': {
-                'id': item['id_local_entrega']
-            },
-            'parametrosExerc': {
-                'id': item['id_parametro_exercicio']
-            },
-            'codigo': item['codigo'],
-            'data': item['data_solicitacao'].strftime("%Y-%m-%d"),
-            'nomeSolicitante': item['nome_solicitante'],
-            'assunto': model.cleanhtml(item['assunto']),
-            'tipoNecessidade': {
-                'valor': item['tipo_necessidade']
-            },
-            'objeto': item['objeto'],
-            'justificativa': model.cleanhtml(item['justificativa']),
-            'observacao': model.cleanhtml(item['observacao']),
-            'status': {
-                'valor': item['status_solicitacao']
-            },
-            'situacaoCadastral': {
-                'valor': item['situacao_cadastral']
-            },
+            'quantidade': item['qtd_aditivada'],
+            'valorUnitario': item['qcpvlrunit']
         }
 
-        # print(f'Dados gerados ({contador}): ', json.dumps(dict_dados))
+        print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Solicitações de Compra',
+            'descricao_tipo_registro': 'Cadastro de Itens Aditivos de Contratos',
             'id_gerado': None,
             'json': json.dumps(dict_dados),
-            'i_chave_dsk1': item['chave_dsk1'],
-            'i_chave_dsk2': item['chave_dsk2'],
-            'i_chave_dsk3': item['chave_dsk3']
+            'i_chave_dsk1': item['clicodigo'],
+            'i_chave_dsk2': item['ano_contrato'],
+            'i_chave_dsk3': item['nro_contrato'],
+            'i_chave_dsk4': item['separador'],
+            'i_chave_dsk5': item['cmiid']
         })
 
         if True:

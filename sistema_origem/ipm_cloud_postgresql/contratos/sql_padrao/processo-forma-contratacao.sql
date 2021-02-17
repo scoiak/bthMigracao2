@@ -22,7 +22,7 @@ from (
         'CLASSIFICA' as desc_prop_invalida,
         'CLASSIFICA' as desc_prop_invalida_lote,
         p.pcsfundamentolegal,
-        (case when p.pcsfundamentolegal is null then 0
+        (case when p.pcsfundamentolegal is null then 48
               when p.modcodigo in (7) then 48 --Dispensa de Licitação
               when p.modcodigo in (8) then 81 -- Inegibilidade
               when p.pcsfundamentolegal ~ '13.979' then 159 -- RP
