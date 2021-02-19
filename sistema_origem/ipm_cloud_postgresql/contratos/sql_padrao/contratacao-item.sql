@@ -35,7 +35,7 @@ from (
 	and q.minano = {{ano}}
 	and c.ctrtipoaditivo is null
 	and c.ctrano is not null
-	--and c.minnro in (5, 8)
+	--and c.minnro in (15)
 	--and c.ctridentificador = 99
 	order by 1, 2 desc, 3 desc, q.cmiid
 ) tab

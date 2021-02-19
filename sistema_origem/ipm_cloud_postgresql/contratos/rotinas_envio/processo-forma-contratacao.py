@@ -124,9 +124,11 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
 
         if item['nro_sequencial'] is not None:
             dict_dados.update({'numeroSequencial': item['nro_sequencial']})
+            # dict_dados.update({'numeroSequencial': 24})
 
         if item['id_fundamento_legal'] is not None and item['id_fundamento_legal'] != 0:
             dict_dados.update({'fundamentacaoLegal': {'id': item['id_fundamento_legal']}})
+            # dict_dados.update({'fundamentacaoLegal': {'id': 81}}) # Inegibilidade
 
         if item['id_membro_comissao'] is not None and item['id_membro_comissao'] != 0:
             dict_dados.update({'membroComissao': {'id': item['id_membro_comissao']}})

@@ -40,7 +40,7 @@ from (
 	where c.clicodigomin = {{clicodigo}}
 	and c.clicodigo = c.clicodigomin
 	and c.minano = {{ano}}
-	--and c.minnro in (5)
+	--and c.minnro in (15)
 	and c.minano is not null
 	and c.minnro is not null
 	order by 1, 2 desc, 3 desc, 4 desc, 8 desc, 9 desc, 10 asc)
@@ -79,7 +79,7 @@ union all
 	and c.clicodigomin = {{clicodigo}}
 	and c.clicodigo = c.clicodigomin
 	and c.minano = {{ano}}
-	--and c.minnro = 5
+	--and c.minnro = 15
 	--and c.copnro = 1687
 	and c.minano is not null
 	and c.minnro is not null
@@ -92,7 +92,7 @@ union all
 		'ITEM-PRINCIPAL-SEM-CONTRATO' as origem,
 		ct.ctrano as ano_contrato,
 		ct.ctrnro as nro_contrato,
-		c.ctridentificador as identificador_contrato,
+		ct.ctridentificador as identificador_contrato,
 		c.copano as ano_sf,
 		c.copnro as nro_sf,
 		ic.cmiid,
@@ -118,7 +118,7 @@ union all
 	and c.clicodigomin = {{clicodigo}}
 	and c.clicodigo = c.clicodigomin
 	and c.minano = {{ano}}
-	--and c.minnro = 5
+	--and c.minnro = 15
 	and c.ctrano is null
 	and c.ctridentificador is null
 	--and c.copnro = 1687
@@ -132,5 +132,5 @@ and id_contratacao_item is not null
 and id_material is not null
 and id_especificacao is not null
 and qtd_liquida > 0 -- Impede o envio de itens totalmente estornados/anulados
-and origem in ('ITEM-PRINCIPAL', 'ITEM-PRINCIPAL-SEM-CONTRATO')
+--and origem in ('ITEM-PRINCIPAL', 'ITEM-PRINCIPAL-SEM-CONTRATO')
 --limit 1

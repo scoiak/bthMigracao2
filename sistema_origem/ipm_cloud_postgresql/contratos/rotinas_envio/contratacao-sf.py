@@ -91,8 +91,9 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         id_organograma_padrao = 0
     elif params_exec['clicodigo'] == '13482':
         id_organograma_padrao = 376332
-    elif params_exec['clicodigo'] == '16975':
+    elif params_exec['clicodigo'] == '11968':
         id_organograma_padrao = 373447
+
 
     for item in dados:
         lista_dados_enviar = []

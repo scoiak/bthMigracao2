@@ -3,7 +3,8 @@ select
 	'305' as sistema,
 	'contratacao' as tipo_registro,
 	concat(nro_contrato, '/', ano_contrato, ' (', identificador_contrato, ')') as contrato,
-	concat(nro_processo, '/', ano_processo) as processo,
+	concat(nro_processo, '/', ano_processo) as minuta,
+	concat(nro_licitacao, '/', ano_licitacao) as licitacao,
 	concat(nro_ata, '/', ano_ata) as ata,
 	*
 from (
@@ -11,7 +12,7 @@ from (
 		c.clicodigo,
 		c.ctrano as ano_contrato,
 		c.ctrnro as nro_contrato,
-		(regexp_replace((regexp_replace(c.ctrnro,'\/\d+','','g')),'\.','','g')) as nro_formatado,
+		(regexp_replace((regexp_replace(c.ctrnro,'\/\d+','','g')),'[^0-9]','','g')) as nro_formatado,
 		--'10053' as nro_formatado,
 		c.ctridentificador as identificador_contrato,
 		c.ctrano as ano_termo,
@@ -19,6 +20,8 @@ from (
 		c.ctrnro,
 		c.minano as ano_processo,
 		c.minnro as nro_processo,
+		t.pcsano as ano_licitacao,
+		t.pcsnro as nro_licitacao,
 		rp.arpano as ano_ata,
 		rp.arpnro as nro_ata,
 		left(c.ctrobjetotc, 500) as objeto,
@@ -51,7 +54,7 @@ from (
 	left join wco.tbataregpreco rp on (rp.clicodigo = c.clicodigo and rp.minano = c.minano and rp.minnro = c.minnro and rp.unicodigo = c.unicodigo)
 	where c.clicodigo = {{clicodigo}}
 	and c.minano = {{ano}}
-	--and c.minnro in (5, 8)
+	--and c.minnro in (15)
 	and c.ctrtipoaditivo is null
 	and c.minano is not null
 	and c.minnro is not null
@@ -64,4 +67,4 @@ and id_entidade is not null
 and id_processo is not null
 and id_fornecedor is not null
 and instrumento = 'PROCESSO'
---limit 5
+--limit 1

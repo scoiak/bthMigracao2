@@ -16,7 +16,10 @@ from (
 		left(mc.mardescricao, 20) as marca,
 		qcp.qcpvencedor,
 		p.modcodigo,
-		(case when (p.modcodigo = 7 and qcp.qcpposicao = 1) then 'VENCEU' when qcp.qcpposicao = 1 then 'VENCEU' else 'PERDEU' end) as situacao,
+		(case
+			when (select 1 from wco.vw_qcp_vencedor v where v.clicodigo = qcp.clicodigo and v.minano = qcp.minano and v.minnro = qcp.minnro and v.cmiid = qcp.cmiid and v.unicodigo = qcp.unicodigo) is not null then 'VENCEU'
+			else 'PERDEU'
+		end) as situacao,
 		(case
 			when (p.modcodigo = 6 and qcp.qcpvencedor = 0 and qcp.qcpposicao = 1) then 2
 			when qcp.qcpvencedor = 1 then 1
@@ -34,7 +37,7 @@ from (
 	inner join wun.tbunico u on (u.unicodigo = qcp.unicodigo)
 	where qcp.clicodigo = {{clicodigo}}
 	and qcp.minano = {{ano}}
-	--and qcp.minnro = 85
+	--and qcp.minnro = 15
 	--and qcp.minnro not in (35, 41, 65, 81, 88, 90, 92, 99, 100)
 	order by 1, 2 desc, 3 desc, 4 asc
 ) tab

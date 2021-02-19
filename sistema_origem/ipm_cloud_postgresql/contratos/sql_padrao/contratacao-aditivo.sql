@@ -15,7 +15,8 @@ from (
 		c.ctrdatainivig::varchar as data_aditivo,
 		(case when c.ctrtipoaditivo in (3, 5, 7, 8, 14) then c.ctrdatafimvig::varchar else null end) data_final_nova,
 		c.adjsequencia,
-		coalesce((select trunc(sum(auxci.itcvlrtotal), 2) from wco.tbitemcompra auxci where md5(concat(auxci.clicodigo , '@', auxci.copano, '@', auxci.copnro)) in (select md5(concat(auxc.clicodigo , '@', copano, '@', copnro)) as hash from wco.tbcompra auxc where auxc.clicodigo = c.clicodigo and auxc.clicodigo = auxc.clicodigoctr and auxc.ctrano = c.ctrano and auxc.ctridentificador = c.ctridentificador)), 0) as valor_aditivo,
+		--coalesce((select trunc(sum(auxci.itcvlrtotal), 2) from wco.tbitemcompra auxci where md5(concat(auxci.clicodigo , '@', auxci.copano, '@', auxci.copnro)) in (select md5(concat(auxc.clicodigo , '@', copano, '@', copnro)) as hash from wco.tbcompra auxc where auxc.clicodigo = c.clicodigo and auxc.clicodigo = auxc.clicodigoctr and auxc.ctrano = c.ctrano and auxc.ctridentificador = c.ctridentificador)), 0) as valor_aditivo,
+		0.00 as valor_aditivo,
 		c.ctrano as ano_aditivo,
 		c.ctrnro as nro_aditivo,
 		c.ctridentificador as identificador_aditivo,
@@ -33,7 +34,7 @@ from (
 	where c.clicodigo = {{clicodigo}}
 	--and c.ctranosup = {{ano}}
 	and c.minano = {{ano}}
-	and c.minnro in (5)
+	--and c.minnro in (15)
 	and c.ctrtipoaditivo is not null
 	and c.ctrtipoaditivo <> 12
 	--and c.minnro = 2

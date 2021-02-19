@@ -10,7 +10,7 @@ DB_USER = 'postgres'
 DB_PW = 'admin'
 """
 
-
+"""
 # Esta conexão é usada para o envio das entidades oficiais do compras
 DB_HOST = 'localhost'
 DB_PORT = '5433'
@@ -25,7 +25,6 @@ DB_PORT = '5433'
 DB_NAME = 'bigua_camara'
 DB_USER = 'postgres'
 DB_PW = 'admin'
-"""
 
 
 def iniciar_migracao():

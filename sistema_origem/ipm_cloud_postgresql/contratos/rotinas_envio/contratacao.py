@@ -107,8 +107,8 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
               'entidade': {
                   'id': item['id_entidade']
               },
-              'numero': item['nro_processo'],
-              'ano': item['ano_processo']
+              'numero': item['nro_licitacao'],
+              'ano': item['ano_licitacao']
             },
             'numeroTermo': item['nro_formatado'],
             'ano': item['ano_contrato'],

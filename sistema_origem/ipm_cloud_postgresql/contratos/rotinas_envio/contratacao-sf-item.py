@@ -93,7 +93,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         contador += 1
         print(f'\r- Enviando registros: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
         hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['clicodigo'], item['ano_contrato'],
-                                              item['identificador_contrato'], item['separador'], item['ano_sf'],
+                                              int(item['identificador_contrato']), item['separador'], item['ano_sf'],
                                               item['nro_sf'], item['separador'], item['cmiid'])
 
         url_parametrizada = url.replace('{exercicio}', str(item['ano_sf']))\
@@ -131,7 +131,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'json': json.dumps(dict_dados),
             'i_chave_dsk1': item['clicodigo'],
             'i_chave_dsk2': item['ano_contrato'],
-            'i_chave_dsk3': item['identificador_contrato'],
+            'i_chave_dsk3': int(item['identificador_contrato']),
             'i_chave_dsk4': item['separador'],
             'i_chave_dsk5': item['ano_sf'],
             'i_chave_dsk6': item['nro_sf'],
@@ -150,7 +150,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             model.atualiza_tabelas_controle_envio_sem_lote(params_exec, req_res, tipo_registro=tipo_registro)
             if req_res[0]['mensagem'] is not None:
                 total_erros += 1
-                print('stop!!!')
+                print('stop!!!', req_res[0]['mensagem'])
                 # break
     if total_erros > 0:
         print(f'- Envio finalizado. Foram encontrados um total de {total_erros} inconsistência(s) de envio.')
