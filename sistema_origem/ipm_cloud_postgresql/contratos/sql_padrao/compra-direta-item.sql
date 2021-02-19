@@ -21,7 +21,7 @@ from (
 	from wco.tbitemcompra ic
 	where ic.clicodigo = {{clicodigo}}
 	and ic.copano = {{ano}}
-	--and ic.copnro = 1502
+	--and ic.copnro = 1
 	and ic.minano is null
 	and ic.minnro is null
 	order by 1, 2 desc, 3 desc

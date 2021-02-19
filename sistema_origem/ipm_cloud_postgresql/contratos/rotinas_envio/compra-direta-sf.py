@@ -95,6 +95,12 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['clicodigo'], item['ano_sf'], item['nro_sf'])
         url_parametrizada = url.replace('{exercicio}', str(item['ano_sf']))\
                                .replace('{contratacaoId}', str(item['id_contratacao']))
+
+        if params_exec['clicodigo'] == '16975':
+            id_organograma_padrao = 373447
+        else:
+            id_organograma_padrao = 0
+
         dict_dados = {
             'idIntegracao': hash_chaves,
             'url': url_parametrizada,
@@ -102,7 +108,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                 'id': item['id_contratacao']
             },
             'organograma': {
-                'id': item['id_organograma']
+                'id': id_organograma_padrao if item['id_organograma'] == 0 else item['id_organograma']
             },
             'prazoEntrega': {
                 'id': id_prazo_entrega_padrao if item['id_prazo_entrega'] == 0 else item['id_prazo_entrega']
