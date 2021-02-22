@@ -24,7 +24,7 @@ from (
 		cc.cncclassif as nro_ogranograma,
 		(select u.uninomerazao from wun.tbunico u where u.unicodigo = (select usr.unicodigo from webbased.tbusuario usr where usr.usucodigo = c.usucodigo)) as solicitante,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'contratacao-arp', a.clicodigo, a.arpano, a.arpnro, '@', a.arpsequencia))) as id_contratacao,
-		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'centro-custo',c.copano, replace(cc.cncclassif,'.','')))) as id_organograma,
+		coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'centro-custo',c.copano, replace(cc.cncclassif,'.','')))), 0) as id_organograma,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'fornecedor', (regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g'))))) as id_fornecedor,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'entidade', c.clicodigo))), upper(unaccent(left(coalesce(trim(c.coppreventrega),'Imediata'), 50)))))) as id_prazo_entrega,
 		14011 as id_local_entrega,
@@ -35,7 +35,7 @@ from (
 	left join wun.tbunico u on (u.unicodigo = c.unicodigo)
 	where c.clicodigo = {{clicodigo}}
 	and c.minano = {{ano}}
-	and c.minnro = 103
+	--and c.minnro = 103
 	--and a.arpnro = 69
 	and c.minano is not null
 	and c.minnro is not null
@@ -43,6 +43,5 @@ from (
 ) tab
 where id_gerado is null
 and id_contratacao is not null
-and id_organograma is not null
 and id_fornecedor is not null
 --limit 1

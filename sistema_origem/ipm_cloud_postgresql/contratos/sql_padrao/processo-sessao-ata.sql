@@ -20,7 +20,7 @@ from (
   from wco.tbatalicitacao a
   where a.clicodigo = {{clicodigo}}
   and a.minano = {{ano}}
-  --and a.minnro = 258
+  -- and a.minnro = 204
   order by 1, 2 desc, 3 desc
 ) tab
 where id_gerado is null

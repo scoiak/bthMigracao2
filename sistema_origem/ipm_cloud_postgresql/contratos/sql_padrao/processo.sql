@@ -33,6 +33,7 @@ from (
 	    coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'prazo-entrega', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'entidade', 2016))), upper(unaccent(left(coalesce(trim(e.edtpreventrmat),'Imediata'), 50)))))), 0) as id_prazo_entrega,
 		e.edtcondpgto as forma_pagamento,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'forma-pagamento', coalesce(upper(unaccent(trim(e.edtcondpgto))), 'Conforme Edital')))) as id_forma_pagamento,
+		--3166 as id_forma_pagamento, -- 10 dias
 		m.mintiporegexec as regime_execucao,
         coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'regime-execucao', (case m.mintiporegexec when 1 then 'Empreitada por Preço Global' when 2 then 'Empreitada por Preço Unitário' when 3 then 'Empreitada por Preço Global Integral' when 4 then 'Tarefa' when 5 then 'Execução Direta' when 6 then 'Cessão de Direitos' when 7 then 'Serviços' when 8 then 'Alienação de Bens Móveis' when 9 then 'Alienação de Bens Imóveis'  when 10 then 'Cessão de Direitos' when 11 then 'Cessão de Direito Real de Uso - Bens Públicos' else 'Compras' end)))), 0) id_regime_execucao,
 		left(p.pcsfinalidade, 1500) as objeto,

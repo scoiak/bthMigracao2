@@ -96,6 +96,14 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                                               item['nro_ata'], item['separador'], item['ano_sf'], item['nro_sf'])
         url_parametrizada = url.replace('{exercicio}', str(item['ano_sf']))\
                                .replace('{contratacaoId}', str(item['id_contratacao']))
+
+        if params_exec['clicodigo'] == '2016':
+            id_organograma_padrao = 0
+        elif params_exec['clicodigo'] == '13482':
+            id_organograma_padrao = 376332
+        elif params_exec['clicodigo'] == '11968':
+            id_organograma_padrao = 401517
+
         dict_dados = {
             'idIntegracao': hash_chaves,
             'url': url_parametrizada,
@@ -103,7 +111,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                 'id': item['id_contratacao']
             },
             'organograma': {
-                'id': item['id_organograma']
+                'id': id_organograma_padrao if item['id_organograma'] == 0 else item['id_organograma']
             },
             'prazoEntrega': {
                 'id': id_prazo_entrega_padrao if item['id_prazo_entrega'] == 0 else item['id_prazo_entrega']
@@ -120,7 +128,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'observacao': item['observacao']
         }
 
-        print(f'Dados gerados ({contador}): ', dict_dados)
+        # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,

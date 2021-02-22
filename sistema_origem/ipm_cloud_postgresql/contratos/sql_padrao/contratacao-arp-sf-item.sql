@@ -31,7 +31,7 @@ from (
 	inner join wco.tbataregpreco a on (a.clicodigo = c.clicodigo and a.minano = c.minano and a.minnro = c.minnro and a.unicodigo = cp.unicodigo)
 	where c.clicodigo = {{clicodigo}}
 	and c.minano = {{ano}}
-	and c.minnro = 103
+	--and c.minnro = 103
 	--and a.arpnro = 69
 	and c.minano is not null
 	and c.minnro is not null

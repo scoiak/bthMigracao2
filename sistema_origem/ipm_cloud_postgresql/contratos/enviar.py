@@ -11,7 +11,7 @@ def iniciar():
         # 'clicodigo': '13482', # SAUDE
         # 'clicodigo': '16975',  # FAMABI
         'clicodigo': '11968',  # CAMARA
-        'ano': 2015,
+        'ano': 2020,
         'somente_pre_validar': False,
     }
     mensagem_inicio(params_exec)
@@ -110,19 +110,19 @@ def iniciar():
     # enviar(params_exec, 'compra-direta-sf-item')
 
     # Contratações - Processos Administrativos
-    enviar(params_exec, 'contratacao')
-    enviar(params_exec, 'contratacao-item')
-    enviar(params_exec, 'contratacao-aditivo')
-    # # enviar(params_exec, 'contratacao-aditivo-item') # Não utilizar
-    enviar(params_exec, 'contratacao-apostilamento')
-    enviar(params_exec, 'contratacao-sf')
-    enviar(params_exec, 'contratacao-sf-item')
+    # enviar(params_exec, 'contratacao')
+    # enviar(params_exec, 'contratacao-item')
+    # enviar(params_exec, 'contratacao-aditivo')
+    # # # enviar(params_exec, 'contratacao-aditivo-item') # Não utilizar
+    # enviar(params_exec, 'contratacao-apostilamento')
+    # enviar(params_exec, 'contratacao-sf')
+    # enviar(params_exec, 'contratacao-sf-item')
 
     # enviar(params_exec, 'contratacao-aditivo-item_v2')
 
     # Contratações - Atas de Registro de Preço
     # enviar(params_exec, 'contratacao-arp')
-    # enviar(params_exec, 'contratacao-arp-item')
+    enviar(params_exec, 'contratacao-arp-item')
     # enviar(params_exec, 'contratacao-arp-sf')
     # enviar(params_exec, 'contratacao-arp-sf-item')
 

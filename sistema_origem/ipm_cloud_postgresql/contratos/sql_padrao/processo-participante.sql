@@ -36,7 +36,7 @@ from (
 	natural join wun.tbunico u
 	where p.clicodigo = {{clicodigo}}
     and p.minano = {{ano}}
-    --and p.minnro = 258
+    --and p.minnro = 204
 	--and pr.modcodigo <> 1
 	and not exists (
 		select 1 from (
