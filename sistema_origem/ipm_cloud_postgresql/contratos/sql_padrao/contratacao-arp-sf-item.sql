@@ -22,16 +22,16 @@ from (
 		c.itcvlrtotal as valor_total,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'contratacao-arp', a.clicodigo, a.arpano, a.arpnro, '@', a.arpsequencia))) as id_contratacao,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'contratacao-arp-sf', c.clicodigo, a.arpano, a.arpnro, '@', c.copano, c.copnro))) as id_solicitacao,
-		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'contratacao-arp-item', a.clicodigo, a.arpano, a.arpnro, '@', a.arpsequencia, '@', c.cmiid))) as id_contratacao_item,
+		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'contratacao-arp-item', c.clicodigo, a.arpano, a.arpnro, '@', a.arpsequencia, '@', c.cmiid))) as id_contratacao_item,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'material', c.prdcodigo))) as id_material,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'material-especificacao', c.prdcodigo))) as id_especificacao,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'contratacao-arp-sf-item', c.clicodigo, a.arpano, a.arpnro, '@', c.copano, c.copnro, '@', c.cmiid))) as id_gerado
 	from wco.tbitemcompra c
-	inner join wco.tbcompra cp on (cp.clicodigo = c.clicodigo and cp.minano = c.minano and cp.minnro = c.minnro and cp.copano = c.copano and cp.copnro = c.copnro)
-	inner join wco.tbataregpreco a on (a.clicodigo = c.clicodigo and a.minano = c.minano and a.minnro = c.minnro and a.unicodigo = cp.unicodigo)
-	where c.clicodigo = {{clicodigo}}
-	and c.minano = {{ano}}
-	--and c.minnro = 103
+	left join wco.tbcompra cp on (cp.clicodigo = c.clicodigo and cp.minano = c.minano and cp.minnro = c.minnro and cp.copano = c.copano and cp.copnro = c.copnro)
+	left join wco.tbataregpreco a on (a.clicodigo = coalesce(cp.clicodigomin, cp.clicodigo) and a.minano = c.minano and a.minnro = c.minnro and a.unicodigo = cp.unicodigo)
+	where (cp.clicodigomin = {{clicodigo}} or cp.clicodigo = {{clicodigo}})
+	and cp.minano = {{ano}}
+	and cp.minnro = 153
 	--and a.arpnro = 69
 	and c.minano is not null
 	and c.minnro is not null

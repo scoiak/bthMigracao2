@@ -20,8 +20,19 @@ def busca_dados_cloud(params_exec):
     print('- Iniciando busca de dados no cloud.')
     campos = 'configuracao(id), id, configuracao.processoAdministrativo.id'
     lista_dados = []
-    criterio = f'configuracao.processoAdministrativo.parametroExercicio.exercicio = {params_exec["ano"]} and entidade.id = 2734'
 
+    if params_exec['clicodigo'] == '2016':
+        id_entidade = 56  # Prefeitura
+    elif params_exec['clicodigo'] == '13482':
+        id_entidade = 2739  # Saúde
+    elif params_exec['clicodigo'] == '16975':
+        id_entidade = 2734  # FAMABI
+    elif params_exec['clicodigo'] == '9769':
+        id_entidade = 2988  # Institudo
+    elif params_exec['clicodigo'] == '11968':
+        id_entidade = 34  # Câmara
+
+    criterio = f'configuracao.processoAdministrativo.parametroExercicio.exercicio = {params_exec["ano"]} and entidade.id = {id_entidade}'
     registros_cloud = interacao_cloud.busca_api_fonte_dados(params_exec, url=url, campos=campos, criterio=criterio)
 
     if registros_cloud is not None and len(registros_cloud) > 0:

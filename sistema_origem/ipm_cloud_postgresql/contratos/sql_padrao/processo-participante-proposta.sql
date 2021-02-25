@@ -21,10 +21,11 @@ from (
 			else 'PERDEU'
 		end) as situacao,
 		(case
-			when (p.modcodigo = 6 and qcp.qcpvencedor = 0 and qcp.qcpposicao = 1) then 2
-			when qcp.qcpvencedor = 1 then 1
-			when qcp.qcpvencedor <> 1 and (qcp.qcpposicao = 0 or qcp.qcpposicao is null) then 2
-			else qcp.qcpposicao
+			when (select 1 from wco.vw_qcp_vencedor v where v.clicodigo = qcp.clicodigo and v.minano = qcp.minano and v.minnro = qcp.minnro and v.cmiid = qcp.cmiid and v.unicodigo = qcp.unicodigo) is not null then 1
+			else (case
+					when qcp.qcpposicao <> 0 and qcp.qcpposicao <> 1 then qcp.qcpposicao
+					else 2
+				  end)
 		end) as colocacao,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo', qcp.clicodigo, qcp.minano, qcp.minnro))) as id_processo,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo-participante', qcp.clicodigo, qcp.minano, qcp.minnro, (regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g'))))) as id_participante,
@@ -37,7 +38,7 @@ from (
 	inner join wun.tbunico u on (u.unicodigo = qcp.unicodigo)
 	where qcp.clicodigo = {{clicodigo}}
 	and qcp.minano = {{ano}}
-	--and qcp.minnro = 204
+	-- and qcp.minnro = 188
 	--and qcp.minnro not in (35, 41, 65, 81, 88, 90, 92, 99, 100)
 	order by 1, 2 desc, 3 desc, 4 asc
 ) tab

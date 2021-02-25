@@ -18,7 +18,7 @@ from (
 		'VALIDO' as situacao_documento,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo', dl.clicodigo, dl.minano, dl.minnro))) as id_processo,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo-participante', dl.clicodigo, dl.minano, dl.minnro, (regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g'))))) as id_participante,
-	    (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'tipo-documento', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'entidade', dl.clicodigo))), dl.doccodigo))) as id_tipo_documento,
+	    (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'tipo-documento', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'entidade', 2016))), dl.doccodigo))) as id_tipo_documento,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo-documento', dl.clicodigo, dl.minano, dl.minnro, dl.doccodigo))) as id_doc_processo,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo-participante-documento', dl.clicodigo, dl.minano, dl.minnro, (regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g')), dl.doccodigo))) as id_gerado
 	from wco.tbdoclic dl
@@ -26,9 +26,10 @@ from (
 	inner join wun.tbunico u on (u.unicodigo = dl.unicodigo)
 	where dl.clicodigo = {{clicodigo}}
 	and dl.minano = {{ano}}
-	--and dl.minnro = 15
+	--and dl.minnro = 188
 	order by 1, 2 desc, 3 desc, 4
 ) tab
 where id_gerado is null
 and id_processo is not null
 and id_participante is not null
+and id_tipo_documento is not null

@@ -17,6 +17,7 @@ from (
 		c.copano as ano_sf,
 		c.copnro as nro_sf,
 		c.copdataemissao::varchar as data_sf,
+		--'2020-02-12' as data_sf,
 		c.unicodigo,
 		concat(c.copfinalidade, c.cophistorico, ' (Migração: Compra ', c.copnro, '/', c.copano, ', Ata ', a.arpnro, '/', a.arpano, ', Minuta ', c.minnro, '/', c.minano, ')') as observacao,
 		c.coplocalentrega,
@@ -30,12 +31,12 @@ from (
 		14011 as id_local_entrega,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'contratacao-arp-sf', c.clicodigo, a.arpano, a.arpnro, '@', c.copano, c.copnro))) as id_gerado
 	from wco.tbcompra c
-	inner join wco.tbataregpreco a on (a.clicodigo = c.clicodigo and a.minano = c.minano and a.minnro = c.minnro and a.unicodigo = c.unicodigo)
+	inner join wco.tbataregpreco a on (a.clicodigo = coalesce(c.clicodigomin, c.clicodigo) and a.minano = c.minano and a.minnro = c.minnro and a.unicodigo = c.unicodigo)
 	left join wun.tbcencus cc on (cc.organo = c.copano and cc.cnccodigo = c.cnccodigo)
 	left join wun.tbunico u on (u.unicodigo = c.unicodigo)
-	where c.clicodigo = {{clicodigo}}
+	where (c.clicodigo = {{clicodigo}} or c.clicodigomin = {{clicodigo}})
 	and c.minano = {{ano}}
-	--and c.minnro = 103
+	and c.minnro = 153
 	--and a.arpnro = 69
 	and c.minano is not null
 	and c.minnro is not null

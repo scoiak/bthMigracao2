@@ -36,7 +36,7 @@ from (
 	 left join wco.tbitemin i on (i.clicodigo = rp.clicodigo and i.minano = rp.minano and i.minnro = rp.minnro and i.cmiid = qcp.cmiid)
 	 where rp.clicodigo = {{clicodigo}}
 	 and rp.minano = {{ano}}
-	 --and rp.minnro = 35
+	 --and rp.minnro = 166
 	 order by 1, 2 desc, 3 desc
 ) tab
 where id_gerado is null

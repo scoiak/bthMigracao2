@@ -14,7 +14,7 @@ from (
         m.pcsano as ano_processo,
         m.pcsnro as nro_processo,
         coalesce(lic.licano, m.minano) as ano_sequencial,
-        coalesce(lic.licnro, m.minnro) as nro_sequencial,
+         coalesce(lic.licnro, m.minnro) as nro_sequencial,
         p.modcodigo,
         (select mo.moddescricao from wco.tbmodalidade mo where mo.modcodigo = p.modcodigo) as desc_modalidade,
         p.pcsano as parametro_exercicio,
@@ -22,9 +22,9 @@ from (
         'CLASSIFICA' as desc_prop_invalida,
         'CLASSIFICA' as desc_prop_invalida_lote,
         p.pcsfundamentolegal,
-        (case when p.pcsfundamentolegal is null then 48
+        (case when p.modcodigo in (8) then 81 -- Inegibilidade
               when p.modcodigo in (7) then 48 --Dispensa de Licitação
-              when p.modcodigo in (8) then 81 -- Inegibilidade
+              when p.pcsfundamentolegal is null then 48
               when p.pcsfundamentolegal ~ '13.979' then 159 -- RP
               when (p.pcsfundamentolegal ~ '10.520' or p.modcodigo = 6) then 160 -- Pregão
               else 0 end
@@ -57,7 +57,7 @@ from (
     left join wco.tbedital e            on (e.clicodigo = m.clicodigo and e.minnro = m.minnro and e.minano = m.minano)
     where m.clicodigo = {{clicodigo}}
     and p.pcsano = {{ano}}
-    --and p.pcsnro = 204
+    --and p.pcsnro = 188
     order by 1, 2 desc, 3 desc
 ) tab
 where id_gerado is null

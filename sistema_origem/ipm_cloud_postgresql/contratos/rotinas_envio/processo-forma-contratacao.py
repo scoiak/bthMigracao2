@@ -124,7 +124,9 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
 
         if item['nro_sequencial'] is not None:
             dict_dados.update({'numeroSequencial': item['nro_sequencial']})
-            # dict_dados.update({'numeroSequencial': 24})
+            # dict_dados.update({'numeroSequencial': int('6' + str(item['nro_sequencial']))})
+            # dict_dados.update({'numeroSequencial': item['nro_minuta']})
+            # dict_dados.update({'numeroSequencial': 999})
 
         if item['id_fundamento_legal'] is not None and item['id_fundamento_legal'] != 0:
             dict_dados.update({'fundamentacaoLegal': {'id': item['id_fundamento_legal']}})
@@ -132,8 +134,10 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
 
         if item['id_membro_comissao'] is not None and item['id_membro_comissao'] != 0:
             dict_dados.update({'membroComissao': {'id': item['id_membro_comissao']}})
-            # dict_dados.update({'membroComissao': {'id': 53788}}) # Pregoeiro
-            # dict_dados.update({'membroComissao': {'id': 53417}}) # Presidente
+            # dict_dados.update({'membroComissao': {'id': 53788}})  # Pregoeiro
+            # dict_dados.update({'membroComissao': {'id': 53417}})  # Presidente
+            # dict_dados.update({'membroComissao': {'id': 53501}})  # Leiloeiro
+
 
         if item['registro_preco'] is not None:
             dict_dados.update({'registroPreco':  item['registro_preco']})

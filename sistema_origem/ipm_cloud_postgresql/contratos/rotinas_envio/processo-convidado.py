@@ -114,7 +114,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         if item['observacao'] is not None:
             dict_dados.update({'observacao': item['observacao']})
 
-        print(f'Dados gerados ({contador}): ', dict_dados)
+        # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,

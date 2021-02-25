@@ -18,7 +18,7 @@ from (
 	 	rp.arpdata::varchar as data_assinatura,
 	 	rp.arpdatavigfim::varchar as data_vencimento,
 	 	rp.arpobjeto as objeto,
-	 	null as observacao,
+	 	concat('Migração: Ata ', rp.arpnro, '/', rp.arpano, ', Sequencia ',  rp.arpsequencia, ', Minuta ', rp.minnro, '/', rp.minano) as observacao,
 	 	'PROCESSO_HOMOLOGADO' AS origem,
 	    'ANDAMENTO' AS situacao,
 	 	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'parametro-exercicio', rp.arpano))) as id_parametro_exercicio,
@@ -30,11 +30,11 @@ from (
 	 inner join wun.tbunico u on u.unicodigo = rp.unicodigo
 	 where rp.clicodigo = {{clicodigo}}
 	 and rp.minano = {{ano}}
-	 --and rp.minnro = 35
-	 order by 1, 2 desc, 3 desc
+	 --and rp.minnro = 166
+	 order by 1, 2 desc, 3 asc
 ) tab
 where id_gerado is null
 and id_processo is not null
 and id_fornecedor is not null
---and id_ato_final is not null
+and id_ato_final is not null
 --limit 1
