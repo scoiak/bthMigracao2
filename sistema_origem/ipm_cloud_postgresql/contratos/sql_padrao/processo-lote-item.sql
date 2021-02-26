@@ -18,6 +18,7 @@ from (
 	 from wco.tbitemin i
 	 where i.clicodigo = {{clicodigo}}
 	 and i.minano = {{ano}}
+	 --and i.minnro = 68
 	 and i.lotcodigo is not null
 	 order by 1, 2 desc, 3 desc, 4 asc, 5 asc
 ) tab

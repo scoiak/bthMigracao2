@@ -38,7 +38,7 @@ from (
 	inner join wun.tbunico u on (u.unicodigo = qcp.unicodigo)
 	where qcp.clicodigo = {{clicodigo}}
 	and qcp.minano = {{ano}}
-	-- and qcp.minnro = 188
+	--and qcp.minnro = 68
 	--and qcp.minnro not in (35, 41, 65, 81, 88, 90, 92, 99, 100)
 	order by 1, 2 desc, 3 desc, 4 asc
 ) tab

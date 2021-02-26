@@ -30,6 +30,7 @@ from (
      from wco.tbitemin i
 	 where i.clicodigo = {{clicodigo}}
 	 and i.minano = {{ano}}
+	 --and i.minnro = 68
 	 and i.lotcodigo is null
 	 and not exists ( -- Filtro para não enviar itens de processos com itens repetidos
 		select 1 from (
@@ -70,6 +71,7 @@ from (
      from wco.tbitemin i
 	 where i.clicodigo = {{clicodigo}}
 	 and i.minano = {{ano}}
+	 --and i.minnro = 68
 	 and i.lotcodigo is not null
 	 and not exists (
 		select 1 from ( -- Filtro para não enviar itens de processos com itens repetidos

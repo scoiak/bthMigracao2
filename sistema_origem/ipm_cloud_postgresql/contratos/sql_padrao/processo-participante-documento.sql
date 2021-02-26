@@ -26,7 +26,7 @@ from (
 	inner join wun.tbunico u on (u.unicodigo = dl.unicodigo)
 	where dl.clicodigo = {{clicodigo}}
 	and dl.minano = {{ano}}
-	--and dl.minnro = 188
+	--and dl.minnro = 68
 	order by 1, 2 desc, 3 desc, 4
 ) tab
 where id_gerado is null

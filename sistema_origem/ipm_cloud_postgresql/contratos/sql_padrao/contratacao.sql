@@ -12,7 +12,7 @@ from (
 		c.clicodigo,
 		c.ctrano as ano_contrato,
 		c.ctrnro as nro_contrato,
-		(regexp_replace((regexp_replace(c.ctrnro,'\/\d+','','g')),'[^0-9]','','g')) as nro_formatado,
+		(regexp_replace((regexp_replace(c.ctrnro,'\/\d+','','g')),'[^0-9]','','g'))::integer as nro_formatado,
 		--'10053' as nro_formatado,
 		c.ctridentificador as identificador_contrato,
 		c.ctrano as ano_termo,
@@ -54,7 +54,7 @@ from (
 	left join wco.tbataregpreco rp on (rp.clicodigo = c.clicodigo and rp.minano = c.minano and rp.minnro = c.minnro and rp.unicodigo = c.unicodigo)
 	where c.clicodigo = {{clicodigo}}
 	and c.minano = {{ano}}
-	--and c.minnro = 188
+	--and c.minnro = 203
 	--and c.minnro not in (13, 17, 21)
 	and c.ctrtipoaditivo is null
 	and c.minano is not null

@@ -98,8 +98,10 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
 
         if params_exec['clicodigo'] == '16975':
             id_organograma_padrao = 373447
-        else:
-            id_organograma_padrao = 0
+        elif params_exec['clicodigo'] == '13482':
+            id_organograma_padrao = 371827
+        elif params_exec['clicodigo'] == '2016':
+            id_organograma_padrao = 392830
 
         dict_dados = {
             'idIntegracao': hash_chaves,

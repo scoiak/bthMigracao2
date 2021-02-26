@@ -18,7 +18,7 @@ from (
 		true as fornecimento_imediato,
 		'QUANTIDADE' as tipo_controle_saldo,
 		'EXECUCAO' as situacao,
-		concat('Compra direta ', c.copnro, '/', c.copano, '. ', c.copfinalidade) as observacao,
+		concat('Compra direta ', c.copnro, '/', c.copano, '. ') as observacao,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'parametro-exercicio', c.copano))) as id_exercicio,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'entidade', c.clicodigo))) as id_entidade,
 		10 as id_tipo_objeto, -- COMPRAS_SERVICOS
