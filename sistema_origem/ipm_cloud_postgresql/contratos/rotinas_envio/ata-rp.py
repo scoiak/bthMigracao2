@@ -102,7 +102,6 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                 'id': item['id_fornecedor']
             },
             'numero': item['nro_ata'],
-            # 'numero': 99998,
             'ano': item['ano_homologacao'],
             'origem': {
                 'valor': item['origem']

@@ -47,6 +47,7 @@ from (
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'fornecedor', (regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g'))))) as id_fornecedor,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'entidade', c.clicodigo))) as id_entidade,
 		coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'ata-rp', rp.clicodigo, rp.arpano, rp.arpnro, rp.unicodigo))), 0) as id_ata,
+		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo-ato-final', c.clicodigo, c.minano, c.minnro))) as id_ato_final,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'contratacao', c.clicodigo, c.ctrano, c.ctridentificador))) as id_gerado
 	from wco.tbcontrato c
 	inner join wun.tbunico u on (u.unicodigo = c.unicodigo)
@@ -59,6 +60,7 @@ from (
 	and c.ctrtipoaditivo is null
 	and c.minano is not null
 	and c.minnro is not null
+	and c.ctrnro !~ '-'
 	and not exists (select 1 from wco.tbataregpreco a where a.clicodigo  = c.clicodigo and a.minano = c.minano and a.minnro = c.minnro)
 	--and c.ctridentificador in (231, 208)
 	order by 1, 2 desc, 3 desc
@@ -67,5 +69,6 @@ where id_gerado is null
 and id_entidade is not null
 and id_processo is not null
 and id_fornecedor is not null
+and id_ato_final is not null
 and instrumento = 'PROCESSO'
 --limit 1

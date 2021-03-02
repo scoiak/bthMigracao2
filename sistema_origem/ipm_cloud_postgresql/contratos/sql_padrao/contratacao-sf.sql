@@ -12,7 +12,11 @@ from (
 		c.clicodigo,
 		c.minano as ano_minuta,
 		c.minnro as nro_minuta,
-		c.copdataemissao::varchar as data_sf,
+		(case
+			when c.copdataemissao < coalesce(ct.ctrdataassinatura, c.copdataemissao) then ct.ctrdataassinatura::varchar
+			when c.copdataemissao > coalesce(ct.ctrdatavencto, c.copdataemissao) then ct.ctrdatavencto::varchar
+			else c.copdataemissao::varchar
+		end) as data_sf,
 		'PRINCIPAL' as origem,
 		ct.ctrano as ano_contrato,
 		ct.ctrnro as nro_contrato,
@@ -52,7 +56,11 @@ union all
 		c.clicodigo,
 		c.minano as ano_minuta,
 		c.minnro as nro_minuta,
-		c.copdataemissao::varchar as data_sf,
+		(case
+			when c.copdataemissao < coalesce(ct.ctrdataassinatura, c.copdataemissao) then ct.ctrdataassinatura::varchar
+			when c.copdataemissao > coalesce(ct.ctrdatavencto, c.copdataemissao) then ct.ctrdatavencto::varchar
+			else c.copdataemissao::varchar
+		end) as data_sf,
 		'ADITIVO' as origem,
 		ct.ctrano as ano_contrato,
 		ct.ctrnro as nro_contrato,
@@ -93,7 +101,11 @@ union all
 		c.clicodigo,
 		c.minano as ano_minuta,
 		c.minnro as nro_minuta,
-		c.copdataemissao::varchar as data_sf,
+		(case
+			when c.copdataemissao < coalesce(ct.ctrdataassinatura, c.copdataemissao) then ct.ctrdataassinatura::varchar
+			when c.copdataemissao > coalesce(ct.ctrdatavencto, c.copdataemissao) then ct.ctrdatavencto::varchar
+			else c.copdataemissao::varchar
+		end) as data_sf,
 		'PRINCIPAL_SEM_CONTRATO' as origem,
 		ct.ctrano as ano_contrato,
 		ct.ctrnro as nro_contrato,
@@ -135,5 +147,5 @@ union all
 where id_gerado is null
 and id_contratacao is not null
 and id_fornecedor is not null
---and origem in ('PRINCIPAL', 'PRINCIPAL_SEM_CONTRATO')
+and origem in ('PRINCIPAL', 'PRINCIPAL_SEM_CONTRATO')
 --limit 1

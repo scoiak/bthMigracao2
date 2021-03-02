@@ -34,7 +34,7 @@ from (
 	where c.clicodigo = {{clicodigo}}
 	--and c.ctranosup = {{ano}}
 	and c.minano = {{ano}}
-	and c.minnro in (203)
+	--and c.minnro in (203)
 	and c.ctrtipoaditivo is not null
 	and c.ctrtipoaditivo <> 12
 	--and c.minnro = 2
