@@ -32,8 +32,8 @@ from (
 	where true
 	and ((c.clicodigo = {{clicodigo}} and c.clicodigomin is null) or ((c.clicodigo = {{clicodigo}} and c.clicodigomin = c.clicodigo)) or (c.clicodigomin = {{clicodigo}} and c.clicodigo <> c.clicodigomin))
 	and cp.minano = {{ano}}
-	and cp.minnro = 30
-	and a.arpnro = 117
+	--and cp.minnro = 148
+	--and a.arpnro = 13
 	and c.minano is not null
 	and c.minnro is not null
 ) tab

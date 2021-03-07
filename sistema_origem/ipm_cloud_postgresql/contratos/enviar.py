@@ -7,11 +7,11 @@ from datetime import datetime
 def iniciar():
     print(':: Iniciando migração do sistema Compras/Contratos')
     params_exec = {
-        'clicodigo': '2016', # PM
-        # 'clicodigo': '13482', # SAUDE
+        # 'clicodigo': '2016', # PM
+        'clicodigo': '13482', # SAUDE
         # 'clicodigo': '16975',  # FAMABI
         # 'clicodigo': '11968',  # CAMARA
-        'ano': 2020,
+        'ano': 2018,
         'somente_pre_validar': False,
     }
     mensagem_inicio(params_exec)
@@ -121,9 +121,10 @@ def iniciar():
     # enviar(params_exec, 'contratacao-aditivo-item_v2')
 
     # Contratações - Atas de Registro de Preço
+    # enviar(params_exec, 'processo-participante-proposta-busca')
     # enviar(params_exec, 'contratacao-arp')
     # enviar(params_exec, 'contratacao-arp-item')
-    # enviar(params_exec, 'contratacao-arp-sf')
+    enviar(params_exec, 'contratacao-arp-sf')
     # enviar(params_exec, 'contratacao-arp-sf-item')
 
 

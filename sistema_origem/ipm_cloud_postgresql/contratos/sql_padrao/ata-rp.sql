@@ -30,7 +30,7 @@ from (
 	 inner join wun.tbunico u on u.unicodigo = rp.unicodigo
 	 where rp.clicodigo = {{clicodigo}}
 	 and rp.minano = {{ano}}
-	 --and rp.minnro = 166
+	 --and rp.minnro = 148
 	 order by 1, 2 desc, 3 asc
 ) tab
 where id_gerado is null

@@ -38,8 +38,8 @@ from (
 		where true
 		and ((c.clicodigo = {{clicodigo}} and c.clicodigomin is null) or ((c.clicodigo = {{clicodigo}} and c.clicodigomin = c.clicodigo)) or (c.clicodigomin = {{clicodigo}} and c.clicodigo <> c.clicodigomin))
 		and c.minano = {{ano}}
-		and c.minnro = 30
-		--and a.arpnro = 69
+		--and c.minnro = 148
+		--and a.arpnro = 8
 		group by 1, 2, 3, 4, 5, 6, 7, 8
 		order by 1, 2 desc, 4 desc, 6, 8
 	) aux
@@ -53,5 +53,6 @@ and id_material is not null
 and id_especificacao is not null
 and id_ata is not null
 and id_proposta is not null
-and uninomerazao = 'PLAYRIO PARQUES INFANTIL'
+and quantidade > 0
+--and uninomerazao = 'PLAYRIO PARQUES INFANTIL'
 --limit 1

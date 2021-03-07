@@ -40,7 +40,17 @@ from (
 	left join wco.tbminuta t on (t.clicodigo = a.clicodigo and t.minano = a.minano and t.minnro = a.minnro)
 	where a.clicodigo = {{clicodigo}}
 	and a.minano = {{ano}}
-	--and a.minnro = 153
+	--and a.minnro = 148
+	and exists ( -- Esse filtro impede a migração de contratações de atas que não tiveram nenhuma execução até o momento
+		select 1
+		from wco.tbcompra c
+		where true
+		and ((c.clicodigo = a.clicodigo and c.clicodigomin is null) or (c.clicodigo = a.clicodigo and c.clicodigomin = c.clicodigo) or (c.clicodigomin = a.clicodigo and c.clicodigo <> c.clicodigomin))
+		and c.minano = a.minano
+		and c.minnro = a.minnro
+		and c.unicodigo = a.unicodigo
+		limit 1
+	)
 	order by 1, 2 desc, 3 desc, 4
 ) tab
 where id_gerado is null

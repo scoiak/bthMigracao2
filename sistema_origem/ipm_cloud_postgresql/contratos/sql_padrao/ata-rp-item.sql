@@ -36,7 +36,7 @@ from (
 	 left join wco.tbitemin i on (i.clicodigo = rp.clicodigo and i.minano = rp.minano and i.minnro = rp.minnro and i.cmiid = qcp.cmiid)
 	 where rp.clicodigo = {{clicodigo}}
 	 and rp.minano = {{ano}}
-	 --and rp.minnro = 166
+	 --and rp.minnro = 148
 	 order by 1, 2 desc, 3 desc
 ) tab
 where id_gerado is null
@@ -46,4 +46,5 @@ and id_material is not null
 and id_material_especificacao is not null
 and id_item is not null
 and id_config_item is not null
+--and nro_ata = 26
 --limit 1

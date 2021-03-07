@@ -133,6 +133,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
 
         if True:
             model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)
+            """
             req_res = interacao_cloud\
                 .preparar_requisicao_sem_lote(
                     lista_dados=lista_dados_enviar,
@@ -142,6 +143,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             model.atualiza_tabelas_controle_envio_sem_lote(params_exec, req_res, tipo_registro=tipo_registro)
             if req_res[0]['mensagem'] is not None:
                 total_erros += 1
+            """
     if total_erros > 0:
         print(f'- Envio finalizado. Foram encontrados um total de {total_erros} inconsistência(s) de envio.')
     else:
