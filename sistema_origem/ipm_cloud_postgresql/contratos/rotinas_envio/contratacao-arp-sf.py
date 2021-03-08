@@ -98,7 +98,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                                .replace('{contratacaoId}', str(item['id_contratacao']))
 
         if params_exec['clicodigo'] == '2016':
-            id_organograma_padrao = 0
+            id_organograma_padrao = 410116
         elif params_exec['clicodigo'] == '13482':
             id_organograma_padrao = 376332
         elif params_exec['clicodigo'] == '11968':

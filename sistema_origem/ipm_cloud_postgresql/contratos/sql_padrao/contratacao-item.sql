@@ -33,6 +33,7 @@ from (
 	left join wun.tbunico u on (u.unicodigo = q.unicodigo)
 	where q.clicodigo = {{clicodigo}}
 	and q.minano = {{ano}}
+	--and q.minnro = 164
 	and c.ctrtipoaditivo is null
 	and c.ctrano is not null
 	--and c.minnro in (203)
@@ -45,4 +46,4 @@ and id_contratacao is not null
 and id_material is not null
 and id_especificacao is not null
 and id_ato_final is not null
---limit 5
+--limit 1

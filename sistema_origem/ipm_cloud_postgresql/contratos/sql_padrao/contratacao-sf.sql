@@ -45,7 +45,7 @@ from (
 	and c.clicodigo = {{clicodigo}}
 	and c.clicodigomin = c.clicodigo
 	and c.minano = {{ano}}
-	--and c.minnro in (203)
+	and c.minnro in (18)
 	and c.minano is not null
 	and c.minnro is not null
 	and not exists (select 1 from wco.tbataregpreco a where a.clicodigo  = c.clicodigo and a.minano = c.minano and a.minnro = c.minnro)
@@ -90,7 +90,7 @@ union all
 	and c.clicodigo = {{clicodigo}}
 	and c.clicodigomin = c.clicodigo
 	and c.minano = {{ano}}
-	--and c.minnro in (203)
+	and c.minnro in (18)
 	and c.minano is not null
 	and c.minnro is not null
 	and not exists (select 1 from wco.tbataregpreco a where a.clicodigo  = c.clicodigo and a.minano = c.minano and a.minnro = c.minnro)
@@ -135,7 +135,7 @@ union all
 	and c.clicodigo = {{clicodigo}}
 	and c.clicodigomin = c.clicodigo
 	and c.minano = {{ano}}
-	--and c.minnro in (203)
+	and c.minnro in (18)
 	and c.minano is not null
 	and c.minnro is not null
 	and c.ctrano is null
@@ -147,5 +147,5 @@ union all
 where id_gerado is null
 and id_contratacao is not null
 and id_fornecedor is not null
-and origem in ('PRINCIPAL', 'PRINCIPAL_SEM_CONTRATO')
+--and origem in ('PRINCIPAL', 'PRINCIPAL_SEM_CONTRATO')
 --limit 1

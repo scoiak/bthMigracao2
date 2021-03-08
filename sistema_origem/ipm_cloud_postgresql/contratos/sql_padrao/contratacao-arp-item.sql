@@ -38,7 +38,7 @@ from (
 		where true
 		and ((c.clicodigo = {{clicodigo}} and c.clicodigomin is null) or ((c.clicodigo = {{clicodigo}} and c.clicodigomin = c.clicodigo)) or (c.clicodigomin = {{clicodigo}} and c.clicodigo <> c.clicodigomin))
 		and c.minano = {{ano}}
-		--and c.minnro = 148
+		and c.minnro = 221
 		--and a.arpnro = 8
 		group by 1, 2, 3, 4, 5, 6, 7, 8
 		order by 1, 2 desc, 4 desc, 6, 8
