@@ -33,4 +33,4 @@ from (
 ) tab
 where id_gerado is null
 and id_fornecedor is not null
-limit 1
+--limit 1

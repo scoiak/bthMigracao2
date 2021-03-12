@@ -89,7 +89,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
         contador += 1
         print(f'\r- Enviando registros: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
         hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['clicodigo'],
-                                              item['copano'], item['copnro'])
+                                              item['copano'], item['copnro'], item['separador'], item['numero'])
         url_parametrizada = url\
             .replace('{exercicio}', str(item['exercicio']))\
             .replace('{contratacaoId}', str(item['id_contratacao']))\
@@ -110,7 +110,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'observacao': item['observacao']
         }
 
-        print(f'Dados gerados ({contador}): ', dict_dados)
+        # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,
@@ -121,7 +121,9 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'json': json.dumps(dict_dados),
             'i_chave_dsk1': item['clicodigo'],
             'i_chave_dsk2': item['copano'],
-            'i_chave_dsk3': item['copnro']
+            'i_chave_dsk3': item['copnro'],
+            'i_chave_dsk4': item['separador'],
+            'i_chave_dsk5': item['numero']
         })
 
         if True:

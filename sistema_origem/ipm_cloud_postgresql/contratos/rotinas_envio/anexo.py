@@ -4,23 +4,26 @@ import json
 import logging
 import re
 import math
+import base64
 from datetime import datetime
 
 sistema = 305
-tipo_registro = 'comprovante'
-url = 'https://contratos.betha.cloud/contratacao-services/api/comprovantes'
+tipo_registro = 'ata-rp'
+url = 'https://compras.betha.cloud/compras-services/api/anexos/base64'
 
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
+    geraJsonAnexo()
+
     # E - Realiza a consulta dos dados que serão enviados
-    dados_assunto = coletar_dados(params_exec)
+    # dados_assunto = coletar_dados(params_exec)
 
     # T - Realiza a pré-validação dos dados
-    dados_enviar = pre_validar(params_exec, dados_assunto)
+    # dados_enviar = pre_validar(params_exec, dados_assunto)
 
     # L - Realiza o envio dos dados validados
     if not params_exec.get('somente_pre_validar'):
-        iniciar_envio(params_exec, dados_enviar, 'POST')
+        pass # iniciar_envio(params_exec, dados_enviar, 'POST')
 
 
 def coletar_dados(params_exec):
@@ -40,14 +43,6 @@ def coletar_dados(params_exec):
 
     finally:
         return df
-
-
-def list_unique(lista):
-    list_of_unique = []
-    for item in lista:
-        if item not in list_of_unique:
-            list_of_unique.append(item)
-    return list_of_unique
 
 
 def pre_validar(params_exec, dados):
@@ -76,6 +71,7 @@ def pre_validar(params_exec, dados):
 
 def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     print('- Iniciando envio dos dados.')
+    lista_controle_migracao = []
     hoje = datetime.now().strftime("%Y-%m-%d")
     token = params_exec['token']
     total_dados = len(dados)
@@ -83,32 +79,37 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     total_erros = 0
 
     for item in dados:
-        lista_controle_migracao = []
         lista_dados_enviar = []
+        lista_controle_migracao = []
         contador += 1
-        print(f'\r- Gerando JSON: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['clicodigo'], item['copano'],
-                                              item['copnro'], item['separador'], item['nfisequencia'])
+        print(f'\r- Enviando registros: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
+        hash_chaves = model.gerar_hash_chaves(sistema,  tipo_registro, item['clicodigo'], item['ano_ata'],
+                                              item['nro_ata'], item['unicodigo'])
+        url_parametrizada = url.replace('{exercicio}', str(item['ano_homologacao'])) \
+                               .replace('{processoAdministrativoId}', str(item['id_processo']))
         dict_dados = {
             'idIntegracao': hash_chaves,
+            'url': url_parametrizada,
+            'processoAdministrativo': {
+                'id': item['id_processo']
+            },
             'fornecedor': {
                 'id': item['id_fornecedor']
             },
-            'tipoComprovante': {
-                'id': item['id_tipo_comprovante']
+            'numero': item['nro_ata'],
+            'ano': item['ano_homologacao'],
+            'origem': {
+                'valor': item['origem']
             },
-            'numeroComprovante': item['numero_comprovante'],
-            'dataEmissao': item['data_emissao'],
-            'valorBruto': item['valor_bruto'],
-            'valorDesconto': item['valor_desconto'],
-            'valorLiquido': item['valor_liquido'],
+            'situacao': {
+                'valor': item['situacao']
+            },
+            'dataAta': item['data_ata'],
+            'dataAssinatura': item['data_assinatura'],
+            'dataVencimento': item['data_vencimento'],
+            'objeto': item['objeto'],
+            'observacao': item['observacao']
         }
-
-        if item['serie'] is not None:
-            dict_dados.update({'serie': item['serie']})
-
-        if item['finalidade'] is not None:
-            dict_dados.update({'finalidade': item['finalidade']})
 
         # print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
@@ -116,14 +117,13 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Comprovantes',
+            'descricao_tipo_registro': 'Cadastro de Atas de RP',
             'id_gerado': None,
             'json': json.dumps(dict_dados),
             'i_chave_dsk1': item['clicodigo'],
-            'i_chave_dsk2': item['copano'],
-            'i_chave_dsk3': item['copnro'],
-            'i_chave_dsk4': item['separador'],
-            'i_chave_dsk5': item['nfisequencia']
+            'i_chave_dsk2': item['ano_ata'],
+            'i_chave_dsk3': item['nro_ata'],
+            'i_chave_dsk4': item['unicodigo']
         })
 
         if True:
@@ -135,9 +135,27 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                     url=url,
                     tipo_registro=tipo_registro)
             model.atualiza_tabelas_controle_envio_sem_lote(params_exec, req_res, tipo_registro=tipo_registro)
+            if req_res[0]['mensagem'] is not None:
+                print('Erro: ', req_res[0]['mensagem'])
+                total_erros += 1
     if total_erros > 0:
         print(f'- Envio finalizado. Foram encontrados um total de {total_erros} inconsistência(s) de envio.')
     else:
         print('- Envio de dados finalizado sem inconsistências.')
 
 
+def geraJsonAnexo():
+    path = 'C:\\Users\\Kaio\\Desktop\\TESTE.txt'
+    # conteudo_arquivo = open(path, "r").read()
+    conteudo_arquivo = 'teste migracao arquivo'
+    conteudo_arquivo = conteudo_arquivo.encode('ascii')
+    arquivo_base_64 = base64.b64encode(conteudo_arquivo)
+
+    dict_dados = {
+        'identificadorOrigem': '23184',
+        'tipoProcessoOrigem': 'TEXTOS_PROCESSO_ADMINISTRATIVO',
+        'nome': 'meu_arquivo.txt',
+        'conteudo': str(arquivo_base_64)
+    }
+
+    print(json.dumps(dict_dados))

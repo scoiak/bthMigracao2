@@ -11,7 +11,7 @@ def iniciar():
         # 'clicodigo': '13482', # SAUDE
         # 'clicodigo': '16975',  # FAMABI
         # 'clicodigo': '11968',  # CAMARA
-        'ano': 2020,
+        'ano': 2015,
         'somente_pre_validar': False,
     }
     mensagem_inicio(params_exec)
@@ -130,10 +130,10 @@ def iniciar():
     # enviar(params_exec, 'comprovante')
     # enviar(params_exec, 'solicitacao-recebimento')
     # enviar(params_exec, 'solicitacao-recebimento-item')
-    # enviar(params_exec, 'solicitacao-recebimento-comprovante') # !!! PENDENTE
+    # enviar(params_exec, 'solicitacao-recebimento-comprovante')
 
     """ Envio de Anexos """
-    # enviar(params_exec, 'anexo') # !!! PENDENTE
+    enviar(params_exec, 'anexo') # !!! PENDENTE
 
 
 def enviar(params_exec, tipo_registro, *args, **kwargs):
