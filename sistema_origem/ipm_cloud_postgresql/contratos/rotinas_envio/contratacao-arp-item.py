@@ -121,7 +121,10 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'valorUnitarioPercentual': item['valor_unitario']
         }
 
-        # print(f'Dados gerados ({contador}): ', dict_dados)
+        if item['possui_duplicado'] is True:
+            dict_dados['especificacao']['id'] = item['id_material_duplicado_epec']
+
+        print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,

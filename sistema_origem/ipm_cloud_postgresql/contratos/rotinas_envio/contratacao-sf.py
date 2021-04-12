@@ -128,7 +128,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'observacao': item['observacao']
         }
 
-        # print(f'Dados gerados ({contador}): ', dict_dados)
+        print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,
@@ -145,7 +145,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'i_chave_dsk6': item['nro_sf'],
         })
 
-        if True:
+        if False:
             model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)
             req_res = interacao_cloud\
                 .preparar_requisicao_sem_lote(

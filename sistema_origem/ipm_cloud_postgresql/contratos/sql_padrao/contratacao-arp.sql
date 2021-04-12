@@ -40,7 +40,7 @@ from (
 	left join wco.tbminuta t on (t.clicodigo = a.clicodigo and t.minano = a.minano and t.minnro = a.minnro)
 	where a.clicodigo = {{clicodigo}}
 	and a.minano = {{ano}}
-	--and a.minnro = 221
+	and a.minnro = 119
 	and exists ( -- Esse filtro impede a migração de contratações de atas que não tiveram nenhuma execução até o momento
 		select 1
 		from wco.tbcompra c

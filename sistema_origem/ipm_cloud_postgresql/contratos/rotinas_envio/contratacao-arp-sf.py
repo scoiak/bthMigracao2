@@ -122,7 +122,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'fornecedor': {
                 'id': item['id_fornecedor']
             },
-            'numero': item['nro_sf'],
+            'numero': '-' + str(item['nro_sf']),
             'nomeSolicitante': item['solicitante'],
             'data': item['data_sf'],
             'observacao': item['observacao']

@@ -131,7 +131,11 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'amostra': item['amostra']
         }
 
-        # print(f'Dados gerados ({contador}): ', dict_dados)
+        if item['possui_duplicado'] is True:
+            dict_dados['materialEspecificacao']['id'] = int(item['id_material_duplicado_epec'])
+            dict_dados['configuracaoItem']['materialEspecificacao']['id'] = int(item['id_material_duplicado_epec'])
+
+        print(f'Dados gerados ({contador}): ', json.dumps(dict_dados))
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,

@@ -31,7 +31,7 @@ def iniciar():
     # enviar(params_exec, 'classe')
     # enviar(params_exec, 'material')
     # enviar(params_exec, 'material-especificacao')
-    enviar(params_exec, 'material-duplicado-especificacao')
+    # enviar(params_exec, 'material-duplicado-especificacao') # FLAG!!!
     # enviar(params_exec, 'tipo-objeto')
     # enviar(params_exec, 'regime-execucao')
     # enviar(params_exec, 'prazo-entrega')
@@ -80,7 +80,7 @@ def iniciar():
     # # enviar(params_exec, 'processo-entidade-item')
     # enviar(params_exec, 'processo-convidado')
     # enviar(params_exec, 'processo-publicacao')
-    # enviar(params_exec, 'processo-impugnacao')
+    # enviar(params _exec, 'processo-impugnacao')
     # enviar(params_exec, 'processo-sessao')
     # enviar(params_exec, 'processo-participante')
     # enviar(params_exec, 'processo-participante-documento')
