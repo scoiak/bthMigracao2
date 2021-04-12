@@ -7,11 +7,11 @@ from datetime import datetime
 def iniciar():
     print(':: Iniciando migração do sistema Compras/Contratos')
     params_exec = {
-        'clicodigo': '2016', # PM
-        # 'clicodigo': '13482', # SAUDE
+        'clicodigo': '2016',  # PM
+        # 'clicodigo': '13482',  # SAUDE
         # 'clicodigo': '16975',  # FAMABI
         # 'clicodigo': '11968',  # CAMARA
-        'ano': 2015,
+        'ano': 2019,
         'somente_pre_validar': False,
     }
     mensagem_inicio(params_exec)
@@ -31,6 +31,7 @@ def iniciar():
     # enviar(params_exec, 'classe')
     # enviar(params_exec, 'material')
     # enviar(params_exec, 'material-especificacao')
+    enviar(params_exec, 'material-duplicado-especificacao')
     # enviar(params_exec, 'tipo-objeto')
     # enviar(params_exec, 'regime-execucao')
     # enviar(params_exec, 'prazo-entrega')
@@ -133,7 +134,7 @@ def iniciar():
     # enviar(params_exec, 'solicitacao-recebimento-comprovante')
 
     """ Envio de Anexos """
-    enviar(params_exec, 'anexo') # !!! PENDENTE
+    # enviar(params_exec, 'anexo') # !!! PENDENTE
 
 
 def enviar(params_exec, tipo_registro, *args, **kwargs):

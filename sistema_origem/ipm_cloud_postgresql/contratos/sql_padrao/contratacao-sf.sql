@@ -23,6 +23,7 @@ from (
 		ct.ctridentificador as identificador_contrato,
 		c.copano as ano_sf,
 		c.copnro as nro_sf,
+		--concat('10', c.copnro) as nro_sf,
 		c.unicodigo,
 		left(concat(c.copfinalidade, c.cophistorico, ' (Migração: Compra ', c.copnro, '/', c.copano, ', Contrato ', ct.ctrnro, '/', ct.ctrano, ', Identificador ',  ct.ctridentificador, ', Minuta ', c.minnro, '/', c.minano, ').'), 2048) as observacao,
 		(select sum(itcqtde) from wco.tbitemcompra ic where ic.clicodigo = c.clicodigo and ic.copano = c.copano and ic.copnro = c.copnro) as qtd_comprada,
@@ -42,10 +43,9 @@ from (
 	left join wun.tbcencus cc on (cc.organo = c.copano and cc.cnccodigo = c.cnccodigo)
 	left join wun.tbunico u on (u.unicodigo = c.unicodigo)
 	where true
-	and c.clicodigo = {{clicodigo}}
-	and c.clicodigomin = c.clicodigo
+	and ((c.clicodigo = {{clicodigo}} and c.clicodigomin = c.clicodigo) or (c.clicodigomin = {{clicodigo}} and c.clicodigo <> c.clicodigomin))
 	and c.minano = {{ano}}
-	and c.minnro in (16)
+	and c.minnro in (80)
 	and c.minano is not null
 	and c.minnro is not null
 	and not exists (select 1 from wco.tbataregpreco a where a.clicodigo  = c.clicodigo and a.minano = c.minano and a.minnro = c.minnro)
@@ -67,6 +67,7 @@ union all
 		ct.ctridentificador as identificador_contrato,
 		c.copano as ano_sf,
 		c.copnro as nro_sf,
+		--concat('10', c.copnro) as nro_sf,
 		c.unicodigo,
 		left(concat(c.copfinalidade, c.cophistorico, ' (Migração: Compra ', c.copnro, '/', c.copano, ', Contrato ', ct.ctrnro, '/', ct.ctrano, ', Identificador ',  ct.ctridentificador, ', Minuta ', c.minnro, '/', c.minano, ').'), 2048) as observacao,
 		(select sum(itcqtde) from wco.tbitemcompra ic where ic.clicodigo = c.clicodigo and ic.copano = c.copano and ic.copnro = c.copnro) as qtd_comprada,
@@ -87,10 +88,9 @@ union all
 	left join wun.tbcencus cc on (cc.organo = c.copano and cc.cnccodigo = c.cnccodigo)
 	left join wun.tbunico u on (u.unicodigo = c.unicodigo)
 	where true
-	and c.clicodigo = {{clicodigo}}
-	and c.clicodigomin = c.clicodigo
+	and ((c.clicodigo = {{clicodigo}} and c.clicodigomin = c.clicodigo) or (c.clicodigomin = {{clicodigo}} and c.clicodigo <> c.clicodigomin))
 	and c.minano = {{ano}}
-	and c.minnro in (16)
+	and c.minnro in (80)
 	and c.minano is not null
 	and c.minnro is not null
 	and not exists (select 1 from wco.tbataregpreco a where a.clicodigo  = c.clicodigo and a.minano = c.minano and a.minnro = c.minnro)
@@ -112,6 +112,7 @@ union all
 		ct.ctridentificador as identificador_contrato,
 		c.copano as ano_sf,
 		c.copnro as nro_sf,
+		--concat('10', c.copnro) as nro_sf,
 		c.unicodigo,
 		left(concat(c.copfinalidade, c.cophistorico, ' (Migração: Compra ', c.copnro, '/', c.copano, ', Sem vínculo Contrato,  Identificador ',  ct.ctridentificador, ', Minuta ', c.minnro, '/', c.minano, ').'), 2048) as observacao,
 		(select sum(itcqtde) from wco.tbitemcompra ic where ic.clicodigo = c.clicodigo and ic.copano = c.copano and ic.copnro = c.copnro) as qtd_comprada,
@@ -132,10 +133,9 @@ union all
 	left join wun.tbcencus cc on (cc.organo = c.copano and cc.cnccodigo = c.cnccodigo)
 	left join wun.tbunico u on (u.unicodigo = c.unicodigo)
 	where true
-	and c.clicodigo = {{clicodigo}}
-	and c.clicodigomin = c.clicodigo
+	and ((c.clicodigo = {{clicodigo}} and c.clicodigomin = c.clicodigo) or (c.clicodigomin = {{clicodigo}} and c.clicodigo <> c.clicodigomin))
 	and c.minano = {{ano}}
-	and c.minnro in (16)
+	and c.minnro in (80)
 	and c.minano is not null
 	and c.minnro is not null
 	and c.ctrano is null
@@ -147,5 +147,6 @@ union all
 where id_gerado is null
 and id_contratacao is not null
 and id_fornecedor is not null
+and identificador_contrato <> '122'
 --and origem in ('PRINCIPAL', 'PRINCIPAL_SEM_CONTRATO')
 --limit 1

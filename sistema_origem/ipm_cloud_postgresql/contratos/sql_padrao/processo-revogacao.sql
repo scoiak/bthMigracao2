@@ -21,7 +21,7 @@ from (
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo', l.clicodigo, l.minano, l.minnro))) as id_processo,
 		coalesce((select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat('305', 'responsavel', (select (regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g')) from wun.tbunico u where u.unicodigo = (select i.unicodigo from wco.tbintegrante i where i.cmlcodigo = m.cmlcodigo and i.mbcatribuicao in(3,6) limit 1))))), 0) as id_responsavel,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo-ato-final', l.clicodigo, l.minano, l.minnro))) as id_ato_final,
-		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo-ato-final', l.clicodigo, l.minano, l.minnro))) as id_gerado
+		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo-revogacao', l.clicodigo, l.minano, l.minnro))) as id_gerado
 	from wco.tblicitacao l
 	left join wco.tbminuta m on (m.clicodigo = l.clicodigo and m.minano = l.clicodigo and m.minnro = l.minnro)
 	where l.licsituacao = 6
@@ -31,4 +31,5 @@ from (
 ) tab
 where id_gerado is null
 and id_processo is not null
+--and id_processo in (211216, 211255, 211220, 211237, 211215, 211262, 211239, 211241)
 --limit 1

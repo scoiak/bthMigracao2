@@ -7,5 +7,5 @@ from wco.tbcadqcp qcp
 where qcp.clicodigo = {{clicodigo}}
 and qcp.minano = {{ano}}
 --and qcp.minnro not in (35, 41, 65, 81, 88, 90, 92, 99, 100)
---and qcp.minnro = 68
+and qcp.minnro = 33
 order by 1, 2 desc, 3 desc

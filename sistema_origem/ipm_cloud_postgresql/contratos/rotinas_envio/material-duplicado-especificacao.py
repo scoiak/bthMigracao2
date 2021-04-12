@@ -7,11 +7,9 @@ import math
 from datetime import datetime
 
 sistema = 305
-tipo_registro = 'processo-revogacao'
-url = 'https://compras.betha.cloud/compras-services/api/exercicios/{exercicio}/processos-administrativo/{processoAdministrativoId}/atos-finais'
+tipo_registro = 'material-duplicado-especificacao'
+url = 'https://compras.betha.cloud/compras-services/api/materiais/{materialId}/especificacoes'
 
-# Define responsável padrao caso o SQL nao encontre um registro
-id_responsavel_padrao = 5483713
 
 def iniciar_processo_envio(params_exec, *args, **kwargs):
     # E - Realiza a consulta dos dados que serão enviados
@@ -44,14 +42,6 @@ def coletar_dados(params_exec):
         return df
 
 
-def list_unique(lista):
-    list_of_unique = []
-    for item in lista:
-        if item not in list_of_unique:
-            list_of_unique.append(item)
-    return list_of_unique
-
-
 def pre_validar(params_exec, dados):
     print('- Iniciando pré-validação dos registros.')
     dados_validados = []
@@ -78,7 +68,6 @@ def pre_validar(params_exec, dados):
 
 def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     print('- Iniciando envio dos dados.')
-    lista_controle_migracao = []
     hoje = datetime.now().strftime("%Y-%m-%d")
     token = params_exec['token']
     total_dados = len(dados)
@@ -86,45 +75,38 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     total_erros = 0
 
     for item in dados:
-        lista_dados_enviar = []
         lista_controle_migracao = []
+        lista_dados_enviar = []
         contador += 1
-        print(f'\r- Enviando registros: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
-        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['clicodigo'], item['ano_processo'],
-                                              item['nro_processo'])
-        url_parametrizada = url.replace('{exercicio}', str(item['ano_processo']))\
-                               .replace('{processoAdministrativoId}', str(item['id_processo']))
+        print(f'\r- Gerando JSON: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
+        hash_chaves = model.gerar_hash_chaves(sistema, tipo_registro, item['clicodigo'], item['minano'],
+                                              item['minnro'], item['separador'], item['cmiid'])
+        url_parametrizada = url.replace('{materialId}', str(item['id_material']))
+
         dict_dados = {
             'idIntegracao': hash_chaves,
             'url': url_parametrizada,
-            'processoAdm': {
-                'id': item['id_processo']
+            'unidadeMedida': {
+                'id': item['id_un_medida']
             },
-            'responsavel': {
-                'id': id_responsavel_padrao if item['id_responsavel'] == 0 else item['id_responsavel']
-            },
-            'tipo': {
-                'valor': item['tipo']
-            },
-            'tipoRevogacaoAnulacao': {
-                'id': item['id_tipo_revogacao_anulacao']
-            },
-            'data': item['data_ato_afinal'],
-            'observacao': item['observacoes']
+            'descricao': item['descricao'],
+            'codigoEspecificacao': item['codigo_especificacao']
         }
 
-        # print(f'Dados gerados ({contador}): ', dict_dados)
+        print(f'Dados gerados ({contador}): ', dict_dados)
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,
             'tipo_registro': tipo_registro,
             'hash_chave_dsk': hash_chaves,
-            'descricao_tipo_registro': 'Cadastro de Revogação Processo',
+            'descricao_tipo_registro': 'Cadastro de Materiais',
             'id_gerado': None,
             'json': json.dumps(dict_dados),
             'i_chave_dsk1': item['clicodigo'],
-            'i_chave_dsk2': item['ano_processo'],
-            'i_chave_dsk3': item['nro_processo']
+            'i_chave_dsk2': item['minnro'],
+            'i_chave_dsk3': item['minano'],
+            'i_chave_dsk4': item['separador'],
+            'i_chave_dsk5': item['cmiid'],
         })
 
         if True:
@@ -137,9 +119,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                     tipo_registro=tipo_registro)
             model.atualiza_tabelas_controle_envio_sem_lote(params_exec, req_res, tipo_registro=tipo_registro)
             if req_res[0]['mensagem'] is not None:
-                print('Erro: ', req_res[0]['mensagem'])
                 total_erros += 1
-                # break
     if total_erros > 0:
         print(f'- Envio finalizado. Foram encontrados um total de {total_erros} inconsistência(s) de envio.')
     else:

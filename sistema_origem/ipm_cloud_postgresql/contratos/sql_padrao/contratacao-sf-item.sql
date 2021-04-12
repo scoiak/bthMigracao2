@@ -40,7 +40,7 @@ from (
 	where c.clicodigomin = {{clicodigo}}
 	and c.clicodigo = c.clicodigomin
 	and c.minano = {{ano}}
-	and c.minnro in (16)
+	and c.minnro in (80)
 	and c.minano is not null
 	and c.minnro is not null
 	order by 1, 2 desc, 3 desc, 4 desc, 8 desc, 9 desc, 10 asc)
@@ -79,7 +79,7 @@ union all
 	and c.clicodigomin = {{clicodigo}}
 	and c.clicodigo = c.clicodigomin
 	and c.minano = {{ano}}
-	and c.minnro = 16
+	and c.minnro = 80
 	--and c.copnro = 1687
 	and c.minano is not null
 	and c.minnro is not null
@@ -118,7 +118,7 @@ union all
 	and c.clicodigomin = {{clicodigo}}
 	and c.clicodigo = c.clicodigomin
 	and c.minano = {{ano}}
-	and c.minnro = 16
+	and c.minnro = 80
 	and c.ctrano is null
 	and c.ctridentificador is null
 	--and c.copnro = 1687

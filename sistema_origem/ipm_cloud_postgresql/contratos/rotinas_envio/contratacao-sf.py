@@ -88,7 +88,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     total_erros = 0
 
     if params_exec['clicodigo'] == '2016':
-        id_organograma_padrao = 371587
+        id_organograma_padrao = 371768
     elif params_exec['clicodigo'] == '13482':
         id_organograma_padrao = 376332
     elif params_exec['clicodigo'] == '11968':
@@ -122,7 +122,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'fornecedor': {
                 'id': item['id_fornecedor']
             },
-            'numero': item['nro_sf'],
+            'numero': str(item['nro_sf']),
             'nomeSolicitante': item['solicitante'],
             'data': item['data_sf'],
             'observacao': item['observacao']
