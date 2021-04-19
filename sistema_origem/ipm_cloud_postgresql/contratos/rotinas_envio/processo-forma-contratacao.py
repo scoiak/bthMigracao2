@@ -138,7 +138,6 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             # dict_dados.update({'membroComissao': {'id': 53417}})  # Presidente
             # dict_dados.update({'membroComissao': {'id': 53501}})  # Leiloeiro
 
-
         if item['registro_preco'] is not None:
             dict_dados.update({'registroPreco':  item['registro_preco']})
 

@@ -135,7 +135,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             dict_dados['materialEspecificacao']['id'] = int(item['id_material_duplicado_epec'])
             dict_dados['configuracaoItem']['materialEspecificacao']['id'] = int(item['id_material_duplicado_epec'])
 
-        print(f'Dados gerados ({contador}): ', json.dumps(dict_dados))
+        # print(f'Dados gerados ({contador}): ', json.dumps(dict_dados))
         lista_dados_enviar.append(dict_dados)
         lista_controle_migracao.append({
             'sistema': sistema,

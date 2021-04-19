@@ -10,7 +10,6 @@ DB_USER = 'postgres'
 DB_PW = 'admin'
 """
 
-
 # Esta conexão é usada para o envio das entidades oficiais do compras
 DB_HOST = 'localhost'
 DB_PORT = '5433'

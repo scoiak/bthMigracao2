@@ -115,10 +115,13 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'especificacao': {
                 'id': item['id_especificacao']
             },
-            'quantidade': item['qtd_liquida'],
+            'quantidade': item['qtd_liquida'] ,
             'valorUnitario': item['valor_unitario'],
             'valorTotal': item['valor_liquido'],
         }
+
+        if item['possui_duplicado'] is True:
+            dict_dados['especificacao']['id'] = item['id_material_duplicado_espec']
 
         print(f'Dados gerados ({contador}): ', json.dumps(dict_dados))
         lista_dados_enviar.append(dict_dados)

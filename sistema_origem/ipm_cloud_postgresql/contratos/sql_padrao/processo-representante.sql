@@ -22,7 +22,7 @@ from (
 	inner join wun.tbunico u on (u.unicodigo = p.unicodigo)
 	where p.clicodigo = {{clicodigo}}
     and p.minano = {{ano}}
-    and p.minnro = 119
+    and p.minnro in (81)
 	and pr.modcodigo <> 1
 	and p.unicodigorepr is not null
 	order by 1, 2 desc, 3 desc
@@ -31,4 +31,5 @@ where id_gerado is null
 and id_processo is not null
 and id_sessao is not null
 and id_participante is not null
+--and id_processo in (213969, 214060, 213812, 213811, 214200, 214180, 213809, 213807, 214166, 213803, 213802, 214107)
 --limit 5

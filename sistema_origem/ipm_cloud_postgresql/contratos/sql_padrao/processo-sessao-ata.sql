@@ -20,9 +20,10 @@ from (
   from wco.tbatalicitacao a
   where a.clicodigo = {{clicodigo}}
   and a.minano = {{ano}}
-  and a.minnro = 119
+  and a.minnro in (81)
   order by 1, 2 desc, 3 desc
 ) tab
 where id_gerado is null
 and id_processo is not null
 and id_sessao is not null
+--and id_processo in (213969, 214060, 213812, 213811, 214200, 214180, 213809, 213807, 214166, 213803, 213802, 214107)

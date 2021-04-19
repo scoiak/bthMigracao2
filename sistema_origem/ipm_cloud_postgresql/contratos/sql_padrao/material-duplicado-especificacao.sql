@@ -11,7 +11,7 @@ from (
 		i.minnro,
 		i.minano,
 		i.cmiid,
-		concat('Minuta ', i.minnro, '/', i.minano, ' (', i.clicodigo, '), cmiid ', i.cmiid, ' : ', coalesce(p.prddescdet, p.prddescricao)) as descricao,
+		concat(coalesce(p.prddescdet, p.prddescricao), ' (Minuta ', i.minnro, '/', i.minano, ', Clicodigo ', i.clicodigo, ', CMIID ', i.cmiid, ')') as descricao,
 		concat(i.minano, i.minnro, i.cmiid)::integer as codigo_especificacao,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo', i.clicodigo, i.minano, i.minnro))) as id_processo,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'unidade-medida', (select up.cnicodigo from wun.tbunipro up where up.prdcodigo = p.prdcodigo limit 1)))) as id_un_medida,
@@ -20,8 +20,9 @@ from (
 	from wco.tbitemin i
 	inner join wun.tbproduto p on (p.prdcodigo = i.prdcodigo)
 	where i.clicodigo = {{clicodigo}}
-	and i.minano = {{ano}}
-	and i.minnro = 119
+	and i.minano >= 2010
+	--and i.minano = {{ano}}
+	--and i.minnro = 27
 	and exists ( -- Verifica a existência de um item duplicado para o processo atual
 		select 1
 		from (
@@ -42,5 +43,5 @@ from (
 where id_gerado is null
 and id_un_medida is not null 
 and id_material is not null
-
+and id_processo in (211292)
 

@@ -14,7 +14,8 @@ from (
         m.pcsano as ano_processo,
         m.pcsnro as nro_processo,
         coalesce(lic.licano, m.minano) as ano_sequencial,
-         coalesce(lic.licnro, m.minnro) as nro_sequencial,
+        coalesce(lic.licnro, m.minnro) as nro_sequencial,
+        --m.minnro as nro_sequencial,
         p.modcodigo,
         (select mo.moddescricao from wco.tbmodalidade mo where mo.modcodigo = p.modcodigo) as desc_modalidade,
         p.pcsano as parametro_exercicio,
@@ -56,8 +57,8 @@ from (
     left join wco.tblicitacao lic       on (lic.clicodigo = m.clicodigo and lic.minano = m.minano and lic.minnro = m.minnro)
     left join wco.tbedital e            on (e.clicodigo = m.clicodigo and e.minnro = m.minnro and e.minano = m.minano)
     where m.clicodigo = {{clicodigo}}
-    and p.pcsano = {{ano}}
-    and p.pcsnro = 119
+    and m.minano = {{ano}}
+    and m.minnro in (81)
     order by 1, 2 desc, 3 desc
 ) tab
 where id_gerado is null

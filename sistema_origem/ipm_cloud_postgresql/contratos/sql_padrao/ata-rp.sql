@@ -12,9 +12,14 @@ from (
 	 	rp.minnro as nro_processo,
 	 	rp.arpsequencia,
 	 	rp.unicodigo,
+	    (select lic.licdatahomologacao::varchar from wco.tblicitacao lic where lic.clicodigo = rp.clicodigo and lic.minano = rp.minano and lic.minnro = rp.minnro)::varchar as dt_homologacao,
 	 	left((select lic.licdatahomologacao::varchar from wco.tblicitacao lic where lic.clicodigo = rp.clicodigo and lic.minano = rp.minano and lic.minnro = rp.minnro), 4) as ano_homologacao,
 	 	(regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g')) as cpf_fornecedor,
-	 	rp.arpdata::varchar as data_ata,
+	 	(case
+	 		when left((select lic.licdatahomologacao::varchar from wco.tblicitacao lic where lic.clicodigo = rp.clicodigo and lic.minano = rp.minano and lic.minnro = rp.minnro), 4) <> left(rp.arpdata::varchar, 4)
+	 		then (select lic.licdatahomologacao::varchar from wco.tblicitacao lic where lic.clicodigo = rp.clicodigo and lic.minano = rp.minano and lic.minnro = rp.minnro)::varchar
+	 		else rp.arpdata::varchar
+	 	end ) as data_ata,
 	 	rp.arpdata::varchar as data_assinatura,
 	 	rp.arpdatavigfim::varchar as data_vencimento,
 	 	rp.arpobjeto as objeto,
@@ -30,7 +35,7 @@ from (
 	 inner join wun.tbunico u on u.unicodigo = rp.unicodigo
 	 where rp.clicodigo = {{clicodigo}}
 	 and rp.minano = {{ano}}
-	 --and rp.minnro = 119
+	 --and rp.minnro = 27
 	 order by 1, 2 desc, 3 asc
 ) tab
 where id_gerado is null

@@ -88,7 +88,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
     total_erros = 0
 
     if params_exec['clicodigo'] == '2016':
-        id_organograma_padrao = 371768
+        id_organograma_padrao = 392830
     elif params_exec['clicodigo'] == '13482':
         id_organograma_padrao = 376332
     elif params_exec['clicodigo'] == '11968':
@@ -122,7 +122,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'fornecedor': {
                 'id': item['id_fornecedor']
             },
-            'numero': str(item['nro_sf']),
+            'numero': '-' + str(item['nro_sf']),
             'nomeSolicitante': item['solicitante'],
             'data': item['data_sf'],
             'observacao': item['observacao']
@@ -145,7 +145,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
             'i_chave_dsk6': item['nro_sf'],
         })
 
-        if False:
+        if True:
             model.insere_tabela_controle_migracao_registro(params_exec, lista_req=lista_controle_migracao)
             req_res = interacao_cloud\
                 .preparar_requisicao_sem_lote(

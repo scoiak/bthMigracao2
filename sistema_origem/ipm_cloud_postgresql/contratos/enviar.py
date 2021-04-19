@@ -11,7 +11,7 @@ def iniciar():
         # 'clicodigo': '13482',  # SAUDE
         # 'clicodigo': '16975',  # FAMABI
         # 'clicodigo': '11968',  # CAMARA
-        'ano': 2019,
+        'ano': 2017,
         'somente_pre_validar': False,
     }
     mensagem_inicio(params_exec)
@@ -118,7 +118,7 @@ def iniciar():
     # enviar(params_exec, 'contratacao-aditivo-item_v2') # Configurar antes de usar
     # enviar(params_exec, 'contratacao-apostilamento')
     # enviar(params_exec, 'contratacao-sf')
-    # enviar(params_exec, 'contratacao-sf-item')
+    enviar(params_exec, 'contratacao-sf-item')
 
     # Contratações - Atas de Registro de Preço
     # enviar(params_exec, 'processo-participante-proposta-busca')
@@ -138,7 +138,7 @@ def iniciar():
 
 
 def enviar(params_exec, tipo_registro, *args, **kwargs):
-    print(f'\n:: Iniciando execução do assunto {tipo_registro}')
+    print(f'\n:: Iniciando execução do cadastro {tipo_registro}')
     tempo_inicio = datetime.now()
     path_padrao = f'sistema_origem.{settings.BASE_ORIGEM}.{settings.SISTEMA_ORIGEM}.rotinas_envio'
     modulo = __import__(f'{path_padrao}.{tipo_registro}', globals(), locals(), ['iniciar_processo_envio'], 0)

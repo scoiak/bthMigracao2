@@ -41,7 +41,7 @@ from (
 	where true
 	and ((c.clicodigo = {{clicodigo}} and c.clicodigomin is null) or ((c.clicodigo = {{clicodigo}} and c.clicodigomin = c.clicodigo)) or (c.clicodigomin = {{clicodigo}} and c.clicodigo <> c.clicodigomin))
 	and c.minano = {{ano}}
-	and c.minnro = 119
+	and c.minnro = 27
 	---and a.arpnro = 13
 	and c.minano is not null
 	and c.minnro is not null

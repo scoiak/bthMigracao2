@@ -21,9 +21,26 @@ from (
 		i.cmiqtde as quantidade,
 		q.qcpvlrunit as valor_unitario,
 		q.qcpvlrtotal as valor_total,
+		coalesce((
+	 		select true
+	 		from (
+				select distinct
+					i2.prdcodigo,
+					count(*) as qtd
+				from wco.tbitemin i2
+				where i2.clicodigo = i.clicodigo
+				and i2.minano = i.minano
+				and i2.minnro = i.minnro
+				and i2.prdcodigo = i.prdcodigo
+				group by 1
+			) aux2
+			where aux2.qtd > 1
+			limit 1)
+		, false) as possui_duplicado,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'contratacao', c.clicodigo, c.ctrano, c.ctridentificador))) as id_contratacao,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'material', i.prdcodigo))) as id_material,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'material-especificacao', i.prdcodigo))) as id_especificacao,
+		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'material-duplicado-especificacao', i.clicodigo, i.minano, i.minnro, '@', i.cmiid))) as id_material_duplicado_espec,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo-ato-final', coalesce(c.clicodigomin, c.clicodigo), c.minano, c.minnro))) as id_ato_final,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo-participante-proposta', coalesce(c.clicodigomin, c.clicodigo), q.minano, q.minnro, (regexp_replace(u.unicpfcnpj,'[/.-]|[ ]','','g')), q.cmiid))) as id_proposta,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'contratacao-item', c.clicodigo, c.ctrano, c.ctridentificador, '@', q.cmiid))) as id_gerado
@@ -33,7 +50,7 @@ from (
 	left join wun.tbunico u on (u.unicodigo = q.unicodigo)
 	where q.clicodigo = {{clicodigo}}
 	and q.minano = {{ano}}
-	--and q.minnro = 164
+	and q.minnro = 178
 	and c.ctrtipoaditivo is null
 	and c.ctrano is not null
 	--and c.minnro in (203)

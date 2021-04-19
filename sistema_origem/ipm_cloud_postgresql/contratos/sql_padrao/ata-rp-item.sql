@@ -20,10 +20,27 @@ from (
 	    i.cmiqtde as quantidade,
 	    qcp.qcpvlrunit as valor_unitario,
 	    qcp.qcpvlrtotal as valor_total,
+	    coalesce((
+	 		select true
+	 		from (
+				select distinct
+					i2.prdcodigo,
+					count(*) as qtd
+				from wco.tbitemin i2
+				where i2.clicodigo = i.clicodigo
+				and i2.minano = i.minano
+				and i2.minnro = i.minnro
+				and i2.prdcodigo = i.prdcodigo
+				group by 1
+			) aux
+			where aux.qtd > 1
+			limit 1)
+		, false) as possui_duplicado,
 	 	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo', rp.clicodigo, rp.minano, rp.minnro))) as id_processo,
 	 	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'ata-rp', rp.clicodigo, rp.arpano, rp.arpnro, rp.unicodigo))) as id_ata,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'material', i.prdcodigo))) as id_material,
 	 	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'material-especificacao', i.prdcodigo))) as id_material_especificacao,
+	 	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'material-duplicado-especificacao', i.clicodigo, i.minano, i.minnro, '@', i.cmiid))) as id_material_duplicado_epec,
 	 	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo-item', rp.clicodigo, rp.minano, rp.minnro, '@', coalesce(i.lotcodigo ,0), '@', i.cmiitem))) as id_item,
 	 	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo-item-configuracao', (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo', rp.clicodigo, rp.minano, rp.minnro))), (select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'processo-item', rp.clicodigo, rp.minano, rp.minnro, '@', coalesce(i.lotcodigo ,0), '@', i.cmiitem)))))) as id_config_item,
 	 	(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'ata-rp-item', rp.clicodigo, rp.arpano, rp.arpnro, rp.unicodigo, qcp.cmiid))) as id_gerado
@@ -36,7 +53,7 @@ from (
 	 left join wco.tbitemin i on (i.clicodigo = rp.clicodigo and i.minano = rp.minano and i.minnro = rp.minnro and i.cmiid = qcp.cmiid)
 	 where rp.clicodigo = {{clicodigo}}
 	 and rp.minano = {{ano}}
-	 --and rp.minnro = 52
+	 --and rp.minnro = 27
 	 order by 1, 2 desc, 3 desc
 ) tab
 where id_gerado is null
