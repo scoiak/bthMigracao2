@@ -57,7 +57,7 @@ from (
 	where true
 	and ((c.clicodigo = {{clicodigo}} and c.clicodigomin = c.clicodigo) or (c.clicodigomin = {{clicodigo}} and c.clicodigo <> c.clicodigomin))
 	and c.minano = {{ano}}
-	and c.minnro in (178)
+	and c.minnro in (47)
 	and c.minano is not null
 	and c.minnro is not null
 	order by 1, 2 desc, 3 desc, 4 desc, 8 desc, 9 desc, 10 asc)
@@ -112,7 +112,7 @@ union all
 	where true
 	and ((c.clicodigo = {{clicodigo}} and c.clicodigomin = c.clicodigo) or (c.clicodigomin = {{clicodigo}} and c.clicodigo <> c.clicodigomin))
 	and c.minano = {{ano}}
-	and c.minnro = 178
+	and c.minnro = 47
 	--and c.copnro = 1687
 	and c.minano is not null
 	and c.minnro is not null
@@ -167,7 +167,7 @@ union all
 	where true
 	and ((c.clicodigo = {{clicodigo}} and c.clicodigomin = c.clicodigo) or (c.clicodigomin = {{clicodigo}} and c.clicodigo <> c.clicodigomin))
 	and c.minano = {{ano}}
-	and c.minnro = 178
+	and c.minnro = 47
 	and c.ctrano is null
 	and c.ctridentificador is null
 	--and c.copnro = 1687

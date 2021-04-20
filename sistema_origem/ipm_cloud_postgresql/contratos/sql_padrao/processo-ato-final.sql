@@ -18,6 +18,7 @@ from (
 	from wco.tblicitacao l
 	left join wco.tbminuta m on (m.clicodigo = l.clicodigo and m.minano = l.clicodigo and m.minnro = l.minnro)
 	where l.licdatahomologacao is not null
+	and l.licsituacao = 4
 	and l.clicodigo = {{clicodigo}}
 	and l.minano = {{ano}}
 	--and l.minnro = 120

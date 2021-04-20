@@ -45,7 +45,7 @@ from (
 	where true
 	and ((c.clicodigo = {{clicodigo}} and c.clicodigomin = c.clicodigo) or (c.clicodigomin = {{clicodigo}} and c.clicodigo <> c.clicodigomin))
 	and c.minano = {{ano}}
-	and c.minnro in (178)
+	and c.minnro in (47)
 	and c.minano is not null
 	and c.minnro is not null
 	and not exists (select 1 from wco.tbataregpreco a where a.clicodigo  = c.clicodigo and a.minano = c.minano and a.minnro = c.minnro)
@@ -90,7 +90,7 @@ union all
 	where true
 	and ((c.clicodigo = {{clicodigo}} and c.clicodigomin = c.clicodigo) or (c.clicodigomin = {{clicodigo}} and c.clicodigo <> c.clicodigomin))
 	and c.minano = {{ano}}
-	and c.minnro in (178)
+	and c.minnro in (47)
 	and c.minano is not null
 	and c.minnro is not null
 	and not exists (select 1 from wco.tbataregpreco a where a.clicodigo  = c.clicodigo and a.minano = c.minano and a.minnro = c.minnro)
@@ -135,7 +135,7 @@ union all
 	where true
 	and ((c.clicodigo = {{clicodigo}} and c.clicodigomin = c.clicodigo) or (c.clicodigomin = {{clicodigo}} and c.clicodigo <> c.clicodigomin))
 	and c.minano = {{ano}}
-	and c.minnro in (178)
+	and c.minnro in (47)
 	and c.minano is not null
 	and c.minnro is not null
 	and c.ctrano is null
