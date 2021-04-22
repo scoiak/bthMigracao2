@@ -27,20 +27,18 @@ from (
 		(case c.ctrtipoaditivo when 1 then 'Normal' when 2 then 'Objeto' when 3 then 'Prazo' when 4 then 'Valor (Equilibrio)' when 5 then 'Prazo Valor'when 6 then 'Objeto Valor' when 7 then 'Objeto Prazo' when 8 then 'Objeto Prazo Valor' when 9 then 'Outros Aditivos' when 10 then 'Recisão Contratual' when 11 then 'Rerratificação' when 12 then 'Apostila' when 13 then '???' when 14 then 'Prorrogação' else 'Cessão' end) as desc_tipo_aditivo,
 		false as continua,
 		false as reforma,
-		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'contratacao', c.clicodigo, c.ctranosup, c.ctridentsup))) as id_contrato,
+		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'contratacao', c.clicodigo, c.ctranosup, c.ctridentsup))) as id_contratacao,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305,'tipo-aditivo', c.ctrtipoaditivo))) as id_tipo_aditivo,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'contratacao-aditivo', c.clicodigo, c.ctrano, c.ctrnro))) as id_gerado
 	from wco.tbcontrato c
 	where c.clicodigo = {{clicodigo}}
-	--and c.ctranosup = {{ano}}
 	and c.minano = {{ano}}
-	and c.minnro in (144)
+	--and c.minnro in (144)
 	and c.ctrtipoaditivo is not null
 	and c.ctrtipoaditivo <> 12
-	--and c.minnro = 2
 	order by 1, 2 desc, 3 desc, 4 asc
 ) tab
 where id_gerado is null
-and id_contrato is not null
+and id_contratacao is not null
 and id_tipo_aditivo is not null
---limit 1
+{{id_contratacao}}

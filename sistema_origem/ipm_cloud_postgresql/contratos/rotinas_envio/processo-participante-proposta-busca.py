@@ -29,7 +29,7 @@ def busca_dados_cloud(params_exec, dados_base):
     for item in lista_dados:
         print(f'\r- Verificando registros: {contador}/{total_dados}', '\n' if contador == total_dados else '', end='')
         criterio = f'participante.fornecedor.pessoa.cpfCnpj = \'{item["cpf_participante"]}\' ' \
-                   f'and item.material.id = {item["id_material"]} ' \
+                   f'and item.id = {item["id_item"]} ' \
                    f'and processoAdministrativo.id = {item["id_processo"]}'
         registro_cloud = interacao_cloud.busca_api_fonte_dados(params_exec, url=url, campos=campos, criterio=criterio)
 

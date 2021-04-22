@@ -27,21 +27,19 @@ from (
 		'SEM_ALTERACAO' as tipo_alteracao,
 		99 as sequencial,
 		2 as id_tipo_apostilamento, --Alteração de Despesa Orçamentária
-		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'contratacao', c.clicodigo, c.ctranosup, c.ctridentsup))) as id_contrato,
+		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'contratacao', c.clicodigo, c.ctranosup, c.ctridentsup))) as id_contratacao,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305,'tipo-aditivo', c.ctrtipoaditivo))) as id_tipo_aditivo,
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'contratacao-apostilamento', c.clicodigo, c.ctranosup, c.ctridentsup, '@', c.ctrano, c.ctrnro))) as id_gerado
 	from wco.tbcontrato c
 	where c.clicodigoctl = {{clicodigo}}
-	--and c.ctranosup = {{ano}}
 	and c.minano = {{ano}}
-	and c.minnro in (178)
+	--and c.minnro in (178)
 	and c.ctrtipoaditivo is not null
 	and c.ctrtipoaditivo = 12
-	--and c.minnro = 204
-	--and c.ctrnro = 'Apostila 5'
 	order by 1, 2 desc, 3 desc, 6 asc
 ) tab
 where id_gerado is null
-and id_contrato is not null
+and id_contratacao is not null
 and id_tipo_aditivo is not null
+{{id_contratacao}}
 --limit 1

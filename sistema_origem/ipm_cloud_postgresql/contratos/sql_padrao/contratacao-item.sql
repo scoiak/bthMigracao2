@@ -46,15 +46,14 @@ from (
 		(select id_gerado from public.controle_migracao_registro where hash_chave_dsk = md5(concat(305, 'contratacao-item', c.clicodigo, c.ctrano, c.ctridentificador, '@', q.cmiid))) as id_gerado
 	from wco.vw_qcp_vencedor q
 	left join wco.tbcontrato c on (c.clicodigo = q.clicodigo and c.minano = q.minano and c.minnro = q.minnro and c.unicodigo = q.unicodigo)
+	--left join wco.tbcontrato c on (c.clicodigo = q.clicodigo and c.minano = q.minano and c.minnro = q.minnro)
 	left join wco.tbitemin i on (i.clicodigo = q.clicodigo and i.minano = q.minano and i.minnro = q.minnro and i.cmiid = q.cmiid)
 	left join wun.tbunico u on (u.unicodigo = q.unicodigo)
 	where q.clicodigo = {{clicodigo}}
 	and q.minano = {{ano}}
-	and q.minnro = 178
+	--and q.minnro = 60
 	and c.ctrtipoaditivo is null
 	and c.ctrano is not null
-	--and c.minnro in (203)
-	--and c.ctridentificador = 99
 	order by 1, 2 desc, 3 desc, q.cmiid
 ) tab
 where id_gerado is null
@@ -63,4 +62,5 @@ and id_contratacao is not null
 and id_material is not null
 and id_especificacao is not null
 and id_ato_final is not null
+{{id_contratacao}}
 --limit 1
