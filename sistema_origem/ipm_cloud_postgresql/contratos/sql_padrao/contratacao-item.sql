@@ -50,7 +50,8 @@ from (
 	left join wco.tbitemin i on (i.clicodigo = q.clicodigo and i.minano = q.minano and i.minnro = q.minnro and i.cmiid = q.cmiid)
 	left join wun.tbunico u on (u.unicodigo = q.unicodigo)
 	where q.clicodigo = {{clicodigo}}
-	and q.minano = {{ano}}
+	and q.minano >= 2010
+	--and q.minano = {{ano}}
 	--and q.minnro = 60
 	and c.ctrtipoaditivo is null
 	and c.ctrano is not null
