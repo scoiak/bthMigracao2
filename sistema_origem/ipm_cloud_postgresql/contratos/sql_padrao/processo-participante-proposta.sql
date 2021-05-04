@@ -38,9 +38,9 @@ from (
     inner join wun.tbunico u on (u.unicodigo = qcp.unicodigo)
     where qcp.clicodigo = {{clicodigo}}
     --and qcp.minano = {{ano}}
-    and qcp.minano >= 2010
+    and qcp.minano = 2020
     --and qcp.minnro in (81)
-    --and qcp.minnro not in (35, 41, 65, 81, 88, 90, 92, 99, 100)
+    and qcp.minnro in (49,65,88,92,92,99,100,188)
     order by 1, 2 desc, 3 desc, 4 asc
 ) tab
 where id_gerado is null

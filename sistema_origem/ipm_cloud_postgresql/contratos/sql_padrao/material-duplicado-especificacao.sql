@@ -20,7 +20,7 @@ from (
 	from wco.tbitemin i
 	inner join wun.tbproduto p on (p.prdcodigo = i.prdcodigo)
 	where i.clicodigo = {{clicodigo}}
-	and i.minano >= 2010
+	and i.minano >= 2017
 	--and i.minano = {{ano}}
 	--and i.minnro = 27
 	and exists ( -- Verifica a existência de um item duplicado para o processo atual
@@ -43,5 +43,5 @@ from (
 where id_gerado is null
 and id_un_medida is not null 
 and id_material is not null
-and id_processo in (211292)
+--and id_processo in (211292)
 

@@ -130,3 +130,33 @@ begin
 	return a;
 END $$;
 %/%
+
+CREATE OR REPLACE FUNCTION bth_insert_cmr
+(
+	sis 			integer default 0,
+	tipo_reg 		text default '',
+	desc_tipo_reg 	text default '',
+	id_gerado 		integer default 0,
+	chave1 			text default '',
+	chave2 			text default null,
+	chave3 			text default null,
+	chave4 			text default null,
+	chave5 			text default null,
+	chave6 			text default null,
+	chave7 			text default null,
+	chave8 			text default null,
+	chave9 			text default null,
+	chave10			text default null,
+	chave11			text default null,
+	chave12			text default null
+)
+RETURNS text
+LANGUAGE plpgsql AS $$
+declare
+	h text;
+begin
+	h = md5(concat(sis, tipo_reg, chave1, chave2, chave3, chave4, chave5, chave6, chave7, chave8, chave9, chave10, chave11, chave12));
+	insert into public.controle_migracao_registro values (sis, tipo_reg, h, desc_tipo_reg, id_gerado, chave1, chave2, chave3, chave4, chave5, chave6, chave7, chave8, chave9, chave10, chave11, chave12) on conflict do nothing;
+	return h;
+END $$;
+%/%

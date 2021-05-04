@@ -140,6 +140,7 @@ def iniciar_envio(params_exec, dados, metodo, *args, **kwargs):
                     tipo_registro=tipo_registro)
             model.atualiza_tabelas_controle_envio_sem_lote(params_exec, req_res, tipo_registro=tipo_registro)
             if req_res[0]['mensagem'] is not None:
+                print('Erro: ', req_res[0]['mensagem'])
                 total_erros += 1
     if total_erros > 0:
         print(f'- Envio finalizado. Foram encontrados um total de {total_erros} inconsistência(s) de envio.')
