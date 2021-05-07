@@ -18,7 +18,7 @@ from (
 	from wco.tblotemin l
 	where l.clicodigo = {{clicodigo}}
 	and l.minano = {{ano}}
-	and l.minnro in (36,279,5)
+	and l.minnro in (20, 15, 10)
 	order by 1, 2 desc, 3 desc, 4 asc
 ) tab
 where id_gerado is null

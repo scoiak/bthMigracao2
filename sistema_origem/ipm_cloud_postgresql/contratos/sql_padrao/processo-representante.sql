@@ -22,7 +22,7 @@ from (
 	inner join wun.tbunico u on (u.unicodigo = p.unicodigo)
 	where p.clicodigo = {{clicodigo}}
     and p.minano = {{ano}}
-    and p.minnro in (81)
+    and p.minnro in (20, 15, 10)
 	and pr.modcodigo <> 1
 	and p.unicodigorepr is not null
 	order by 1, 2 desc, 3 desc

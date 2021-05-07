@@ -25,8 +25,8 @@ from (
 	left join wco.tbprocesso pr on (pr.clicodigo = p.clicodigo and pr.pcsano = p.minano and pr.pcsnro = p.minnro)
 	where p.clicodigo = {{clicodigo}}
 	and p.minano = {{ano}}
-	and p.minnro in (5,125,123,109,99,1)
-	and pr.modcodigo = 1
+	and p.minnro in (20, 15, 10)
+	--and pr.modcodigo = 1
 	order by 1, 2 desc, 3 desc
 ) tab
 where id_gerado is null

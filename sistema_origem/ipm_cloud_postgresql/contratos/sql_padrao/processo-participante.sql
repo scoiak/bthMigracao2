@@ -36,7 +36,7 @@ from (
 	natural join wun.tbunico u
 	where p.clicodigo = {{clicodigo}}
     and p.minano = {{ano}}
-    and p.minnro in (81)
+    and p.minnro in (20, 15, 10)
 	--and pr.modcodigo <> 1
 	order by 1, 2 desc, 3 desc
 ) tab

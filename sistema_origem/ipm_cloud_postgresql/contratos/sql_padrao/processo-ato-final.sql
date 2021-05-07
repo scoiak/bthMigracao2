@@ -22,7 +22,7 @@ from (
 	and l.clicodigo = {{clicodigo}}
 	and l.minano = {{ano}}
 	--and l.minnro = 120
-	and l.minnro in (81)
+	and l.minnro in (20, 15, 10)
 	order by 1, 2 desc, 3 desc
 ) tab
 where id_gerado is null

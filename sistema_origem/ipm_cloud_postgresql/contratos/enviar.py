@@ -9,12 +9,12 @@ def iniciar():
     params_exec = {
         # 'clicodigo': '2016',  # PM
         # 'clicodigo': '13482',  # SAUDE
-        # 'clicodigo': '16975',  # FAMABI
-        'clicodigo': '11968',  # CAMARA
-        'ano': 2018,
+        'clicodigo': '16975',  # FAMABI
+        # 'clicodigo': '11968',  # CAMARA
+        'ano': 2016,
         'somente_pre_validar': False,
-        'id_contratacao': ' and id_contratacao in (960483, 960482, 960445, 960446, 960449, 960459, 960436, 960458, 960457, 960491, 960443, 960447, 960497, 960498, 960441, 960442, 960500, 960435, 960440, 960439, 960437, 960438, 960434, 960493, 960495, 960496, 960494, 960499, 960486, 960492, 960490, 960489, 960485, 960488, 960479, 960487, 960480, 960484, 960481, 960478, 960475, 960476, 960474, 960477, 960466, 960472, 960471, 960469, 960473, 960468, 960470, 960467, 960461, 960465, 960464, 960460, 960462, 960463)',
-        'token': '86e6501b-59b7-4793-874c-bee84100e779'  # oficial: Camara #ignoreline,
+        'id_contratacao': ' and id_contratacao in (891578, 891579)',
+        # 'token': '86e6501b-59b7-4793-874c-bee84100e779'  # oficial: Camara #ignoreline,
 
     }
     mensagem_inicio(params_exec)
@@ -77,7 +77,7 @@ def iniciar():
     # enviar(params_exec, 'processo-documento')
     # enviar(params_exec, 'processo-entidade')
     # enviar(params_exec, 'processo-despesa')
-    enviar(params_exec, 'processo-item')
+    # enviar(params_exec, 'processo-item')
     # enviar(params_exec, 'processo-lote')
     # enviar(params_exec, 'processo-lote-item')
     # # enviar(params_exec, 'processo-entidade-item')
@@ -117,7 +117,7 @@ def iniciar():
 
     # Contratações - Processos Administrativos
     # enviar(params_exec, 'contratacao')
-    # enviar(params_exec, 'contratacao-item')
+    enviar(params_exec, 'contratacao-item')
     # enviar(params_exec, 'contratacao-aditivo')
     # enviar(params_exec, 'contratacao-aditivo-item') # Não utilizar
     # enviar(params_exec, 'contratacao-aditivo-item_v2') # Configurar antes de usar

@@ -15,7 +15,7 @@ from (
 	from wco.tbdocexigido d
 	where d.clicodigo = {{clicodigo}}
 	and d.minano = {{ano}}
-	and d.minnro in (81)
+	and d.minnro in (20, 15, 10)
 	order by 1, 2 desc, 3 desc, 4 asc
 ) tab
 where id_gerado is null

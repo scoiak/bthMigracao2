@@ -48,7 +48,7 @@ from (
      from wco.tbitemin i
 	 where i.clicodigo = {{clicodigo}}
 	 and i.minano = {{ano}}
-	 and i.minnro in (25)
+	 and i.minnro in (20, 15, 10)
 	 and i.lotcodigo is null
 	 order by 2, 3 desc, 4 desc, 5 asc, 6 asc)
 	 union all
@@ -94,7 +94,7 @@ from (
      from wco.tbitemin i
 	 where i.clicodigo = {{clicodigo}}
 	 and i.minano = {{ano}}
-	 and i.minnro in (25)
+	 and i.minnro in (20, 15, 10)
 	 and i.lotcodigo is not null
 	 order by 2, 3 desc, 4 desc, 5 asc, 6 asc)
 ) tab
